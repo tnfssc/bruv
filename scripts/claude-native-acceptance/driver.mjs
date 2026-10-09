@@ -52,10 +52,10 @@ async function waitForFile(file, limit = 15000) {
     } catch {}
     await new Promise((r) => setTimeout(r, 100));
   }
-  throw Error("Actual managed worker did not produce " + path.basename(file));
+  throw Error(`Actual managed worker did not produce ${path.basename(file)}`);
 }
 export async function captureIdentity({ page, proof }) {
-  const row = page.locator('[data-model-slug="' + modelSlug + '"]');
+  const row = page.locator(`[data-model-slug="${modelSlug}"]`);
   await row.scrollIntoViewIfNeeded();
   await page.screenshot({ path: path.join(proof, "custom-model-identity.png") });
 }
@@ -135,7 +135,7 @@ export async function exercise({ page, url, snapshot, body, config, observation 
   assertCancellationChronology(
     await renderedTimelineText(page, path.join(config.proof, "cancellation-visual-chronology.json")),
   );
-  await page.goto(url + "/settings/providers");
+  await page.goto(`${url}/settings/providers`);
   await page.goto(url);
   await page.locator("[data-thread-item]").filter({ hasText: "ACCEPT_EXECUTE" }).first().click();
   await visible("CANCELLATION_COMPLETED_REAL");
@@ -170,7 +170,7 @@ export function checkWire(wire) {
   );
   const actualToolResults = JSON.stringify(toolResults);
   for (const marker of ["BRUV_EXECUTE_REAL", "CANCEL_INSPECT_REAL"])
-    assert.ok(actualToolResults.includes(marker), "Actual tool_result " + marker);
+    assert.ok(actualToolResults.includes(marker), `Actual tool_result ${marker}`);
   assert.match(actualToolResults, /task_/, "Real tool_result managed task ID");
   const assistantText = (m) =>
     m.type === "assistant" && Array.isArray(m.message?.content)
@@ -182,7 +182,7 @@ export function checkWire(wire) {
   for (const marker of ["EARLY_RETURN_REAL", "TASK_COMPLETED_REAL", "CANCELLATION_COMPLETED_REAL"])
     assert.ok(
       out.some((m) => assistantText(m).includes(marker)),
-      "Actual assistant output " + marker,
+      `Actual assistant output ${marker}`,
     );
   const taskStarts = out.filter((m) => m.type === "system" && m.subtype === "task_started");
   const taskEnds = out.filter((m) => m.type === "system" && m.subtype === "task_notification");
@@ -268,11 +268,11 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
   const projection = projectWire(wire);
   await fs.writeFile(
     path.join(proof, "wire-projection.ndjson"),
-    projection.map((x) => JSON.stringify(x)).join("\n") + "\n",
+    `${projection.map((x) => JSON.stringify(x)).join("\n")}\n`,
   );
   await fs.writeFile(
     path.join(proof, "result.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         integratedAcceptance: true,
         syntheticConnectorEvents: false,
@@ -304,7 +304,7 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
 }
 
@@ -320,7 +320,7 @@ export async function waitForProcessExit(pidFile, timeoutMs = 15000) {
       if (error.code === "ESRCH") return;
       throw error;
     }
-    if (Date.now() >= deadline) throw Error("Native Stop left fixture process alive: " + pid);
+    if (Date.now() >= deadline) throw Error(`Native Stop left fixture process alive: ${pid}`);
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
 }
@@ -353,7 +353,7 @@ export function capture({ page }) {
       const walk = (value, owner = {}, location = "root") => {
         if (!value || typeof value !== "object") return;
         if (Array.isArray(value)) {
-          for (const [index, entry] of value.entries()) walk(entry, owner, location + "[" + index + "]");
+          for (const [index, entry] of value.entries()) walk(entry, owner, `${location}[${index}]`);
           return;
         }
         if (value.type === "user_message" && value.text?.startsWith("ACCEPT_CANCEL:")) cancellationRunId = value.runId;
@@ -372,7 +372,7 @@ export function capture({ page }) {
           "parentNodeId",
           "nativeId",
         ])
-          if (typeof value[key] === "string") context[key + "Hash"] = idHash(value[key]);
+          if (typeof value[key] === "string") context[`${key}Hash`] = idHash(value[key]);
         const markers = fixtureMarkers.filter((marker) =>
           Object.values(value).some((text) => typeof text === "string" && text.includes(marker)),
         );
@@ -392,7 +392,7 @@ export function capture({ page }) {
           });
         }
         for (const [key, child] of Object.entries(value))
-          if (typeof child === "object") walk(child, context, location + "." + key);
+          if (typeof child === "object") walk(child, context, `${location}.${key}`);
       };
       walk(decoded);
     }),
@@ -434,7 +434,7 @@ async function persistT3Evidence({ proof, root }, t3Items) {
       database.close();
     }
   }
-  await fs.writeFile(path.join(proof, "t3-item-projection.json"), JSON.stringify(t3Items, null, 2) + "\n");
+  await fs.writeFile(path.join(proof, "t3-item-projection.json"), `${JSON.stringify(t3Items, null, 2)}\n`);
 }
 
 export function assertCancellationChronology(body) {
@@ -477,18 +477,16 @@ export async function captureFailure({ page, proof, root }) {
   }
   if (!request) return;
   const disclosure = () =>
-    page
-      .locator('[data-timeline-row-id="turn-fold:' + request.runId + '"]')
-      .getByRole("button", { name: /^Worked for / });
+    page.locator(`[data-timeline-row-id="turn-fold:${request.runId}"]`).getByRole("button", { name: /^Worked for / });
   const retain = async (name) => {
     const button = disclosure();
     if ((await button.getAttribute("aria-expanded")) === "false") await button.click();
     await page.getByText("CANCEL_CONFIRMED_REAL").last().waitFor();
     await fs.writeFile(
-      path.join(proof, name + ".txt"),
+      path.join(proof, `${name}.txt`),
       (await page.locator("body").innerText()).replace(/\/var\/tmp\/bruv-native-acceptance-[^/]+/g, "<FIXTURE>"),
     );
-    await page.screenshot({ path: path.join(proof, name + ".png") });
+    await page.screenshot({ path: path.join(proof, `${name}.png`) });
   };
   await retain("diagnostic-correct-disclosure");
   await fs.writeFile(path.join(proof, "diagnostic-correct-disclosures.json"), JSON.stringify(await collect(), null, 2));
@@ -504,7 +502,7 @@ export async function captureFailure({ page, proof, root }) {
 export async function expandRunDisclosure(page, runId) {
   assert.ok(runId, "Actual cancellation run identity must be observed");
   const button = page
-    .locator('[data-timeline-row-id="turn-fold:' + runId + '"]')
+    .locator(`[data-timeline-row-id="turn-fold:${runId}"]`)
     .getByRole("button", { name: /^Worked for / });
   if ((await button.getAttribute("aria-expanded")) === "false") await button.click();
   assert.equal(await button.getAttribute("aria-expanded"), "true", "The cancellation run disclosure is expanded");

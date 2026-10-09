@@ -36,7 +36,7 @@ const streamFunction = (_m, context, options) => {
             { type: "toolCall", id: "t1", name: "longWork", arguments: {} },
             { type: "toolCall", id: "t2", name: "secondWork", arguments: {} },
           ]
-        : [{ type: "text", text: "research complete " + n }],
+        : [{ type: "text", text: `research complete ${n}` }],
     api: model.api,
     provider: model.provider,
     model: model.id,

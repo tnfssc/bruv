@@ -1,3 +1,4 @@
+import { requireValue } from "../../scripts/lib/require-value";
 import { resolve } from "node:path";
 
 // One-time asset tool, not part of the build. Needs librsvg and ImageMagick.
@@ -34,11 +35,11 @@ for (const width of [24, 28, 48]) {
 }
 await Bun.write(
   resolve(import.meta.dir, "../assets/brand/wordmark-cells.json"),
-  JSON.stringify(result, null, 2) + "\n",
+  `${JSON.stringify(result, null, 2)}\n`,
 );
 
 // Social cards use the same paths, centered on a dark 1200 × 630 canvas.
-const geometry = (await Bun.file(source).text()).match(/<g[\s\S]*<\/g>/)![0].replace("#171717", "#fafafa");
+const geometry = requireValue((await Bun.file(source).text()).match(/<g[\s\S]*<\/g>/))[0].replace("#171717", "#fafafa");
 const card =
   '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#171717"/><g transform="translate(96.5 136.4) scale(1.9)">' +
   geometry +

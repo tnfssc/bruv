@@ -115,7 +115,7 @@ function parseInput(content: string | unknown[]): { text: string; images: ImageC
       typeof source.media_type === "string"
     )
       images.push({ type: "image", data: source.data, mimeType: source.media_type });
-    else throw new Error("Unsupported user content block: " + String(p.type));
+    else throw new Error(`Unsupported user content block: ${String(p.type)}`);
   }
   return { text: texts.join("\n"), images };
 }
@@ -149,7 +149,7 @@ function nativeMessage(
       return {
         role: "assistant",
         content: nativeContent(message.content),
-        model: message.provider + "/" + message.model,
+        model: `${message.provider}/${message.model}`,
       };
     case "toolResult":
       return {
@@ -233,15 +233,15 @@ export async function preflightClaudeCompatModel(options: ClaudeCompatRuntimeOpt
   const resolveModel = (key: string): Model<Api> => {
     const separator = key.indexOf("/");
     if (separator < 1)
-      throw new Error("Select an exact Bruv provider/id in T3; Claude aliases are not supported: " + key);
+      throw new Error(`Select an exact Bruv provider/id in T3; Claude aliases are not supported: ${key}`);
     const model = models.getModel(key.slice(0, separator), key.slice(separator + 1));
     if (!model)
-      throw new Error("Unknown configured Bruv model; select an exact provider/id from the selected Bruv home: " + key);
+      throw new Error(`Unknown configured Bruv model; select an exact provider/id from the selected Bruv home: ${key}`);
     return model;
   };
   const configured =
     settings.getDefaultProvider() && settings.getDefaultModel()
-      ? settings.getDefaultProvider() + "/" + settings.getDefaultModel()
+      ? `${settings.getDefaultProvider()}/${settings.getDefaultModel()}`
       : undefined;
   const initialModel =
     options.model !== undefined ? resolveModel(options.model) : configured ? resolveModel(configured) : undefined;
@@ -282,7 +282,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   const readiness = () => {
     const selected = session.model;
     if (!selected || !models.hasConfiguredAuth(selected.provider))
-      throw new Error("No configured authentication for " + (selected?.provider ?? initialModel.provider));
+      throw new Error(`No configured authentication for ${selected?.provider ?? initialModel.provider}`);
     const auth = models.getProviderAuthStatus(selected.provider);
     return {
       provider: selected.provider,
@@ -343,20 +343,24 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     omitThinking: options.thinkingDisplay === "omitted",
     auxiliary: options.auxiliary,
     diagnostic: options.diagnostic,
-    initialization: () => ({
-      cwd: options.cwd,
-      tools: session.getActiveToolNames(),
-      mcp_servers: options.mcp?.status() ?? [],
-      model: session.model!.provider + "/" + session.model!.id,
-      permissionMode: options.permissionMode ?? "default",
-      slash_commands: options.disableSlashCommands ? [] : commands.catalog().map((c) => c.name),
-      skills: loader.getSkills().skills.map((s) => s.name),
-      plugins: [],
-      claude_code_version: COMPAT_PROTOCOL_VERSION,
-      bruv: { engine: "pi", version: bruvPackage.version, provider_access_verified: false },
-    }),
+    initialization: () => {
+      const selectedModel = session.model;
+      if (!selectedModel) throw new Error("Native session has no selected model");
+      return {
+        cwd: options.cwd,
+        tools: session.getActiveToolNames(),
+        mcp_servers: options.mcp?.status() ?? [],
+        model: `${selectedModel.provider}/${selectedModel.id}`,
+        permissionMode: options.permissionMode ?? "default",
+        slash_commands: options.disableSlashCommands ? [] : commands.catalog().map((c) => c.name),
+        skills: loader.getSkills().skills.map((s) => s.name),
+        plugins: [],
+        claude_code_version: COMPAT_PROTOCOL_VERSION,
+        bruv: { engine: "pi", version: bruvPackage.version, provider_access_verified: false },
+      };
+    },
     sessionId: () => options.nativeSessionId ?? session.sessionId,
-    model: () => (session.model ? session.model.provider + "/" + session.model.id : (options.model ?? "")),
+    model: () => (session.model ? `${session.model.provider}/${session.model.id}` : (options.model ?? "")),
   });
   const rootUserMessages = new WeakSet<object>();
   let nativeFast: ReturnType<typeof import("../agent/native-fast-mode").registerNativeFastMode> | undefined;
@@ -380,7 +384,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
             onTaskOwner: (owner) =>
               bindNativeTasks(owner, {
                 root: {
-                  namespace: "bruv:" + resolve(options.agentDir),
+                  namespace: `bruv:${resolve(options.agentDir)}`,
                   sourceSessionId: owner.sourceSessionId,
                   sessionId: options.nativeSessionId ?? manager.getSessionId(),
                 },
@@ -476,7 +480,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
               await frontend.flush();
               if (!nativeFast || !ctx.model) throw new Error("Native Fast is unavailable");
               nativeFast.setWithCostConsent(
-                await options.mcp.readCurrentThreadFastMode(ctx.model.provider + "/" + ctx.model.id, turnSignal),
+                await options.mcp.readCurrentThreadFastMode(`${ctx.model.provider}/${ctx.model.id}`, turnSignal),
               );
             } catch {
               // A failed read must not leave an old premium authorization in force.
@@ -491,7 +495,10 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           });
           pi.on("before_provider_request", (event, ctx) => {
             if (!options.thinkingDisplay || !ctx.model?.reasoning) return;
-            const payload = event.payload as Record<string, any>;
+            const payload = event.payload as {
+              thinking?: Record<string, unknown>;
+              reasoning?: Record<string, unknown>;
+            };
             if (
               ctx.model.api === "anthropic-messages" &&
               payload.thinking?.type &&
@@ -652,7 +659,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   for (const name of selectedTools)
     if (!availableTools.has(name)) {
       await close();
-      throw new Error("Unavailable native tool: " + name);
+      throw new Error(`Unavailable native tool: ${name}`);
     }
   session.setActiveToolsByName(selectedTools);
 
@@ -669,8 +676,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
             (m): m is Model<Api> => (m.type === "chat" || m.type === undefined) && models.hasConfiguredAuth(m.provider),
           )
           .map((m) => ({
-            value: m.provider + "/" + m.id,
-            displayName: m.name + " (" + m.provider + ")",
+            value: `${m.provider}/${m.id}`,
+            displayName: `${m.name} (${m.provider})`,
             description: "Bruv configured model; provider access unverified",
           })),
         // Never report Anthropic subscription/account identity for non-Claude engines.
@@ -700,7 +707,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           set_permission_mode: async (message: CompatControlRequest) => {
             checkOpen();
             if (typeof message.request.mode !== "string") throw new Error("set_permission_mode requires mode");
-            options.changePermissionMode!(message.request.mode);
+            if (!options.changePermissionMode) throw new Error("No native permission mode binding");
+            options.changePermissionMode(message.request.mode);
             options.permissionMode = message.request.mode;
             return {};
           },
@@ -728,7 +736,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       if (typeof message.request.model !== "string") throw new Error("set_model requires an exact model ID");
       const model = resolveModel(message.request.model);
       if (!models.hasConfiguredAuth(model.provider))
-        throw new Error("No configured authentication for " + model.provider);
+        throw new Error(`No configured authentication for ${model.provider}`);
       await session.setModel(model);
       return {};
     },
@@ -828,7 +836,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     auxiliaryUsed = true;
     readiness();
     const validator = Compile(schema as TSchema);
-    await session.prompt(text + "\n\nReturn only JSON matching this JSON Schema:\n" + JSON.stringify(schema), {
+    await session.prompt(`${text}\n\nReturn only JSON matching this JSON Schema:\n${JSON.stringify(schema)}`, {
       expandPromptTemplates: false,
       source: "rpc",
     });

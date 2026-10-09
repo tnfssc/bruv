@@ -14,7 +14,7 @@ function executeResponse(code, sequence) {
     tool_calls: [
       {
         index: 0,
-        id: "history_" + sequence,
+        id: `history_${sequence}`,
         type: "function",
         function: {
           name: "execute",
@@ -44,7 +44,7 @@ function historyReply(body, counter, nextToolSequence) {
   ) {
     // Background summaries are genuine model requests, not another user action.
     const markers = [...new Set(all.match(/HISTORY_[A-Z_]+|orchid-73/g) ?? [])];
-    return textResponse("## Goal\nLocal native history acceptance.\n## Critical Context\n" + markers.join(" "));
+    return textResponse(`## Goal\nLocal native history acceptance.\n## Critical Context\n${markers.join(" ")}`);
   }
   if (!body.tools?.length) return textResponse("Local native history acceptance");
 
@@ -110,7 +110,7 @@ console.log("HISTORY_AUTHORITY_EMPTY");`,
     );
     return textResponse("HISTORY_REOPEN_CONTEXT_OK orchid-73");
   }
-  throw Error("Unrecognized history prompt: " + user.slice(0, 120));
+  throw Error(`Unrecognized history prompt: ${user.slice(0, 120)}`);
 }
 
 export async function startHistoryModel({ counter }) {
@@ -133,16 +133,16 @@ export async function startHistoryModel({ counter }) {
       records.push({ sequence: records.length + 1, messages: body.messages ?? [], delta });
       res.writeHead(200, { "content-type": "text/event-stream" });
       const chunk = (d, f) => ({
-        id: "history-local-" + records.length,
+        id: `history-local-${records.length}`,
         object: "chat.completion.chunk",
         created: 1,
         model: modelId,
         choices: [{ index: 0, delta: d, finish_reason: f }],
       });
       res.end(
-        [chunk(delta, null), chunk({}, delta.tool_calls ? "tool_calls" : "stop")]
-          .map((x) => "data: " + JSON.stringify(x) + "\n\n")
-          .join("") + "data: [DONE]\n\n",
+        `${[chunk(delta, null), chunk({}, delta.tool_calls ? "tool_calls" : "stop")]
+          .map((x) => `data: ${JSON.stringify(x)}\n\n`)
+          .join("")}data: [DONE]\n\n`,
       );
     } catch (e) {
       records.push({ sequence: records.length + 1, error: e.message, messages: body?.messages });
@@ -170,7 +170,7 @@ export function verifyHistoryModelRecords(records) {
     typeof m.content === "string" ? m.content : (m.content ?? []).map((b) => b.text ?? "").join("\n");
   const pairedResult = (record, marker) => {
     const result = record.messages.find((m) => m.role === "tool" && content(m).includes(marker));
-    assert.ok(result, "actual tool result contains " + marker);
+    assert.ok(result, `actual tool result contains ${marker}`);
     assert.ok(
       record.messages.some((m) => m.role === "assistant" && m.tool_calls?.some((c) => c.id === result.tool_call_id)),
       "model sees ID-paired tool exchange",
@@ -202,7 +202,7 @@ export function verifyHistoryModelRecords(records) {
     ["HISTORY_REOPEN_CONTEXT_OK orchid-73", "HISTORY_ROLLBACK_CONTEXT_OK", "HISTORY_CHILD_FUTURE"],
   ]) {
     const r = records.find((r) => r.delta?.content === response);
-    assert.ok(r, "actual continuation " + response);
+    assert.ok(r, `actual continuation ${response}`);
     const context = JSON.stringify(r.messages);
     assert.ok(context.includes(required));
     assert.ok(!context.includes(absent));

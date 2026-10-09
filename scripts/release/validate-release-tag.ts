@@ -2,9 +2,9 @@ export function validateReleaseTag(tag: string, version: unknown): string | unde
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version)) {
     return "package.json contains an unsupported version";
   }
-  const expected = "v" + version;
+  const expected = `v${version}`;
   if (tag !== expected)
-    return "release tag " + JSON.stringify(tag) + " does not match package.json version; expected " + expected;
+    return `release tag ${JSON.stringify(tag)} does not match package.json version; expected ${expected}`;
 }
 
 if (import.meta.main) {
@@ -19,5 +19,5 @@ if (import.meta.main) {
     console.error(error);
     process.exit(1);
   }
-  console.log("validated release " + tag);
+  console.log(`validated release ${tag}`);
 }

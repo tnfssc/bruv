@@ -117,10 +117,11 @@ export class RemoteQuestionBridge {
         !m.readOnly &&
         m.remote?.taskId === task.taskId &&
         samePinnedOwner(m.remote, task) &&
+        m.replyId !== undefined &&
         m.replyId === receipt.replyId &&
         m.remote.replyState === "uncertain"
       )
-        await this.service.finishRemoteReply(ctx, { ...m, replyId: m.replyId!, delivered: true });
+        await this.service.finishRemoteReply(ctx, { ...m, replyId: m.replyId, delivered: true });
     }
   }
   /** Only call after QuestionService.answer from the explicit /questions human route. */
@@ -136,13 +137,15 @@ export class RemoteQuestionBridge {
       task = state.tasks[q.remote.taskId];
     if (!task || task.jobSessionFile !== ctx.sessionManager.getSessionFile() || !samePinnedOwner(q.remote, task))
       throw new Error("Pinned remote question owner unavailable; human reply remains saved");
-    const pending = questions(task).find((r) => r.id === q.remote!.id && sameOwner(r.owner, q.remote!.owner));
+    const savedRemote = q.remote;
+    const pending = questions(task).find((r) => r.id === savedRemote.id && sameOwner(r.owner, savedRemote.owner));
     if (q.remote.replyState === "saved" && (pending?.status !== "pending" || pending.version !== q.remote.version))
       throw new Error("Remote question owner/version changed; saved human reply was not retargeted or sent");
     if (q.remote.replyState === "saved") q = await this.service.claimRemoteReply(ctx, q);
     // Explicit human resume replays ONLY the same immutable request/replyId.
     // The owner receipt is authoritative and will not dispatch an uncertain command twice.
-    const remote = q.remote!;
+    const remote = q.remote;
+    if (!remote || !q.answer || !q.replyId) throw new Error("Claimed remote reply is missing its saved identity");
     try {
       const response = await this.client.control(
         {
@@ -159,15 +162,15 @@ export class RemoteQuestionBridge {
       const receipt = (response as { task?: { taskId?: string; reply?: { replyId?: string; status?: string } } })?.task;
       return await this.service.finishRemoteReply(ctx, {
         ...q,
-        replyId: q.replyId!,
+        replyId: q.replyId,
         delivered:
           receipt?.taskId === remote.taskId &&
           receipt.reply?.replyId === q.replyId &&
           receipt.reply?.status === "delivered",
       });
     } catch (error) {
-      await this.service.finishRemoteReply(ctx, { ...q, replyId: q.replyId!, delivered: false, error: String(error) });
-      throw new Error("Remote answer outcome uncertain; saved reply identity retained. " + String(error));
+      await this.service.finishRemoteReply(ctx, { ...q, replyId: q.replyId, delivered: false, error: String(error) });
+      throw new Error(`Remote answer outcome uncertain; saved reply identity retained. ${String(error)}`);
     }
   }
 }

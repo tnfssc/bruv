@@ -67,13 +67,13 @@ const maxPending = 20,
   maxHistory = 200;
 function text(value: unknown, limit: number, label: string): string {
   if (typeof value !== "string" || !value.trim() || value.length > limit)
-    throw new Error(label + " must be nonempty and at most " + limit + " characters");
+    throw new Error(`${label} must be nonempty and at most ${limit} characters`);
   return value.trim();
 }
 function path(ctx: QuestionContext): string {
   const file = ctx.sessionManager.getSessionFile();
   if (!file) throw new Error("Questions require a persistent session file");
-  return file + ".questions.json";
+  return `${file}.questions.json`;
 }
 /** Question ownership needs IDs and causality, never saved message bodies. */
 export function questionBranchIds(manager: QuestionContext["sessionManager"]): string[] {
@@ -119,7 +119,7 @@ function read(file: string): Question[] {
   }
 }
 function write(file: string, records: Question[]): void {
-  const temp = file + "." + randomUUID() + ".tmp";
+  const temp = `${file}.${randomUUID()}.tmp`;
   try {
     const fd = openSync(temp, "wx", 0o600);
     try {
@@ -148,7 +148,7 @@ export class QuestionService {
   onAnswered?: (question: Question, ctx: QuestionContext) => void | Promise<void>;
   private async change<T>(file: string, edit: (records: Question[]) => { result: T; changed: boolean }): Promise<T> {
     mkdirSync(dirname(file), { recursive: true });
-    const lock = file + ".lock";
+    const lock = `${file}.lock`;
     let fd: number | undefined;
     for (let i = 0; i < 100; i++) {
       try {
@@ -289,7 +289,7 @@ export class QuestionService {
         throw new Error("Question ledger full (220). Start a new session; existing questions were kept.");
       const now = new Date().toISOString();
       const result: Question = {
-        id: "q_" + randomUUID(),
+        id: `q_${randomUUID()}`,
         owner,
         text: question,
         status: "pending",
@@ -352,7 +352,7 @@ export class QuestionService {
   resolve(ctx: QuestionContext, input: QuestionMutation & { reason: string }): Promise<Question> {
     const reason = text(input?.reason, 2000, "reason");
     return this.mutate(ctx, input, (q) => {
-      if (q.version !== input.version) throw new Error("Stale question version: current " + q.version);
+      if (q.version !== input.version) throw new Error(`Stale question version: current ${q.version}`);
       remoteOwned(q);
       if (q.status === "resolved") throw new Error("Question already resolved");
       q.status = "resolved";
@@ -381,7 +381,7 @@ export class QuestionService {
       q.status = "answered";
       q.answeredFrom = "cli";
       q.answer = answer;
-      q.replyId = input.replyId ?? "reply_" + randomUUID();
+      q.replyId = input.replyId ?? `reply_${randomUUID()}`;
       q.replyVersion = input.version;
       q.delivery = "resume-needed";
       if (q.remote) q.remote.replyState = "saved";
@@ -394,8 +394,8 @@ export class QuestionService {
   cancel(ctx: QuestionContext, input: QuestionMutation): Promise<Question> {
     return this.mutate(ctx, input, (q) => {
       remoteOwned(q);
-      if (q.version !== input.version) throw new Error("Stale question version: current " + q.version);
-      if (q.status !== "pending" && q.status !== "answered") throw new Error("Question already " + q.status);
+      if (q.version !== input.version) throw new Error(`Stale question version: current ${q.version}`);
+      if (q.status !== "pending" && q.status !== "answered") throw new Error(`Question already ${q.status}`);
       q.status = "cancelled";
       return true;
     });
@@ -407,7 +407,7 @@ export class QuestionService {
     if (!["resume-needed", "queued", "dispatching", "delivered"].includes(input.delivery))
       throw new Error("Invalid delivery");
     return this.mutate(ctx, input, (q) => {
-      if (q.version !== input.version) throw new Error("Stale question version: current " + q.version);
+      if (q.version !== input.version) throw new Error(`Stale question version: current ${q.version}`);
       if (q.status !== "answered") throw new Error("Question not answered");
       if (input.delivery === "queued" && (q.delivery === "dispatching" || q.delivery === "delivered"))
         throw new Error("Reply dispatch already claimed; do not send it twice");
@@ -458,15 +458,15 @@ export class QuestionService {
         throw new Error("Question ledger full; remote question remains pending remotely");
       const now = new Date().toISOString();
       const question: MirroredQuestion = {
-        id: "q_" + randomUUID(),
+        id: `q_${randomUUID()}`,
         owner,
         text: normalized.text,
         status: normalized.status,
         version: 1,
         createdAt: now,
         updatedAt: now,
-        requester: "SSH · " + source.host,
-        taskIds: ["ssh:" + encodeURIComponent(source.taskId)],
+        requester: `SSH · ${source.host}`,
+        taskIds: [`ssh:${encodeURIComponent(source.taskId)}`],
         remote: { ...source, observedVersion: source.version, observedStatus: normalized.status },
         choices: normalized.choices,
         allowFreeText: normalized.allowFreeText,
@@ -482,7 +482,7 @@ export class QuestionService {
   /** Claim durable human intent before transport. Uncertain claims are NEVER automatically replayed. */
   claimRemoteReply(ctx: QuestionContext, input: QuestionMutation): Promise<Question> {
     return this.mutate(ctx, input, (q) => {
-      if (q.version !== input.version) throw new Error("Stale question version: current " + q.version);
+      if (q.version !== input.version) throw new Error(`Stale question version: current ${q.version}`);
       if (!q.remote || q.status !== "answered" || q.answeredFrom !== "cli" || !q.replyId || !q.answer)
         throw new Error("No explicit human remote reply");
       if (q.remote.replyState !== "saved") throw new Error("Remote reply already claimed; reconcile, do not resend");
@@ -534,8 +534,8 @@ function ids(value: unknown): string[] | undefined {
   return result;
 }
 function check(q: Question, version: number): void {
-  if (q.version !== version) throw new Error("Stale question version: current " + q.version);
-  if (q.status !== "pending") throw new Error("Question already " + q.status);
+  if (q.version !== version) throw new Error(`Stale question version: current ${q.version}`);
+  if (q.status !== "pending") throw new Error(`Question already ${q.status}`);
 }
 
 function remoteOwned(q: Question): void {

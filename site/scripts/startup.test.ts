@@ -25,7 +25,7 @@ test("terminal starts without flashing HTML and failures restore it", async () =
     await page.close();
     for (const asset of ["terminal.js", "ghostty-vt.wasm"]) {
       const broken = await browser.newPage();
-      await broken.route("**/" + asset, (route) => route.abort());
+      await broken.route(`**/${asset}`, (route) => route.abort());
       await broken.goto(server.url.href);
       await broken.locator("#text-content").waitFor({ state: "visible" });
       expect(await broken.locator("h1").textContent()).toBe("bruv");

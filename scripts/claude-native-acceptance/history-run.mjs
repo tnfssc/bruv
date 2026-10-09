@@ -17,7 +17,7 @@ const normalBinary = path.resolve(
   process.env.BRUV_RUNTIME_BINARY ?? fileURLToPath(new URL("../../dist/bruv", import.meta.url)),
 );
 await fs.access(normalBinary, fs.constants.X_OK);
-const proof = path.resolve(process.env.PROOF_OUTPUT ?? ".cache/claude-history-proof-" + Date.now());
+const proof = path.resolve(process.env.PROOF_OUTPUT ?? `.cache/claude-history-proof-${Date.now()}`);
 await fs.mkdir(path.dirname(proof), { recursive: true });
 await fs.mkdir(proof);
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "bruv-native-acceptance-"));
@@ -51,7 +51,7 @@ try {
   await fs.writeFile(config.env.BRUV_ACCEPTANCE_CONFIG, JSON.stringify(config), { mode: 0o600 });
   await runReplay(config);
   const modelChecks = verifyHistoryModelRecords(model.records);
-  await fs.writeFile(path.join(proof, "model-checks.json"), JSON.stringify(modelChecks, null, 2) + "\n");
+  await fs.writeFile(path.join(proof, "model-checks.json"), `${JSON.stringify(modelChecks, null, 2)}\n`);
   if ((await fs.readFile(path.join(state, "root-tool-count"), "utf8")).trim().split("\n").length !== 1)
     throw Error("Stored root tool reexecuted");
   passed = true;
@@ -67,15 +67,15 @@ try {
     }
     await fs.writeFile(
       path.join(proof, "cleanup.json"),
-      JSON.stringify({
+      `${JSON.stringify({
         temporaryScopedStateRemoved: true,
         realCredentialsUsed: false,
         integratedReplayPassed: passed,
-      }) + "\n",
+      })}\n`,
     );
   }
 }
-console.log("Integrated native acceptance proof: " + proof);
+console.log(`Integrated native acceptance proof: ${proof}`);
 
 async function prepareScopedReplay(config, connector) {
   const root = path.dirname(config.state);
@@ -89,7 +89,7 @@ async function prepareScopedReplay(config, connector) {
   const normalBinary = config.env.BRUV_CLAUDE_COMPAT_BRUV_PATH;
   await fs.writeFile(
     path.join(config.proof, "invocation.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         connector: path.basename(connector),
         connectorSha256: createHash("sha256")
@@ -104,7 +104,7 @@ async function prepareScopedReplay(config, connector) {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
 }
 
@@ -126,7 +126,7 @@ async function runReplay(config) {
       child.once("error", reject);
       child.once("close", resolve);
     });
-    if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
+    if (code !== 0) throw Error(`Integrated native replay failed with exit ${code}`);
   } finally {
     if (child.exitCode === null) child.kill("SIGTERM");
     await closed;
@@ -150,15 +150,15 @@ async function retainHistoryProof(config, records, passed) {
     const wire = (await fs.readFile(config.wire, "utf8")).trim().split("\n").filter(Boolean).map(JSON.parse);
     await fs.writeFile(
       path.join(proof, "wire-projection.ndjson"),
-      projectWire(wire)
+      `${projectWire(wire)
         .map((x) => JSON.stringify(x))
-        .join("\n") + "\n",
+        .join("\n")}\n`,
     );
   } catch {}
   if (records) {
     await fs.writeFile(
       path.join(proof, "model-projection.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         records.map((r) => ({
           sequence: r.sequence,
           model: r.model,
@@ -178,7 +178,7 @@ async function retainHistoryProof(config, records, passed) {
         })),
         null,
         2,
-      ) + "\n",
+      )}\n`,
     );
   }
 }

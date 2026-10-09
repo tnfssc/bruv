@@ -46,7 +46,7 @@ export async function repositoryUntracked(
   const count = paths.length + (incomplete && !terminated ? 1 : 0);
   return {
     paths: incomplete ? [] : paths,
-    preview: paths.slice(0, 12).map((path) => (path.length > 160 ? path.slice(0, 160) + "…" : path)),
+    preview: paths.slice(0, 12).map((path) => (path.length > 160 ? `${path.slice(0, 160)}…` : path)),
     count,
     incomplete,
   };

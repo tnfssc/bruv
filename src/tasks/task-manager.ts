@@ -201,7 +201,7 @@ export class TaskManager {
 
   spawn(launch: TaskLaunch): TaskSummary {
     this.#assertAcceptingTasks();
-    const id = launch.id ?? "task_" + randomUUID().slice(0, 8);
+    const id = launch.id ?? `task_${randomUUID().slice(0, 8)}`;
     if (this.#tasks.has(id)) throw new Error("Duplicate task ID");
     const child = this.#spawnChild(launch);
     const task = this.#createTask(
@@ -256,13 +256,13 @@ export class TaskManager {
 
   preparationSignal(id: string): AbortSignal {
     const task = this.#require(id);
-    if (!task.preparationController) throw new Error("Task " + id + " is not preparing");
+    if (!task.preparationController) throw new Error(`Task ${id} is not preparing`);
     return task.preparationController.signal;
   }
 
   updatePreparedWorkspace(id: string, workspace: WorkspaceSummary): TaskSummary {
     const task = this.#requireRunning(id);
-    if (!task.preparationController) throw new Error("Task " + id + " is not preparing");
+    if (!task.preparationController) throw new Error(`Task ${id} is not preparing`);
     task.workspace = { ...workspace, preparationStatus: "preparing" };
     task.cwd = workspace.path;
     this.#emit({ type: "updated", task: this.#summary(task) });
@@ -271,7 +271,7 @@ export class TaskManager {
 
   updateWorkspaceSetup(id: string, status: NonNullable<WorkspaceSummary["setupStatus"]>): TaskSummary {
     const task = this.#require(id);
-    if (!task.workspace?.setupTaskId) throw new Error("Task " + id + " has no workspace setup");
+    if (!task.workspace?.setupTaskId) throw new Error(`Task ${id} has no workspace setup`);
     task.workspace.setupStatus = status;
     this.#emit({ type: "updated", task: this.#summary(task) });
     return this.#summary(task);
@@ -280,7 +280,7 @@ export class TaskManager {
   activatePreparedAgent(id: string, launch: Omit<TaskLaunch, "id" | "kind">): TaskSummary {
     this.#assertAcceptingTasks();
     const task = this.#requireRunning(id);
-    if (!task.preparationController || task.process) throw new Error("Task " + id + " is not preparing");
+    if (!task.preparationController || task.process) throw new Error(`Task ${id} is not preparing`);
     const child = this.#spawnChild(launch);
     // Keep the reservation's identity, output, waiters, delivery policy and deadline.
     task.agent = launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined;
@@ -301,9 +301,9 @@ export class TaskManager {
 
   failPreparedAgent(id: string, error: unknown): TaskSummary {
     const task = this.#requireRunning(id);
-    if (!task.preparationController) throw new Error("Task " + id + " is not preparing");
+    if (!task.preparationController) throw new Error(`Task ${id} is not preparing`);
     const message = error instanceof Error ? error.message : String(error);
-    this.#append(task, "[workspace preparation failed] " + message + "\n", false);
+    this.#append(task, `[workspace preparation failed] ${message}\n`, false);
     if (task.workspace) {
       task.workspace.preparationStatus = "failed";
       task.workspace.preparationError = message.slice(0, 2000);
@@ -461,7 +461,8 @@ export class TaskManager {
       if (task.completionOutput !== undefined) inspection.output = task.completionOutput;
       return Promise.resolve(inspection);
     }
-    return task.completion!;
+    if (!task.completion) throw new Error(`Task ${id} has no completion promise`);
+    return task.completion;
   }
 
   /** Hand off notification ownership exactly once when a foreground wait times out. */
@@ -539,7 +540,9 @@ export class TaskManager {
 
   async write(id: string, input: string, close = false): Promise<TaskSummary> {
     const task = this.#requireRunning(id);
-    const stdin = task.process!.stdin;
+    const process = task.process;
+    if (!process) throw new Error(`Task ${id} has no input stream`);
+    const stdin = process.stdin;
     await new Promise<void>((resolve, reject) => {
       stdin.write(input, (error) => (error ? reject(error) : resolve()));
     });
@@ -553,7 +556,8 @@ export class TaskManager {
 
   closeInput(id: string): TaskSummary {
     const task = this.#requireRunning(id);
-    task.process!.stdin.end();
+    if (!task.process) throw new Error(`Task ${id} has no input stream`);
+    task.process.stdin.end();
     task.stdinOpen = false;
     this.#activity(task, "input");
     return this.#summary(task);

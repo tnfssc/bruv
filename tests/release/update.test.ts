@@ -21,7 +21,7 @@ const body = new TextEncoder().encode("new compiled bruv");
 const connectorBody = new TextEncoder().encode("new compiled connector");
 const releaseUrl = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
 const dirs = new Set<string>();
-const root = (tag: string) => "https://github.com/tnfssc/bruv/releases/download/" + tag + "/";
+const root = (tag: string) => `https://github.com/tnfssc/bruv/releases/download/${tag}/`;
 const deps = (fetch: typeof globalThis.fetch, executable: string, extra: UpdateDeps = {}): UpdateDeps => ({
   fetch,
   executable,
@@ -77,7 +77,7 @@ function fixture(tag = "v0.3.0", options: ReleaseOptions = {}) {
       const assets = [];
       if (!options.missingBinary) assets.push({ name, browser_download_url: url });
       if (!options.missingChecksum)
-        assets.push({ name: name + ".sha256", browser_download_url: options.checksumUrl ?? url + ".sha256" });
+        assets.push({ name: `${name}.sha256`, browser_download_url: options.checksumUrl ?? `${url}.sha256` });
       return assets;
     }),
   };
@@ -86,20 +86,20 @@ function fixture(tag = "v0.3.0", options: ReleaseOptions = {}) {
     const url = String(input);
     calls.push(url);
     if (url === releaseUrl) return Response.json(release);
-    if (url === root(tag) + asset + ".sha256") await options.beforeBruvChecksum?.();
+    if (url === `${root(tag) + asset}.sha256`) await options.beforeBruvChecksum?.();
     for (const { name, expectedBody, options } of artifacts) {
       const binaryUrl = root(tag) + name;
       if (url === binaryUrl)
         return new Response(options.binaryBody ?? expectedBody, { status: options.binaryStatus ?? 200 });
-      if (url === binaryUrl + ".sha256") {
+      if (url === `${binaryUrl}.sha256`) {
         // Hash the expected payload, not a deliberately truncated/corrupt response.
         const checksum = options.checksum ?? createHash("sha256").update(expectedBody).digest("hex");
-        return new Response(checksum + "  " + (options.checksumFile ?? name) + "\n", {
+        return new Response(`${checksum}  ${options.checksumFile ?? name}\n`, {
           status: options.checksumStatus ?? 200,
         });
       }
     }
-    throw new Error("unexpected URL " + url);
+    throw new Error(`unexpected URL ${url}`);
   }) as typeof globalThis.fetch;
   return { fetch, calls };
 }
@@ -142,10 +142,10 @@ describe("invocation and release authority", () => {
     expect(await Bun.file(x.path).bytes()).toEqual(body);
     expect(f.calls).toEqual([
       releaseUrl,
-      root("v0.3.0") + "bruv-darwin-arm64",
-      root("v0.3.0") + "bruv-darwin-arm64.sha256",
-      root("v0.3.0") + "bruv-claude-compat-darwin-arm64",
-      root("v0.3.0") + "bruv-claude-compat-darwin-arm64.sha256",
+      `${root("v0.3.0")}bruv-darwin-arm64`,
+      `${root("v0.3.0")}bruv-darwin-arm64.sha256`,
+      `${root("v0.3.0")}bruv-claude-compat-darwin-arm64`,
+      `${root("v0.3.0")}bruv-claude-compat-darwin-arm64.sha256`,
     ]);
   });
 
@@ -174,14 +174,14 @@ describe("invocation and release authority", () => {
         tag_name: "v0.3.0",
         assets: [
           { name: "bruv-linux-x64", browser_download_url: url },
-          { name: "bruv-linux-x64.sha256", browser_download_url: root("v0.3.0") + "bruv-linux-x64.sha256" },
+          { name: "bruv-linux-x64.sha256", browser_download_url: `${root("v0.3.0")}bruv-linux-x64.sha256` },
           {
             name: "bruv-claude-compat-linux-x64",
-            browser_download_url: root("v0.3.0") + "bruv-claude-compat-linux-x64",
+            browser_download_url: `${root("v0.3.0")}bruv-claude-compat-linux-x64`,
           },
           {
             name: "bruv-claude-compat-linux-x64.sha256",
-            browser_download_url: root("v0.3.0") + "bruv-claude-compat-linux-x64.sha256",
+            browser_download_url: `${root("v0.3.0")}bruv-claude-compat-linux-x64.sha256`,
           },
         ],
       },
@@ -303,7 +303,7 @@ describe("release selection and installed pair repair", () => {
       await writeFile(join(x.dir, "bruv-claude-compat"), "existing connector");
       await expect(
         updateBruv(
-          deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => "bruv-claude-compat " + current }),
+          deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => `bruv-claude-compat ${current}` }),
         ),
       ).resolves.toMatchObject({
         status,
@@ -415,10 +415,10 @@ describe("artifact download integrity", () => {
       await updateBruv(deps(fetch, x.path));
       expect(f.calls).toEqual([
         releaseUrl,
-        root("v0.3.0") + "bruv-linux-x64",
-        root("v0.3.0") + "bruv-linux-x64.sha256",
-        root("v0.3.0") + "bruv-claude-compat-linux-x64",
-        root("v0.3.0") + "bruv-claude-compat-linux-x64.sha256",
+        `${root("v0.3.0")}bruv-linux-x64`,
+        `${root("v0.3.0")}bruv-linux-x64.sha256`,
+        `${root("v0.3.0")}bruv-claude-compat-linux-x64`,
+        `${root("v0.3.0")}bruv-claude-compat-linux-x64.sha256`,
       ]);
       expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([300_000, 1_800_000, 300_000, 1_800_000, 300_000]);
       expect(signals.every((signal) => signal instanceof AbortSignal)).toBe(true);
@@ -435,7 +435,7 @@ describe("artifact download integrity", () => {
       await writeFile(connector, "old connector");
       const f = fixture();
       const fetch = (async (url: RequestInfo | URL, init?: RequestInit) => {
-        if (String(url) !== root("v0.3.0") + "bruv-linux-x64") return f.fetch(url, init);
+        if (String(url) !== `${root("v0.3.0")}bruv-linux-x64`) return f.fetch(url, init);
         const error = new DOMException("The operation timed out.", "TimeoutError");
         if (where === "request") throw error;
         return new Response(
@@ -593,20 +593,20 @@ describe("pair publication and recovery", () => {
     const f = fixture();
     const events: string[] = [];
     const fetch = (async (url: RequestInfo | URL, init?: RequestInit) => {
-      events.push("fetch:" + String(url).split("/").at(-1));
+      events.push(`fetch:${String(url).split("/").at(-1)}`);
       return f.fetch(url, init);
     }) as typeof globalThis.fetch;
     await updateBruv(
       deps(fetch, x.path, {
-        onDownload: (version: string) => events.push("download:" + version),
+        onDownload: (version: string) => events.push(`download:${version}`),
         runBinary: async (path: string, args: string[]) => {
-          events.push("probe:" + basename(path) + ":" + args.join(" "));
+          events.push(`probe:${basename(path)}:${args.join(" ")}`);
           expect(await readFile(x.path, "utf8")).toBe("old");
           expect(await readFile(connector, "utf8")).toBe("old connector");
           return basename(path) === "bruv" ? "0.3.0" : "bruv-claude-compat 0.3.0";
         },
         rename: async (from, to) => {
-          events.push("replace:" + basename(String(to)));
+          events.push(`replace:${basename(String(to))}`);
           const stage = dirname(String(from));
           expect(await readFile(join(stage, "bruv.previous"), "utf8")).toBe("old");
           expect(await readFile(join(stage, "bruv-claude-compat.previous"), "utf8")).toBe("old connector");
@@ -753,6 +753,7 @@ describe("private compiled updater integration", () => {
     const connectorPayload = join(x.dir, "connector-payload");
     const normal = "#!/bin/sh\necho 0.3.0\n";
     const connector =
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
       '#!/bin/sh\nif [ "$1" = --bruv-version ]; then product=$("${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$(dirname "$0")/bruv}" --version); printf "bruv-claude-compat %s\\n" "$product"; exit; fi\necho "Bruv connector"\n';
     await writeFile(normalPayload, normal);
     await writeFile(connectorPayload, connector);

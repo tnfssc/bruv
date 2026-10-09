@@ -12,7 +12,7 @@ export function pairedBuildCommand(options: string[], root: string, bun: string)
     bun,
     resolve(root, "scripts/build", "build-claude-compat.ts"),
     ...options.filter((arg) => !arg.startsWith("--outfile=")),
-    "--outfile=" + connector,
+    `--outfile=${connector}`,
   ];
 }
 

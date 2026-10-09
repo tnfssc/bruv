@@ -154,7 +154,7 @@ function prepareRepositoryCheckout(dir: string, upload: Upload): string {
       maxBuffer: 1024 * 1024,
     },
   );
-  if (clone.exitCode !== 0) throw Error("Remote snapshot clone failed: " + clone.stderr.toString().slice(0, 1000));
+  if (clone.exitCode !== 0) throw Error(`Remote snapshot clone failed: ${clone.stderr.toString().slice(0, 1000)}`);
   // The bundle is a transfer artifact, not a configured source remote or history promise.
   const detachedSource = Bun.spawnSync(["git", "-C", checkout, "remote", "remove", "origin"], { env });
   if (detachedSource.exitCode !== 0) throw Error("Cannot remove snapshot transfer remote");
@@ -171,8 +171,8 @@ function prepareRepositoryCheckout(dir: string, upload: Upload): string {
   const entries = tree.stdout.toString().split("\0").filter(Boolean);
   let expanded = 0;
   for (const row of entries) {
-    const [mode, type, _oid, size] = row.split("\t")[0]!.trim().split(/\s+/);
-    if (!["100644", "100755"].includes(mode!) || type !== "blob" || !Number.isSafeInteger(Number(size)))
+    const [mode, type, _oid, size] = row.split("\t")[0].trim().split(/\s+/);
+    if (!["100644", "100755"].includes(mode) || type !== "blob" || !Number.isSafeInteger(Number(size)))
       throw Error("Unsupported remote snapshot tree entry");
     expanded += Number(size);
   }
@@ -356,7 +356,7 @@ async function uploadRepositorySnapshot(client: RemoteClient, id: string, descri
     )) as { checkout?: string };
     if (response.checkout) checkout = response.checkout;
   }
-  if (!checkout) throw Error("Remote repository preparation unconfirmed; retry same task ID " + id);
+  if (!checkout) throw Error(`Remote repository preparation unconfirmed; retry same task ID ${id}`);
   return checkout;
 }
 
@@ -443,7 +443,7 @@ export async function returnRepository(client: RemoteClient, task: RemoteTask): 
   writeFileSync(patch, bytes, { mode: 0o600 });
   const lockDir = join(dirname(client.path), "repo-locks");
   mkdirSync(lockDir, { recursive: true, mode: 0o700 });
-  const db = new Database(join(lockDir, digest(descriptor.root) + ".sqlite"));
+  const db = new Database(join(lockDir, `${digest(descriptor.root)}.sqlite`));
   try {
     db.exec("PRAGMA busy_timeout=0; BEGIN EXCLUSIVE");
     const latest = read<Descriptor>(file);

@@ -7,7 +7,7 @@ assert.ok(baseline.some(r=>r.main&&r.type==='result'&&r.is_error===false&&r.resu
 assert.ok(baseline.some(r=>r.main&&r.kind==='stderr'&&r.value.includes('ConnectionRefused')));
 assert.ok(baseline.some(r=>r.main&&r.kind==='exit'&&r.value===1));
 for(const [name,turns,calls] of [['simple',1,1],['two-mcp',2,4]]){
- const result=await read('observed/'+name+'/result.json'),wire=await read('observed/'+name+'/wire.json');
+ const result=await read(`observed/${name}/result.json`),wire=await read(`observed/${name}/wire.json`);
  assert.equal(result.connectorSha256,provenance.fixedBinarySha256);
  assert.equal(result.t3Sha256,provenance.t3Sha256);assert.equal(result.t3Sha256After,provenance.t3Sha256);
  assert.equal(result.modelCalls,calls);assert.equal(result.reply,true);assert.equal(result.idle,true);

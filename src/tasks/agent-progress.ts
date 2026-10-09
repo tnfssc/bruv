@@ -60,17 +60,31 @@ export class AgentProgress {
     this.#pending = "";
   }
   #record(line: string) {
-    let event: any;
+    let event: {
+      type?: unknown;
+      toolName?: unknown;
+      args?: Record<string, unknown>;
+      isError?: unknown;
+      errorMessage?: unknown;
+      assistantMessageEvent?: { type?: unknown; delta?: unknown };
+      result?: { content?: unknown; details?: { handoff?: unknown } };
+      message?: {
+        role?: unknown;
+        content?: Array<{ type?: unknown; text?: unknown }>;
+        stopReason?: unknown;
+        errorMessage?: unknown;
+      };
+    };
     try {
       event = JSON.parse(line);
     } catch {
-      this.emit("[stdout] " + text(line) + "\n");
+      this.emit(`[stdout] ${text(line)}\n`);
       return;
     }
     if (!event || typeof event.type !== "string") return;
     this.info.events = (this.info.events ?? 0) + 1;
     this.info.lastActivityAt = new Date().toISOString();
-    const log = (message: string) => this.emit("[" + this.info.lastActivityAt + "] " + message + "\n");
+    const log = (message: string) => this.emit(`[${this.info.lastActivityAt}] ${message}\n`);
     switch (event.type) {
       case "session":
         log("Session started");
@@ -91,15 +105,15 @@ export class AgentProgress {
       case "tool_execution_start":
         this.info.currentTool = text(event.toolName, 100);
         this.info.phase = "running tool";
-        log("Tool started: " + this.info.currentTool);
+        log(`Tool started: ${this.info.currentTool}`);
         if (event.args && typeof event.args === "object") {
           for (const key of ["code", "command", "prompt", "path"]) {
-            if (typeof event.args[key] === "string") log(key + ": " + text(event.args[key], 1000));
+            if (typeof event.args[key] === "string") log(`${key}: ${text(event.args[key], 1000)}`);
           }
         }
         break;
       case "tool_execution_end": {
-        log("Tool " + (event.isError ? "failed: " : "finished: ") + text(event.toolName, 100));
+        log(`Tool ${event.isError ? "failed: " : "finished: "}${text(event.toolName, 100)}`);
         const output = content(event.result?.content);
         if (output) log(output);
         if (event.isError) this.info.lastError = output || "Tool failed";
@@ -121,7 +135,7 @@ export class AgentProgress {
           for (const part of message.content)
             if (part?.type === "text" && typeof part.text === "string") this.final.append(part.text);
         }
-        if (output) log("Assistant: " + output);
+        if (output) log(`Assistant: ${output}`);
         this.failed = message.stopReason === "error" || message.stopReason === "aborted";
         // A final message is not process completion: print mode may still own
         // jobs. Report the observed boundary, not a fictitious ongoing stream.
@@ -133,7 +147,7 @@ export class AgentProgress {
         if (message.stopReason === "error" || message.stopReason === "aborted") {
           this.failed = true;
           this.info.lastError = text(message.errorMessage) || message.stopReason;
-          log("Model error: " + this.info.lastError);
+          log(`Model error: ${this.info.lastError}`);
         }
         break;
       }
@@ -142,7 +156,7 @@ export class AgentProgress {
       case "auto_compaction_start":
       case "auto_compaction_end":
         this.info.phase = event.type;
-        log(event.type + (event.errorMessage ? ": " + text(event.errorMessage) : ""));
+        log(event.type + (event.errorMessage ? `: ${text(event.errorMessage)}` : ""));
         break;
       case "agent_end":
         this.info.phase = this.failed ? "model failed" : "agent ended";

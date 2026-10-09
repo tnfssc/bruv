@@ -9,7 +9,7 @@ import { SourceApprovalService, type SourcePreparation, type SourceSelection } f
 /** SSH task IDs cannot collide with local or native task IDs. */
 export function sshJobId(taskId: string): string {
   if (!/^[a-zA-Z0-9_-]{1,128}$/.test(taskId)) throw new Error("Invalid SSH task ID");
-  return "ssh:" + Buffer.from(taskId, "utf8").toString("base64url");
+  return `ssh:${Buffer.from(taskId, "utf8").toString("base64url")}`;
 }
 export function sshTaskId(id: string): string {
   if (!id.startsWith("ssh:")) throw new Error("Not an SSH job ID");
@@ -140,7 +140,7 @@ function project(task: RemoteTask): SshJob {
     ...(task.lastError ? { lastError: task.lastError } : {}),
     ...(task.transcriptComplete !== undefined ? { transcriptComplete: task.transcriptComplete } : {}),
     ...(task.cancelDelivery ? { cancelDelivery: task.cancelDelivery.status } : {}),
-    ...(task.events.some((event, index) => index > 0 && event.seq !== task.events[index - 1]!.seq + 1) ||
+    ...(task.events.some((event, index) => index > 0 && event.seq !== task.events[index - 1].seq + 1) ||
     (task.events[0]?.seq ?? 1) > 1
       ? { transcriptGap: true }
       : {}),
@@ -197,7 +197,7 @@ export function createRemoteJobsAdapter(
         taskId: record.intent.taskId,
         questionId: record.questionId,
         state: record.state,
-        retry: "Retry the same subagent intent with source.retryTaskId=" + record.intent.taskId,
+        retry: `Retry the same subagent intent with source.retryTaskId=${record.intent.taskId}`,
         ...(record.omissionReason ? { omissionReason: record.omissionReason } : {}),
       },
       provenance: {
@@ -299,7 +299,7 @@ export function createRemoteJobsAdapter(
       if (!connection) throw new Error("SSH placement requires an already human-pinned /remote connection");
       const authorizedTarget = connection.host === "local" ? "ssh:local" : connection.host;
       if (request.target !== authorizedTarget)
-        throw new Error("SSH target must match the already human-pinned connection.host: " + authorizedTarget);
+        throw new Error(`SSH target must match the already human-pinned connection.host: ${authorizedTarget}`);
       const { request: launchRequest, preparation } = await prepareLaunchRequest(
         request,
         connection,
@@ -400,9 +400,9 @@ export function createRemoteJobsAdapter(
       return entries
         .sort(
           (a, b) =>
-            a.order[0]! - b.order[0]! ||
-            a.order[1]! - b.order[1]! ||
-            a.order[2]! - b.order[2]! ||
+            a.order[0] - b.order[0] ||
+            a.order[1] - b.order[1] ||
+            a.order[2] - b.order[2] ||
             a.job.id.localeCompare(b.job.id),
         )
         .map((entry) => entry.job);
@@ -429,7 +429,7 @@ export function createRemoteJobsAdapter(
       const pieces: Buffer[] = [];
       let position = 0;
       for (let i = 0; i < task.events.length; i++) {
-        const entry = Buffer.from((i ? "\n" : "") + JSON.stringify(task.events[i]!.event));
+        const entry = Buffer.from((i ? "\n" : "") + JSON.stringify(task.events[i].event));
         if (position + entry.length > offset && position < offset + limit + 3)
           pieces.push(
             entry.subarray(Math.max(0, offset - position), Math.min(entry.length, offset + limit + 3 - position)),
@@ -448,7 +448,7 @@ export function createRemoteJobsAdapter(
           safe.start > 0 ||
           offset > position ||
           (task.events[0]?.seq ?? 1) > 1 ||
-          task.events.some((event, index) => index > 0 && event.seq !== task.events[index - 1]!.seq + 1),
+          task.events.some((event, index) => index > 0 && event.seq !== task.events[index - 1].seq + 1),
       };
     },
     async stop(sessionFile, id) {

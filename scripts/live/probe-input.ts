@@ -16,9 +16,9 @@ export function probeArgs(args: string[], mode: "recorded" | "controlled") {
         throw Error("--source requires one explicit JSONL file");
       source = args[++i];
     } else if (["--study-2026-09-25", "--disclose-private", "--synthetic"].includes(arg)) {
-      if (flags.has(arg)) throw Error("Duplicate flag: " + arg);
+      if (flags.has(arg)) throw Error(`Duplicate flag: ${arg}`);
       flags.add(arg);
-    } else if (arg.startsWith("--")) throw Error("Unknown flag: " + arg);
+    } else if (arg.startsWith("--")) throw Error(`Unknown flag: ${arg}`);
     else trials.push(arg);
   }
   if (flags.has("--synthetic") && (mode !== "controlled" || source || flags.has("--study-2026-09-25")))
@@ -32,8 +32,17 @@ export function probeArgs(args: string[], mode: "recorded" | "controlled") {
   return { source, synthetic: flags.has("--synthetic"), trials };
 }
 
-export function readStudy(source: string): any[] {
-  const entries: any[] = [];
+export type StudyContent = string | { text?: string }[];
+export type StudyEntry = {
+  timestamp: string;
+  type?: string;
+  customType?: string;
+  content?: StudyContent;
+  message?: { role: string; content?: StudyContent; sections?: { preamble?: string; cwd?: string } };
+};
+
+export function readStudy(source: string): StudyEntry[] {
+  const entries: StudyEntry[] = [];
   for (const text of readStudyLines(source)) {
     const entry = JSON.parse(text);
     if (typeof entry?.timestamp !== "string") throw Error("Missing timestamp");
@@ -75,9 +84,9 @@ function* readStudyLines(source: string): Generator<string> {
   }
 }
 
-export function studyTarget(entries: any[], index: number) {
+export function studyTarget(entries: StudyEntry[], index: number) {
   const value = entries[index]?.message?.content;
   if (entries[index]?.message?.role !== "user" || !(typeof value === "string" || Array.isArray(value)))
-    throw Error("Study target missing user turn at index " + index);
-  return entries[index];
+    throw Error(`Study target missing user turn at index ${index}`);
+  return entries[index] as StudyEntry & { message: { role: "user"; content: StudyContent } };
 }

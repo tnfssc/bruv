@@ -56,7 +56,7 @@ export function defaultHelperPath(
   const name = platform === "linux" ? "live-audio-linux" : "live-audio";
   return moduleUrl.includes("/$bunfs/")
     ? join(dirname(executable), name)
-    : fileURLToPath(new URL("../../dist/" + name, moduleUrl));
+    : fileURLToPath(new URL(`../../dist/${name}`, moduleUrl));
 }
 /** Audio server discovery only. Never pass model credentials to the native process. */
 export function audioEnvironment(env: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
@@ -119,7 +119,7 @@ class HelperInput {
 
   send(msg: { type: string; [key: string]: unknown }): Promise<void> {
     if (this.closed) return Promise.reject(new Error("Audio helper closed"));
-    const payload = JSON.stringify(msg) + "\n";
+    const payload = `${JSON.stringify(msg)}\n`;
     const bytes = Buffer.byteLength(payload);
     // Leave control-message headroom when admitting playback.
     if (this.pendingBytes + bytes > MAX_PENDING - (msg.type === "play" ? 256 : 0))
@@ -288,12 +288,12 @@ export class LiveAudio {
     if (signal.aborted) {
       void promise.catch(() => {});
       this.close();
-      throw new Error("Audio helper " + phase + " cancelled");
+      throw new Error(`Audio helper ${phase} cancelled`);
     }
     let abort!: () => void;
     const cancelled = new Promise<never>((_, reject) => {
       abort = () => {
-        reject(new Error("Audio helper " + phase + " cancelled"));
+        reject(new Error(`Audio helper ${phase} cancelled`));
         this.close();
       };
       signal.addEventListener("abort", abort, { once: true });

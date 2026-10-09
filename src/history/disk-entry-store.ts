@@ -216,7 +216,7 @@ class MetadataParser {
       this.at++;
     }
   }
-  private token(start: number, end = this.at): any {
+  private token(start: number, end = this.at): unknown {
     return JSON.parse(this.text.subarray(start, end).toString("utf8"));
   }
   private stringEnd(): void {
@@ -313,7 +313,7 @@ class MetadataParser {
       }
     }
   }
-  private value(fields?: Set<string>, root = false): any {
+  private value(fields?: Set<string>, root = false): unknown {
     if (!fields) {
       this.skipValue();
       return;
@@ -332,7 +332,7 @@ class MetadataParser {
         this.space();
         const keyStart = this.at;
         this.stringEnd();
-        const key = this.token(keyStart);
+        const key = this.token(keyStart) as string;
         this.space();
         if (this.text[this.at++] !== 58) this.fail();
         if (fields.has(key)) {
@@ -376,7 +376,9 @@ class MetadataParser {
     this.at = 0;
     this.text = text;
     try {
-      const result = this.value(this.rootFields, true);
+      const result = this.value(this.rootFields, true) as
+        | { type?: string; customType?: string; data?: { root?: unknown; cursor?: { link?: unknown } } }
+        | undefined;
       this.space();
       if (this.at !== text.length) this.fail();
       if (
@@ -388,7 +390,7 @@ class MetadataParser {
           !result.data?.cursor?.link)
       )
         delete result.data;
-      return result?.type === "session" ? JSON.parse(text.toString("utf8")) : result;
+      return result?.type === "session" ? JSON.parse(text.toString("utf8")) : (result as FileEntry);
     } finally {
       this.text = EMPTY_BUFFER;
     }
@@ -475,22 +477,31 @@ export function migrateSessionFile(path: string, version: number): void {
   atomicReplace(path, (fd) => {
     let previous: string | null = null;
     scanJsonl(path, ({ entry }, index) => {
-      const mutable = entry as FileEntry & Record<string, any>;
+      const mutable = entry as unknown as {
+        type: string;
+        version?: number;
+        id?: string;
+        parentId?: string | null;
+        firstKeptEntryIndex?: number;
+        firstKeptEntryId?: string;
+        message?: { role: string };
+      };
       if (mutable.type === "session") mutable.version = 3;
       else {
         if (version < 2) {
-          mutable.id = ids[index]!;
+          const id = ids[index];
+          if (id === undefined) throw new Error("Missing migrated entry ID");
+          mutable.id = id;
           mutable.parentId = previous;
-          previous = mutable.id;
+          previous = id;
           if (mutable.type === "compaction" && typeof mutable.firstKeptEntryIndex === "number") {
-            mutable.firstKeptEntryId = ids[mutable.firstKeptEntryIndex]!;
+            mutable.firstKeptEntryId = ids[mutable.firstKeptEntryIndex];
             delete mutable.firstKeptEntryIndex;
           }
         }
-        if (mutable.type === "message" && (mutable as any).message?.role === "hookMessage")
-          (mutable as any).message.role = "custom";
+        if (mutable.type === "message" && mutable.message?.role === "hookMessage") mutable.message.role = "custom";
       }
-      writeLine(fd, mutable);
+      writeLine(fd, mutable as unknown as FileEntry);
     });
   });
 }
@@ -501,12 +512,11 @@ function ownedString(value: string): string {
 }
 
 function metadata(entry: SessionEntry, offset: number, length: number, ownStrings: boolean): EntryMetadata {
-  const value = entry as SessionEntry & Record<string, any>;
   const meta: EntryMetadata =
     entry.type === "custom"
-      ? value.customType === TASK_PROJECTION_CUSTOM_TYPE
+      ? entry.customType === TASK_PROJECTION_CUSTOM_TYPE
         ? new TaskProjectionMetadata(entry.id, entry.parentId, entry.timestamp, offset, length)
-        : new CustomEntryMetadata(entry.id, entry.parentId, entry.timestamp, offset, length, value.customType)
+        : new CustomEntryMetadata(entry.id, entry.parentId, entry.timestamp, offset, length, entry.customType)
       : {
           type: entry.type,
           id: entry.id,
@@ -516,18 +526,22 @@ function metadata(entry: SessionEntry, offset: number, length: number, ownString
           length,
         };
   if (entry.type === "message") {
-    meta.messageRole = value.message?.role;
-    meta.messageProvider = value.message?.provider;
-    meta.messageModel = value.message?.model;
-  } else if (entry.type === "compaction") meta.firstKeptEntryId = value.firstKeptEntryId;
-  else if (entry.type === "thinking_level_change") meta.thinkingLevel = value.thinkingLevel;
+    meta.messageRole = entry.message?.role;
+    meta.messageProvider =
+      entry.message && typeof entry.message === "object" && "provider" in entry.message
+        ? entry.message.provider
+        : undefined;
+    meta.messageModel =
+      entry.message && typeof entry.message === "object" && "model" in entry.message ? entry.message.model : undefined;
+  } else if (entry.type === "compaction") meta.firstKeptEntryId = entry.firstKeptEntryId;
+  else if (entry.type === "thinking_level_change") meta.thinkingLevel = entry.thinkingLevel;
   else if (entry.type === "model_change") {
-    meta.provider = value.provider;
-    meta.modelId = value.modelId;
+    meta.provider = entry.provider;
+    meta.modelId = entry.modelId;
   } else if (entry.type === "label") {
-    meta.targetId = value.targetId;
-    meta.label = value.label;
-  } else if (entry.type === "session_info") meta.name = value.name;
+    meta.targetId = entry.targetId;
+    meta.label = entry.label;
+  } else if (entry.type === "session_info") meta.name = entry.name;
   // JSON parsers can return slices backed by the complete input line. The
   // resident index must own its tiny strings, not retain discarded payloads
   // (old task checkpoints can contain very large cursor snapshots).
@@ -868,7 +882,7 @@ export class DiskEntryStore {
       this.activePath,
       ({ entry, offset, length }, index) => {
         if (index === 0 && (entry.type !== "session" || typeof entry.id !== "string"))
-          throw new Error("Session file has no valid initial header: " + this.targetPath);
+          throw new Error(`Session file has no valid initial header: ${this.targetPath}`);
         if (entry.type === "session") {
           header ??= entry as SessionHeader;
           return;
@@ -890,7 +904,7 @@ export class DiskEntryStore {
   }
 
   private cacheKey(meta: EntryMetadata): string {
-    return meta.offset + ":" + meta.length;
+    return `${meta.offset}:${meta.length}`;
   }
 
   private remember(bytes: Buffer, meta: EntryMetadata): void {
@@ -927,6 +941,6 @@ export function readSessionFileHeader(path: string): SessionHeader | undefined {
 
 export function sessionFileVersion(path: string): number | undefined {
   const header = readSessionFileHeader(path);
-  if (!header) throw new Error("Session file has no valid initial header: " + path);
+  if (!header) throw new Error(`Session file has no valid initial header: ${path}`);
   return header.version ?? 1;
 }

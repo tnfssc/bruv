@@ -11,7 +11,7 @@ export function preview(port = Number(process.env.PORT || 4173)) {
       } catch {
         return new Response("Bad request", { status: 400 });
       }
-      const path = resolve(root, "." + (pathname.endsWith("/") ? pathname + "index.html" : pathname));
+      const path = resolve(root, `.${pathname.endsWith("/") ? `${pathname}index.html` : pathname}`);
       if (!path.startsWith(root + sep)) return new Response("Not found", { status: 404 });
       const file = Bun.file(path);
       return (await file.exists())
@@ -22,5 +22,5 @@ export function preview(port = Number(process.env.PORT || 4173)) {
 }
 if (import.meta.main) {
   const server = preview();
-  console.log("Preview: " + server.url);
+  console.log(`Preview: ${server.url}`);
 }

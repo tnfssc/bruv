@@ -45,10 +45,10 @@ export async function runRemoteRoot(options: RemoteRootCLIOptions): Promise<void
   }
   const client = await RootClient.open({ ...options, cwd: options.cwd ?? process.cwd(), target });
   const state = client.read();
-  process.stdout.write("Root placement: " + target.name + " · " + state.sourceLabel + "\n");
+  process.stdout.write(`Root placement: ${target.name} · ${state.sourceLabel}\n`);
   if (state.source?.omittedUntracked.length)
     process.stdout.write(
-      "Untracked omitted: " + state.source.omittedUntracked.join(", ") + " (explicit --remote-include required)\n",
+      `Untracked omitted: ${state.source.omittedUntracked.join(", ")} (explicit --remote-include required)\n`,
     );
   await client.ensureCreated();
   // Observation/reconciliation happens inside the presentation; offline reconnect still opens its saved view.

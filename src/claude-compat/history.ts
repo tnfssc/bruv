@@ -4,7 +4,7 @@ import { appendFile, mkdir, readFile, realpath, writeFile } from "node:fs/promis
 import { isAbsolute, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import type { AssistantMessage, ImageContent, Message, TextContent } from "@earendil-works/pi-ai";
-import { type SessionEntry, SessionManager } from "@earendil-works/pi-coding-agent";
+import { type CustomEntry, SessionManager } from "@earendil-works/pi-coding-agent";
 import { getDiskBackedEntryMetadata } from "../history/session-manager";
 
 export interface NativeHistoryOptions {
@@ -48,9 +48,9 @@ function segment(value: string): string {
   if (!/^[\w-]{1,128}$/.test(value)) throw new Error("Invalid native path/agent ID");
   return value;
 }
-function object(value: unknown): Record<string, any> {
+function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Expected transcript object");
-  return value as Record<string, any>;
+  return value as Record<string, unknown>;
 }
 function text(value: unknown): string {
   if (typeof value !== "string") throw new Error("Expected transcript string");
@@ -62,14 +62,14 @@ export function nativeProjectKey(cwd: string): string {
   if (encoded.length <= 200) return encoded;
   let hash = 0;
   for (let i = 0; i < cwd.length; i++) hash = ((hash << 5) - hash + cwd.charCodeAt(i)) | 0;
-  return encoded.slice(0, 200) + "-" + Math.abs(hash).toString(36);
+  return `${encoded.slice(0, 200)}-${Math.abs(hash).toString(36)}`;
 }
 async function location(options: Pick<NativeHistoryOptions, "configDir" | "cwd" | "sessionId" | "projectKey">) {
   if (!isAbsolute(options.configDir)) throw new Error("An explicit absolute SDK-aligned configDir is required");
   const cwd = await realpath(resolve(options.cwd));
   const projectKey = options.projectKey === undefined ? nativeProjectKey(cwd) : segment(options.projectKey);
   const projectDir = join(options.configDir.normalize("NFC"), "projects", projectKey);
-  return { cwd, projectDir, filePath: join(projectDir, uuid(options.sessionId) + ".jsonl") };
+  return { cwd, projectDir, filePath: join(projectDir, `${uuid(options.sessionId)}.jsonl`) };
 }
 async function entriesAt(filePath: string): Promise<NativeEntry[]> {
   const contents = await readFile(filePath, "utf8");
@@ -108,16 +108,19 @@ interface NativeRecord {
 }
 
 /** Import maps are bookkeeping; looking for one must not load every task snapshot. */
-export function nativeImportEntryMaps(manager: SessionManager): SessionEntry[] {
+type NativeImportMap = CustomEntry<{ nativeSessionId: string; entries: { nativeUuid: string; piEntryId: string }[] }>;
+export function nativeImportEntryMaps(manager: SessionManager): NativeImportMap[] {
   const metadata = getDiskBackedEntryMetadata(manager);
   if (metadata)
     return metadata
       .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map")
       .map((entry) => manager.getEntry(entry.id))
-      .filter((entry): entry is SessionEntry => entry !== undefined);
+      .filter((entry): entry is NativeImportMap => entry?.type === "custom");
   return manager
     .getEntries()
-    .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map");
+    .filter(
+      (entry): entry is NativeImportMap => entry.type === "custom" && entry.customType === "bruv-native-entry-map",
+    );
 }
 
 /** Derived transcripts only. One writer per root/child; this class never starts or restores work. */
@@ -156,8 +159,7 @@ export class NativeHistory {
       options.sessionId,
     );
     if (imported.messages.length !== mappings.length) throw new Error("Imported transcript changed");
-    for (let i = 0; i < mappings.length; i++) {
-      const mapping = mappings[i]!;
+    for (const [i, mapping] of mappings.entries()) {
       const source = manager.getEntry(text(mapping.piEntryId));
       if (
         mapping.nativeUuid !== imported.nativeUuids[i] ||
@@ -165,7 +167,7 @@ export class NativeHistory {
         JSON.stringify(source.message) !== JSON.stringify(imported.messages[i])
       )
         throw new Error("Imported transcript no longer matches canonical Pi history");
-      writer.sourceUuids.set(mapping.piEntryId, mapping.nativeUuid);
+      writer.sourceUuids.set(text(mapping.piEntryId), text(mapping.nativeUuid));
     }
     await writer.load(importedIds);
     return writer;
@@ -190,16 +192,17 @@ export class NativeHistory {
             ...(typeof entry.costUSD === "number" ? { costUSD: entry.costUSD } : {}),
           });
         if (entry.type !== "user" && entry.type !== "assistant") continue;
+        if (!entry.uuid) throw new Error("Transcript message is missing its UUID");
         if (
           entry.sessionId !== this.options.sessionId ||
           ((entry.bruv?.sourceSessionId !== this.options.sourceSessionId || entry.forkedFrom) &&
-            !importedIds.has(entry.uuid!) &&
-            (!selected || selected.has(entry.uuid!)))
+            !importedIds.has(entry.uuid) &&
+            (!selected || selected.has(entry.uuid)))
         )
           throw new Error("Transcript is not this Pi session's derived view; import SDK forks into a fresh Pi session");
-        this.lastMessageUuid = entry.uuid!;
+        this.lastMessageUuid = entry.uuid;
         if (entry.bruv?.sourceSessionId === this.options.sourceSessionId)
-          this.sourceUuids.set(entry.bruv.sourceMessageId, entry.uuid!);
+          this.sourceUuids.set(entry.bruv.sourceMessageId, entry.uuid);
       }
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
@@ -253,7 +256,7 @@ export class NativeHistory {
         ...(input.costUSD === undefined ? {} : { costUSD: input.costUSD }),
         bruv: { sourceSessionId: this.options.sourceSessionId, sourceMessageId: input.sourceMessageId },
       };
-      await appendFile(this.filePath, JSON.stringify(entry) + "\n", { mode: 0o600 });
+      await appendFile(this.filePath, `${JSON.stringify(entry)}\n`, { mode: 0o600 });
       this.records.set(id, {
         uuid: id,
         parentUuid,
@@ -277,7 +280,7 @@ export class NativeHistory {
     segment(binding.taskId);
     if (!/^[A-Za-z0-9_.:-]{1,128}$/.test(binding.sourceCallId)) throw new Error("Invalid actual tool-use ID");
     if (binding.parentAgentId !== undefined) segment(binding.parentAgentId);
-    const path = join(this.filePath.slice(0, -6), "subagents", "agent-" + binding.taskId + ".jsonl");
+    const path = join(this.filePath.slice(0, -6), "subagents", `agent-${binding.taskId}.jsonl`);
     const metadata = {
       toolUseId: binding.sourceCallId,
       parentAgentId: binding.parentAgentId ?? null,
@@ -292,7 +295,7 @@ export class NativeHistory {
     const writer = (async () => {
       const child = new NativeHistory({ ...this.options, sourceSessionId: binding.sourceSessionId }, path, true);
       await child.load();
-      const metaPath = path.slice(0, -6) + ".meta.json";
+      const metaPath = `${path.slice(0, -6)}.meta.json`;
       try {
         await writeFile(metaPath, bindingKey, { flag: "wx", mode: 0o600 });
       } catch (error) {
@@ -312,22 +315,23 @@ export class NativeHistory {
   }
 }
 
-function contentBlocks(content: unknown): Record<string, any>[] {
+function contentBlocks(content: unknown): Record<string, unknown>[] {
   if (typeof content === "string") return [{ type: "text", text: content }];
   if (!Array.isArray(content)) throw new Error("Expected native content blocks");
   return content.map(object);
 }
-function userBlock(block: Record<string, any>): TextContent | ImageContent {
+function userBlock(block: Record<string, unknown>): TextContent | ImageContent {
   if (block.type === "text") return { type: "text", text: text(block.text) };
   if (block.type === "image") {
     const source = object(block.source);
     if (source.type !== "base64") throw new Error("Only stored base64 images can be imported");
     return { type: "image", data: text(source.data), mimeType: text(source.media_type) };
   }
-  throw new Error("Unsupported native user/result content: " + block.type);
+  throw new Error(`Unsupported native user/result content: ${block.type}`);
 }
 /** Select the last root leaf by parent links, not by transcript prose or source IDs. */
-function activeRootConversation(entries: NativeEntry[], sessionId: string): NativeEntry[] {
+type NativeConversationEntry = NativeEntry & { uuid: string };
+function activeRootConversation(entries: NativeEntry[], sessionId: string): NativeConversationEntry[] {
   uuid(sessionId);
   const conversation = entries.filter(
     (entry) =>
@@ -337,7 +341,7 @@ function activeRootConversation(entries: NativeEntry[], sessionId: string): Nati
       entry.type === "attachment" ||
       entry.type === "progress",
   );
-  const byId = new Map<string, NativeEntry>();
+  const byId = new Map<string, NativeConversationEntry>();
   for (const entry of conversation) {
     if (
       !entry.uuid ||
@@ -347,17 +351,17 @@ function activeRootConversation(entries: NativeEntry[], sessionId: string): Nati
       entry.isSidechain
     )
       throw new Error("Invalid root transcript identity");
-    byId.set(entry.uuid, entry);
+    byId.set(entry.uuid, entry as NativeConversationEntry);
   }
   const parents = new Set(conversation.map((entry) => entry.parentUuid).filter(Boolean));
-  const leaf = [...conversation].reverse().find((entry) => !parents.has(entry.uuid));
+  const leaf = [...byId.values()].reverse().find((entry) => !parents.has(entry.uuid));
   if (!leaf) throw new Error("No importable conversation");
-  const chain: NativeEntry[] = [];
+  const chain: NativeConversationEntry[] = [];
   const seen = new Set<string>();
-  let entry: NativeEntry | undefined = leaf;
+  let entry: NativeConversationEntry | undefined = leaf;
   while (entry) {
-    if (seen.has(entry.uuid!)) throw new Error("Transcript parent cycle");
-    seen.add(entry.uuid!);
+    if (seen.has(entry.uuid)) throw new Error("Transcript parent cycle");
+    seen.add(entry.uuid);
     chain.push(entry);
     if (entry.parentUuid === null) break;
     if (typeof entry.parentUuid !== "string" || !byId.has(entry.parentUuid))
@@ -386,7 +390,7 @@ export function nativeHistoryToPi(
     if (!Number.isFinite(timestamp)) throw new Error("Invalid transcript timestamp");
     const blocks = contentBlocks(message.content);
     const push = (message: Message) => {
-      converted.push({ message, nativeUuid: item.uuid! });
+      converted.push({ message, nativeUuid: item.uuid });
     };
     if (item.type === "assistant") {
       const content: AssistantMessage["content"] = blocks.map((block) => {
@@ -405,11 +409,19 @@ export function nativeHistoryToPi(
           if (!id || calls.has(id)) throw new Error("Duplicate/empty tool-use ID");
           calls.set(id, name);
           pending.add(id);
-          return { type: "toolCall", id, name, arguments: object(block.input) };
+          return {
+            type: "toolCall",
+            id,
+            name,
+            arguments: object(block.input) as Extract<
+              AssistantMessage["content"][number],
+              { type: "toolCall" }
+            >["arguments"],
+          };
         }
-        throw new Error("Unsupported native assistant content: " + block.type);
+        throw new Error(`Unsupported native assistant content: ${block.type}`);
       });
-      const usage = message.usage ?? {};
+      const usage = object(message.usage ?? {});
       const count = (name: string) => {
         const value = usage[name] ?? 0;
         if (typeof value !== "number" || !Number.isFinite(value) || value < 0)
@@ -459,10 +471,12 @@ export function nativeHistoryToPi(
         flush();
         const id = text(block.tool_use_id);
         if (!pending.delete(id)) throw new Error("Tool result has no pending actual tool-use ID");
+        const toolName = calls.get(id);
+        if (toolName === undefined) throw new Error("Tool result has no actual tool-use name");
         push({
           role: "toolResult",
           toolCallId: id,
-          toolName: calls.get(id)!,
+          toolName,
           content: contentBlocks(block.content ?? "").map(userBlock),
           isError: block.is_error === true,
           timestamp,
@@ -503,17 +517,20 @@ export async function importNativeHistory(
       .filter((entry) => entry.forkedFrom)
       .map((entry) => ({ uuid: entry.uuid, forkedFrom: entry.forkedFrom })),
   });
-  const entries = messages.map((message, index) => ({
-    nativeUuid: nativeUuids[index]!,
-    piEntryId: manager.appendMessage(message),
-  }));
+  const entries = messages.map((message, index) => {
+    const nativeUuid = nativeUuids[index];
+    if (!nativeUuid) throw new Error("Imported message is missing its native UUID");
+    return { nativeUuid, piEntryId: manager.appendMessage(message) };
+  });
   manager.appendCustomEntry("bruv-native-entry-map", { nativeSessionId: options.sessionId, entries });
   const history = await NativeHistory.resumeImported({ ...options, sourceSessionId: manager.getSessionId() }, manager);
+  const sourceSessionFile = manager.getSessionFile();
+  if (!sourceSessionFile) throw new Error("Imported session has no history file");
   return {
     history,
     sessionManager: manager,
     sourceSessionId: manager.getSessionId(),
-    sourceSessionFile: manager.getSessionFile()!,
+    sourceSessionFile,
     entries,
     ownership: "imported-history-only",
   };

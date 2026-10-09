@@ -1,6 +1,6 @@
 import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import { createHash } from "node:crypto";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { SessionEntry, ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { recordDiagnostic } from "../diagnostics";
 import { MAIN_AGENT_MODES, type MainAgentMode, mainAgentGuidance, replaceMainAgentGuidance } from "../prompts";
 import { updateCurrentInstructionFrame } from "./instruction-continuity";
@@ -23,8 +23,13 @@ function sessionOwner(ctx: ExtensionContext): string {
     .digest("hex");
 }
 
-function activeEntries(ctx: ExtensionContext): any[] {
-  const manager = ctx.sessionManager as { getBranch?: () => any[]; getEntries?: () => any[] } | undefined;
+function activeEntries(ctx: ExtensionContext): SessionEntry[] {
+  const manager = ctx.sessionManager as
+    | {
+        getBranch?: () => SessionEntry[];
+        getEntries?: () => SessionEntry[];
+      }
+    | undefined;
   return manager?.getBranch?.() ?? manager?.getEntries?.() ?? [];
 }
 
@@ -53,8 +58,8 @@ function persistedMode(ctx: ExtensionContext): MainAgentMode {
 export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean) {
   let mode: MainAgentMode = "orchestrator";
   let ui: ExtensionContext["ui"] | undefined;
-  const status = () => ui?.setStatus("bruv-mode", isRoot() ? "mode: " + mode : undefined);
-  const describe = () => mode + " (instructions only; model and thinking unchanged)";
+  const status = () => ui?.setStatus("bruv-mode", isRoot() ? `mode: ${mode}` : undefined);
+  const describe = () => `${mode} (instructions only; model and thinking unchanged)`;
 
   pi.registerCommand("mode", {
     description: "Show or switch main-agent instruction mode (fast, normal, orchestrator)",
@@ -74,7 +79,7 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
       }
       const requested = args.trim().toLowerCase();
       if (!requested) {
-        ctx.ui.notify("Main-agent mode: " + describe() + ". Use /mode fast|normal|orchestrator.", "info");
+        ctx.ui.notify(`Main-agent mode: ${describe()}. Use /mode fast|normal|orchestrator.`, "info");
         status();
         return;
       }
@@ -90,7 +95,7 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
           pi.appendEntry(INSTRUCTION_MODE_ENTRY, { mode: next });
         } catch (error) {
           const reason = error instanceof Error ? error.message : String(error);
-          ctx.ui.notify("Could not persist main-agent mode: " + reason, "error");
+          ctx.ui.notify(`Could not persist main-agent mode: ${reason}`, "error");
           return;
         }
         mode = next;
@@ -99,7 +104,7 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
         );
       }
       status();
-      ctx.ui.notify("Main-agent mode: " + describe() + ".", "info");
+      ctx.ui.notify(`Main-agent mode: ${describe()}.`, "info");
     },
   });
 

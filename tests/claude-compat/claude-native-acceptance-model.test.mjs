@@ -45,9 +45,9 @@ test("no completion or early-return is generated without runtime result evidence
 test("loopback endpoint has exact API path and truthful SSE model identity", async () => {
   const model = await startModel(options);
   try {
-    const url = "http://127.0.0.1:" + model.port;
-    assert.equal((await fetch(url + "/v1/chat/completions")).status, 404);
-    const response = await fetch(url + "/v1/chat/completions", {
+    const url = `http://127.0.0.1:${model.port}`;
+    assert.equal((await fetch(`${url}/v1/chat/completions`)).status, 404);
+    const response = await fetch(`${url}/v1/chat/completions`, {
       method: "POST",
       body: JSON.stringify(request("ACCEPT_EXECUTE")),
     });
@@ -58,7 +58,7 @@ test("loopback endpoint has exact API path and truthful SSE model identity", asy
     const delta = JSON.parse(chunks[0].slice(6));
     assert.equal(delta.model, modelId);
     assert.equal(delta.choices[0].delta.tool_calls[0].function.name, "execute");
-    const wrong = await fetch(url + "/v1/chat/completions", {
+    const wrong = await fetch(`${url}/v1/chat/completions`, {
       method: "POST",
       body: JSON.stringify({ ...request("ACCEPT_EXECUTE"), model: "opus" }),
     });
@@ -102,12 +102,12 @@ test("actual killed-job completion has its own response without a fake new promp
 
 test("human permission scenarios request actual side effects, never native packets", () => {
   for (const scenario of ["allow", "deny", "stop"]) {
-    const call = reply(request("HUMAN_PERMISSION_" + scenario), options).tool_calls[0];
+    const call = reply(request(`HUMAN_PERMISSION_${scenario}`), options).tool_calls[0];
     assert.equal(call.function.name, "execute");
     const code = JSON.parse(call.function.arguments).code;
     assert.match(code, /await Bun.write/);
     assert.ok(code.includes("/isolated/state/permission-"));
-    assert.ok(code.includes(JSON.stringify("/isolated/state/permission-" + scenario + ".effect")));
+    assert.ok(code.includes(JSON.stringify(`/isolated/state/permission-${scenario}.effect`)));
     assert.doesNotMatch(code, /control_request|control_response|task_started/);
   }
   assert.throws(() => reply(request("HUMAN_PERMISSION_unknown"), options), /Unknown permission/);
@@ -193,11 +193,11 @@ test("overlapping async replies retain their own SSE and success/error record se
         await gate;
         throw Error("delayed failure");
       }
-      return { role: "assistant", content: user + ":" + body.__sequence };
+      return { role: "assistant", content: `${user}:${body.__sequence}` };
     },
   });
   const post = (user) =>
-    fetch("http://127.0.0.1:" + model.port + "/v1/chat/completions", {
+    fetch(`http://127.0.0.1:${model.port}/v1/chat/completions`, {
       method: "POST",
       body: JSON.stringify(request(user)),
     }).then(async (response) => ({ status: response.status, text: await response.text() }));
@@ -219,7 +219,7 @@ test("overlapping async replies retain their own SSE and success/error record se
       const frames = chunks.map((chunk) => JSON.parse(chunk.slice(6)));
       assert.deepEqual(
         frames.map((frame) => frame.id),
-        Array(2).fill("local-acceptance-" + sequence),
+        Array(2).fill(`local-acceptance-${sequence}`),
       );
       assert.equal(frames[0].choices[0].delta.content, content);
       assert.equal(model.records.find((record) => record.delta?.content === content).sequence, sequence);
@@ -274,7 +274,7 @@ test("cancellation program saves its owned ID before stop and waits for terminal
       " cancel",
     { waitSeconds: 0 },
   ]);
-  assert.deepEqual(events[1], ["write", options.state + "/cancel.job-id", "task_owned"]);
+  assert.deepEqual(events[1], ["write", `${options.state}/cancel.job-id`, "task_owned"]);
   assert.deepEqual(events[2], ["stop", "task_owned"]);
   assert.deepEqual(
     events.filter((event) => event[0] === "inspect"),

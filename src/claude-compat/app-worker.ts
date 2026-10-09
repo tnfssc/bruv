@@ -80,7 +80,7 @@ export function bindNormalAppWorker(
 const launches = new Set(["delegate_task", "create_threads", "t3_thread_launch"]);
 export function prepareAppWorkerCall(policy: AppWorkerPolicy | undefined, call: PermissionRequest): PermissionRequest {
   if (call.owner !== "app_owned") return call;
-  const tool = call.toolName.split("__").at(-1)!;
+  const tool = call.toolName.split("__").pop() ?? call.toolName;
   if (!launches.has(tool)) return call;
   if (policy?.role !== "orchestrator" || policy.depth !== 0)
     throw new Error("App delegation requires an explicit root orchestrator; normal workers cannot delegate");

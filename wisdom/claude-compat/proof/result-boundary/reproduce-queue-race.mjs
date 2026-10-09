@@ -6,13 +6,13 @@ import {pathToFileURL} from 'node:url';
 import assert from 'node:assert/strict';
 const root=path.resolve(process.argv[2]);
 assert.equal(JSON.parse(await fs.readFile(path.join(root,'package.json'),'utf8')).version,'4.0.0-rc.115');
-const load=name=>import(pathToFileURL(path.join(root,'dist',name+'.js')).href);
+const load=name=>import(pathToFileURL(path.join(root,'dist',`${name}.js`)).href);
 const Effect=await load('Effect'), Scheduler=await load('Scheduler'), Queue=await load('Queue');
 const fixedPath=path.join(root,'dist','Queue.waiter-recheck.mjs');
 const source=await fs.readFile(path.join(root,'dist/Queue.js'),'utf8');
 const needle='self.state.takers.add(resume);';
 assert.equal(source.split(needle).length,2);
-await fs.writeFile(fixedPath,source.replace(needle,needle+'\n        if (self.messages.length > 0 || self.state.offers.size > 0) scheduleReleaseTaker(self);'));
+await fs.writeFile(fixedPath,source.replace(needle,`${needle}\n        if (self.messages.length > 0 || self.state.offers.size > 0) scheduleReleaseTaker(self);`));
 const Fixed=await import(pathToFileURL(fixedPath).href);
 async function reproduce(Q) {
  const q=await Effect.runPromise(Q.unbounded());

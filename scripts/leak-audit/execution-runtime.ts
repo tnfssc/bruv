@@ -17,7 +17,7 @@ type ResourceSample = {
 
 async function rss(pid = process.pid) {
   try {
-    const s = await readFile("/proc/" + pid + "/status", "utf8");
+    const s = await readFile(`/proc/${pid}/status`, "utf8");
     return Number(s.match(/^VmRSS:\s+(\d+)/m)?.[1] ?? 0);
   } catch {
     return 0;
@@ -45,7 +45,7 @@ async function auditExecutionRuntime(binary: string) {
       label,
       rssKb: await rss(),
       heap: process.memoryUsage().heapUsed,
-      fds: (await readdir("/proc/" + process.pid + "/fd")).length,
+      fds: (await readdir(`/proc/${process.pid}/fd`)).length,
     };
     samples.push(sample);
     console.log(JSON.stringify(sample));
@@ -77,38 +77,38 @@ async function auditExecutionRuntime(binary: string) {
     const pid = Number(r.stdout.trim());
     ownedDescendants.add(pid);
     for (let n = 0; n < 50 && alive(pid); n++) await Bun.sleep(10);
-    if (alive(pid)) throw Error("descendant survived " + pid);
+    if (alive(pid)) throw Error(`descendant survived ${pid}`);
   }
 
   try {
     await snap("baseline");
-    for (let i = 0; i < 5; i++) await execute("console.log(" + i + ")");
+    for (let i = 0; i < 5; i++) await execute(`console.log(${i})`);
     await snap("warm");
     for (let i = 0; i < 80; i++) {
-      const r = await execute(i % 2 ? 'console.error("e' + i + '")' : 'console.log("o' + i + '")');
-      if (r.exitCode !== 0) throw Error("short failed " + i);
+      const r = await execute(i % 2 ? `console.error("e${i}")` : `console.log("o${i}")`);
+      if (r.exitCode !== 0) throw Error(`short failed ${i}`);
     }
     await snap("80-short");
     for (let i = 0; i < 24; i++) {
       const r = await execute('process.stdout.write("x".repeat(1_000_000));process.stderr.write("y".repeat(250_000))');
-      if (!r.stdoutLost || !r.stderrLost || !r.stdoutPath || !r.stderrPath) throw Error("spill failed " + i);
+      if (!r.stdoutLost || !r.stderrLost || !r.stdoutPath || !r.stderrPath) throw Error(`spill failed ${i}`);
     }
     await snap("24-spill-30MB");
     for (let i = 0; i < 24; i++) {
       const r = await execute('process.on("SIGTERM",()=>{});await new Promise(()=>{})', { timeoutMs: 25 });
-      if (!r.timedOut) throw Error("timeout failed " + i);
+      if (!r.timedOut) throw Error(`timeout failed ${i}`);
     }
     await snap("24-timeout");
     for (let i = 0; i < 24; i++) {
       const r = await executeWithCallerAbort('process.on("SIGTERM",()=>{});await new Promise(()=>{})');
-      if (!r.cancelled) throw Error("abort failed " + i);
+      if (!r.cancelled) throw Error(`abort failed ${i}`);
     }
     await snap("24-abort");
     for (let i = 0; i < 50; i++) {
-      const r = await execute('const x=await shell("synthetic");if(x.n!==' + i + ')throw Error("bad bridge")', {
+      const r = await execute(`const x=await shell("synthetic");if(x.n!==${i})throw Error("bad bridge")`, {
         jobHandler: async () => ({ n: i }),
       });
-      if (r.exitCode !== 0) throw Error("bridge failed " + i + ":" + r.stderr);
+      if (r.exitCode !== 0) throw Error(`bridge failed ${i}:${r.stderr}`);
     }
     await snap("50-bridge");
     let bridgeAborts = 0;
@@ -129,7 +129,7 @@ async function auditExecutionRuntime(binary: string) {
           throw Error("aborted");
         },
       });
-      if (!r.timedOut) throw Error("bridge timeout failed " + i);
+      if (!r.timedOut) throw Error(`bridge timeout failed ${i}`);
     }
     await Bun.sleep(50);
     await snap("6-bridge-timeout");

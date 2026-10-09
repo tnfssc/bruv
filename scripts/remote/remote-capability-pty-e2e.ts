@@ -1,3 +1,5 @@
+import type { FixtureTarget } from "../fixtures/rpc-types";
+import { requireValue } from "../lib/require-value";
 import { loopbackParent, fixtureRpc } from "../fixtures/loopback-parent-fixture";
 import { ownedFixtureEnv } from "../../tests/helpers/helpers";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
@@ -6,16 +8,16 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { strict as assert } from "node:assert";
-const bruv = process.env.BRUV_BIN!;
+const bruv = requireValue(process.env.BRUV_BIN);
 const home = homedir();
 const statePath = join(home, ".bruv/remote/state.json");
-const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
+const agentDir = requireValue(process.env.BRUV_CODING_AGENT_DIR);
 // remote-e2e.sh owns this root and its SSH/Docker fixture settings.
-const rpcEnv = ownedFixtureEnv(process.env.FIXTURE_DROP_DIR!);
-rpcEnv.PATH = join(process.env.FIXTURE_DROP_DIR!, "bin") + ":" + rpcEnv.PATH;
+const rpcEnv = ownedFixtureEnv(requireValue(process.env.FIXTURE_DROP_DIR));
+rpcEnv.PATH = `${join(requireValue(process.env.FIXTURE_DROP_DIR), "bin")}:${rpcEnv.PATH}`;
 rpcEnv.BRUV_CODING_AGENT_DIR = agentDir;
 rpcEnv.PI_CODING_AGENT_DIR = agentDir;
-rpcEnv.DOCKER_HOST = process.env.DOCKER_HOST!;
+rpcEnv.DOCKER_HOST = requireValue(process.env.DOCKER_HOST);
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
@@ -73,20 +75,20 @@ const launchRpc = (cwd = launchRepo, diagnostic = false) =>
     noSession: diagnostic,
     timeoutDetail: (events) =>
       "; pane=" +
-      spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
+      spawnSync("tmux", ["-L", `bruv-capability-pty-${process.pid}`, "capture-pane", "-p", "-t", "remote"], {
         encoding: "utf8",
       }).stdout +
       "; events=" +
       JSON.stringify(events.slice(-4)),
   });
 const ssh = (...args: string[]) =>
-  spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", ...args], {
+  spawnSync("ssh", ["-F", requireValue(process.env.FIXTURE_SSH_CONFIG), "fixture-owner", ...args], {
     encoding: "utf8",
     timeout: 6000,
   });
 // Real tmux PTY against the same disposable native owner; no local question ledger is created.
 const tmux = (...args: string[]) => {
-  const result = spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, ...args], {
+  const result = spawnSync("tmux", ["-L", `bruv-capability-pty-${process.pid}`, ...args], {
     encoding: "utf8",
     timeout: 10000,
   });
@@ -98,7 +100,7 @@ const evidence = (name: string) => {
   const dir = process.env.BRUV_REMOTE_PTY_ARTIFACTS;
   if (dir) {
     mkdirSync(dir, { recursive: true });
-    writeFileSync(join(dir, name + ".txt"), pane());
+    writeFileSync(join(dir, `${name}.txt`), pane());
   }
 };
 const key = (...keys: string[]) => tmux("send-keys", "-t", "remote", ...keys);
@@ -110,9 +112,9 @@ const until = async (needle: string, timeout = 12000) => {
     if (frame.includes(needle)) return frame;
     await Bun.sleep(80);
   }
-  throw Error("PTY missing " + needle + "\n" + pane());
+  throw Error(`PTY missing ${needle}\n${pane()}`);
 };
-const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+const quote = (value: string) => `'${value.replaceAll("'", "'\\''")}'`;
 
 // All remote data is confined to the disposable SSH container; all grants target this test checkout.
 const repo = join(home, "capability-test-repo");
@@ -136,7 +138,7 @@ const allGrants = (id: string) =>
         )
         .filter((g) => g.taskId === id)
     : [];
-const granted = (id: string) => allGrants(id).filter((g) => !existsSync(join(grantDir, g.id + ".revoked")));
+const granted = (id: string) => allGrants(id).filter((g) => !existsSync(join(grantDir, `${g.id}.revoked`)));
 const needs = (id: string) =>
   (state().tasks[id]?.task?.capabilityNeeds ?? []) as Array<{ id: string; kind: string; input: string }>;
 const reopen = async () => {
@@ -161,7 +163,7 @@ const select = async (label: string) => {
   await Bun.sleep(150);
   key("C-u");
   type(label);
-  await until("> " + label);
+  await until(`> ${label}`);
   await Bun.sleep(100);
   key("Enter");
   const next: Record<string, string> = {
@@ -172,7 +174,7 @@ const select = async (label: string) => {
     "shell.execute": "Invalid capability kind; no grant sent",
     "Revoke: repo.read": "Revoke local capability",
   };
-  if (next[label]) await until(next[label]!);
+  if (next[label]) await until(requireValue(next[label]));
 };
 async function verifyOwnedPlacement() {
   // The migrated agent path is independently exercised; never force owned jobs into the legacy diagnostic inbox.
@@ -183,7 +185,7 @@ async function verifyOwnedPlacement() {
   const launched = JSON.parse(readFileSync(proof, "utf8"));
   assert(
     launched.discovery.targets.some(
-      (target: any) => target.name === "fixture-owner" && target.authorized && target.kind === "ssh",
+      (target: FixtureTarget) => target.name === "fixture-owner" && target.authorized && target.kind === "ssh",
     ),
   );
   const ownedId = Buffer.from(launched.launch.id.slice(4), "base64url").toString();
@@ -193,7 +195,7 @@ async function verifyOwnedPlacement() {
     30000,
   );
   assert(
-    JSON.stringify(state().tasks[ownedId]!.events).includes("REMOTE_REPO_TOOL_DONE"),
+    JSON.stringify(requireValue(state().tasks[ownedId]).events).includes("REMOTE_REPO_TOOL_DONE"),
     "normal child did not execute on owner",
   );
   console.log(
@@ -210,24 +212,24 @@ async function seedDiagnosticCapabilityRequests(rpc: ReturnType<typeof fixtureRp
     "real owner request",
     30000,
   );
-  const id = Object.keys(state().tasks).find((id) => needs(id).length)!;
+  const id = requireValue(Object.keys(state().tasks).find((id) => needs(id).length));
   assert(needs(id).some((n) => n.kind === "repo.read" && n.input === "on-demand.txt"));
   // The owner publishes arbitrary saved requests. Inject an unsupported kind *only into this disposable
   // fixture's owner ledger* to assert that rendering it never turns it into an authorizable action.
   const unsupported = { id: "fixture_unsupported", taskId: id, kind: "shell.execute", input: "rm -rf /" };
-  assert.equal(ssh("mkdir -p /root/.bruv/remote-owner/tasks/" + id + "/capability-needs").status, 0);
+  assert.equal(ssh(`mkdir -p /root/.bruv/remote-owner/tasks/${id}/capability-needs`).status, 0);
   const injected = spawnSync(
     "ssh",
     [
       "-F",
-      process.env.FIXTURE_SSH_CONFIG!,
+      requireValue(process.env.FIXTURE_SSH_CONFIG),
       "fixture-owner",
-      "cat > /root/.bruv/remote-owner/tasks/" + id + "/capability-needs/fixture_unsupported.json",
+      `cat > /root/.bruv/remote-owner/tasks/${id}/capability-needs/fixture_unsupported.json`,
     ],
     { input: JSON.stringify(unsupported), encoding: "utf8", timeout: 6000 },
   );
   assert.equal(injected.status, 0, injected.stderr);
-  rpc.send("/remote sync " + id);
+  rpc.send(`/remote sync ${id}`);
   await rpc.wait(() => needs(id).some((n) => n.kind === "shell.execute"), "unsupported owner fixture surfaced");
   return id;
 }
@@ -235,8 +237,8 @@ async function seedDiagnosticCapabilityRequests(rpc: ReturnType<typeof fixtureRp
 async function startCapabilityPtyAndVerifySnapshot(id: string) {
   const cmd = [
     "env",
-    "HOME=" + home,
-    "BRUV_CODING_AGENT_DIR=" + agentDir,
+    `HOME=${home}`,
+    `BRUV_CODING_AGENT_DIR=${agentDir}`,
     bruv,
     "--offline",
     "--no-approve",
@@ -247,7 +249,7 @@ async function startCapabilityPtyAndVerifySnapshot(id: string) {
   ]
     .map(quote)
     .join(" ");
-  tmux("new-session", "-d", "-s", "remote", "-x", "120", "-y", "35", "cd " + quote(repo) + " && " + cmd);
+  tmux("new-session", "-d", "-s", "remote", "-x", "120", "-y", "35", `cd ${quote(repo)} && ${cmd}`);
   await until("capability request: repo.read", 20000);
   type("/remote");
   key("Enter");
@@ -262,9 +264,9 @@ async function startCapabilityPtyAndVerifySnapshot(id: string) {
   evidence("requests-and-unsupported");
   // An owner change during a displayed menu must not silently rewrite the human's current choice.
   const extra = { id: "fixture_new_request", taskId: id, kind: "tool:git-diff", input: "tracked.txt" };
-  const extraFile = "/root/.bruv/remote-owner/tasks/" + id + "/capability-needs/fixture_new_request.json";
+  const extraFile = `/root/.bruv/remote-owner/tasks/${id}/capability-needs/fixture_new_request.json`;
   assert.equal(
-    spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "cat > " + extraFile], {
+    spawnSync("ssh", ["-F", requireValue(process.env.FIXTURE_SSH_CONFIG), "fixture-owner", `cat > ${extraFile}`], {
       input: JSON.stringify(extra),
       encoding: "utf8",
       timeout: 6000,
@@ -304,15 +306,15 @@ async function verifyGrantRequiresHumanConsent(id: string, rpc: ReturnType<typeo
   await openCapabilities();
   await select("repo.read");
   await until("HUMAN authorization required");
-  const capFile = "/root/.bruv/remote-owner/tasks/" + id + "/capability-needs/fixture_cap_file.json";
-  const original = ssh("cat " + capFile);
+  const capFile = `/root/.bruv/remote-owner/tasks/${id}/capability-needs/fixture_cap_file.json`;
+  const original = ssh(`cat ${capFile}`);
   assert.equal(original.status, 0, original.stderr);
-  assert.equal(ssh("rm " + capFile).status, 0);
+  assert.equal(ssh(`rm ${capFile}`).status, 0);
   key("Enter");
   await until("Remote request changed; no grant sent");
   assert.equal(granted(id).length, 0, "stale remote request created a local grant");
   assert.equal(
-    spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "cat > " + capFile], {
+    spawnSync("ssh", ["-F", requireValue(process.env.FIXTURE_SSH_CONFIG), "fixture-owner", `cat > ${capFile}`], {
       input: original.stdout,
       encoding: "utf8",
       timeout: 6000,
@@ -383,5 +385,5 @@ try {
 } finally {
   for (const child of rpcChildren) child.kill();
   provider.stop();
-  spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, "kill-server"]);
+  spawnSync("tmux", ["-L", `bruv-capability-pty-${process.pid}`, "kill-server"]);
 }

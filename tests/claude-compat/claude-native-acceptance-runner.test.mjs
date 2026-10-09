@@ -148,7 +148,7 @@ async function runFixture({
     await fs.copyFile(runner, path.join(scripts, "run.mjs"));
     for (const file of ["worker.mjs", "tap.mjs"])
       await fs.copyFile(
-        new URL("../../scripts/claude-native-acceptance/" + file, import.meta.url),
+        new URL(`../../scripts/claude-native-acceptance/${file}`, import.meta.url),
         path.join(scripts, file),
       );
     const artifact = path.join(fixture, "owned-artifact");
@@ -191,7 +191,7 @@ async function runFixture({
     let workerRunning;
     if (workers) {
       const running = () =>
-        fs.readFile("/proc/" + workerPid + "/stat", "utf8").then(
+        fs.readFile(`/proc/${workerPid}/stat`, "utf8").then(
           (stat) => !/\) Z /.test(stat),
           () => false,
         );
@@ -274,7 +274,7 @@ test("app and human evidence retain independent counts and both model lifetimes"
 });
 
 for (const failure of ["result", "projection"]) {
-  test(failure + " write failure still closes both local models and removes scoped state", async () => {
+  test(`${failure} write failure still closes both local models and removes scoped state`, async () => {
     const r = await runFixture({ failure, app: true });
     assert.equal(r.timedOut, false, r.output);
     assert.notEqual(r.code, 0);

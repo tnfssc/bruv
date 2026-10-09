@@ -1,13 +1,17 @@
+import type { RemoteState } from "../../src/remote/client";
+import type { RemoteTask } from "../../src/remote/protocol";
+import type { Question } from "../../src/questions/service";
+import { requireValue } from "../lib/require-value";
 /** Compiled disposable owner recovery + in-app session switch. Run via remote-e2e.sh. */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { strict as assert } from "node:assert";
-const home = process.env.HOME!,
-  bruv = process.env.BRUV_BIN!,
-  drop = process.env.FIXTURE_DROP_DIR!;
+const home = requireValue(process.env.HOME),
+  bruv = requireValue(process.env.BRUV_BIN),
+  drop = requireValue(process.env.FIXTURE_DROP_DIR);
 const statePath = join(home, ".bruv/remote/state.json");
-const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
+const agentDir = requireValue(process.env.BRUV_CODING_AGENT_DIR);
 mkdirSync(agentDir, { recursive: true });
 // Local fake coordinator acknowledges task attention; no tools, real keys, or external provider.
 const provider = Bun.serve({
@@ -15,7 +19,7 @@ const provider = Bun.serve({
   port: 0,
   fetch: () =>
     new Response(
-      [
+      `${[
         {
           id: "fixture",
           object: "chat.completion.chunk",
@@ -33,8 +37,8 @@ const provider = Bun.serve({
           choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
         },
       ]
-        .map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n")
-        .join("") + "data: [DONE]\n\n",
+        .map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`)
+        .join("")}data: [DONE]\n\n`,
       { headers: { "content-type": "text/event-stream" } },
     ),
 });
@@ -43,7 +47,7 @@ writeFileSync(
   JSON.stringify({
     providers: {
       fixture: {
-        baseUrl: "http://127.0.0.1:" + provider.port + "/v1",
+        baseUrl: `http://127.0.0.1:${provider.port}/v1`,
         api: "openai-completions",
         apiKey: "fixture-only",
         models: [{ id: "fixture-model", name: "fixture", contextWindow: 32000, maxTokens: 1024 }],
@@ -51,7 +55,7 @@ writeFileSync(
     },
   }),
 );
-const tmuxName = "bruv-recovery-" + process.pid;
+const tmuxName = `bruv-recovery-${process.pid}`;
 const tmux = (...args: string[]) => {
   const r = spawnSync("tmux", ["-L", tmuxName, ...args], { encoding: "utf8", timeout: 10000 });
   assert.equal(r.status, 0, r.stderr);
@@ -62,7 +66,7 @@ const capture = (name: string) => {
   const dir = process.env.BRUV_REMOTE_PTY_ARTIFACTS;
   if (dir) {
     mkdirSync(dir, { recursive: true });
-    writeFileSync(join(dir, name + ".txt"), pane());
+    writeFileSync(join(dir, `${name}.txt`), pane());
   }
 };
 const key = (...keys: string[]) => tmux("send-keys", "-t", "recovery", ...keys);
@@ -71,7 +75,15 @@ const type = (s: string) => {
   tmux("paste-buffer", "-b", "fixture", "-t", "recovery");
   key("Enter");
 };
-const state = (): any => JSON.parse(readFileSync(statePath, "utf8"));
+type RecoveryState = Omit<RemoteState, "tasks"> & {
+  tasks: Record<
+    string,
+    Omit<RemoteState["tasks"][string], "task"> & {
+      task?: { taskId: string; state: string; questions?: Question[]; reply?: { replyId: string } };
+    }
+  >;
+};
+const state = (): RecoveryState => JSON.parse(readFileSync(statePath, "utf8"));
 const wait = async (fn: () => boolean, label: string, ms = 30000) => {
   const start = Date.now();
   while (!fn()) {
@@ -96,29 +108,29 @@ let rpcOut = "",
   rpcErr = "";
 rpc.stdout.on("data", (x) => (rpcOut += x));
 rpc.stderr.on("data", (x) => (rpcErr += x));
-const send = (s: string) => rpc.stdin.write(JSON.stringify({ type: "prompt", message: s }) + "\n");
-const ownerQuestion = (id: string): any => {
+const send = (s: string) => rpc.stdin.write(`${JSON.stringify({ type: "prompt", message: s })}\n`);
+const ownerQuestion = (id: string): Question => {
   const r = spawnSync(
     "/usr/bin/ssh",
     [
       "-F",
-      process.env.FIXTURE_SSH_CONFIG!,
+      requireValue(process.env.FIXTURE_SSH_CONFIG),
       "fixture-owner",
-      "cat /root/.bruv/remote-owner/tasks/" + id + "/session.jsonl.questions.json",
+      `cat /root/.bruv/remote-owner/tasks/${id}/session.jsonl.questions.json`,
     ],
     { encoding: "utf8", timeout: 6000 },
   );
   assert.equal(r.status, 0, r.stderr);
   return JSON.parse(r.stdout)[0];
 };
-const ownerSaved = (id: string): any => {
+const ownerSaved = (id: string): { task: RemoteTask; pid?: number; startTime?: string; boot: string } => {
   const r = spawnSync(
     "/usr/bin/ssh",
     [
       "-F",
-      process.env.FIXTURE_SSH_CONFIG!,
+      requireValue(process.env.FIXTURE_SSH_CONFIG),
       "fixture-owner",
-      "cat /root/.bruv/remote-owner/tasks/" + id + "/state.json",
+      `cat /root/.bruv/remote-owner/tasks/${id}/state.json`,
     ],
     { encoding: "utf8", timeout: 6000 },
   );
@@ -128,7 +140,7 @@ const ownerSaved = (id: string): any => {
 const ownerTaskIds = (): string[] => {
   const r = spawnSync(
     "/usr/bin/ssh",
-    ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "ls -1 /root/.bruv/remote-owner/tasks"],
+    ["-F", requireValue(process.env.FIXTURE_SSH_CONFIG), "fixture-owner", "ls -1 /root/.bruv/remote-owner/tasks"],
     { encoding: "utf8", timeout: 6000 },
   );
   assert.equal(r.status, 0, r.stderr);
@@ -136,10 +148,10 @@ const ownerTaskIds = (): string[] => {
 };
 const launch = async (command: (s: string) => void, name: string) => {
   const before = new Set(Object.keys(state().tasks));
-  command("/remote launch /fixture/repo REMOTE_FIXTURE_MENU_" + name);
-  await wait(() => Object.keys(state().tasks).some((id) => !before.has(id)), "launch " + name);
-  const id = Object.keys(state().tasks).find((id) => !before.has(id))!;
-  await wait(() => !!state().tasks[id]?.task?.questions?.length, "question " + name);
+  command(`/remote launch /fixture/repo REMOTE_FIXTURE_MENU_${name}`);
+  await wait(() => Object.keys(state().tasks).some((id) => !before.has(id)), `launch ${name}`);
+  const id = requireValue(Object.keys(state().tasks).find((id) => !before.has(id)));
+  await wait(() => !!state().tasks[id]?.task?.questions?.length, `question ${name}`);
   return id;
 };
 // Each proof keeps the accepted identity, the transport disturbance, and reconciliation together.
@@ -153,10 +165,10 @@ async function verifyLaunchRetryPreservesOwnerProcess() {
   const acceptedLaunch = JSON.parse(readFileSync(join(drop, "dropped-launch.json"), "utf8"));
   const launchId = acceptedLaunch.task.taskId;
   assert(!beforeLaunch.has(launchId));
-  await wait(() => state().tasks[launchId]?.lastError, "uncertain launch persisted");
+  await wait(() => !!state().tasks[launchId]?.lastError, "uncertain launch persisted");
   assert.equal(state().tasks[launchId].outcome, "unknown");
-  assert.match(state().tasks[launchId].lastError, /accepted owner launch response intentionally lost/);
-  await wait(() => rpcOut.includes("Launch outcome unknown for " + launchId), "uncertain launch surfaced to RPC");
+  assert.match(requireValue(state().tasks[launchId].lastError), /accepted owner launch response intentionally lost/);
+  await wait(() => rpcOut.includes(`Launch outcome unknown for ${launchId}`), "uncertain launch surfaced to RPC");
   await wait(
     () => !!state().tasks[launchId]?.task?.questions?.length || !!ownerSaved(launchId).pid,
     "owner native launch",
@@ -164,14 +176,14 @@ async function verifyLaunchRetryPreservesOwnerProcess() {
   const ownerBefore = ownerSaved(launchId);
   assert(ownerBefore.pid && ownerBefore.startTime, "owner persisted native process identity");
   const idsBefore = ownerTaskIds();
-  send("/remote retry " + launchId);
+  send(`/remote retry ${launchId}`);
   await wait(() => state().tasks[launchId]?.outcome === "accepted", "same taskId launch recovered");
   await wait(() => !!state().tasks[launchId]?.task?.questions?.length, "recovered native question");
   const ownerAfter = ownerSaved(launchId);
   assert.deepEqual(ownerTaskIds(), idsBefore, "retry created an extra owner task");
   assert.equal(ownerAfter.pid, ownerBefore.pid, "retry dispatched a second native process");
   assert.equal(ownerAfter.startTime, ownerBefore.startTime, "retry changed native process identity");
-  assert.equal(state().tasks[launchId].task.taskId, launchId);
+  assert.equal(requireValue(state().tasks[launchId].task).taskId, launchId);
   console.log(
     "accepted launch reply lost, same taskId recovered",
     launchId,
@@ -184,24 +196,24 @@ async function verifyLaunchRetryPreservesOwnerProcess() {
 
 async function verifyAnswerRetryPreservesReply() {
   const lost = await launch(send, "LOST_REPLY");
-  const q = state().tasks[lost].task.questions[0];
+  const q = requireValue(requireValue(state().tasks[lost].task).questions)[0];
   writeFileSync(join(drop, "drop-next-answer"), "one-shot\n");
-  send("/remote answer " + lost + " " + q.id + " ACCEPTED_ON_OWNER");
+  send(`/remote answer ${lost} ${q.id} ACCEPTED_ON_OWNER`);
   await wait(
     () => existsSync(join(drop, "drop-used")) && !!state().tasks[lost]?.replyDelivery?.[q.id],
     "dropped accepted reply",
   );
   assert(existsSync(join(drop, "dropped-reply.json")));
   const accepted = JSON.parse(readFileSync(join(drop, "dropped-reply.json"), "utf8"));
-  const replyId = state().tasks[lost].replies[q.id].replyId;
+  const replyId = requireValue(state().tasks[lost].replies)[q.id].replyId;
   assert.equal(accepted.task.reply.replyId, replyId);
-  assert.equal(state().tasks[lost].replyDelivery[q.id].status, "uncertain");
+  assert.equal(requireValue(state().tasks[lost].replyDelivery)[q.id].status, "uncertain");
   assert.equal(ownerQuestion(lost).answer, "ACCEPTED_ON_OWNER");
-  send("/remote sync " + lost);
+  send(`/remote sync ${lost}`);
   await wait(() => state().tasks[lost]?.task?.reply?.replyId === replyId, "sync receipt");
-  send("/remote answer " + lost + " " + q.id + " ACCEPTED_ON_OWNER");
+  send(`/remote answer ${lost} ${q.id} ACCEPTED_ON_OWNER`);
   await wait(() => state().tasks[lost]?.replyDelivery?.[q.id]?.status === "delivered", "same reply recovered");
-  assert.equal(state().tasks[lost].replies[q.id].replyId, replyId);
+  assert.equal(requireValue(state().tasks[lost].replies)[q.id].replyId, replyId);
   assert.equal(ownerQuestion(lost).answer, "ACCEPTED_ON_OWNER");
   console.log(
     "accepted reply lost after owner response, reconciled same replyId",
@@ -215,12 +227,12 @@ async function verifyAnswerRetryPreservesReply() {
 
 async function verifySessionSwitchPreservesTaskOwners() {
   // Run real interactive binary in tmux. PATH is explicit: fish/tmux may reset it.
-  const quote = (x: string) => "'" + x.replaceAll("'", "'\\''") + "'";
+  const quote = (x: string) => `'${x.replaceAll("'", "'\\''")}'`;
   const cmd = [
     "env",
-    "PATH=" + process.env.PATH,
-    "HOME=" + home,
-    "BRUV_CODING_AGENT_DIR=" + agentDir,
+    `PATH=${process.env.PATH}`,
+    `HOME=${home}`,
+    `BRUV_CODING_AGENT_DIR=${agentDir}`,
     bruv,
     "--offline",
     "--no-approve",
@@ -238,7 +250,7 @@ async function verifySessionSwitchPreservesTaskOwners() {
   await Bun.sleep(300);
   const a = await launch(type, "SWITCH_OLD");
   await wait(() => !!state().tasks[a].jobSessionFile, "old session owner");
-  const oldSession = state().tasks[a].jobSessionFile;
+  const oldSession = requireValue(state().tasks[a].jobSessionFile);
   await wait(() => existsSync(oldSession), "old session journal published after fixture acknowledgement");
   const oldFrame = pane();
   capture("old-session");
@@ -248,11 +260,11 @@ async function verifySessionSwitchPreservesTaskOwners() {
   await Bun.sleep(300);
   const b = await launch(type, "SWITCH_NEW");
   await wait(() => !!state().tasks[b].jobSessionFile, "new session owner");
-  const newSession = state().tasks[b].jobSessionFile;
+  const newSession = requireValue(state().tasks[b].jobSessionFile);
   assert.notEqual(newSession, oldSession, "/new did not change in-app session");
   assert.equal(state().tasks[a].jobSessionFile, oldSession, "switch adopted previous task");
-  const questionA = state().tasks[a].task.questions[0];
-  send("/remote answer " + a + " " + questionA.id + " ANSWERED_OUTSIDE_NEW_SESSION");
+  const questionA = requireValue(requireValue(state().tasks[a].task).questions)[0];
+  send(`/remote answer ${a} ${questionA.id} ANSWERED_OUTSIDE_NEW_SESSION`);
   await wait(() => ownerQuestion(a).answer === "ANSWERED_OUTSIDE_NEW_SESSION", "external old answer");
   await Bun.sleep(6000); // real background refresh, not a renderer unit test
   const newFrame = pane();
@@ -285,7 +297,13 @@ async function verifySessionSwitchPreservesTaskOwners() {
   key("Enter");
   await Bun.sleep(1500);
   type("/session");
-  await wait(() => pane().replace(/\s/g, "").includes(oldSession.split("/").at(-1)), "resumed original session file");
+  await wait(
+    () =>
+      pane()
+        .replace(/\s/g, "")
+        .includes(requireValue(oldSession.split("/").at(-1))),
+    "resumed original session file",
+  );
   capture("resumed-original-session");
   assert.equal(state().tasks[a].jobSessionFile, oldSession);
   assert.equal(state().tasks[b].jobSessionFile, newSession);

@@ -97,7 +97,7 @@ export function analyzeSpeakerCheck(
   if (playbackDbfs < -68 && tailDbfs < -68 && baselineDbfs < -68) return { status: "no_signal", ...levels };
   if (baselineDbfs > -24) return { status: "inconclusive", reason: "high_background", ...levels };
   let referenceEnergy = 0;
-  for (let i = 0; i < reference.length; i++) referenceEnergy += reference[i]! ** 2;
+  for (const sample of reference) referenceEnergy += sample ** 2;
   let best = 0,
     bestLag = 0,
     bestSign = 1,
@@ -109,8 +109,11 @@ export function analyzeSpeakerCheck(
     let dot = 0,
       energy = 0;
     for (let i = 0; i < reference.length; i++) {
-      const value = playbackAndTail[lag + i]!;
-      dot += reference[i]! * value;
+      const sample = reference[i];
+      const value = playbackAndTail[lag + i];
+      if (sample === undefined || value === undefined)
+        throw new Error("Speaker correlation window exceeds captured audio");
+      dot += sample * value;
       energy += value * value;
     }
     const correlation = energy ? dot / Math.sqrt(referenceEnergy * energy) : 0;
@@ -315,10 +318,16 @@ function processingConfiguration(native: SpeakerCheckAudio["diagnostics"]["ready
     voiceProcessingBypassed: native.voiceProcessingBypassed,
     captureRate: native.captureRate,
     renderRate: native.renderRate,
-    ...(Number.isInteger(native.captureChannels) && native.captureChannels! > 0 && native.captureChannels! <= 256
+    ...(typeof native.captureChannels === "number" &&
+    Number.isInteger(native.captureChannels) &&
+    native.captureChannels > 0 &&
+    native.captureChannels <= 256
       ? { captureChannels: native.captureChannels }
       : {}),
-    ...(Number.isInteger(native.renderChannels) && native.renderChannels! > 0 && native.renderChannels! <= 256
+    ...(typeof native.renderChannels === "number" &&
+    Number.isInteger(native.renderChannels) &&
+    native.renderChannels > 0 &&
+    native.renderChannels <= 256
       ? { renderChannels: native.renderChannels }
       : {}),
   };

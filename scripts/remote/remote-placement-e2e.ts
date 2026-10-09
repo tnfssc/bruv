@@ -1,3 +1,5 @@
+import type { Question } from "../../src/questions/service";
+import { requireValue } from "../lib/require-value";
 import { networkNoneFixture, quote, wait } from "../fixtures/network-none-fixture";
 /** Isolated, offline Docker SSH + compiled CLI PTY acceptance. See fixture README. */
 import assert from "node:assert/strict";
@@ -33,14 +35,14 @@ const artifacts = process.env.REMOTE_PLACEMENT_ARTIFACTS
   ? resolve(process.env.REMOTE_PLACEMENT_ARTIFACTS)
   : mkdtempSync(join(tmpBase, "remote-placement-artifacts-"));
 mkdirSync(artifacts, { recursive: true });
-const name = "bruv-placement-" + process.pid + "-" + Date.now();
+const name = `bruv-placement-${process.pid}-${Date.now()}`;
 const harness = networkNoneFixture({
   root,
   name,
   alias: ALIAS,
   bun,
   binary: probe ? undefined : binary,
-  base: base!,
+  base: requireValue(base),
   buildArg: "PLACEMENT_BASE",
   files: {
     Dockerfile: join(fixture, "Dockerfile"),
@@ -58,7 +60,7 @@ const socket = join(root, "tmux.sock");
 const session = join(home, "parent.jsonl");
 const tmux = (...args: string[]) => run("tmux", ["-f", "/dev/null", "-S", socket, ...args]);
 const pane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "placement");
-const capture = (label: string) => writeFileSync(join(artifacts, label + ".txt"), pane());
+const capture = (label: string) => writeFileSync(join(artifacts, `${label}.txt`), pane());
 const type = (message: string) => {
   tmux("send-keys", "-t", "placement", "-l", message);
   tmux("send-keys", "-t", "placement", "Enter");
@@ -73,21 +75,21 @@ const files = (dir: string): string[] =>
 const json = (file: string) => JSON.parse(readFileSync(file, "utf8"));
 const statePath = join(home, ".bruv", "remote", "state.json");
 const state = () => (existsSync(statePath) ? json(statePath) : { tasks: {} });
-const questionRows = () => {
+const questionRows = (): Question[] => {
   const file = join(home, "placement-human-questions.json");
   if (!existsSync(file)) return [];
   const result = json(file);
   return Array.isArray(result) ? result : (result.questions ?? []);
 };
 const question = (name: string) =>
-  questionRows().find((q: any) => q.text === name && q.status !== "resolved" && q.status !== "cancelled");
+  questionRows().find((q) => q.text === name && q.status !== "resolved" && q.status !== "cancelled");
 let ptyStarted = false;
 let parentProvider: ReturnType<typeof Bun.serve> | undefined;
 let passed = false;
 console.log("Placement artifacts:", artifacts);
 try {
   const { imageId, ssh } = await harness.start();
-  const receipt: any = {
+  const receipt = {
     mode: probe ? "fixture-probe-only" : "acceptance",
     sourceCommit: run("git", ["-C", source, "rev-parse", "HEAD"]),
     sourceDirty: run("git", ["-C", source, "status", "--porcelain"]),
@@ -112,11 +114,11 @@ try {
         const body = (await request.json()) as Parameters<typeof stream>[0];
         assert.equal(body.model, "placement-parent", "a descendant escaped to the parent inference runtime");
         const { appendFileSync } = await import("node:fs");
-        appendFileSync(join(artifacts, "parent-inference.jsonl"), JSON.stringify(body) + "\n");
+        appendFileSync(join(artifacts, "parent-inference.jsonl"), `${JSON.stringify(body)}\n`);
         return new Response(stream(body), { headers: { "content-type": "text/event-stream" } });
       },
     });
-    models.providers.fixture.baseUrl = "http://127.0.0.1:" + parentProvider.port + "/v1";
+    models.providers.fixture.baseUrl = `http://127.0.0.1:${parentProvider.port}/v1`;
     writeFileSync(join(agent, "models.json"), JSON.stringify(models));
     // If the destination accidentally inherits the parent's profile, inference fails loudly.
     writeFileSync(
@@ -143,7 +145,7 @@ try {
     const command = [
       "env",
       "-i",
-      ...Object.entries(env).map(([k, v]) => k + "=" + v),
+      ...Object.entries(env).map(([k, v]) => `${k}=${v}`),
       binary,
       "--offline",
       "--no-approve",
@@ -171,18 +173,18 @@ try {
     start();
     await wait("compiled CLI initial model", () => pane().includes("placement-parent"));
     await Bun.sleep(2000);
-    type("/remote connect " + ALIAS + " /usr/local/bin/bruv");
+    type(`/remote connect ${ALIAS} /usr/local/bin/bruv`);
     await wait("one human pinned connection", () => state().connection?.host === ALIAS);
     const pinned = JSON.stringify(state().connection);
     capture("01-human-connect");
     let queryIndex = 0;
     const captureQuestions = async () => {
       const index = ++queryIndex;
-      type("PLACEMENT_QUERY_QUESTIONS_" + index);
-      await wait("ordinary questions API capture", () => pane().includes("PLACEMENT_QUESTIONS_CAPTURED_" + index));
+      type(`PLACEMENT_QUERY_QUESTIONS_${index}`);
+      await wait("ordinary questions API capture", () => pane().includes(`PLACEMENT_QUESTIONS_CAPTURED_${index}`));
     };
-    const ownerQuestions = (id: string) =>
-      JSON.parse(ssh("cat /root/.bruv/remote-owner/tasks/" + id + "/session.jsonl.questions.json"));
+    const ownerQuestions = (id: string): Question[] =>
+      JSON.parse(ssh(`cat /root/.bruv/remote-owner/tasks/${id}/session.jsonl.questions.json`));
     const waitOwnerQuestion = async (id: string) => {
       await wait(
         "real server question persisted",
@@ -192,7 +194,7 @@ try {
             name,
             "test",
             "-f",
-            "/root/.bruv/remote-owner/tasks/" + id + "/session.jsonl.questions.json",
+            `/root/.bruv/remote-owner/tasks/${id}/session.jsonl.questions.json`,
           ]).status === 0,
         90000,
       );
@@ -216,14 +218,14 @@ try {
     // identity checks, client-only restart and explicit human approval in one journey.
     const answerCleanQuestionAfterRestart = async (taskId: string) => {
       assert(question(QUESTION), "ordinary questions.list omitted the remote child question");
-      const q = question(QUESTION);
+      const q = requireValue(question(QUESTION));
       assert.equal(q.status, "pending");
       assert(q.owner && Number.isInteger(q.version), "question lost owner/version provenance");
-      const remoteQ = ownerQuestions(taskId).find((row: any) => row.text === QUESTION);
+      const remoteQ = ownerQuestions(taskId).find((row) => row.text === QUESTION);
       assert(remoteQ, "missing source remote question");
       for (const identity of [taskId, remoteQ.id, remoteQ.owner.sessionId, remoteQ.owner.branchId])
-        assert(JSON.stringify(q).includes(identity), "ordinary question lost remote provenance: " + identity);
-      const objects = (value: any): any[] =>
+        assert(JSON.stringify(q).includes(identity), `ordinary question lost remote provenance: ${identity}`);
+      const objects = (value: unknown): object[] =>
         value && typeof value === "object" ? [value, ...Object.values(value).flatMap(objects)] : [];
       assert(
         objects(q).some(
@@ -248,23 +250,23 @@ try {
       assert.deepEqual(Object.keys(state().tasks), [taskId]);
       await captureQuestions();
       assert.equal(question(QUESTION)?.id, q.id, "restart changed ordinary question identity");
-      assert.equal(question(QUESTION).status, "pending");
-      assert.deepEqual(question(QUESTION).owner, q.owner);
-      assert.equal(question(QUESTION).version, q.version);
+      assert.equal(requireValue(question(QUESTION)).status, "pending");
+      assert.deepEqual(requireValue(question(QUESTION)).owner, q.owner);
+      assert.equal(requireValue(question(QUESTION)).version, q.version);
       type("/questions");
       await wait("ordinary questions menu", () => pane().includes("Questions ·") && pane().includes(QUESTION));
       capture("03-ordinary-questions-menu");
       key("Escape");
       await Bun.sleep(150);
       assert.equal(
-        ownerQuestions(taskId).find((row: any) => row.id === remoteQ.id).status,
+        requireValue(ownerQuestions(taskId).find((row) => row.id === remoteQ.id)).status,
         "pending",
         "Escape guessed an answer",
       );
       type("/questions");
       await wait("ordinary question picker", () => pane().includes("Questions ·"));
       key("Enter");
-      await wait("human answer choice", () => pane().includes("→ " + ANSWER));
+      await wait("human answer choice", () => pane().includes(`→ ${ANSWER}`));
       capture("04-explicit-human-choice");
       key("Enter");
     };
@@ -299,19 +301,21 @@ try {
     // A separate launch proves drift is review-only, not overwritten by a convenient patch.
     type("PLACEMENT_START_DRIFT launch a second normal placed task");
     await wait("two placements", () => Object.keys(state().tasks).length === 2);
-    const driftId = Object.keys(state().tasks).find((id) => id !== cleanId)!;
+    const driftId = requireValue(Object.keys(state().tasks).find((id) => id !== cleanId));
     await waitOwnerQuestion(driftId);
     assert(question("PLACEMENT_DRIFT_QUESTION"), "ordinary questions.list omitted drift question");
     const dq = question("PLACEMENT_DRIFT_QUESTION");
     writeFileSync(join(repo, "guard.txt"), "PLACEMENT_PARENT_DRIFT\n");
-    type("/questions answer " + dq.id + " " + ANSWER);
+    type(`/questions answer ${requireValue(dq).id} ${ANSWER}`);
     await wait("drift job result", () => existsSync(join(home, "placement-result-drift.json")), 90000);
     await wait("drift review artifact", () =>
       descriptors().some(
         (d) => d.data.prompt?.includes("PLACEMENT_ORCHESTRATOR_DRIFT") && d.data.outcome?.status === "review",
       ),
     );
-    const driftDescriptor = descriptors().find((d) => d.data.prompt?.includes("PLACEMENT_ORCHESTRATOR_DRIFT"))!;
+    const driftDescriptor = requireValue(
+      descriptors().find((d) => d.data.prompt?.includes("PLACEMENT_ORCHESTRATOR_DRIFT")),
+    );
     assert.equal(readFileSync(join(repo, "guard.txt"), "utf8"), "PLACEMENT_PARENT_DRIFT\n");
     assert.equal(readFileSync(join(repo, "tracked.txt"), "utf8"), "PLACEMENT_REMOTE_RETURN\n");
     assert(existsSync(driftDescriptor.data.outcome.artifact));
@@ -353,20 +357,17 @@ try {
     copyFileSync(statePath, join(artifacts, "remote-client.json"));
     for (const side of ["clean", "drift"])
       for (const kind of ["job", "result"])
-        copyFileSync(
-          join(home, "placement-" + kind + "-" + side + ".json"),
-          join(artifacts, "placement-" + kind + "-" + side + ".json"),
-        );
+        copyFileSync(join(home, `placement-${kind}-${side}.json`), join(artifacts, `placement-${kind}-${side}.json`));
     for (const d of descriptors()) {
       const id = JSON.parse(readFileSync(d.file, "utf8")).prompt.includes("DRIFT") ? "drift" : "clean";
-      writeFileSync(join(artifacts, "snapshot-" + id + ".json"), JSON.stringify(d.data, null, 2));
+      writeFileSync(join(artifacts, `snapshot-${id}.json`), JSON.stringify(d.data, null, 2));
       if (d.data.outcome?.artifact && existsSync(d.data.outcome.artifact))
-        copyFileSync(d.data.outcome.artifact, join(artifacts, "return-" + id + ".patch"));
+        copyFileSync(d.data.outcome.artifact, join(artifacts, `return-${id}.patch`));
     }
     for (const [i, file] of files(home)
       .filter((f) => f.endsWith(".questions.json"))
       .entries())
-      copyFileSync(file, join(artifacts, "questions-" + i + ".json"));
+      copyFileSync(file, join(artifacts, `questions-${i}.json`));
     capture("07-reconnect-no-duplicates");
     console.log(
       "PASS compiled CLI PTY normal placement: tracked snapshot/provenance, destination orchestrator profile/role, omitted-target server child/worktree, ordinary human questions, restart identity, jobs result, safe apply and drift review",
@@ -382,9 +383,9 @@ try {
 } finally {
   if (harness.containerStarted) {
     for (const file of ["placement-inference.jsonl", "placement-provider-errors", "placement-provider.log"]) {
-      const r = raw("docker", ["cp", name + ":/tmp/" + file, join(artifacts, file)]);
+      const r = raw("docker", ["cp", `${name}:/tmp/${file}`, join(artifacts, file)]);
       if (r.status !== 0 && file !== "placement-provider-errors")
-        writeFileSync(join(artifacts, file + ".unavailable.txt"), r.stderr);
+        writeFileSync(join(artifacts, `${file}.unavailable.txt`), r.stderr);
     }
     writeFileSync(join(artifacts, "docker.log"), raw("docker", ["logs", name]).stderr);
   }

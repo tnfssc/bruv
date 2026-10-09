@@ -27,15 +27,15 @@ export async function loadLiveConfig(path = liveConfigPath()): Promise<LiveConfi
     return parseLiveConfig(JSON.parse(await readFile(path, "utf8")));
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return defaultLiveConfig();
-    throw new Error("Invalid Live settings at " + path + ": " + String(error));
+    throw new Error(`Invalid Live settings at ${path}: ${String(error)}`);
   }
 }
 export async function saveLiveConfig(config: LiveConfig, path = liveConfigPath()): Promise<void> {
   const validated = parseLiveConfig(config);
   await mkdir(dirname(path), { recursive: true });
-  const temporary = path + "." + randomUUID() + ".tmp";
+  const temporary = `${path}.${randomUUID()}.tmp`;
   try {
-    await writeFile(temporary, JSON.stringify(validated, null, 2) + "\n", { flag: "wx", mode: 0o600 });
+    await writeFile(temporary, `${JSON.stringify(validated, null, 2)}\n`, { flag: "wx", mode: 0o600 });
     await rename(temporary, path);
   } finally {
     await unlink(temporary).catch(() => {});

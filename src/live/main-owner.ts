@@ -2,9 +2,9 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import type { AgentMessage } from "@earendil-works/pi-agent-core";
-import { validateToolArguments } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { AgentMessage, AgentTool, AgentToolResult } from "@earendil-works/pi-agent-core";
+import { validateToolArguments, type ToolCall } from "@earendil-works/pi-ai";
+import type { AgentSessionEvent, ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import {
   type ClassicSession,
   getInstructionContinuitySession,
@@ -16,7 +16,7 @@ import type { VoiceOrchestration } from "./types";
 /** This Pi release has no public external-agent tool seam. Own the same pinned
  * ClassicSession that ordinary turns use, Direct providers own tool turns; paired GPT-Live admits ordinary session.prompt turns. */
 type OwnerSession = ClassicSession & {
-  _toolRegistry: Map<string, any>;
+  _toolRegistry: Map<string, AgentTool>;
   sendCustomMessage(
     message: { customType: string; content: { type: "text"; text: string }[]; display: boolean; details?: unknown },
     options: { triggerTurn: boolean },
@@ -25,7 +25,12 @@ type OwnerSession = ClassicSession & {
   _extensionRunner: NonNullable<ClassicSession["_extensionRunner"]>;
   sessionManager: ExtensionContext["sessionManager"] & {
     appendMessage(message: AgentMessage): string;
-    appendCustomMessageEntry(type: string, content: any, display: boolean, details?: unknown): string;
+    appendCustomMessageEntry(
+      type: string,
+      content: Extract<AgentMessage, { role: "custom" }>["content"],
+      display: boolean,
+      details?: unknown,
+    ): string;
   };
 };
 export type MainOwner = {
@@ -63,11 +68,11 @@ const drainingOwners = new WeakMap<object, MainOwner & { identity: string; accep
 const acquiring = new WeakSet<object>();
 const textTurns = new WeakSet<object>();
 function identity(manager: ExtensionContext["sessionManager"]): string {
-  return manager.getSessionId() + ":" + manager.getLeafId();
+  return `${manager.getSessionId()}:${manager.getLeafId()}`;
 }
 /** Normal appends (including billing entries) advance the leaf without switching branches. */
 function sameBranch(owner: { identity: string }, manager: ExtensionContext["sessionManager"]): boolean {
-  const prefix = manager.getSessionId() + ":";
+  const prefix = `${manager.getSessionId()}:`;
   if (!owner.identity.startsWith(prefix)) return false;
   const leaf = owner.identity.slice(prefix.length);
   const now = identity(manager);
@@ -142,9 +147,9 @@ function record(session: OwnerSession, message: AgentMessage, onMessage?: (messa
  * stream never fires. Feed only the terminal subscriber path (not extension hooks
  * or agent execution) for the already-admitted tool pair. This is the pinned
  * Pi 0.87 private UI seam; replace when Pi exposes external tool events. */
-function showLiveTool(session: OwnerSession, event: unknown): void {
+function showLiveTool(session: OwnerSession, event: AgentSessionEvent): void {
   try {
-    (session as OwnerSession & { _emit?: (event: any) => void })._emit?.(event);
+    (session as OwnerSession & { _emit?: (event: AgentSessionEvent) => void })._emit?.(event);
   } catch {
     // Only synchronous dispatch failures are isolated; _emit does not await listeners.
   }
@@ -201,17 +206,22 @@ class LiveHistory {
  * Admission and lifetime are owned by the caller, not by this protocol operation. */
 async function executeRegisteredLiveTool(
   session: OwnerSession,
-  tool: any,
+  tool: AgentTool,
   call: Parameters<VoiceOrchestration["execute"]>[0] & { id: string },
   controller: AbortController,
   valid: () => boolean,
   canCommit: () => boolean,
   getStopWorkReport: () => unknown,
-): Promise<{ result: any; isError: boolean }> {
+): Promise<{ result: Omit<AgentToolResult<unknown>, "details"> & { details?: unknown }; isError: boolean }> {
   const id = call.id;
-  const toolCall = { type: "toolCall" as const, id, name: "execute", arguments: (call.args ?? {}) as any };
-  let args: any = call.args ?? {};
-  let result: any;
+  const toolCall = {
+    type: "toolCall" as const,
+    id,
+    name: "execute",
+    arguments: (call.args ?? {}) as ToolCall["arguments"],
+  };
+  let args: Record<string, unknown> = call.args ?? {};
+  let result: Omit<AgentToolResult<unknown>, "details"> & { details?: unknown };
   let isError = false;
   let acceptingUpdates = true;
   try {
@@ -274,7 +284,7 @@ async function executeRegisteredLiveTool(
         ...(result.content ?? []),
         {
           type: "text",
-          text: "jobs.stopWork host report (captured before foreground cancellation):\n" + JSON.stringify(stopReport),
+          text: `jobs.stopWork host report (captured before foreground cancellation):\n${JSON.stringify(stopReport)}`,
         },
       ],
     };
@@ -289,7 +299,8 @@ async function executeRegisteredLiveTool(
           assistantMessage,
           toolCall,
           args,
-          result,
+          // Pi omits details on thrown-tool results too; its hook type requires the key.
+          result: result as AgentToolResult<unknown>,
           isError,
           context: session.agent.state,
         })
@@ -417,7 +428,7 @@ async function acquire(
     history.append({
       role: "custom",
       customType: "live-provisional",
-      content: [{ type: "text", text: kind + ": " + text }],
+      content: [{ type: "text", text: `${kind}: ${text}` }],
       display: true,
       details: { final: false, kind },
       timestamp: Date.now(),
@@ -469,9 +480,9 @@ async function acquire(
     if (bytes > 64 * 1024) {
       const sessionFile = manager.getSessionFile?.();
       if (!sessionFile) throw new Error("Large Live context requires a durable session history path");
-      const path = sessionFile + ".artifacts/live/context.json";
+      const path = `${sessionFile}.artifacts/live/context.json`;
       await mkdir(dirname(path), { recursive: true, mode: 0o700 });
-      const temporary = path + "." + randomUUID() + ".tmp";
+      const temporary = `${path}.${randomUUID()}.tmp`;
       try {
         await writeFile(temporary, serialized, { mode: 0o600 });
         if (!valid()) throw new Error("Live owner closed during context persistence");
@@ -519,12 +530,15 @@ async function acquire(
           history.append({
             role: "custom",
             customType: message.customType,
-            content: message.content as any,
+            content: message.content as Extract<AgentMessage, { role: "custom" }>["content"],
             display: message.display ?? false,
             details: message.details,
             timestamp: Date.now(),
           });
-        const transformed = await session.agent.transformContext!(
+        const transformContext = session.agent.transformContext;
+        if (!transformContext) throw new Error("Main context transform is unavailable");
+        const transformed = await transformContext.call(
+          session.agent,
           session.agent.state.messages,
           callbacks.signal ?? new AbortController().signal,
         );
@@ -613,7 +627,8 @@ async function acquire(
     },
     async typedInput(text) {
       if (owner.delegatedVoice) {
-        await owner.delegate!("typed-" + ++counter, text);
+        if (!owner.delegate) throw new Error("Delegated Live main turn is unavailable");
+        await owner.delegate(`typed-${++counter}`, text);
         return;
       }
       if (!valid()) return;
@@ -782,7 +797,7 @@ async function acquire(
     },
     orchestration: {
       instructions: instruction,
-      artifactDirectory: manager.getSessionFile?.() ? manager.getSessionFile() + ".artifacts/live" : undefined,
+      artifactDirectory: manager.getSessionFile?.() ? `${manager.getSessionFile()}.artifacts/live` : undefined,
       tools: [
         { name: "execute", description: tool.description, parametersJsonSchema: tool.parameters },
       ] as VoiceOrchestration["tools"],
@@ -791,7 +806,7 @@ async function acquire(
         if (transcript && !(await transcript.result)) throw new Error("Live input ended without a final transcript");
         await turnPreparation;
         if (!valid()) throw new Error("Live owner is no longer active");
-        const callId = call.id || "live-" + ++counter;
+        const callId = call.id || `live-${++counter}`;
         const signature = JSON.stringify([call.name, call.args]);
         const previous = calls.get(callId);
         if (previous) {
@@ -849,13 +864,16 @@ async function acquire(
     history.append({
       role: "custom",
       customType: message.customType,
-      content: message.content as any,
+      content: message.content as Extract<AgentMessage, { role: "custom" }>["content"],
       display: message.display ?? false,
       details: message.details,
       timestamp: Date.now(),
     });
   try {
-    const transformed = await session.agent.transformContext!(
+    const transformContext = session.agent.transformContext;
+    if (!transformContext) throw new Error("Main context transform is unavailable");
+    const transformed = await transformContext.call(
+      session.agent,
       session.agent.state.messages,
       callbacks.signal ?? new AbortController().signal,
     );
@@ -867,7 +885,9 @@ async function acquire(
     }
     callbacks.signal?.throwIfAborted();
     if (!valid()) throw new Error("Session changed while preparing Live context");
-    setCurrentInstructionFrame(manager, owner.orchestration.instructions!);
+    const instructions = owner.orchestration.instructions;
+    if (!instructions) throw new Error("Effective root instructions are unavailable");
+    setCurrentInstructionFrame(manager, instructions);
     const history = transformed.filter((message) => message.role !== "system");
     if (history.length) {
       const context = await project(history);

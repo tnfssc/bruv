@@ -1,3 +1,5 @@
+import { requireValue } from "../lib/require-value";
+import type { ProbeMethods, ProbeInteractiveMode } from "./sdk-probe-types";
 /** Offline phase probe; existing shared navigation fixture is unchanged. */
 import { runOfflineNavigationSdkProbe } from "./navigation-workloads";
 import { InteractiveMode } from "../../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/interactive-mode.js";
@@ -15,7 +17,8 @@ function measure<T>(name: string, action: () => T): T {
     phases.push({ name, startedAtMs, durationMs: performance.now() - startedAtMs });
   }
 }
-function wrap(proto: any, names: string[], prefix: string) {
+function wrap(target: object, names: string[], prefix: string) {
+  const proto = target as ProbeMethods;
   for (const name of names) {
     const original = proto[name];
     if (typeof original !== "function") continue;
@@ -44,14 +47,14 @@ wrap(
   ["flattenTree", "buildActivePath", "applyFilter", "recalculateVisualStructure", "findNearestVisibleIndex"],
   "TreeList.",
 );
-const originalInit = (InteractiveMode.prototype as any).init;
-(InteractiveMode.prototype as any).init = function (...args: unknown[]) {
+const originalInit = (InteractiveMode.prototype as unknown as ProbeInteractiveMode).init;
+(InteractiveMode.prototype as unknown as ProbeInteractiveMode).init = function () {
   wrap(
     SessionManager.prototype,
     ["getTree", "getEntries", "getEntryCountByType", "buildContextEntries"],
     "SessionManager.",
   );
-  return originalInit.apply(this, args);
+  return originalInit.call(this);
 };
 wrap(
   InteractiveMode.prototype,
@@ -68,20 +71,21 @@ wrap(
 
 // Own the selector-confirm capture from mounting through final verification.
 // No provider/summary access; settling and verification are outside lifecycle timing.
-async function captureSelectorConfirmation(app: any, leafId: string) {
+async function captureSelectorConfirmation(app: ProbeInteractiveMode, leafId: string) {
   app.settingsManager.getBranchSummarySkipPrompt = () => true;
   app.showTreeSelector(leafId);
-  const selector = app.editorContainer.children.find((child: any) => child instanceof TreeSelectorComponent);
+  const selector = app.editorContainer.children.find((child) => child instanceof TreeSelectorComponent);
   if (!selector) throw new Error("No real tree selector mounted");
   await Bun.sleep(40); // Let the actual selector frame finish; not CPU time.
 
   const frames: { startedAtMs: number; durationMs: number }[] = [];
   const renderer = app.renderer;
-  const originalRender = renderer.doRender;
+  const measuredRenderer = renderer as unknown as ProbeMethods;
+  const originalRender = measuredRenderer.doRender;
   const treeList = selector.getTreeList();
-  const originalSelect = treeList.onSelect;
+  const originalSelect = requireValue(treeList.onSelect) as (entryId: string) => Promise<unknown>;
   let completion: Promise<unknown> | undefined;
-  renderer.doRender = function (...args: unknown[]) {
+  measuredRenderer.doRender = function (...args: unknown[]) {
     const startedAtMs = performance.now();
     try {
       return originalRender.apply(this, args);
@@ -89,7 +93,7 @@ async function captureSelectorConfirmation(app: any, leafId: string) {
       frames.push({ startedAtMs, durationMs: performance.now() - startedAtMs });
     }
   };
-  treeList.onSelect = (...selection: unknown[]) => {
+  treeList.onSelect = (...selection: [string]) => {
     completion = originalSelect(...selection);
     return completion;
   };
@@ -118,16 +122,18 @@ async function captureSelectorConfirmation(app: any, leafId: string) {
     };
   } finally {
     treeList.onSelect = originalSelect;
-    renderer.doRender = originalRender;
+    measuredRenderer.doRender = originalRender;
   }
 }
 
 // Capture the actual selector confirm path only after real disk resume completes.
-const originalResume = (InteractiveMode.prototype as any).handleResumeSession;
+const originalResume = (InteractiveMode.prototype as unknown as ProbeInteractiveMode).handleResumeSession;
 let choose!: Awaited<ReturnType<typeof captureSelectorConfirmation>>;
-(InteractiveMode.prototype as any).handleResumeSession = async function (...args: unknown[]) {
+(InteractiveMode.prototype as unknown as ProbeInteractiveMode).handleResumeSession = async function (
+  ...args: unknown[]
+) {
   const resumed = await originalResume.apply(this, args);
-  choose = await captureSelectorConfirmation(this, "a" + (size - 1));
+  choose = await captureSelectorConfirmation(this, `a${size - 1}`);
   return resumed;
 };
 const size = Number(process.argv[2] ?? "1000");

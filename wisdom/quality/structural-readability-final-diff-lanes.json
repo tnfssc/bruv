@@ -148,12 +148,7 @@
             "systemReason": "The scripts retain their original history, context, and heap assertions while making retention boundaries visible. Explicit SDK manager release matches the actual store disposal contract instead of mutating it with newSession during outer cleanup. All inspected directory removals target script-created mkdtemp fixtures, but none were executed. These are measurement/lifetime clarity improvements, not evidence of measured performance in this review."
           },
           {
-            "paths": [
-              "scripts/prompt-preview.ts",
-              "src/prompts.ts",
-              "src/prompt-preview.ts",
-              "src/agent/extension.ts"
-            ],
+            "paths": ["scripts/prompt-preview.ts", "src/prompts.ts", "src/prompt-preview.ts", "src/agent/extension.ts"],
             "readingReason": "Followed CLI role/mode parsing to PREVIEW_ROLES and MAIN_AGENT_MODES, deferred production preview import, scratch runtime and selected-project framing, explicit preview child environment, and captureOfflineTurn stream replacement. MAIN_AGENT_MODES plus root exactly matches current PREVIEW_ROLES.",
             "systemReason": "Valid preview behavior still calls the production preview path; help/invalid arguments no longer import the production runtime and generated assets. The retained static prompts import is type-only for Pi and loads embedded Markdown, not the production runtime. The actual preview frames through the same root/child helpers reviewed above, with stream replacement as its model-network boundary."
           }
@@ -733,10 +728,7 @@
                 "systemReason": "Followed session_start as root, late bruv-agent depth/type append, wisdom command/prompt rootAllowed callback, definitive ordinary-turn identity rehydration and chained SDK prompt contributions. Wisdom is registered before the final framing hook, so the callback must restore identity itself to avoid leaking root guidance. The child marker drives both command refusal and normal subagent guidance on two actual SDK turns; explicit shutdown is awaited before session.dispose."
               },
               {
-                "paths": [
-                  "tests/goals-sdk.test.ts",
-                  "src/agent/extension.ts"
-                ],
+                "paths": ["tests/goals-sdk.test.ts", "src/agent/extension.ts"],
                 "readingReason": "offlineResponse removes three copies of event-stream construction without absorbing goal lifecycle policy. The three callers still select tool content and stop reason explicitly; bound model, shared usage and timestamp timing match the removed code.",
                 "systemReason": "Read set/update/clear scripts, task-complete continuation scripts, and failing print-completion cycle scripts. Each returns the same queued done/end sequence into real SDK execute dispatch; the helper does not choose goals, milestones, completion, or handoff behavior. This is a local delivery helper, not a second lifecycle authority."
               }
@@ -757,10 +749,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/helpers.ts",
-          "tests/history-sdk-probe.test.ts"
-        ],
+        "changedSourcePaths": ["tests/helpers.ts", "tests/history-sdk-probe.test.ts"],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
@@ -1105,10 +1094,7 @@
                 "systemReason": "The semantic harness methods remove repeated event-shape noise while preserving actual hook seams. Appended goal entries now belong to the harness active branch and advance its leaf. The pre-session slash case genuinely avoids session_start, unlike the deleted callback-array mutation. Ordinary leaf movement, different-goal navigation, restart and sixteen-token retention correspond to distinct authority/accounting responsibilities; no huge abstraction is introduced."
               },
               {
-                "paths": [
-                  "tests/herdr-agent-state.test.ts",
-                  "src/herdr-agent-state.ts"
-                ],
+                "paths": ["tests/herdr-agent-state.test.ts", "src/herdr-agent-state.ts"],
                 "readingReason": "Read the shared recorder and all three removed socket-server variants. shouldReply retains release-only, all-but-first and non-release policies. Reporter attempt treats first response data as success and destroys its socket; shutdown clears queued state and drains release under retained authority.",
                 "systemReason": "One recorder owns server/listen/close and handles only ordinary late EPIPE. Shared request numbering and explicit response policies preserve the stalled-send and concurrent replacement stories rather than changing reporter protocol expectations. Temporary directory removal is restricted to the recorder-created directory and was not executed."
               },
@@ -1172,10 +1158,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/helpers.ts",
-          "tests/history-sdk-probe.test.ts"
-        ],
+        "changedSourcePaths": ["tests/helpers.ts", "tests/history-sdk-probe.test.ts"],
         "priorObjections": [
           {
             "paths": [
@@ -1292,12 +1275,7 @@
             "systemReason": "prepareAgentSession owns and disposes both creation and reopened managers. Adapter factory fault contexts use withTemporaryManager/disposal and pending replacement paths; DiskEntryStore.dispose unlinks its own spool, not inherited HOME or config. The probe preserves the reopen/collision/publication/pending/fork/recent-load fault journeys and the positive fresh-manager disposal control. Caller roots are retained instead of being erased after the child."
           },
           {
-            "paths": [
-              "tests/goals.test.ts",
-              "src/goals/store.ts",
-              "src/goals/extension.ts",
-              "src/goals/controller.ts"
-            ],
+            "paths": ["tests/goals.test.ts", "src/goals/store.ts", "src/goals/extension.ts", "src/goals/controller.ts"],
             "readingReason": "Read the entire expanded goals diff, including removed bespoke branch harness. The shared harness now updates durable branch/leaf on append and exposes narrow event verbs rather than handlers/ctx internals. startSession:false actually exercises command initialization before startup, unlike the deleted post-start handler-array mutation. New diagnostic tests distinguish malformed/unmatched goal updates from unrelated journal entries.",
             "systemReason": "latestGoal revokes a mismatched predecessor, diagnoses only closed-schema task references and permits a subsequent explicit set/clear boundary. ensureStore compares branch-derived goal state on leaf movement, preserving controller accounting for ordinary message advancement but discarding reminders for changed goal authority. Tests exercise navigation, session restart, exact reminder payloads, foreground questions and the newest-sixteen transport bound separately from endRun accounting. The unchanged owned JSONL durability test was also inspected; no execution occurred."
           },
@@ -1512,9 +1490,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/helpers.ts"
-        ],
+        "changedSourcePaths": ["tests/helpers.ts"],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
@@ -1745,20 +1721,12 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "tests/native-fast-mode.test.ts",
-              "src/agent/native-fast-mode.ts",
-              "src/session/restore-leaf.ts"
-            ],
+            "paths": ["tests/native-fast-mode.test.ts", "src/agent/native-fast-mode.ts", "src/session/restore-leaf.ts"],
             "readingReason": "Followed harness runtime selection, modelRegistry OAuth forwarding, real manager branch access, persistence injection and delayed consent/auth promises into production request authorization and runtime wrapper ownership. The new competing-controller test corresponds to the Set/WeakMap patch: ambiguous authorization refuses before preparation; shutdown removes one owner and final shutdown restores the original descriptor.",
             "systemReason": "Local providerRuntime/createOfflineSession/decodeRequestBody helpers remove repeated adapter and SDK setup without replacing real serialization or hiding the dispatch boundary. Returning registration and the active branch keeps checkpoint rollback assertions attached to the actual manager. Explicit promise handshakes improve lifetime clarity over microtask polling."
           },
           {
-            "paths": [
-              "tests/native-shake-sdk.test.ts",
-              "src/agent/manual-shake.ts",
-              "src/agent/native-compaction.ts"
-            ],
+            "paths": ["tests/native-shake-sdk.test.ts", "src/agent/manual-shake.ts", "src/agent/native-compaction.ts"],
             "readingReason": "Compared every removed nested scenario arrangement with the eight explicit callbacks and read the unchanged harness. Schema mutation and unresolved append now precede harness registration, which only captures manager/context and optionally binds transformContext; no eager plan is computed there. Lost/duplicate shim, changed runtime state, stale branch and provider/API refusals remain distinct arrangements.",
             "systemReason": "The named scenario map is a bounded test-local abstraction; assertions still verify no shake checkpoint and visible refusal. It does not substitute fixture counts or serializer success for checkpoint authority."
           },
@@ -1986,19 +1954,12 @@
             "systemReason": "Collection owns the mutable shared byte budget and graph queue; rendering receives only notice-bearing package records, no unused directory or repository metadata. Ordering, missing-license failures, pinned Pi fallback and final byte ceiling remain equivalent. Notices flow into the same published asset allowlist and installer notice directory. The extraction creates useful graph/read/render seams without a huge abstraction or options bag."
           },
           {
-            "paths": [
-              "scripts/ci-selective.ts",
-              ".github/workflows/ci.yml",
-              ".gitignore"
-            ],
+            "paths": ["scripts/ci-selective.ts", ".github/workflows/ci.yml", ".gitignore"],
             "readingReason": "Followed the actual workflow comparison baseline and tested merge checkout into plan(), reference-path classifier, clean-HEAD and regular-file checks, published selection and docs runner, then required job admission. Read ignored artifacts so publishing selection does not itself invalidate the clean-checkout check.",
             "systemReason": "Reference-only recognition is now shared instead of inferred via a complete intermediate plan. Invalid/empty/unsafe diffs still request full CI, --run still refuses full plans and rechecks checkout. Both platform jobs still depend on full=true. The final case statement admits exactly the previous two tuples, with feedback success mandatory; diagnostics improve without widening green outcomes."
           },
           {
-            "paths": [
-              ".github/workflows/dependency-updates.yml",
-              "scripts/generate-third-party-notices.ts"
-            ],
+            "paths": [".github/workflows/dependency-updates.yml", "scripts/generate-third-party-notices.ts"],
             "readingReason": "Followed validate job base/SHA outputs, candidate commit, Linux validation/notices and bundle packaging into the separate write-permission job. Read local bundle verification, FETCH_HEAD equality, one-parent base equality, allowed-file loop, then credential setup, current develop guard, lease push, status and PR update.",
             "systemReason": "The new step boundary moves downloaded identity/file verification before GH_TOKEN and gh auth setup-git, while retaining credential-free checkout and no dependency execution in the publication job. Publication is still guarded against stale develop and concurrent bot-branch movement. Ownership becomes clearer without changing the candidate being published."
           },
@@ -2158,11 +2119,7 @@
             },
             "sourceJourneys": [
               {
-                "paths": [
-                  "src/cli.ts",
-                  "src/update.ts",
-                  "scripts/bruv-claude-compat.sh"
-                ],
+                "paths": ["src/cli.ts", "src/update.ts", "scripts/bruv-claude-compat.sh"],
                 "readingReason": "Root CLI normalizes claude-compat update into the same updateBruv call. fetchStablePair still resolves four exact official URLs before inspecting the installation. inspectInstalledPair retains realpath, regular-file/single-link checks and optional sibling lstat. installedConnectorMatches retains old installed-only --version fallback; pairProbe removes inherited launcher overrides and provides an explicit staged bruv override. stageVerifiedExecutable preserves SHA256/filename checks and permissions. installReleasePair owns staging, backups, sameFile recheck, connector-first publication and reverse rollback; baseline rollback source was compared directly.",
                 "systemReason": "The extracted helpers express release authority, installation identity and publication lifetime separately without transferring mutable transaction ownership to callers. Current/newer/available/updated results, no-downgrade repair policy and onDownload ordering are source-equivalent. Check-only exits before staging/downloads. No changed cleanup boundary or missing rollback owner found."
               },
@@ -2260,10 +2217,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "scripts/find-ci-baseline.ts",
-          "tests/dependency-updates.test.ts"
-        ],
+        "changedSourcePaths": ["scripts/find-ci-baseline.ts", "tests/dependency-updates.test.ts"],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
@@ -2324,11 +2278,7 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "src/cli.ts",
-              "src/update.ts",
-              "scripts/verify-update.ts"
-            ],
+            "paths": ["src/cli.ts", "src/update.ts", "scripts/verify-update.ts"],
             "readingReason": "The public update entry still supplies currentVersion/check/onDownload and consumes the same four statuses. updateBruv now reads as orchestration: authorize stable metadata, inspect installation, decide current/newer/repair, then install. The exact four official URLs are resolved before any download. Named bruv/connector records replace positional downloads/files indexing without changing probe flags or result path.",
             "systemReason": "installReleasePair retains both-checksum-before-probe ordering, candidate product-version probes, the Darwin helper probe, backups and same-file checks before publishing connector then normal. It still reverses completed renames, retains staging on failed restoration, and cleans only its owned stage otherwise. --check still does no artifact downloads/replacements; installed legacy --version fallback is not used for candidates. verify-update compiles actual current or frozen updater imports and checks preservation, rollback, installed hashes/version identities, unchanged running runner and no remaining stage. Named installed records remove index coupling between path, expected hash, HOME and version flag."
           },
@@ -2959,9 +2909,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/helpers.ts"
-        ],
+        "changedSourcePaths": ["tests/helpers.ts"],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
@@ -3571,9 +3519,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/update.test.ts"
-        ],
+        "changedSourcePaths": ["tests/update.test.ts"],
         "priorObjections": [
           {
             "paths": [
@@ -3714,10 +3660,7 @@
     {
       "id": "lane-13",
       "area": "build-release-ci-tooling",
-      "paths": [
-        "tests/update.test.ts",
-        "tests/verify-update.test.ts"
-      ],
+      "paths": ["tests/update.test.ts", "tests/verify-update.test.ts"],
       "chars": 53532,
       "lines": 1156,
       "status": "accepted",
@@ -3763,10 +3706,7 @@
             "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
             "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
             "verdict": "ACCEPT",
-            "diffReadPaths": [
-              "tests/update.test.ts",
-              "tests/verify-update.test.ts"
-            ],
+            "diffReadPaths": ["tests/update.test.ts", "tests/verify-update.test.ts"],
             "contextReadPaths": [
               "tests/update.test.ts",
               "tests/verify-update.test.ts",
@@ -3785,28 +3725,17 @@
             },
             "sourceJourneys": [
               {
-                "paths": [
-                  "tests/update.test.ts",
-                  "src/update.ts",
-                  "src/cli.ts"
-                ],
+                "paths": ["tests/update.test.ts", "src/update.ts", "src/cli.ts"],
                 "readingReason": "Read the complete test diff including removed positions, both full baseline and candidate updater implementations, and the public CLI update branch at both revisions. Fixture options now separate bruv and connector artifacts, use the public UpdateDeps type, and deliberately hash expected rather than corrupt returned bytes. Official URL rejection now supplies all four assets and checks the particular normal-asset error instead of allowing an unrelated missing-connector rejection.",
                 "systemReason": "fetchStablePair still resolves exact official metadata for both binaries and checksums before layout inspection, download or publication. Source invocation and unsupported-host guards remain before fetch. The CLI still supplies check/currentVersion/onDownload and interprets the same four statuses. Current/newer metadata-only behavior, same-version repair, and no-downgrade behavior remain explicitly asserted; helper extraction preserves their ordering."
               },
               {
-                "paths": [
-                  "tests/update.test.ts",
-                  "src/update.ts",
-                  "scripts/bruv-claude-compat.sh"
-                ],
+                "paths": ["tests/update.test.ts", "src/update.ts", "scripts/bruv-claude-compat.sh"],
                 "readingReason": "Followed moved installed fallback and override tests and staged pair tests through pairProbe, installedConnectorMatches, installReleasePair, and the actual shell launcher. Read unchanged staged connector and macOS helper assertion bodies, not just relocation hunks.",
                 "systemReason": "Installed probes strip inherited BRUV_CLAUDE_COMPAT_BRUV_PATH; staged connector probes bind it to the verified candidate normal executable. Installed-only legacy fallback remains distinct from strict staged --bruv-version checks, and macOS live-helper probing still precedes publication. Tests distinguish product identity from the label-only connector --version, matching the launcher authority path."
               },
               {
-                "paths": [
-                  "tests/update.test.ts",
-                  "src/update.ts"
-                ],
+                "paths": ["tests/update.test.ts", "src/update.ts"],
                 "readingReason": "Followed the added event-order test and moved concurrency, first/second rename, and rollback-failure tests into stageVerifiedExecutable and installReleasePair. Compared baseline staging, backups, identity checks, connector-first publication, reversed rollback and final cleanup directly with candidate source.",
                 "systemReason": "The new assertion records sequential downloads/probes/publication and reads both original installed files during probes and both backup files at publication. It checks the real lifetime boundary rather than merely a returned success. Existing tests retain missing/existing connector rollback, concurrent creation/change protection, permission/layout/mode preservation and retained-backup diagnostics. The transaction owner still holds stage, replaced entries and keepRecovery locally; extraction has not split responsibility for rollback or cleanup."
               },
@@ -3846,9 +3775,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/update.test.ts"
-        ],
+        "changedSourcePaths": ["tests/update.test.ts"],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
@@ -3858,10 +3785,7 @@
         "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
         "candidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "verdict": "ACCEPT",
-        "diffReadPaths": [
-          "tests/update.test.ts",
-          "tests/verify-update.test.ts"
-        ],
+        "diffReadPaths": ["tests/update.test.ts", "tests/verify-update.test.ts"],
         "contextReadPaths": [
           "src/update.ts",
           "src/cli.ts",
@@ -3879,28 +3803,17 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "tests/update.test.ts",
-              "src/update.ts"
-            ],
+            "paths": ["tests/update.test.ts", "src/update.ts"],
             "readingReason": "The typed ReleaseOptions separates normal and connector artifact faults and gives the concurrency hook an explicit beforeBruvChecksum lifetime. Followed fixture metadata/fetch into fetchStablePair and stageVerifiedExecutable: canonical asset names and URLs match; checksums still hash the expected payload rather than the intentionally truncated response. The foreign-URL case now supplies the complete connector pair and asserts the authority-specific error, avoiding rejection for an unrelated missing asset.",
             "systemReason": "Both artifacts must be authorized and checksummed before installed files change. Moved integrity tests retain those protections and the nested per-artifact options remove the former any/flat connector option bag without adding another framework."
           },
           {
-            "paths": [
-              "tests/update.test.ts",
-              "src/update.ts",
-              "scripts/bruv-claude-compat.sh",
-              "src/cli.ts"
-            ],
+            "paths": ["tests/update.test.ts", "src/update.ts", "scripts/bruv-claude-compat.sh", "src/cli.ts"],
             "readingReason": "Followed current/newer and same-version repair tests through inspectInstalledPair, installedConnectorMatches and pairProbe. Installed product probes strip inherited launcher overrides; staged connector probes receive the staged normal path. The launcher enters normal bruv claude-compat, and the unchanged CLI shifts claude-compat update into the same update handler. Existing --version fallback stays confined to installed connectors; staged identity is --bruv-version.",
             "systemReason": "Check-only and repair behavior, honest connector display identity, and refusal to downgrade a newer broken pair remain consistent across public aliases and candidate verification. Moving tests into release selection and staged verification groups follows the actual ownership boundaries rather than creating competing helpers."
           },
           {
-            "paths": [
-              "tests/update.test.ts",
-              "src/update.ts"
-            ],
+            "paths": ["tests/update.test.ts", "src/update.ts"],
             "readingReason": "Read the new ordered event assertion against installReleasePair: metadata, onDownload, both binary/checksum downloads, normal/connector product probes, both original backups, identity recheck, connector-first rename, normal rename. The rename callback reads both backups before publication. Followed the retained first/second replacement failure, concurrent file change and rollback-failure tests through replaced tracking and keepRecovery cleanup.",
             "systemReason": "The explicit journey explains why the two renames are not a transaction and why backups survive failed rollback. Test regrouping preserves the old failure cases while the new ordering test makes publication authority and lifetime observable without replacing the updater implementation."
           },
@@ -4211,11 +4124,7 @@
             "systemReason": "Launch authority is still validated before runtime/state access. Transport owns packet requests; runtime owns Pi admission, session abortion and teardown. The refactor removes duplicated exit/close branches rather than adding another shutdown owner."
           },
           {
-            "paths": [
-              "src/claude-compat/frontend.ts",
-              "src/claude-compat/runtime.ts",
-              "src/claude-compat/commands.ts"
-            ],
+            "paths": ["src/claude-compat/frontend.ts", "src/claude-compat/runtime.ts", "src/claude-compat/commands.ts"],
             "readingReason": "Traced runtime consumed-user identity subscription into begin/onEvent/end, assistant stream publication, result usage, retry/terminal errors, notices, and command lifecycle. RunResult contains only per-root-run accounting/failure state and is replaced at begin; result remains readable after settlement. Provider retry success still clears only provider failure. Root human commands retain validated session/root/text admission and native notices rather than becoming model tools.",
             "systemReason": "Canonical Pi events still own start/settle and consumed human/task-notification attribution. Stream publication and usage accounting are separated locally; no child-token aggregation, alternate event scheduler, context bag or fabricated API latency is introduced."
           },
@@ -4233,10 +4142,7 @@
             "systemReason": "Persistence and answer authorization remain in the existing question service command port, not the projection. Lease-local state lowers lifetime ambiguity and protects against an old callback after session replacement. Result publication still waits for the actual human projection while questions.ask remains nonblocking."
           },
           {
-            "paths": [
-              "src/claude-compat/binding.ts",
-              "src/claude-compat/history.ts"
-            ],
+            "paths": ["src/claude-compat/binding.ts", "src/claude-compat/history.ts"],
             "readingReason": "Read fresh, bound-resume and native-import branches; followed importNativeHistory durable bruv-native-entry-map writing, resumeImported transcript/canonical-message checks, and resumeAt branch selection after complete nativeHistoryToPi checkpoint validation. Replacing imported.entries with the manager durable map is coherent because import writes exactly that map before returning. activeRootConversation preserves identity/parent/leaf checks; paired conversion records keep expanded messages and native UUIDs aligned.",
             "systemReason": "Imported history remains history-only, not restored task authority. The branch-oriented storage setup makes manager/history ownership explicit and removes parallel message/UUID mutation without changing conversion or incomplete-tool rejection."
           },
@@ -4415,11 +4321,7 @@
             "systemReason": "The new helper centralizes repeated role mapping rather than introducing a context bag. Derived native history does not replace the canonical session or restore task ownership. Error propagation remains present in both user completion and aggregate shutdown; child writer retains causal metadata and source identities."
           },
           {
-            "paths": [
-              "src/claude-compat/transport.ts",
-              "src/claude-compat/cli.ts",
-              "src/claude-compat/runtime.ts"
-            ],
+            "paths": ["src/claude-compat/transport.ts", "src/claude-compat/cli.ts", "src/claude-compat/runtime.ts"],
             "readingReason": "readFrames is the exact former byte accumulation loop, including geometric allocation, byte limit before copy, trimming/empty-line handling, split UTF-8 assembly and final unterminated frame. run still dispatches each yielded line in order and owns EOF pending-request rejection, accepted-handler drain, write drain, error closure and listener disposal. CLI still owns signal/EOF cancellation and awaits runtime close.",
             "systemReason": "Framing now has only partial-frame state and transport still has cancellation/backpressure/control-correlation authority. The extraction does not create an extra input queue or change user/control dispatch semantics; output errors continue to close transport and enter runtime shutdown."
           },
@@ -4971,10 +4873,7 @@
             "systemReason": "Tests distinguish an acknowledged stop report from observed killed status and leave native Stop cancellation to its owning runtime. Quoted state paths remain data. seedLinkedReturnEvidence groups four linked evidence sources without weakening their correlation/status checks or admitting auth/prompt payloads; final collection without a page still retains cross-source echoes."
           },
           {
-            "paths": [
-              "tests/fixtures/claude-task-worker.ts",
-              "tests/claude-compat-task-binding.test.ts"
-            ],
+            "paths": ["tests/fixtures/claude-task-worker.ts", "tests/claude-compat-task-binding.test.ts"],
             "readingReason": "Read complete current worker and baseline setup, plus unchanged real-worker spawn substitution, journal source, launch acknowledgment, terminal usage and restoration assertions.",
             "systemReason": "installOfflineModelTransport is a named cohesive extraction at the same execution point: identical stream event order, 40ms scheduling, answer, usage=23 and fetch refusal. Real SessionManager/AgentSession ownership and disposal remain outside the transport helper; the caller still passes the actual task session file and prompt."
           }
@@ -5107,10 +5006,7 @@
             "systemReason": "The extension subscribes one emitter to manager events. Only spawned/completed are projected, only explicitly enabled RPC writes raw NDJSON, and sessionFile/depth are not projected. Transport failure cannot prevent task execution or a later completed notice. These tests improve evidence without widening the public event schema or adding lifecycle state."
           },
           {
-            "paths": [
-              "tests/t3/web-launcher.test.ts",
-              "src/t3/web/launcher.ts"
-            ],
+            "paths": ["tests/t3/web-launcher.test.ts", "src/t3/web/launcher.ts"],
             "readingReason": "Separating accepted setup flags from rejected former server flags retains return-code/log/error assertions and gives each console spy a finally-scoped restore. The rejection test now begins with pristine spies instead of relying on an intervening mockClear.",
             "systemReason": "runWeb still only prints externalT3Guide for accepted help/setup flags and returns 2 with the same diagnostic for unsupported flags. No server launch or hidden setup behavior is introduced."
           },
@@ -5256,11 +5152,7 @@
             "systemReason": "Privacy is checked on original default captures before redaction/rendering, using actual hidden message content, reply key and owner IDs. Successful decode precedes the final receipt. Added Python tests intentionally mock encoding and do not serve as real playback proof; the source path through the shared encoder was inspected separately."
           },
           {
-            "paths": [
-              "scripts/leak-audit/cli-rpc-soak.ts",
-              "tests/cli-rpc-soak.test.ts",
-              "src/cli.ts"
-            ],
+            "paths": ["scripts/leak-audit/cli-rpc-soak.ts", "tests/cli-rpc-soak.test.ts", "src/cli.ts"],
             "readingReason": "Compared complete old globals/queue/event retention with SoakRpcSession and the sequential soak caller. The single end waiter is valid because every normal or abort turn is awaited before another starts, and registration still precedes prompt. Full events retention becomes eventCount plus failedResponses, retaining report semantics without the measurement harness itself retaining all events. Turn deadline is cleared even on prompt rejection; finish drains stdin, child exit and both output streams; finally disposes the exact owned child before stopping the loopback server.",
             "systemReason": "Mixed/new-only cycle schedules, abort delay, compact tolerances, samples, report fields and failure exit policy remain intact. The existing CLI-protocol fixture caller was read for fragmented JSONL, prompt/abort and rejection journeys, not used as a green-test verdict. Actual CLI hands ordinary mode to the external Pi SDK; SDK startup/protocol execution was not attempted."
           },
@@ -5416,20 +5308,12 @@
             "systemReason": "Local handoff cancels foreground waits without stopping managed jobs or pretending a bridge disconnect. Failed worker completion restores notification ownership; clean ACK transfers it. The two new owners are scoped to one invocation/process and reduce interleaved result-formatting/cancellation state, not generic frameworks. First-cause diagnostic classification now follows the captured termination cause rather than a later caller-signal reason."
           },
           {
-            "paths": [
-              "src/tasks/job-attention.ts",
-              "src/tasks/task-manager.ts",
-              "src/agent/extension.ts"
-            ],
+            "paths": ["src/tasks/job-attention.ts", "src/tasks/task-manager.ts", "src/agent/extension.ts"],
             "readingReason": "Followed spawned/activity/completed manager events into scheduler state, deadline scheduling, takeDueReasons, authoritative pending snapshots, bounded inspect, notice consumers and waitForNotice. Read scheduler snooze/setWatch/dispose and agent session teardown. Failed inspection now lives with its task state and resets on successful inspection; due checkpoints are still consumed before inspection, avoiding a retry spin. Completion removes state; disposal clears timer/subscription and releases waiters.",
             "systemReason": "Attention remains evidence-only and does not kill jobs. One scheduler owns deadlines and failure episodes; replacing the separate failure-ID set removes a parallel lifetime structure while preserving diagnostics and periodic review behavior. The unchanged notification consumer still sends through the appropriate session/native delivery route."
           },
           {
-            "paths": [
-              "src/tasks/resume-safeguards.ts",
-              "src/tasks/agent-session.ts",
-              "src/agent/extension.ts"
-            ],
+            "paths": ["src/tasks/resume-safeguards.ts", "src/tasks/agent-session.ts", "src/agent/extension.ts"],
             "readingReason": "Read role-marker creation, bounded role parsing/cache/decorate, picker installation, resume confirmation and session-start/shutdown uninstallation. The root refcount map now determines first install/last release; adapters capture original methods in closures and restore only if still installed, preserving another extension wrapper. Unknown/worker/orchestrator gating remains unchanged; decoration itself does not confer root authority.",
             "systemReason": "The refactor removes redundant install counters and mutable original/adapter globals while preserving multiple active-directory ownership and idempotent release. Child session identity still travels in persistent source metadata and is independently restored by the agent integration."
           }
@@ -5540,20 +5424,12 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "src/cli.ts",
-              "src/typescript/runner.ts",
-              "src/typescript/execution.ts"
-            ],
+            "paths": ["src/cli.ts", "src/typescript/runner.ts", "src/typescript/execution.ts"],
             "readingReason": "Followed the internal execute CLI gate, fresh worker spawn, require resolution interception, reachable ESM registration, static/deferred import rewriting, and runner finalization. The deleted createBoundRequire had only its entry-file invocation; replacing its filename parameter with entryFilename retains the anchor. dirname(entryFilename) equals the old cwd. Static dependency traversal retains file URL, builtin, relative, package-export and #import branches.",
             "systemReason": "The extracted registrar owns one Set per execute child, records files before recursion, and leaves CJS evaluation/cache native. Resolver installation still precedes entry registration/import. No process-global loader lifetime leaks into the parent. The refactor separates mechanisms without a new context bag or public semantic change."
           },
           {
-            "paths": [
-              "src/typescript/images.ts",
-              "src/typescript/runner.ts",
-              "src/typescript/execution.ts"
-            ],
+            "paths": ["src/typescript/images.ts", "src/typescript/runner.ts", "src/typescript/execution.ts"],
             "readingReason": "Traced queued showImage writes on private fd 3 through runner finish to parent bounded image collection and atomic decode. Compared every deleted validation branch with decodeImageRecord and the new aggregate loop.",
             "systemReason": "Record helper retains canonical base64, MIME/header, decoded size and resize metadata validation; the channel still checks framing, image count and total decoded bytes before returning anything. Parent execution only attaches images after clean exit and rejects malformed channels. Returning decoded byte length makes per-record trust checking distinct from aggregate accounting rather than trusting the child."
           },
@@ -5599,10 +5475,7 @@
             "systemReason": "Launch evidence is published before an eventual execute failure and remains attached to its invocation; handoff cancels local waits, not managed jobs, and only successful execution sets terminate. Mixed SDK batches continue. New SDK fixture cleanup awaits session_shutdown before removing its owned directory, and foreground-stop assertions distinguish issuing cancellation from worker exit. Attention fixture extraction preserves subscription accounting and restores patched prototypes. Background UX now excludes lifecycle sidecars and chooses parent.jsonl explicitly, avoiding a real ambiguity rather than just moving assertions."
           },
           {
-            "paths": [
-              "tests/cli-rpc-soak.test.ts",
-              "scripts/leak-audit/cli-rpc-soak.ts"
-            ],
+            "paths": ["tests/cli-rpc-soak.test.ts", "scripts/leak-audit/cli-rpc-soak.ts"],
             "readingReason": "Inspected the new fake-CLI entrypoint test together with the actual soak script: fragmented JSONL, response correlation, prompt/abort agent_end timers, replacement cycles, output drains, report persistence, failed prompt handling, and exact child disposal. Followed report.root/error artifact path back to the script-owned mkdtemp root.",
             "systemReason": "The fixture executes the copied real entrypoint with an explicit argv and overrides its binary with a fake rather than substituting the lifecycle under test. The script owns temporary HOME/agent directories and a loopback server; tests check child exit before cleanup and inspect persisted reports. No real provider/auth access was performed. This gives focused cross-file lifecycle evidence by source inspection, not a claim of passing runtime tests."
           }
@@ -5739,20 +5612,12 @@
                 "systemReason": "Registered execute wraps wait cancellation separately from delivery. TaskManager.foreground subscribes to the delivery signal; serveJobBridge retains foreground ACKs across transport end, commits only on clean worker close, aborts on failed/fallback replies or replay, and ordinary RPC ACKs release their controllers immediately. New protocol assertions align with execution.ts clean-exit commit and the registered batch/handoff tests; no duplicated completion ownership found."
               },
               {
-                "paths": [
-                  "tests/job-attention.test.ts",
-                  "src/tasks/job-attention.ts",
-                  "src/tasks/task-manager.ts"
-                ],
+                "paths": ["tests/job-attention.test.ts", "src/tasks/job-attention.ts", "src/tasks/task-manager.ts"],
                 "readingReason": "Changed tests express checkpoints and diagnostics episodes directly rather than one broad transient-failure assertion; finally restores replaced manager methods and disposes the scheduler.",
                 "systemReason": "FakeClock advances actual scheduled deadlines. #takeDueReasons consumes quiet/review deadlines before inspection, pending snapshot is terminal/missing authority, and inspection failure keeps a confirmed pending job watched with one diagnostic per failure episode. Tests distinguish monitoring retirement from killing a still-running manager task."
               },
               {
-                "paths": [
-                  "tests/output-buffer.test.ts",
-                  "src/output-buffer.ts",
-                  "src/tasks/task-manager.ts"
-                ],
+                "paths": ["tests/output-buffer.test.ts", "src/output-buffer.ts", "src/tasks/task-manager.ts"],
                 "readingReason": "Reorganized scenarios separate logical cursors/loss from owned byte storage, strengthen whole page metadata and mutation-isolation assertions, and retain oversized-write/tiny-write/discard coverage without a context bag.",
                 "systemReason": "Buffer append copies retained bytes, read copies pages, discard preserves logical end offsets. TaskManager.inspect owns UTF-8 repair and reads three lookahead bytes; raw-byte discard assertions correctly do not demand character repair from the storage layer."
               },
@@ -5926,11 +5791,7 @@
             "systemReason": "Traced registered execute -> delivery.waitSignal/withJobCancellation -> service foreground -> original response delivery signal. A foreground ACK remains provisional across transport end; executeIsolated commits only after clean worker completion; close dispatches ACK before abort. Failed/oversized/partial-batch replies instead release completion ownership. The new protocol and integration tests cover the same distinction; direct failures and handoff do not kill surviving managed jobs, whose completion notifications remain owned by the session."
           },
           {
-            "paths": [
-              "tests/job-attention.test.ts",
-              "src/tasks/job-attention.ts",
-              "src/tasks/task-manager.ts"
-            ],
+            "paths": ["tests/job-attention.test.ts", "src/tasks/job-attention.ts", "src/tasks/task-manager.ts"],
             "readingReason": "New failure tests separately specify checkpoint consumption, recovery resetting the diagnostic episode, and authoritative pending-snapshot retirement. They restore inspect/pending substitutions in finally, keeping the test intent local instead of adding scheduler internals to a broad fixture.",
             "systemReason": "The scheduler consumes quiet/review deadlines before inspect, pending() decides whether a job remains observable, and a recovered inspect clears inspectionFailed. Test times 100/200/400/600/800/1000 match those transitions. Retirement clears scheduler state without terminating the still-running manager job; suite afterEach owns eventual manager shutdown."
           },
@@ -5949,11 +5810,7 @@
             "systemReason": "Traced UI displayed owner/version -> runtime commands stale-snapshot fence -> service branch/version mutation; compiled execute exposes ask/block/get/list/resolve/cancel but no answer. Followed queued -> durable dispatching claim -> post-await epoch/pause/idle/owner check -> host send -> delivered, and shutdown fencing followed by explicit resume. New tests model pauses and competing runtimes against those real paths. Remote detail assertions distinguish ledger observation from saved local human reply without invoking remote auth. Terminal launch uses execFile argv, its own tmux socket, explicit HOME/config/SDK/temp, offline CLI, and retains its fixture directories; close only targets that socket."
           },
           {
-            "paths": [
-              "tests/output-buffer.test.ts",
-              "src/output-buffer.ts",
-              "src/tasks/task-manager.ts"
-            ],
+            "paths": ["tests/output-buffer.test.ts", "src/output-buffer.ts", "src/tasks/task-manager.ts"],
             "readingReason": "The reorganized tests retain baseline pagination, trimming, tiny-write and oversized-write behavior while adding exact cursor/loss assertions, mutation isolation, and discard-to-empty followed by append. Descriptions explicitly distinguish raw byte storage from UTF-8 presentation.",
             "systemReason": "BoundedOutputBuffer copies incoming and returned slices, preserves logical end/base offsets through discards, and compacts owned retained bytes. TaskManager.inspect alone performs UTF-8-safe slicing and reports skipped prefix loss. The partial-emoji raw-byte expectations therefore agree with the unchanged consumer rather than imposing incompatible text semantics on storage."
           },
@@ -6157,11 +6014,7 @@
                 "systemReason": "Remote observations are provenance, not authority. Failed host dispatch releases the outbox lease and preserves the row; attach replays it while dispose unsubscribes and removes the old volatile source. Successful dispatch marks the durable row delivered. Native attachment state is reset on close/attach; getManager requires the durable local mailbox before creating task ownership. Thus the local session after native teardown is not accidentally still restricted."
               },
               {
-                "paths": [
-                  "tests/task-manager.test.ts",
-                  "src/tasks/task-manager.ts",
-                  "src/tasks/job-service.ts"
-                ],
+                "paths": ["tests/task-manager.test.ts", "src/tasks/task-manager.ts", "src/tasks/job-service.ts"],
                 "readingReason": "Compared candidate and baseline activation and public summary implementations, and followed the unchanged worktree launch caller. Added tests meaningfully check reserved identity, waiter continuity, notification policy, original deadline, metadata-copy isolation and cancellation authority; these are not cosmetic snapshots. However the two new process-backed activation tests reuse commandLaunch, which supplies /bin/sh -lc and no env.",
                 "systemReason": "JobService reserves before workspace preparation, passes the preparation signal through setup, then activates with the original timeout and wait budget already in force. Candidate activation preserves the managed task rather than creating another reservation; summary is now an allowlist and kill settles the original waiter. The assertions agree with this ownership flow. The test subprocess ownership does not: #spawnChild defaults missing env to process.env, so the new tests reach an inherited login-shell HOME/config instead of an owned fixture."
               }
@@ -6278,10 +6131,7 @@
                 "systemReason": "prepareAgent owns the timer, cancellation controller, promise and identity. activatePreparedAgent mutates that same record; #startDeadline does not replace an existing deadline. The real worktree caller observes the preparation signal and activates the reservation, not a second task. The tests exercise waiter identity, notification policy, lifecycle event count, deadline preservation and absence of public cancellation authority. The prior manager-process objection is resolved by actual candidate code."
               },
               {
-                "paths": [
-                  "tests/questions.test.ts",
-                  "src/questions/service.ts"
-                ],
+                "paths": ["tests/questions.test.ts", "src/questions/service.ts"],
                 "readingReason": "Splitting the combined scenarios exposes separate ledger/idempotence, optional-resolution, sibling-dedup, lock-navigation, race and retention responsibilities. All removed assertions are retained in the corresponding new scenarios; race assertions additionally compare persisted winner/version.",
                 "systemReason": "Service mutate revalidates navigation inside the locked change callback, answer deduplicates matching prior reply/version before stale checks, and ask enforces pending/total limits without deleting history. Agent handle cannot supply a UI answer. Fixtures keep branch ancestry explicit, so the split does not confuse continuation ownership with sibling ownership."
               },
@@ -6317,11 +6167,7 @@
                 "systemReason": "The runtime close facet requires complete cancellation discovery, terminal descendants and idle/no pending messages. The owner installs pending-close evidence before end, waits for clean exit, and only then drains queued receipts without dispatch. Nonzero exit remains unknown; exact command replay returns the prior receipt. Prompt acknowledgement is deliberately nonblocking so abort can dispatch. These tests agree across owner/store/runtime rather than asserting contradictory notions of closed."
               },
               {
-                "paths": [
-                  "tests/root-owner.test.ts:462-550",
-                  "src/remote/repository.ts",
-                  "src/remote/root-owner.ts"
-                ],
+                "paths": ["tests/root-owner.test.ts:462-550", "src/remote/repository.ts", "src/remote/root-owner.ts"],
                 "readingReason": "captureTrackedFixture and uploadWithExactReplay reduce repeated upload scaffolding and keep dirty-tracked/excluded-untracked and closed-success export gates separate. Baseline and candidate result assertions still reject accepted, unknown and failed-close states.",
                 "systemReason": "This journey also reveals the remaining isolation contradiction: the extracted Git fixture still spreads process.env, and captureRepository also launches Git from the ambient host. A temporary repository is not a temporary process environment. Unlike the repaired task suite, this file has no owned-process boundary; see objection."
               },
@@ -6376,9 +6222,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/root-owner.test.ts"
-        ],
+        "changedSourcePaths": ["tests/root-owner.test.ts"],
         "priorObjections": [
           {
             "paths": [
@@ -6714,11 +6558,7 @@
                 "systemReason": "executionCancellation commits the first termination before synchronously aborting the bridge; serveJobBridge aborts the per-request signal, so the reentrant caller shutdown cannot replace timeout ownership. SIGTERM-to-SIGKILL escalation and diagnostics are still asserted. ExecuteDelivery publishes canonical launch rows before finish, excludes inline shells, includes completed helpers, preserves explicit helper titles, and retains launch evidence when the outer execute fails. The fixture models these actual boundaries with a small typed capture, not a context bag."
               },
               {
-                "paths": [
-                  "tests/typescript-images.test.ts",
-                  "src/typescript/images.ts",
-                  "src/typescript/execution.ts"
-                ],
+                "paths": ["tests/typescript-images.test.ts", "src/typescript/images.ts", "src/typescript/execution.ts"],
                 "readingReason": "Only execute-process tests retain directory hooks; pure header/channel tests are outside those hooks. New decoder assertions exercise ordered records, retained validated resize metadata, whole-channel rejection, decoded-byte aggregate limits, and framing/count error precedence.",
                 "systemReason": "decodeImageChannel checks channel/framing/count before validating records and counts decoded bytes; executeIsolated decodes only clean successful execution and attaches no partial images on any failure. The reorganized tests distinguish byte-channel trust from child-process transport without weakening the existing execution assertions."
               },
@@ -6844,11 +6684,7 @@
                 "systemReason": "registeredExecuteTool chooses callbacks by event rather than registration order and returns only surfaces exercised. It preserves stable background launch rows even on outer execution failure, inline helper identity, image advisory, capture budgets and session reset checks. New synchronous bridge-cancellation assertion agrees with timeout being latched before reentrant shutdown; no change of result authority into the fixture."
               },
               {
-                "paths": [
-                  "tests/typescript-images.test.ts",
-                  "src/typescript/images.ts",
-                  "src/typescript/execution.ts"
-                ],
+                "paths": ["tests/typescript-images.test.ts", "src/typescript/images.ts", "src/typescript/execution.ts"],
                 "readingReason": "Read the entire regrouping plus new ordered/malformed/count/total-byte tests, current record decoder and channel loop, and parent execute image acceptance after clean process completion. Read existing per-execute fixture lifetime and raw child launch for context.",
                 "systemReason": "Pure format/channel tests no longer allocate process fixtures. Record order and resize metadata assertions agree with parent validation; later invalid records cannot yield partial output, decoded rather than base64 bytes own the aggregate budget, and framing/count checks precede record validation. Existing owned temporary cleanup and inherited raw-child env were inspected, never executed."
               },
@@ -6899,9 +6735,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/worktree-workspace.test.ts"
-        ],
+        "changedSourcePaths": ["tests/worktree-workspace.test.ts"],
         "priorObjections": [
           {
             "paths": [
@@ -7690,11 +7524,7 @@
             "systemReason": "The next-user audit association and branch-wide legacy deduplication remain different lifetimes. Passive live-transcript and raw snapshot records are filtered from model context; uncertainty remains a custom observation adjacent to the associated user turn, never fabricated user prose. Missing fragments produce an incomplete-history notice without an actionable retained suffix. Later unrelated typed turns cannot inherit the association."
           },
           {
-            "paths": [
-              "src/live/speaker-check.ts",
-              "src/live/extension.ts",
-              "src/live/audio.ts"
-            ],
+            "paths": ["src/live/speaker-check.ts", "src/live/extension.ts", "src/live/audio.ts"],
             "readingReason": "Read the complete extraction and the current owner finally block (abort, bounded stop wait and close). Followed the extension local/busy checks and explicit speaker-test consent to the injected audio factory. Inspected native start/play/stop/close contracts, including immediate PCM encoding. Compared measurement callbacks, baseline/stimulus/tail windows, overflow/pending classification and processing validation against their deletions.",
             "systemReason": "The outer function still owns deadline, external abort, late factory completion and helper shutdown; the inner measurement owns capture buffers and clears them before teardown callbacks can refill them. waitForAudio bounds waits without falsely claiming cancellation of native operations. Signal analysis and configuration reporting stay separate; enabled processing is not recast as proven AEC or barge-in quality. No provider is needed for this explicitly consented local measurement."
           },
@@ -7723,10 +7553,7 @@
             "systemReason": "Only model streaming is substituted on the same ordinary session. Real owner delegation and UI routing stay exercised. The microphone helper contains its timer/epoch/counter state and returns the same async stop for stop and close; it does not acquire device/network behavior. Fixture code remains in this durable candidate worktree; consumer mkdtemp homes are test fixtures, not review checkouts."
           },
           {
-            "paths": [
-              "tests/current-pipeline-live.test.ts",
-              "tests/goals-live.test.ts"
-            ],
+            "paths": ["tests/current-pipeline-live.test.ts", "tests/goals-live.test.ts"],
             "readingReason": "Compared every synthetic assistant/toolResult/user/assistant field in appendToolFixture against the deleted local helper and both call sites. Compared runWithinGoalWallLimit with the removed timer/abort/workflow lifetime, and read live-test setup and final evidence/disposal/owned-temp cleanup source.",
             "systemReason": "Synthetic compaction history still surrounds each exact tool value with the same durable messages and model metadata. Goal workflow still races the 120-second wall failure, aborts and drains before dispatch-budget restoration/evidence capture. This extraction binds the relevant lifetime without moving evidence ahead of possible dispatch. Paid/authenticated setup remains intentionally outside the offline review and was not executed."
           }
@@ -7845,10 +7672,7 @@
             "systemReason": "Followed extension capture to the four-frame onset detector, bridge interruption and independent appendMicrophone; speech invalidates scheduler epochs but never gates GPT microphone forwarding. Scheduler flush starts immediately despite an in-flight send, waits before new sends, and stale acceptance earns no played credit. The 15 quiet frames plus 10 guard frames are capture-driven, not playback-clock time. Hard errors latch suppression, repeated onset invalidates again without recursive flush failure. LiveAudio.play/flush remains a pipe-acceptance boundary, not proof of audible playback."
           },
           {
-            "paths": [
-              "tests/live-audio-lifecycle.test.ts",
-              "src/live/audio.ts"
-            ],
+            "paths": ["tests/live-audio-lifecycle.test.ts", "src/live/audio.ts"],
             "readingReason": "The Input fake now parses commands once and separates callback from drain. Each scenario explicitly controls their ordering, capture-gate capability, and worker reap; complete remains the simple combined operation for ordinary cases. These narrow fixture changes reduce repeated JSON parsing and make the two independent acceptance signals legible.",
             "systemReason": "Followed HelperInput active versus queued writes: callback plus drain resolves acceptance, interruptPlayback rejects only unsent play commands, capture_gate survives before flush/stop, and shutdown rejects both active/queued writes. A next-write throw cannot revoke the already resolved active write. Tests check closed notification once and drain detachment, while input/process error guards remain until child close; injected workers record signals and do not spawn or kill real processes."
           },
@@ -7988,11 +7812,7 @@
             "systemReason": "Replacing test calls to gemini/cumulative with usage matches the integrated model-owned accounting dispatch: GPT duration watermark survives turnComplete, Gemini watermark resets per turn, Realtime deduplicates IDs rather than equal usage. Terminal duration is accepted during voice stop before final close bookkeeping. Unknown charges are recorded once without undoing known increments. No test hides the missing OpenAI backend/ASR pricing."
           },
           {
-            "paths": [
-              "tests/live-extension.test.ts",
-              "src/live/extension.ts",
-              "src/live/main-owner.ts"
-            ],
+            "paths": ["tests/live-extension.test.ts", "src/live/extension.ts", "src/live/main-owner.ts"],
             "readingReason": "Read startup-hold and shared-editor extraction diff, actual fixture dependency injection/cleanup and extension owner acquisition, helper launch, provider construction/connect, initial-context replay, microphone start and late-launch disposal. Read main-owner context preparation and close/release excerpts.",
             "systemReason": "Separate reached/resume holds let cancellation tests prove which startup boundary was reached, replacing timing guesses and coupled helper/provider defer state. Late helper ownership is still disposed without opening devices. New tool-provider seam assertions follow real orchestration identity and context options, replay before microphone start, and alive fencing after stop. Shared-editor extraction isolates genuine SDK input routing from simulated transport boundaries without adding a production abstraction or a new context bag."
           },
@@ -8008,10 +7828,7 @@
             "systemReason": "Typed taskFixture models the supplied task port directly rather than a redundant method-string dispatcher. Production still routes operations through the one owning JobService, with confirmation and unchanged-session checks. ownHost/afterEach closes subscriptions and polling on assertion failure. Listener replacement does not reset request deduplication; last-listener removal intentionally resets only active native observations. quotedTranscript centralizes the actual wire envelope, not host.context(), preserving ancestry-only immutable exports and failed-delivery replay behavior."
           },
           {
-            "paths": [
-              "tests/live-credentials.test.ts",
-              "src/live/credentials.ts"
-            ],
+            "paths": ["tests/live-credentials.test.ts", "src/live/credentials.ts"],
             "readingReason": "Read full credential test diff and actual parseLiveKey/loadLiveKey implementation. The error helper inspects only fixture errors, not user credentials.",
             "systemReason": "The prior malformed-file try/catch could pass when no rejection occurred; expectUnavailableKey now requires Error, the opaque 0600 instruction, and no fixture-key leak. This matches the loader catch boundary for unsafe mode, symlink, oversized, directory, missing and invalid-content sources. Parsing remains literal and never evaluates shell assignments."
           },
@@ -8197,11 +8014,7 @@
             "systemReason": "New tests assert distinct lifetimes: an audit survives non-user records but is consumed by the next user even when unmatched; legacy dedup belongs to a single projection. They preserve source objects and avoid attaching speech provenance to a later identical typed request. This agrees with raw hidden audit retention and clean canonical prompt assertions in the integration test."
           },
           {
-            "paths": [
-              "tests/live-playback.test.ts",
-              "src/live/playback.ts",
-              "src/live/extension.ts"
-            ],
+            "paths": ["tests/live-playback.test.ts", "src/live/playback.ts", "src/live/extension.ts"],
             "readingReason": "Read all playback diff and actual Clock/harness. Followed PendingAudio copy/boundary accounting, PlaybackTimeline reservation vs acceptance, scheduler in-flight/flush/epoch handling, and extension send/flush/played-estimate/turn-boundary callers. HeldPipe keeps separate promises per attempted write; NativeRing relocates the exact block consumption and delayed report model from the prior inline simulation.",
             "systemReason": "These are small owned test models, not alternate production schedulers. They reduce duplicated timing bookkeeping while preserving cadence assertions. Added tail-copy and successful-old-write tests directly correspond to pending bytes excluding the taken frame, flush not freeing an outstanding pipe slot, and stale epoch success not crediting new playback."
           },
@@ -8349,11 +8162,7 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "tests/live-session.test.ts",
-              "src/live/session.ts",
-              "src/live/types.ts"
-            ],
+            "paths": ["tests/live-session.test.ts", "src/live/session.ts", "src/live/types.ts"],
             "readingReason": "Read every renamed/split scenario including deletions, the unchanged injected SDK harness, and the complete candidate session. Splits keep the pending-connect cancellation, consumed late rejection, throwing callbacks, goAway, ready reentrancy and send reentrancy assertions rather than removing a lifecycle branch.",
             "systemReason": "connect races SDK setup against bounded local cancellation; epoch gates callbacks and closes late connections. close invalidates epoch before callbacks/SDK close. No added lifecycle owner or revived mic path."
           },
@@ -8391,11 +8200,7 @@
             "systemReason": "compactLiveStatus is pure presentation, not readiness state. Its small facts object is not a context bag. Waveform keeps bounded scalar peaks rather than PCM retention; reset and tick semantics match tests. Candidate live-source search found no production LiveWaveform caller, so these tests are meter-unit evidence, not proof of the current rendered footer."
           },
           {
-            "paths": [
-              "tests/live-setup-diagnostics.test.ts",
-              "native/live/main.swift",
-              "src/live/diagnostics.ts"
-            ],
+            "paths": ["tests/live-setup-diagnostics.test.ts", "native/live/main.swift", "src/live/diagnostics.ts"],
             "readingReason": "Read new source-level barrier checks against actual LiveOutput event/startPolling/cancelPolling/finishStop/poll/discardCapture and Live.start/stop callers, along with existing sanitization tests/helper branches.",
             "systemReason": "ready is enqueued on the serial output queue before timer resumes; stop cancels polling before engine teardown/flush and synchronously clears capture and emits played-zero before stopped. The source test correctly labels itself non-runtime macOS evidence; it introduces no generalized AST/test abstraction."
           },
@@ -8456,10 +8261,7 @@
     {
       "id": "lane-35",
       "area": "live-native-audio",
-      "paths": [
-        "tests/openai-session.test.ts",
-        "tests/openai-upgrade-socket-node.test.mjs"
-      ],
+      "paths": ["tests/openai-session.test.ts", "tests/openai-upgrade-socket-node.test.mjs"],
       "chars": 69315,
       "lines": 1560,
       "status": "accepted",
@@ -8484,10 +8286,7 @@
         "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
         "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
         "verdict": "ACCEPT",
-        "diffReadPaths": [
-          "tests/openai-session.test.ts",
-          "tests/openai-upgrade-socket-node.test.mjs"
-        ],
+        "diffReadPaths": ["tests/openai-session.test.ts", "tests/openai-upgrade-socket-node.test.mjs"],
         "contextReadPaths": [
           "src/live/openai-session.ts",
           "src/live/openai-upgrade-socket.ts",
@@ -8551,11 +8350,7 @@
             "systemReason": "The tests distinguish item origin authorization from playback timing, retain the first content_index/start across chunks, prevent late chunks from an old response and reset offsets on an interruption. Real callbacks use playback.playedMs and playback.interrupt(epoch); ordinary turn completion does not flush playback. Those boundaries fit the helper and existing shared contract. These scenarios improve discoverability, but do not establish every retirement case; the inherited retirement caveat is recorded below."
           },
           {
-            "paths": [
-              "tests/openai-session.test.ts",
-              "src/live/openai-session.ts",
-              "src/live/main-owner.ts"
-            ],
+            "paths": ["tests/openai-session.test.ts", "src/live/openai-session.ts", "src/live/main-owner.ts"],
             "readingReason": "Follow the new retained-call-ID test through response.calls, callIds, pending result publication and subsequent response.created cleanup; compare the corresponding baseline session implementation and baseline main-owner replay cache.",
             "systemReason": "The pending reply keeps its response/replay ID alive through r2; after settlement and another response creation the provider allows an orchestration invocation for that ID. This matches the baseline provider behavior despite the new response-local map. The actual main owner still memoizes same-ID/same-signature executions for the owner lifetime, so executions in this injected test count provider orchestration invocations, not duplicate real side effects."
           }
@@ -8581,9 +8376,7 @@
     {
       "id": "lane-36",
       "area": "parent-integration",
-      "paths": [
-        "tests/live-linux-protocol-regressions.test.ts"
-      ],
+      "paths": ["tests/live-linux-protocol-regressions.test.ts"],
       "chars": 1163,
       "lines": 31,
       "status": "accepted",
@@ -8608,9 +8401,7 @@
         "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
         "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
         "verdict": "ACCEPT",
-        "diffReadPaths": [
-          "tests/live-linux-protocol-regressions.test.ts"
-        ],
+        "diffReadPaths": ["tests/live-linux-protocol-regressions.test.ts"],
         "contextReadPaths": [
           "native/live-linux/tests/test_protocol.py",
           "native/live-linux/tests/protocol.py",
@@ -8642,10 +8433,7 @@
             "systemReason": "The claimed device-free boundary is supported by actual call paths. Local regression cases exercise the shared harness's lifetime/error semantics rather than requiring Pulse credentials, audio hardware, or a live helper."
           },
           {
-            "paths": [
-              "tests/live-native-workflows.test.ts",
-              "tests/live-linux-protocol-regressions.test.ts"
-            ],
+            "paths": ["tests/live-native-workflows.test.ts", "tests/live-linux-protocol-regressions.test.ts"],
             "readingReason": "Inspected the neighboring workflow test's first 65 lines, including its owned mkdtemp HOME/config/SDK fixture and Python argv. It establishes existing Python subprocess test precedent; the assigned adapter itself supplies no env and inherits its caller environment.",
             "systemReason": "No file-writing or config/SDK lookup occurs in the assigned Python call path; -B suppresses bytecode writes. Inherited environment is recorded as a review limitation, not claimed to be an isolated execution sandbox."
           }
@@ -8959,11 +8747,7 @@
             "systemReason": "Image identity, no-network build/container flags, pinned host keys, readiness order and cleanup flags remain in their former lifecycle. Scenario-specific helpers keep the question identity/owner/version checks with explicit human approval, and retain uncertain-command identity reconciliation before running-job cancellation. Root source return is still prohibited without successful close. Helpers use narrow scalar results (command/job IDs), not a generic context bag or a second owner."
           },
           {
-            "paths": [
-              "scripts/remote-jobs-e2e.ts",
-              "src/remote/client.ts",
-              "src/agent/extension.ts"
-            ],
+            "paths": ["scripts/remote-jobs-e2e.ts", "src/remote/client.ts", "src/agent/extension.ts"],
             "readingReason": "Compared the complete two-session scenario extraction, including removed checks, against current client launch registration and final cleanup. Followed stable job-ID decoding, parent yield, terminal completion, cross-session rejection and reconnect/no-redelivery assertions.",
             "systemReason": "The sequence still launches two session-owned jobs and checks both stable IDs and ownership before observing completion. Completion filtering and side-specific checks are named once, while all reconnect clients remain in the same owned clients list. No fixture result or green test was used as acceptance evidence."
           },
@@ -9127,11 +8911,7 @@
             "systemReason": "Role/depth and authorized target checks still precede repository effects. Human approval pins bytes; replay cannot silently change owner or transfer unapproved untracked content. The extracted preparation stage removes inline mutation/closure coupling without adding a new authority."
           },
           {
-            "paths": [
-              "src/remote/owner.ts",
-              "src/remote/client.ts",
-              "src/remote/services.ts"
-            ],
+            "paths": ["src/remote/owner.ts", "src/remote/client.ts", "src/remote/services.ts"],
             "readingReason": "Followed record(event) through OwnerEventJournal, owner events pagination, acceptTranscriptPage, cache save and post-lock serviceRemoteTask. Read runOwnerTask fail, child routing and finally teardown plus client exclusive and syncActive.",
             "systemReason": "Journal sequence advances only after fsync; full page validates before cache mutation; owner epoch and contiguous cursor checks remain. Service callbacks still run after exclusive resolves, allowing control/updateTask without lock recursion. Journal descriptor lifetime belongs to the owner and child failure remains in runOwnerTask."
           },
@@ -9358,11 +9138,7 @@
             "systemReason": "Terminal job text is still preserved before the checkpoint can authorize child shutdown. Pending descendants/messages or questions prevent completion; runtime inspection errors produce error checkpoints rejected by owner. The owner does not infer successful completion merely from an agent yielding. No capture or settlement authority moved to the durability helper."
           },
           {
-            "paths": [
-              "src/remote/client.ts",
-              "src/remote/services.ts",
-              "src/remote/capability-runtime.ts"
-            ],
+            "paths": ["src/remote/client.ts", "src/remote/services.ts", "src/remote/capability-runtime.ts"],
             "readingReason": "Followed client.sync releasing its cache lock before serviceRemoteTask, then replyToCapabilityRequests and waitForCapabilityGrant into the actual mailbox/store. Helper extraction cleanly distinguishes servicing already authorized reads from recording and waiting for missing human-granted authority.",
             "systemReason": "Only live accepted/running tasks service capability requests; task/request/grant identity, explicit task/kind grants and revocation remain checked. Authorized reply bytes are pinned before delivery and exact-request retries reuse them without rereading source. Child need intent remains pinned while waiting; cancellation, terminal marker and timeout still stop waiting. Moving local store construction outside the request loop is harmless because its constructor only stores its directory and grants no authority."
           }
@@ -9571,9 +9347,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "scripts/loopback-parent-fixture.ts"
-        ],
+        "changedSourcePaths": ["scripts/loopback-parent-fixture.ts"],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
@@ -10185,10 +9959,7 @@
                 "systemReason": "Durable output and liveness evidence must precede child exit. The apparently odd killed-job active count is intentional: text capture accepts killed while normal settlement does not count it terminal; cancellation has separate evidence."
               },
               {
-                "paths": [
-                  "tests/remote-session-switch.test.ts",
-                  "src/remote/extension.ts"
-                ],
+                "paths": ["tests/remote-session-switch.test.ts", "src/remote/extension.ts"],
                 "readingReason": "Read all session-switch diff including changed waits and finalizers, observeSession/refresh/start/shutdown, openMenu/showSnapshot/close and unchanged inbox caller. B waits behind A cache I/O, but each publication closure owns its own closed flag and UI. Deferred snapshots/choices exercise both late banner set and late banner clear.",
                 "systemReason": "Cache synchronization can finish after session replacement without attributing A completion history, offline errors or picker footer mutations to B. The extra gates clarify actual publication lifetime instead of relying on repeated sleep polling."
               },
@@ -10261,9 +10032,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/remote-root-presenter.test.ts"
-        ],
+        "changedSourcePaths": ["tests/remote-root-presenter.test.ts"],
         "priorObjections": [
           {
             "paths": [
@@ -10367,10 +10136,7 @@
             "systemReason": "pinSource writes approval.json before requestApproval; retry reuses that record and its dedupKey instead of recapturing. Questions authenticate owner, text, choices, task ID, CLI provenance and reply version. The first meaningful continuation remains permitted by QuestionService, while sibling ownership does not. prepareLaunchRequest replaces a retry-supplied owner with saved.questionOwner, reconstructs the canonical unchanged intent, verifies the pinned snapshot before transport, and passes the original owner to the fake repository launcher/client. No test assertion promotes model text or an ordinary agent resolution to inclusion authority."
           },
           {
-            "paths": [
-              "tests/remote-session-switch.test.ts",
-              "src/remote/extension.ts:87-224,384-395,554-556"
-            ],
+            "paths": ["tests/remote-session-switch.test.ts", "src/remote/extension.ts:87-224,384-395,554-556"],
             "readingReason": "Deferred entry/publication checkpoints replace bounded polling guesses. Tests explicitly distinguish draining old shared cache I/O from publishing into a replacement session. The added picker test holds both snapshot acquisition and choice completion and observes old and replacement status arrays separately.",
             "systemReason": "refresh captures its observation owner and serializes the shared sync; session closure invalidates publication rather than cancelling I/O. poll rechecks closed after awaited reads/syncs. openMenu returns closures tied to that same observation, so late showSnapshot and close cannot change B’s footer. The tests permit the old custom picker to finish and assert its lost status authority; they do not claim all old menu actions are globally cancelled."
           },
@@ -10510,13 +10276,7 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "site/demos.ts",
-              "site/demos.test.ts",
-              "site/layout.ts",
-              "site/terminal.ts",
-              "site/playback.ts"
-            ],
+            "paths": ["site/demos.ts", "site/demos.test.ts", "site/layout.ts", "site/terminal.ts", "site/playback.ts"],
             "readingReason": "Followed actual delegate/background/wisdom shots through transcriptRows, footerRow, demoFrame, demoPanel, composeLanding and viewport projection into terminal paint and activation. Grouping by explicit user-turn boundaries replaces repeated slices/searches; retaining previous across skipped tool blocks preserves original blank-row rules. Interleaved wisdom prose still follows the first aggregate tool count; busy labels still use the latest tool. Footer selection, accent cells, editor reservation, transcript clipping and final-frame clamping remain the same.",
             "systemReason": "Composition owns document coordinates and panel bounds; layout alone clamps scroll, projects capture coordinates and builds hits/ANSI; terminal owns clock, visibility, input, state and row cache. New panel.end and initial compose y reproduce old increments, so playback visibility, mouse/touch control and fixed header geometry still use the same coordinates. Pick<State> contains only composition inputs, not a new lifetime/context bag."
           },
@@ -10559,10 +10319,7 @@
             "systemReason": "Extraction retains the same source hash, crop and run style flags. wrapRow/reflowMenuRow are small local ownership boundaries and preserve glyph order, styles, padding and first-ten-row menu handling. Replay construction returns only the session file; process/network isolation and capture lifetime remain outside it. These scripts are optional evidence producers, not acceptance evidence or authentication paths."
           },
           {
-            "paths": [
-              "site/scripts/install.test.ts",
-              "scripts/install.sh"
-            ],
+            "paths": ["site/scripts/install.test.ts", "scripts/install.sh"],
             "readingReason": "Read generated uname/id/curl/mv mocks, publishRelease, withInstall and all callers against actual installer download verification, isolated probe HOME, paired replacement and rollback. Generated binary/version/checksum bytes and the platform matrix preserve baseline behavior. mockHostCommands and publishRelease separate host simulation from release publication; withInstall owns root creation, child collection, check callback and finally cleanup.",
             "systemReason": "Callbacks no longer need repeated cleanup blocks, and fixture setup failures now enter the same root-owned finally. Real installer remains responsible for checksum-before-execution and rollback; mocked requests/probes still observe those boundaries. Reviewed cleanup and environment effects without executing them. The fixture still inherits process.env, including possible BRUV_INSTALL_DIR; this pre-existing non-hermetic test environment must not be treated as authorization to run it under inherited user settings."
           }
@@ -10586,10 +10343,7 @@
     {
       "id": "lane-45",
       "area": "site-support",
-      "paths": [
-        "site/scripts/validate.ts",
-        "site/terminal.ts"
-      ],
+      "paths": ["site/scripts/validate.ts", "site/terminal.ts"],
       "chars": 28139,
       "lines": 694,
       "status": "accepted",
@@ -10614,10 +10368,7 @@
         "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
         "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
         "verdict": "ACCEPT",
-        "diffReadPaths": [
-          "site/scripts/validate.ts",
-          "site/terminal.ts"
-        ],
+        "diffReadPaths": ["site/scripts/validate.ts", "site/terminal.ts"],
         "contextReadPaths": [
           "site/terminal.ts",
           "site/scripts/validate.ts",
@@ -10806,10 +10557,7 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "scripts/activity-runtime-acceptance.py",
-              "scripts/activity-terminal-acceptance.py"
-            ],
+            "paths": ["scripts/activity-runtime-acceptance.py", "scripts/activity-terminal-acceptance.py"],
             "readingReason": "prepare_long_thread now owns journal construction and state selection; long_thread still owns resize/reopen, draft, group/detail navigation and immutable-prefix/provider-absence assertions. Harness start creates sessions/state before use; launch reads state.session for the next reopen. The fixture dispatcher keeps failed-tool and user-intent priority, delegating unchanged response plans to named branches.",
             "systemReason": "Fixture writes remain under the supplied evidence root, not live session selection. Retained call IDs, rather than request counts, still determine fixture behavior after replay or task/question delivery. The extraction reduces scenario reading burden without asserting that generated history itself proves UI behavior."
           },
@@ -10826,10 +10574,7 @@
             "systemReason": "This is coherent terminal-only proof rather than release provenance. Preflight adaptPiHostFile rejects unsupported/unadapted cached files before importing prepare-assets; preparePiHost independently validates version and every file before writing. No preparation was run. Lifecycle ownership is easier to locate; screenshot success remains distinct from required visual review and overall proof acceptance."
           },
           {
-            "paths": [
-              "scripts/ansi_video_renderer.py",
-              "scripts/task-placement-clean-video.py"
-            ],
+            "paths": ["scripts/ansi_video_renderer.py", "scripts/task-placement-clean-video.py"],
             "readingReason": "The renderer now separates SGR color application, font/presentation lifetime and encoding. _SnapshotRenderer recreates per-frame color state while retaining colors across lines; extended color operands, glyph width, original token-local clipping, frame timing, sample names and ffmpeg argv remain equivalent. Caller appends a final duration row and audits every selected row before encoding. Sampling still re-reads the timeline timestamp after audit callback execution.",
             "systemReason": "Encoding/sampling remain renderer-owned, provenance/redactions/banned-text audits remain caller-owned. Private class state is narrowly fonts and fixed presentation, not a general context bag. PIL replay is not promoted into native terminal or visual acceptance."
           },
@@ -11193,11 +10938,7 @@
             "systemReason": "Startup still replaces only the not-yet-active default editor. Live syncTalkInput detaches a previous editor and attaches with its controller signal; stopObserved aborts that controller before asynchronous audio teardown. The actual TUI runs raw listeners before focused input and filters releases unless wantsKeyRelease. The helper preserves observer-first ordering, focus cancellation, release opt-in, and fullscreen ownership of focus reporting. EditorPushToTalk cancellation still closes its onTalking gate without deleting warmup taps; no auth/device work was exercised."
           },
           {
-            "paths": [
-              "src/diagnostics.ts",
-              "src/diagnostics-extension.ts",
-              "src/agent/extension.ts"
-            ],
+            "paths": ["src/diagnostics.ts", "src/diagnostics-extension.ts", "src/agent/extension.ts"],
             "readingReason": "A snapshot subobject clearly separates live records/health counts from sink generation, dedup state and durable lifetime budget. persistDiagnostic is a narrow acceptance helper, not a persistence framework; recordDiagnostic retains the privacy validation and best-effort boundary.",
             "systemReason": "registerOperationDiagnostics attaches on session_start using captured session identity and a restorable journal leaf; its public command consumes the same snapshot keys and optional bounded replay. Manager diagnosticRecorder captures attachment generation and checks session ID, so the refactor does not move diagnostics to a mutable active owner. Ring insertion still precedes dedup/budget checks, durable slots are reserved before sink invocation, failures remain contained, and a new attachment resets only live snapshot plus the same durable lifetime state. inspectDiagnostics still copies records and freezes the returned populated snapshot."
           },
@@ -11225,11 +10966,7 @@
             "systemReason": "Setup still installs global adapters before constructing adapted SDK messages. The tool setup segment labels and stable-image synchronous measurement wrapper are unchanged. Long-thread counters reset before the first render, iteration is zero for mount, and previousScreen is empty at first setup/reset on dispose; the unified capture therefore retains mount and steady changed-row semantics. The unchanged runner consumes mount evidence for cold frames, then step work/changedRows for steady frames, and disposes fixture and profiler. Cleanup order and sequential ownership guards remain intact."
           },
           {
-            "paths": [
-              "scripts/ui-cleanup-probe.py",
-              "src/cli.ts",
-              "src/ui/conversation-density.ts"
-            ],
+            "paths": ["scripts/ui-cleanup-probe.py", "src/cli.ts", "src/ui/conversation-density.ts"],
             "readingReason": "Terminal isolates private tmux commands and the one deadline; isolated_terminal centralizes owned HOME/server teardown; exercise_terminal and settled_assertions separate scenario observation from evidence judgment. This is a concrete lifecycle split rather than a generic test harness abstraction.",
             "systemReason": "The loopback fixture, fake model configuration, explicit isolated launch environment, tmux socket and scripted two-turn scenario are preserved. Active/expanded/settled captures still generate the same assertions and report shape. The context manager now surrounds fixture configuration as well as execution and exposes records after server stop. Its rmtree targets only the UUID-created probe home, not inherited HOME; this existing owned cleanup was inspected but never run. No terminal fixture, shell workload, binary or network listener was executed."
           }
@@ -11384,19 +11121,12 @@
             "systemReason": "The component owns one active lifetime and idempotent disposal; helper-owned clocks do not acquire session authority. Extracting the two unrelated observers makes clock and subscription ownership easier to inspect, without changing frequency or retaining extra durable state."
           },
           {
-            "paths": [
-              "src/tasks/task-monitor.ts",
-              "src/tasks/task-monitor-source.ts",
-              "src/ui/task-monitor.ts"
-            ],
+            "paths": ["src/tasks/task-monitor.ts", "src/tasks/task-monitor-source.ts", "src/ui/task-monitor.ts"],
             "readingReason": "The /ps installer owns the optional merged source and releases it with the panel. renderOverview and renderInspection retain their original bounded output windows and share renderObservation. MonitorFrame replaces positional border/title/body/control slicing while keeping tiny-height target/control pairing. Stop input still freezes job id and monitorIdentity, revalidates it before kill, and the merged source rechecks SSH ownership before sending a stop; unknown/pending cached SSH observations remain explicitly unconfirmed.",
             "systemReason": "Named frame fields remove the need to mentally reverse-engineer action-target rows. TaskView carries only lines and identity, not a huge context bundle. The refactor leaves cancellation authority and completion consumption outside rendering."
           },
           {
-            "paths": [
-              "src/tasks/subagent-settings-ui.ts",
-              "src/ui/subagent-settings.ts"
-            ],
+            "paths": ["src/tasks/subagent-settings-ui.ts", "src/ui/subagent-settings.ts"],
             "readingReason": "The command loads profiles, presents a cloned draft, and writes only a returned Save result. Screen now holds picker kind/type/returnRow together; showProfiles clears search and restores the selected profile row, openPicker selects the current value, model filtering resets selection, Escape returns or discards, and Input focus follows the model screen. Model catalog deduplication, unavailable-current item, exact-match ordering and inherit deletion remain intact.",
             "systemReason": "The discriminated screen state removes independently mutable row/type/screen combinations. Item construction and selection updates are separated from navigation; persistence authority remains in the command installer."
           },
@@ -11538,11 +11268,7 @@
             "systemReason": "The SDK redraws from lastMessage. The adapter tracks source versus presented message and streaming status in its thinking closure, restores source through nativeUpdate, and only replaces an update wrapper it still owns. remove/clear release tracked components; disposal makes retained foreign chains inactive. The added latest-source and foreign-chain tests match those distinct lifetimes. This is a narrower restoration seam, not a broad context bag."
           },
           {
-            "paths": [
-              "tests/diagnostics.test.ts",
-              "src/diagnostics.ts",
-              "src/diagnostics-extension.ts"
-            ],
+            "paths": ["tests/diagnostics.test.ts", "src/diagnostics.ts", "src/diagnostics-extension.ts"],
             "readingReason": "New diagnostics cases distinguish live observation from successful durable persistence. They verify failed writes and duplicate attempts remain in the ring, snapshots are copied, detach stops persistence, reattach resets the live view and seeds durable dedup, and old generation callbacks cannot affect the new attachment.",
             "systemReason": "recordDiagnostic accepts into the live ring before persistDiagnostic reserves a dedup key/budget and attempts a sink write. Generation-captured recorders and detachers separate session attachments. The unchanged extension session_start path replaces the sink with captured session identity checks, while shutdown intentionally keeps later lifecycle observations available. The assertions match these production owners rather than treating accepted as persisted."
           },
@@ -11692,10 +11418,7 @@
             },
             "sourceJourneys": [
               {
-                "paths": [
-                  "tests/footer.test.ts",
-                  "src/ui/footer.ts"
-                ],
+                "paths": ["tests/footer.test.ts", "src/ui/footer.ts"],
                 "readingReason": "The added deferred-promise polling journey follows installCompactFooter -> pollDescendantCost -> component/installer disposal. It checks one refresh in flight, retry after rejection, and changed-cost-only redraw. The cache test split separates rendering colors from timer lifetime; the added fake-clock journey follows followCacheCountdown notification/tick rescheduling and idempotent disposal. Actual production lifetime code agrees with those assertions; prior in-flight-disposal test and fixture were also read.",
                 "systemReason": "Clocks/subscriptions remain observer-owned, while the component active flag gates delayed callbacks. Separating usage layout from countdown lifetime reduces the number of simultaneous concerns without weakening the old assertions."
               },
@@ -11743,10 +11466,7 @@
                 "systemReason": "The tests explicitly exercise evidence, display metadata and per-frame rendering ownership as distinct authorities. They fit the integrated adapter rather than conflating a failed frame with session teardown. No public-outcome regression was found in this inspected journey."
               },
               {
-                "paths": [
-                  "tests/sdk-markdown-blocks.test.ts",
-                  "tests/sdk-text-wrap-performance.test.ts"
-                ],
+                "paths": ["tests/sdk-markdown-blocks.test.ts", "tests/sdk-text-wrap-performance.test.ts"],
                 "readingReason": "Read both complete diffs and the candidate original-SDK reference factory/module rewriting context. measurePlainBlockWork owns the RegExp.exec hook around one lexer call, preserves both whole-block matcher bans and full raw-token equality, returns the old counters and restores the prototype in finally. createOriginalSdkReference keeps the same utility-only reverse-patch oracle: components import the copied reversed utility, while other relative/external imports resolve against installed SDK dependencies. Every assertion formerly using separate reference globals now uses the one named original object; corpus/layout/cache and work assertions remain intact.",
                 "systemReason": "These helpers factor one clear concern apiece: temporary instrumentation ownership and reference implementation assembly. They improve reading burden without changing the oracle into an invented implementation or weakening rich Unicode/ANSI checks. Reference git apply has explicit owned HOME/config/SDK and retained provenance, further highlighting the proof-build fixture environment inconsistency. Installed dependencies and the selected patch hunk were not executed or attested as runtime-verified."
               },
@@ -11760,11 +11480,7 @@
                 "systemReason": "A small process-boundary helper is a meaningful ownership abstraction, not a catch-all fixture bag. Returned root supports report paths; no shell cleanup or auth fallback is introduced."
               },
               {
-                "paths": [
-                  "tests/tasks-ui-proof-build.test.ts",
-                  "scripts/tasks-ui-proof-build.ts",
-                  "tests/helpers.ts"
-                ],
+                "paths": ["tests/tasks-ui-proof-build.test.ts", "scripts/tasks-ui-proof-build.ts", "tests/helpers.ts"],
                 "readingReason": "Read complete new test and actual builder. The copied builder with stub build/prepare/adaptation verifies one-output CLI, clean-source/adapted-dependency gates, and post-build source/binary provenance. Assertions explicitly state stub binary is not native UI proof. Traced its real git init/add/commit helper into inherited Git authority, then the Bun child into builder git commands; unlike ownedFixtureEnv elsewhere, neither establishes an owned environment.",
                 "systemReason": "The provenance mechanics are legible and appropriately scoped, but a mkdtemp cwd alone does not own Git configuration/hooks or HOME. This is a concrete cross-file boundary contradiction, not a taste objection to the use of stubs."
               }
@@ -11809,10 +11525,7 @@
         }
       ],
       "repairReason": {
-        "changedSourcePaths": [
-          "tests/rolling-activity-disk.test.ts",
-          "tests/tasks-ui-proof-build.test.ts"
-        ],
+        "changedSourcePaths": ["tests/rolling-activity-disk.test.ts", "tests/tasks-ui-proof-build.test.ts"],
         "priorObjections": [
           {
             "paths": [
@@ -11900,19 +11613,12 @@
             "systemReason": "runDiskActivityJourney creates mkdtemp root, constructs {...ownedFixtureEnv(root), ROOT:root}, and supplies it explicitly to run. offlineTestEnv copies that supplied environment, not process.env. HOME/config/cache/SDK/temp and empty Git hooks are owned; ROOT is explicit. The child uses ROOT for SessionManager and component cwd, tears down projection/density/task hooks and disk owner, and does not remove its fixture. Production sync caches membership by the relevant disk metadata object and rebuilds child/live state on each frame; indexed select materializes only relevant entries, rewrite/reread/reset replace ownership metadata, and native in-memory managers use the public fallback. The ordered assertions still exercise those distinctions."
           },
           {
-            "paths": [
-              "tests/tasks-ui-proof-build.test.ts",
-              "tests/helpers.ts",
-              "scripts/tasks-ui-proof-build.ts"
-            ],
+            "paths": ["tests/tasks-ui-proof-build.test.ts", "tests/helpers.ts", "scripts/tasks-ui-proof-build.ts"],
             "readingReason": "The fixture copies the real proof builder into an owned repository but stubs only host adaptation/preparation/compilation. Assertions distinguish stub provenance mechanics from native UI proof, retain clean-source/adapted-dependency preflight failures, and check no record on compile failure or source mutation. The old two-output invocation remains rejected before preparation; compilation options, binary digest and source commit are inspected directly.",
             "systemReason": "Both fixture git init/add/commit and the Bun preload/builder process receive the same ownedFixtureEnv. The nested builder Git calls inherit that already isolated environment: fixed /usr/bin:/bin PATH, owned HOME/config/SDK/temp/Bun locations, GIT_CONFIG_NOSYSTEM/GLOBAL, empty core.hooksPath and no caller Git or credential variables. This closes the stated new-source ownership objection rather than merely putting cwd under /tmp. Fixtures and evidence are retained. Actual preparation/build were not invoked in this review."
           },
           {
-            "paths": [
-              "tests/footer.test.ts",
-              "src/ui/footer.ts"
-            ],
+            "paths": ["tests/footer.test.ts", "src/ui/footer.ts"],
             "readingReason": "Splitting display-state assertions from minute-timer assertions keeps each test about one owner. The new cost test exercises one in-flight refresh, rejection/retry, unchanged versus changed totals, and stopped callbacks; the cache test exercises subscription and timer through a single redraw policy, clamping and idempotent disposal. Compared with baseline inline observer code, candidate pollDescendantCost/followCacheCountdown reduce duplicated scheduling without a context bag.",
             "systemReason": "pollDescendantCost holds busy until its await finishes, catches transient errors, gates redraw by active lifetime and total change, and clears the coarse timer through its stop callback. followCacheCountdown shares update between notifications and ticks and bounds timeout to 1..60000 ms. installCompactFooter marks inactive before stopping both observers and unsubscribing the branch listener. New fake-global timer hooks restore the originals in finally and require no child/filesystem ownership."
           },
@@ -11940,19 +11646,12 @@
             "systemReason": "The related shared fixture owns HOME/config/cache/data/temp and both SDK paths, supplies an explicit env to tmux through run, writes its tmux config, and builds multi-argv env -i pane commands. The PTY version child also gets owned cwd/env. The live-provider measurement is a loopback-only held HTTP fixture with fixture credentials and per-fixture models.json, not inherited live auth. Sessions and artifact pointers are retained while only the dedicated tmux server is terminated. Optional external binary and report output remain explicit caller-selected baseline diagnostic controls, not new hidden authority."
           },
           {
-            "paths": [
-              "tests/startup-tui.test.ts",
-              "tests/sdk-large-text-tui.test.ts",
-              "tests/tui-helpers.ts"
-            ],
+            "paths": ["tests/startup-tui.test.ts", "tests/sdk-large-text-tui.test.ts", "tests/tui-helpers.ts"],
             "readingReason": "Startup process creation now names one offline CLI/environment for both tmux and script transports, while mode selection remains explicit. Diagnostics and skill-command visibility are still tested separately from hiding promotion/inventory. Megabyte-message seeding and offline launch are separated from interaction assertions, retaining start/tail/scroll/rich ANSI/editability and exact persisted-content checks.",
             "systemReason": "Both use mkdtemp-owned HOME/config/cache/data/temp and SDK directories, no process.env spread, explicit cwd/env for transport children, fixed offline placeholder auth, owned tmux configuration/socket, and retained session/evidence locations. Large-text panes additionally use env -i; startup quotes the fixed CLI argv for its existing transport shell, with no traps or cleanup shell. Startup evidence writes now have a nested finally for dedicated tmux shutdown even if an artifact write fails. No inherited HOME/SDK deletion remains in these changed tests."
           },
           {
-            "paths": [
-              "tests/sdk-markdown-blocks.test.ts",
-              "tests/sdk-text-wrap-performance.test.ts"
-            ],
+            "paths": ["tests/sdk-markdown-blocks.test.ts", "tests/sdk-text-wrap-performance.test.ts"],
             "readingReason": "measurePlainBlockWork owns the regex hook in one try/finally for both line-bounded and megabyte-single-line callers, preserving complete raw-token equality and forbidden whole-block matcher assertions. createOriginalSdkReference groups the reversed utility and dependent Text/Markdown reference modules, instead of distributing their initialization across mutable globals. The Unicode/ANSI corpus, widths, full render/cache/invalidate/resize and segmentation-work assertions remain unchanged in substance.",
             "systemReason": "The wrap reference reads installed SDK files and writes only its retained mkdtemp clone, isolates the reverse git-apply child HOME/config/SDK/temp and system/global Git configuration, and routes copied component utility imports to the reversed owned utility while retaining actual dependency resolution for other imports. No installed dependency patching is added. Original here is a utility-hunk oracle, not a claim to revert every SDK patch. Global regex and grapheme instrumentation restores original hooks in finally."
           },
@@ -12081,10 +11780,7 @@
         },
         "sourceJourneys": [
           {
-            "paths": [
-              "tests/tasks-ui-proof-tooling.test.py",
-              "scripts/tasks-ui-native-proof.py"
-            ],
+            "paths": ["tests/tasks-ui-proof-tooling.test.py", "scripts/tasks-ui-native-proof.py"],
             "readingReason": "Followed real stub launch through NativeCapture.session/launch, failure setup and teardown, capture_scenario gates, and main provenance/report publication. New mechanics tests deliberately mock UI frames/screenshots and keep visual acceptance explicitly separate. Startup failure closes server/thread; teardown releases gates before attempting private tmux shutdown. Binary digest rejection happens before output-directory creation.",
             "systemReason": "Documents the evidence owner and its failure paths without claiming that mocked PNG existence or report.passed proves native appearance. Cleanup is confined to owned TemporaryDirectory/private tmux socket, not inherited HOME."
           },
@@ -12263,12 +11959,7 @@
             "systemReason": "The small helper centralizes private process HOME/config/cache/data/SDK/tmp and socket/config construction without assuming ownership of the consumer scenario, server shutdown or artifacts. Returning tmux and paneCommand keeps process authority inspectable; retained filesystem lifetime is explicit."
           },
           {
-            "paths": [
-              "tests/tui-harness.test.ts",
-              "scripts/tui-harness.ts",
-              "scripts/tmux.conf",
-              "tests/helpers.ts"
-            ],
+            "paths": ["tests/tui-harness.test.ts", "scripts/tui-harness.ts", "scripts/tmux.conf", "tests/helpers.ts"],
             "readingReason": "Followed mkdtemp/copy/symlink fixture into script-relative root/state/artifact resolution, tmux launch, duplicate-session check, invalid-name rejection, demo watchdog, frame capture and stop. The relocated script uses the source dist read-only while all harness-produced files resolve below the retained fixture. TMUX_TMPDIR is consistent for test control commands and script/watchdog children.",
             "systemReason": "Existing observable help/session behaviors remain tested, while user HOME/SDK and repository state/artifacts are no longer the implicit writable fixtures. Separate harness fixture is justified by script-relative resolution instead of widening the shared terminal helper into a generic context bag."
           },
@@ -12283,10 +11974,7 @@
             "systemReason": "The extraction reduces fixture closure clutter without turning the oracle into a call to the optimized restore. Consecutive-row optimization, complete transcript writes, width/content changes, capability restoration and preserveScreen behavior retain independent order/output assertions."
           },
           {
-            "paths": [
-              "tests/ui-cleanup-probe.test.py",
-              "scripts/ui-cleanup-probe.py"
-            ],
+            "paths": ["tests/ui-cleanup-probe.test.py", "scripts/ui-cleanup-probe.py"],
             "readingReason": "Read all added tests and the complete probe module, including unchanged SSE/loopback fixture. Followed six responses, exercise_terminal phase capture, settled assertions, single Terminal deadline, isolated_terminal cleanup, and main publication after context teardown. Injected model-write and launch failures match actual nesting and partial-evidence behavior.",
             "systemReason": "Focused protocol tests cover both positive and falsified rows/spacing/counts, while lifetime tests expose the otherwise easy-to-miss setup-before-yield and cleanup-before-report ownership. Terminal and scenario/assertion responsibilities stay small; no new orchestration context bag appears."
           }
@@ -12311,19 +11999,13 @@
     {
       "id": "lane-54",
       "area": "build-release-ci-tooling",
-      "paths": [
-        "scripts/find-ci-baseline.ts",
-        "tests/helpers.ts"
-      ],
+      "paths": ["scripts/find-ci-baseline.ts", "tests/helpers.ts"],
       "chars": 2566,
       "lines": 65,
       "status": "accepted",
       "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
       "repairReason": {
-        "changedSourcePaths": [
-          "scripts/find-ci-baseline.ts",
-          "tests/helpers.ts"
-        ],
+        "changedSourcePaths": ["scripts/find-ci-baseline.ts", "tests/helpers.ts"],
         "reason": "Previously unchanged maintained sources now have actual baseline-to-final diff; require their own whole-integrated-diff scope, not related-context-only coverage."
       },
       "jobId": "task_6b92c1f2",
@@ -12347,10 +12029,7 @@
         "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
         "candidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "verdict": "ACCEPT",
-        "diffReadPaths": [
-          "scripts/find-ci-baseline.ts",
-          "tests/helpers.ts"
-        ],
+        "diffReadPaths": ["scripts/find-ci-baseline.ts", "tests/helpers.ts"],
         "contextReadPaths": [
           "scripts/find-ci-baseline.ts",
           "tests/helpers.ts",
@@ -12385,11 +12064,7 @@
             "systemReason": "A cwd alone does not isolate Git configuration. This closes that ownership gap without changing API trust criteria, shared deadline, ancestor selection or fail-closed behavior."
           },
           {
-            "paths": [
-              ".github/workflows/ci.yml",
-              "scripts/find-ci-baseline.ts",
-              "scripts/ci-selective.ts"
-            ],
+            "paths": [".github/workflows/ci.yml", "scripts/find-ci-baseline.ts", "scripts/ci-selective.ts"],
             "readingReason": "The push comparison step still invokes the CLI with repository/SHA/token from its environment. The CLI omits the optional env argument, retaining process.env; an undefined baseline still yields full validation downstream.",
             "systemReason": "Production behavior remains unchanged; injection is local to subprocess configuration and does not redirect the authenticated HTTP requests or relax baseline authority."
           },

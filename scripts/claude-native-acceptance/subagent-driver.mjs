@@ -14,7 +14,7 @@ async function waitFile(file) {
     } catch {}
     await new Promise((r) => setTimeout(r, 100));
   }
-  throw Error("Missing actual child file: " + path.basename(file));
+  throw Error(`Missing actual child file: ${path.basename(file)}`);
 }
 // Finalization runs after exercise (including failure), without reloading its proof flags from disk.
 let observedConfig;
@@ -115,7 +115,7 @@ async function exerciseCompletedChildReturn(page, config, snapshot) {
   assert.ok(config.renderedChildTranscript, "Actual rendered child transcript and tool input access");
   await fs.writeFile(
     path.join(config.proof, "rendered-child-access.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         accessed: config.renderedChildTranscript,
         renderedToolResult: config.renderedChildToolResult,
@@ -123,7 +123,7 @@ async function exerciseCompletedChildReturn(page, config, snapshot) {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Open parent", exact: true }).click();
@@ -201,12 +201,12 @@ export function checkConsumedPromptOwnership(wire) {
     const input = wire.find(
       (e) => e.kind === "stdin" && e.value.type === "user" && JSON.stringify(e.value.message?.content).includes(prompt),
     );
-    assert.ok(input?.value.uuid, "Actual offered prompt UUID: " + prompt);
+    assert.ok(input?.value.uuid, `Actual offered prompt UUID: ${prompt}`);
     const result = wire.find(
       (e) => e.kind === "stdout" && e.value.type === "result" && e.value.result === answer,
     )?.value;
-    assert.ok(result, "Actual prompt result: " + answer);
-    assert.ok(echoed(result).includes(input.value.uuid), "Consumed prompt UUID missing/wrong: " + prompt);
+    assert.ok(result, `Actual prompt result: ${answer}`);
+    assert.ok(echoed(result).includes(input.value.uuid), `Consumed prompt UUID missing/wrong: ${prompt}`);
   }
   const wake = wire.find(
     (e) => e.kind === "stdout" && e.value.type === "result" && e.value.result === "ROOT_COMPLETION_ONCE_REAL",
@@ -327,18 +327,18 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
 
   await fs.writeFile(
     path.join(proof, "source-task-bindings.json"),
-    JSON.stringify(launchSources, null, 2).replaceAll(path.dirname(config.state), "<FIXTURE>") + "\n",
+    `${JSON.stringify(launchSources, null, 2).replaceAll(path.dirname(config.state), "<FIXTURE>")}\n`,
   );
-  await fs.writeFile(path.join(proof, "task-events.json"), JSON.stringify({ starts, ends, agents }, null, 2) + "\n");
+  await fs.writeFile(path.join(proof, "task-events.json"), `${JSON.stringify({ starts, ends, agents }, null, 2)}\n`);
   await fs.writeFile(
     path.join(proof, "wire-projection.ndjson"),
-    projectWire(wire)
+    `${projectWire(wire)
       .map((x) => JSON.stringify(x))
-      .join("\n") + "\n",
+      .join("\n")}\n`,
   );
   await fs.writeFile(
     path.join(proof, "result.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         focusedLocalSubagent: true,
         modelIdentity: modelSlug,
@@ -361,7 +361,7 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
 }
 

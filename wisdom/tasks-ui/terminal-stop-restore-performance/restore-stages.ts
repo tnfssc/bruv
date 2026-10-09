@@ -14,24 +14,27 @@ import {
 import { isImageLine } from "../../../node_modules/@earendil-works/pi-tui/dist/terminal-image.js";
 import { FakeTerminal } from "../../../scripts/terminal-perf/workloads";
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
+// biome-ignore lint/suspicious/noControlCharactersInRegex: Strip terminal OSC markers, including ESC and BEL.
 const zonePrefix = /^(?:\x1b\]133;[ABC](?:\x07|\x1b\\))+/;
-const samples: any[] = [];
+const samples: Record<string, unknown>[] = [];
 initTheme("dark", false);
 const repeated = "deterministic output row abcdefghijklmnopqrstuvwxyz 0123456789\n"
   .repeat(Math.ceil(2097152 / 61))
   .slice(0, 2097152);
 const unique = Array.from(
   { length: 40000 },
-  (_, i) => String(i).padStart(8, "0") + " output row abcdefghijklmnopqrstuvwxyz 0123456789\n",
+  (_, i) => `${String(i).padStart(8, "0")} output row abcdefghijklmnopqrstuvwxyz 0123456789\n`,
 )
   .join("")
   .slice(0, 2097152);
 for (const [fixture, text] of [
   ["audit-repeated", repeated],
   ["unique-row-counter", unique],
-]) {
+] as const) {
   const terminal = new FakeTerminal(100, 32);
-  const tui = new TuiAltScreen(terminal, false, undefined, { mouse: false }) as any;
+  const tui = new TuiAltScreen(terminal, false, undefined, { mouse: false });
+  // Research replay calls the SDK restore hook, which is not in its public types.
+  const restoreHook = tui as unknown as { applyLineResets(lines: string[]): string[] };
   const document = new Container();
   document.addChild(new UserMessageComponent("small-session start"));
   document.addChild(new UserMessageComponent(text));
@@ -51,7 +54,7 @@ for (const [fixture, text] of [
   let expectedHash = "";
   for (let iteration = 0; iteration < 3; iteration++)
     for (const variant of ["before", "consecutive"]) {
-      const phases: any = {};
+      const phases: Record<string, number> = {};
       function phase<T>(name: string, run: () => T): T {
         const start = performance.now();
         const result = run();
@@ -65,7 +68,7 @@ for (const [fixture, text] of [
         const stripped = phase("stripMs", () =>
           raw.map((line) => line.replace(zonePrefix, "")).map((line) => line.replaceAll(CURSOR_MARKER, "")),
         );
-        rows = phase("normalizeMs", () => tui.applyLineResets(stripped));
+        rows = phase("normalizeMs", () => restoreHook.applyLineResets(stripped));
         rows = phase("imageWidthClipMs", () =>
           rows.map((line) =>
             isImageLine(line) || visibleWidth(line) <= 100 ? line : sliceByColumn(line, 0, 100, true),
@@ -78,12 +81,12 @@ for (const [fixture, text] of [
         phases.imageWidthClipMs = 0;
         rows = phase("transformInclusiveMs", () =>
           raw.map((line) => {
-            if (line === previousLine) return previousRestored!;
+            if (line === previousLine && previousRestored !== undefined) return previousRestored;
             let restored: string;
             misses++;
             const stripped = line.replace(zonePrefix, "").replaceAll(CURSOR_MARKER, "");
             let start = performance.now();
-            restored = tui.applyLineResets([stripped])[0];
+            restored = restoreHook.applyLineResets([stripped])[0];
             phases.normalizeMs += performance.now() - start;
             start = performance.now();
             if (!isImageLine(restored) && visibleWidth(restored) > 100)
@@ -100,9 +103,9 @@ for (const [fixture, text] of [
         let buffer = "\x1b[?2026h\x1b[?1049l\x1b[?7l";
         for (let row = 0; row < rows.length; row++) {
           if (row > 0) buffer += "\r\n";
-          buffer += "\r\x1b[2K" + (rows[row] ?? "");
+          buffer += `\r\x1b[2K${rows[row] ?? ""}`;
         }
-        return buffer + "\x1b[0m\x1b[?7h\r\n\x1b[?25h\x1b[?2026l";
+        return `${buffer}\x1b[0m\x1b[?7h\r\n\x1b[?25h\x1b[?2026l`;
       });
       phase("countingWriteMs", () => terminal.write(buffer));
       const output = terminal.takeOutput();
@@ -113,8 +116,8 @@ for (const [fixture, text] of [
         fixture,
         variant,
         iteration,
-        inputBytes: Buffer.byteLength(text!),
-        inputHash: sha(text!),
+        inputBytes: Buffer.byteLength(text),
+        inputHash: sha(text),
         documentLines: raw.length,
         distinctRawLines: new Set(raw).size,
         transformedRows: misses,
@@ -131,7 +134,7 @@ for (const [fixture, text] of [
 }
 await Bun.write(
   process.argv[2] ?? "/tmp/stop-stages.json",
-  JSON.stringify(
+  `${JSON.stringify(
     {
       runtime: Bun.version,
       boundary:
@@ -140,5 +143,5 @@ await Bun.write(
     },
     null,
     2,
-  ) + "\n",
+  )}\n`,
 );

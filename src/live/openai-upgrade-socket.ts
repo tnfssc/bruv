@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import type { IncomingMessage } from "node:http";
-import type { RealtimeSocket } from "./openai-session";
+import type { RealtimeSocket, RealtimeSocketEvent } from "./openai-session";
 
 /** Own the rejected HTTP response until its bounded diagnostic is read or cancelled. */
 function readRejectionCode(response: IncomingMessage, report: (code?: unknown) => void): () => void {
@@ -47,8 +47,8 @@ function readRejectionCode(response: IncomingMessage, report: (code?: unknown) =
  */
 export function upgradeSocket(url: string, headers: Record<string, string>): RealtimeSocket {
   const ws = new WebSocket(url, { headers, handshakeTimeout: 15000, followRedirects: false });
-  const listeners = new Map<string, Array<(event: any) => void>>();
-  const emit = (type: string, event: unknown) => {
+  const listeners = new Map<string, Array<(event: RealtimeSocketEvent) => void>>();
+  const emit = (type: string, event: RealtimeSocketEvent) => {
     for (const handler of listeners.get(type) ?? []) handler(event);
   };
   let rejected = false;

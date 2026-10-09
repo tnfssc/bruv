@@ -33,9 +33,9 @@ function objectJson(value: string, flag: string): Record<string, unknown> {
   try {
     result = JSON.parse(value);
   } catch {
-    throw new Error(flag + " requires a JSON object");
+    throw new Error(`${flag} requires a JSON object`);
   }
-  if (!result || typeof result !== "object" || Array.isArray(result)) throw new Error(flag + " requires a JSON object");
+  if (!result || typeof result !== "object" || Array.isArray(result)) throw new Error(`${flag} requires a JSON object`);
   return result as Record<string, unknown>;
 }
 
@@ -52,7 +52,7 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
     disableSlashCommands: false,
     addDirs: [],
   };
-  if (argv.length === 1 && ["--help", "-h", "--version", "-v", "--bruv-version"].includes(argv[0]!)) {
+  if (argv.length === 1 && ["--help", "-h", "--version", "-v", "--bruv-version"].includes(argv[0] ?? "")) {
     result.action =
       argv[0] === "--bruv-version" ? "bruv-version" : argv[0] === "--help" || argv[0] === "-h" ? "help" : "version";
     return result;
@@ -62,7 +62,8 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
     output: string | undefined;
   const seen = new Set<string>();
   for (let i = 0; i < argv.length; i++) {
-    const argument = argv[i]!;
+    const argument = argv[i];
+    if (argument === undefined) throw new Error("Missing connector argument");
     if (!argument.startsWith("-")) {
       if (!print || result.prompt !== undefined) throw new Error("Unexpected positional argument");
       result.prompt = argument;
@@ -72,16 +73,16 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
     const flag = split < 0 ? argument : argument.slice(0, split);
     const inline = split < 0 ? undefined : argument.slice(split + 1);
     if (seen.has(flag) && flag !== "--append-system-prompt" && flag !== "--add-dir" && flag !== "--thinking-display")
-      throw new Error("Duplicate option: " + flag);
+      throw new Error(`Duplicate option: ${flag}`);
     seen.add(flag);
     const value = () => {
       if (inline !== undefined) return inline;
       const next = argv[++i];
-      if (next === undefined || next.startsWith("--")) throw new Error(flag + " requires a value");
+      if (next === undefined || next.startsWith("--")) throw new Error(`${flag} requires a value`);
       return next;
     };
     const toggle = () => {
-      if (inline !== undefined) throw new Error(flag + " does not take a value");
+      if (inline !== undefined) throw new Error(`${flag} does not take a value`);
       return true;
     };
     switch (flag) {
@@ -180,11 +181,11 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
         const v = value();
         result.maxThinkingTokens = Number(v);
         if (!/^\d+$/.test(v) || !Number.isSafeInteger(result.maxThinkingTokens))
-          throw new Error(flag + " requires a nonnegative integer");
+          throw new Error(`${flag} requires a nonnegative integer`);
         break;
       }
       default:
-        throw new Error("Unknown connector option: " + flag);
+        throw new Error(`Unknown connector option: ${flag}`);
     }
   }
   if (print && output === "json") {

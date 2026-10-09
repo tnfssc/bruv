@@ -11,7 +11,7 @@ import { rootFacetRequest, RootFacetAcknowledgedError, type RootFacet } from "./
 
 export function processStamp(pid: number): string | undefined {
   try {
-    const stat = readFileSync("/proc/" + pid + "/stat", "utf8");
+    const stat = readFileSync(`/proc/${pid}/stat`, "utf8");
     return stat.slice(stat.lastIndexOf(")") + 2).split(" ")[19];
   } catch {
     return;
@@ -53,7 +53,7 @@ export function validateRootCommand(command: RootCommand) {
     close: [],
   };
   if (!command || !Object.hasOwn(fields, command.kind)) throw Error("Invalid root command");
-  strict(command, ["kind", ...fields[command.kind]!]);
+  strict(command, ["kind", ...fields[command.kind]]);
   if (command.kind === "prompt") text(command.text);
   if (command.kind === "ui.respond") {
     text(command.id, 256);
@@ -83,7 +83,7 @@ export function validateRootCommand(command: RootCommand) {
   if (command.kind === "jobs.inspect" || command.kind === "jobs.stop") text(command.id, 256);
   if (command.kind === "jobs.inspect")
     for (const field of ["offset", "limit"] as const)
-      if (command[field] !== undefined && (!Number.isSafeInteger(command[field]) || command[field]! < 0))
+      if (command[field] !== undefined && (!Number.isSafeInteger(command[field]) || command[field] < 0))
         throw Error("Invalid job pagination");
   if (command.kind === "jobs.list") {
     if (
@@ -147,7 +147,7 @@ export async function handleRootRequest(req: RootRequest, options: RootOwnerOpti
     "repository-result": ["sessionId", "offset"],
   };
   if (!Object.hasOwn(fields, req.op)) throw Error("Invalid root operation");
-  strict(req, ["op", ...(req.op === "create" ? [] : ["ownerId", "epoch"]), ...fields[req.op]!]);
+  strict(req, ["op", ...(req.op === "create" ? [] : ["ownerId", "epoch"]), ...fields[req.op]]);
   if (req.op !== "create" && (req.ownerId !== identity.ownerId || req.epoch !== identity.epoch))
     throw Error("Owner identity or boot epoch changed");
   const store = new RootStore(options.directory);
@@ -172,7 +172,7 @@ export async function handleRootRequest(req: RootRequest, options: RootOwnerOpti
             child.on("error", (error) => {
               const later = new RootStore(options.directory);
               try {
-                later.unknown(req.intent.sessionId, "Root spawn outcome unknown: " + error);
+                later.unknown(req.intent.sessionId, `Root spawn outcome unknown: ${error}`);
               } finally {
                 later.close();
               }
@@ -181,7 +181,7 @@ export async function handleRootRequest(req: RootRequest, options: RootOwnerOpti
             child.unref();
           }
         } catch (error) {
-          store.unknown(req.intent.sessionId, "Root spawn outcome unknown: " + error);
+          store.unknown(req.intent.sessionId, `Root spawn outcome unknown: ${error}`);
         }
       } else reconcile(store, req.intent.sessionId);
       return store.get(value.record.intent.sessionId).record;
@@ -245,7 +245,7 @@ class RpcPort implements RootSessionPort {
   private dialogs = new Map<string, string>();
   private listeners = new Set<(event: unknown) => void>();
   readonly exited: Promise<{ code: number | null; signal: string | null }>;
-  private child: ReturnType<typeof spawn>;
+  private child: import("node:child_process").ChildProcessWithoutNullStreams;
   constructor(
     executable: string,
     args: string[],
@@ -266,7 +266,7 @@ class RpcPort implements RootSessionPort {
     this.child = spawn(executable, args, { cwd, env, stdio: ["pipe", "pipe", "pipe"] });
     let buffer = "",
       failed = false;
-    this.child.stdout!.on("data", (data) => {
+    this.child.stdout.on("data", (data) => {
       if (failed) return;
       buffer += data.toString();
       if (Buffer.byteLength(buffer) > 2 * 1024 * 1024) {
@@ -298,12 +298,12 @@ class RpcPort implements RootSessionPort {
           }
         } catch (error) {
           failed = true;
-          this.fatal(Error("Root RPC event gap: " + error));
+          this.fatal(Error(`Root RPC event gap: ${error}`));
         }
       }
     });
     // Diagnostics do not become model text or unbounded retained output.
-    this.child.stderr!.on("data", () => {});
+    this.child.stderr.on("data", () => {});
     this.child.on("error", (error) => this.fail(error));
     this.exited = new Promise((resolve) =>
       this.child.on("close", (code, signal) => {
@@ -331,7 +331,7 @@ class RpcPort implements RootSessionPort {
         reject(Error("Root RPC acknowledgement unknown"));
       }, 20000);
       this.pending.set(id, { resolve, reject, timer });
-      this.child.stdin!.write(JSON.stringify({ ...command, id }) + "\n", (error) => {
+      this.child.stdin.write(`${JSON.stringify({ ...command, id })}\n`, (error) => {
         if (error) {
           clearTimeout(timer);
           this.pending.delete(id);
@@ -351,7 +351,7 @@ class RpcPort implements RootSessionPort {
     this.dialogs.delete(command.id);
     const { kind, ...response } = command;
     return new Promise((resolve, reject) =>
-      this.child.stdin!.write(JSON.stringify({ type: "extension_ui_response", ...response }) + "\n", (error) =>
+      this.child.stdin.write(`${JSON.stringify({ type: "extension_ui_response", ...response })}\n`, (error) =>
         error ? reject(error) : resolve({ delivery: "written", applied: "unknown" }),
       ),
     );
@@ -366,7 +366,7 @@ class RpcPort implements RootSessionPort {
     };
   }
   end() {
-    this.child.stdin!.end();
+    this.child.stdin.end();
   }
 }
 export class RootAcknowledgedError extends Error {}
@@ -411,7 +411,7 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
     exited = true;
     if (pendingClose && code === 0 && !signal && store.get(id).record.state !== "unknown") {
       confirmRootClosed(store, id, pendingClose);
-    } else store.unknown(id, "Root runtime exit outcome unknown (code=" + code + ", signal=" + signal + ")");
+    } else store.unknown(id, `Root runtime exit outcome unknown (code=${code}, signal=${signal})`);
   });
   try {
     const state = (await port.rpc("root-startup-state", { type: "get_state" })) as {
@@ -421,8 +421,9 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
     };
     const r = store.get(id),
       intent = r.record.intent;
-    if (!state.model) throw Error("Destination root has no configured model; no child-profile fallback");
-    if (intent.model && intent.model !== state.model.provider + "/" + state.model.id)
+    const model = state.model;
+    if (!model) throw Error("Destination root has no configured model; no child-profile fallback");
+    if (intent.model && intent.model !== `${model.provider}/${model.id}`)
       throw Error("Destination rejected explicit root model; silent fallback forbidden");
     if (intent.thinking && intent.thinking !== state.thinkingLevel)
       throw Error("Destination rejected explicit root thinking level");
@@ -443,7 +444,7 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
       current.record = {
         ...current.record,
         state: "running",
-        model: { provider: state.model!.provider, id: state.model!.id },
+        model: { provider: model.provider, id: model.id },
         sessionFile: state.sessionFile,
       };
       store.save(current);
@@ -451,7 +452,7 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
     store.append(id, {
       type: "root_ready",
       state: {
-        model: { provider: state.model.provider, id: state.model.id },
+        model: { provider: model.provider, id: model.id },
         thinkingLevel: state.thinkingLevel,
         sessionFile: state.sessionFile,
       },
@@ -480,7 +481,7 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
           store.save(root);
         });
         // Clear queued user turns before the trusted child-settlement check.
-        await port.rpc("root-clear-" + receipt.commandId, { type: "clear_queue" });
+        await port.rpc(`root-clear-${receipt.commandId}`, { type: "clear_queue" });
         const result = await port.facet({ kind: "close" });
         if ((result as { settled?: boolean })?.settled === true) {
           // Install the evidence before end(): a port may acknowledge exit immediately.
@@ -495,7 +496,7 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
           });
         }
       } catch (error) {
-        store.unknown(id, "Root close acknowledgement unknown: " + error);
+        store.unknown(id, `Root close acknowledgement unknown: ${error}`);
       }
     }
     while (!exited) {
@@ -575,11 +576,12 @@ export async function runRootOwner(
     });
     claimed = true;
     let port: RootSessionPort;
+    if (!initial.ownerClaim) throw Error("Root owner claim missing");
     if (options.port) port = options.port(initial.record);
     else {
       const socket = join(
         tmpdir(),
-        "bruv-root-" + createHash("sha256").update(initial.ownerClaim!).digest("hex").slice(0, 16) + ".sock",
+        `bruv-root-${createHash("sha256").update(initial.ownerClaim).digest("hex").slice(0, 16)}.sock`,
       );
       if (Buffer.byteLength(socket) > 100) throw Error("Root private IPC socket path exceeds Unix limit");
       const sessionFile = join(store.path(sessionId), "session.jsonl");

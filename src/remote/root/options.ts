@@ -32,11 +32,11 @@ export function parseRootPlacementArgs(args: string[]): { localArgs: string[]; r
   const options: RootStartupOptions = { place };
   const seen = new Set<string>();
   for (let i = 0; i < args.length; i++) {
-    const flag = args[i]!;
+    const flag = args[i];
     const takeValue = (): string => {
       const value = args[++i];
-      if (!value || value.startsWith("-") || /[\r\n\0]/.test(value)) throw Error(flag + " requires a value");
-      if (flag !== "--remote-include" && seen.has(flag)) throw Error("Duplicate root option: " + flag);
+      if (!value || value.startsWith("-") || /[\r\n\0]/.test(value)) throw Error(`${flag} requires a value`);
+      if (flag !== "--remote-include" && seen.has(flag)) throw Error(`Duplicate root option: ${flag}`);
       seen.add(flag);
       return value;
     };
@@ -80,9 +80,7 @@ export function parseRootPlacementArgs(args: string[]): { localArgs: string[]; r
         break;
       }
       default:
-        throw Error(
-          "Unsupported remote main-session argument: " + flag + ". Enter prompts in the attached conversation.",
-        );
+        throw Error(`Unsupported remote main-session argument: ${flag}. Enter prompts in the attached conversation.`);
     }
   }
   if (options.remoteRepo && (options.cwd || options.remoteInclude?.length))

@@ -24,13 +24,13 @@ for (const [label, command] of [
     timeout: 15000,
   });
   if (denied.exitCode === 0 || !new TextDecoder().decode(denied.stderr).includes("explicit loopback test gate")) {
-    throw new Error(label + " probe is not gated");
+    throw new Error(`${label} probe is not gated`);
   }
   const child = Bun.spawnSync([...command], { env, stdout: "pipe", stderr: "pipe", timeout: 15000 });
   const output = new TextDecoder().decode(child.stdout);
   const error = new TextDecoder().decode(child.stderr);
   if (child.exitCode !== 0 || !output.includes("full/mini session.updated and HTTP 401 passed")) {
-    throw new Error(label + " offline probe failed (exit " + child.exitCode + "): " + error + output);
+    throw new Error(`${label} offline probe failed (exit ${child.exitCode}): ${error}${output}`);
   }
-  console.log(label + ": " + output.trim());
+  console.log(`${label}: ${output.trim()}`);
 }

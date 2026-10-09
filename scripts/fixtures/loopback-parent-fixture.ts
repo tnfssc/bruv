@@ -1,3 +1,4 @@
+import type { FixtureRpcEvent } from "./rpc-types";
 import { placementReply } from "../../tests/remote/fixtures/remote-e2e/placement-parent";
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -23,9 +24,9 @@ export function loopbackParent(agentDir: string, onCall?: () => void) {
         choices: [{ index: 0, delta, finish_reason }],
       });
       return new Response(
-        [event(response, null), event({}, "tool_calls" in response ? "tool_calls" : "stop")]
-          .map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n")
-          .join("") + "data: [DONE]\n\n",
+        `${[event(response, null), event({}, "tool_calls" in response ? "tool_calls" : "stop")]
+          .map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`)
+          .join("")}data: [DONE]\n\n`,
         { headers: { "content-type": "text/event-stream" } },
       );
     },
@@ -36,7 +37,7 @@ export function loopbackParent(agentDir: string, onCall?: () => void) {
     JSON.stringify({
       providers: {
         fixture: {
-          baseUrl: "http://127.0.0.1:" + provider.port + "/v1",
+          baseUrl: `http://127.0.0.1:${provider.port}/v1`,
           api: "openai-completions",
           apiKey: "fixture-only",
           models: [{ id: "fixture-model", name: "fixture", contextWindow: 32000, maxTokens: 1024 }],
@@ -47,7 +48,7 @@ export function loopbackParent(agentDir: string, onCall?: () => void) {
 
   return provider;
 }
-function readRpcEvents(stdout: Readable, onEvent: (event: any) => void) {
+function readRpcEvents(stdout: Readable, onEvent: (event: FixtureRpcEvent) => void) {
   let buffer = "";
   stdout.on("data", (chunk: Buffer) => {
     buffer += String(chunk);
@@ -58,7 +59,7 @@ function readRpcEvents(stdout: Readable, onEvent: (event: any) => void) {
         try {
           onEvent(JSON.parse(line));
         } catch {
-          throw new Error("Invalid RPC JSON: " + line);
+          throw new Error(`Invalid RPC JSON: ${line}`);
         }
       }
     }
@@ -72,7 +73,7 @@ export function fixtureRpc(options: {
   env: Record<string, string>;
   children: ReturnType<typeof spawn>[];
   noSession?: boolean;
-  timeoutDetail: (events: any[]) => string;
+  timeoutDetail: (events: FixtureRpcEvent[]) => string;
 }) {
   const { bruv, cwd, env } = options;
   const child = spawn(
@@ -93,21 +94,21 @@ export function fixtureRpc(options: {
     },
   );
   options.children.push(child);
-  const events: any[] = [];
+  const events: FixtureRpcEvent[] = [];
   let stderr = "";
   child.stderr.on("data", (chunk: Buffer) => (stderr += String(chunk)));
   readRpcEvents(child.stdout, (event) => {
     events.push(event);
     if (event.type === "extension_ui_request" && event.method === "confirm")
-      child.stdin.write(JSON.stringify({ type: "extension_ui_response", id: event.id, confirmed: false }) + "\n");
+      child.stdin.write(`${JSON.stringify({ type: "extension_ui_response", id: event.id, confirmed: false })}\n`);
   });
-  const send = (message: string) => child.stdin.write(JSON.stringify({ type: "prompt", message }) + "\n");
+  const send = (message: string) => child.stdin.write(`${JSON.stringify({ type: "prompt", message })}\n`);
   const wait = async (predicate: () => boolean, label: string, limit = 20_000) => {
     const start = Date.now();
     while (!predicate()) {
-      if (child.exitCode !== null) throw new Error("RPC exited while " + label + ": " + stderr);
+      if (child.exitCode !== null) throw new Error(`RPC exited while ${label}: ${stderr}`);
       if (Date.now() - start > limit)
-        throw new Error("RPC timeout " + label + "; stderr=" + stderr + options.timeoutDetail(events));
+        throw new Error(`RPC timeout ${label}; stderr=${stderr}${options.timeoutDetail(events)}`);
       await Bun.sleep(40);
     }
   };

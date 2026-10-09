@@ -73,7 +73,7 @@ function runningActionRow(
   width: number,
 ): string {
   const line =
-    theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]!) + (caption ? " " + theme.fg("toolTitle", caption) : "");
+    theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]) + (caption ? ` ${theme.fg("toolTitle", caption)}` : "");
   return truncateToWidth(line, width);
 }
 
@@ -201,7 +201,7 @@ export function executeOutputPreview(
       return details?.outputArtifactErrors
         ? [
             truncateToWidth(
-              theme.fg("success", "✓ " + summary) + theme.fg("warning", " — ⚠ couldn’t save full output"),
+              theme.fg("success", `✓ ${summary}`) + theme.fg("warning", " — ⚠ couldn’t save full output"),
               width,
             ),
             ...rows,
@@ -215,11 +215,11 @@ export function executeOutputPreview(
     const reason = failed ? actionError(details, full) : status.text;
     const row = theme.fg(
       failed ? "error" : status.color,
-      (failed ? "✗" : status.color === "success" ? "✓" : "?") + " " + summary,
+      `${failed ? "✗" : status.color === "success" ? "✓" : "?"} ${summary}`,
     );
     const warning = details?.outputArtifactErrors ? "⚠ couldn’t save full output" : "";
     const suffix = [reason, warning].filter(Boolean).join(" — ");
-    return [truncateToWidth(row + (suffix ? " — " + theme.fg(failed ? "error" : "warning", suffix) : ""), width)];
+    return [truncateToWidth(row + (suffix ? ` — ${theme.fg(failed ? "error" : "warning", suffix)}` : ""), width)];
   });
 }
 
@@ -266,7 +266,7 @@ export function completionPreview(
       if (indicators && width <= 1)
         return [failed ? theme.fg("error", "✗") : cancelled ? theme.fg("error", "⊘") : theme.fg("warning", "?")];
       if (indicators && visibleWidth(indicators) >= width) return [truncateToWidth(indicators, width)];
-      return [truncateToWidth(indicators ? indicators + " " + line : line, width)];
+      return [truncateToWidth(indicators ? `${indicators} ${line}` : line, width)];
     }),
   );
   return box;

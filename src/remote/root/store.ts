@@ -10,14 +10,14 @@ export function rootId(id: unknown): asserts id is string {
 }
 /** Sorted object keys preserve semantic intent, never depend on peer JSON field order. */
 export function canonical(value: unknown): string {
-  if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]";
+  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
   if (value && typeof value === "object")
     return (
       "{" +
       Object.entries(value)
         .filter(([, v]) => v !== undefined)
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => JSON.stringify(k) + ":" + canonical(v))
+        .map(([k, v]) => `${JSON.stringify(k)}:${canonical(v)}`)
         .join(",") +
       "}"
     );
@@ -101,7 +101,7 @@ export class RootStore {
       }
       const root = this.get(session);
       if (root.closing || !["accepted", "running"].includes(root.record.state))
-        throw Error("Root is not accepting commands: " + root.record.state);
+        throw Error(`Root is not accepting commands: ${root.record.state}`);
       const count = this.db.query("SELECT COUNT(*) AS n FROM commands WHERE session=?").get(session) as { n: number };
       if (count.n >= 10000) throw Error("Root command retention limit reached");
       const receipt: RootCommandReceipt = { commandId: id, state: "queued" };

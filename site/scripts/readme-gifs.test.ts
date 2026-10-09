@@ -29,8 +29,8 @@ test("Live storyboard uses current hold-to-talk states and finishes its transcri
 test("README links all four local looping GIF assets", async () => {
   const readme = await Bun.file(resolve(import.meta.dir, "../../README.md")).text();
   for (const id of [...demoIds, "live"]) {
-    const path = "site/assets/demos/" + id + ".gif";
-    expect(readme).toContain("(" + path + ")");
+    const path = `site/assets/demos/${id}.gif`;
+    expect(readme).toContain(`(${path})`);
     const bytes = Buffer.from(await Bun.file(resolve(import.meta.dir, "../..", path)).arrayBuffer());
     expect(bytes.subarray(0, 6).toString()).toBe("GIF89a");
     expect(bytes.readUInt16LE(6)).toBe(840);

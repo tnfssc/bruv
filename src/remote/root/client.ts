@@ -59,10 +59,10 @@ export type RootLocalState = {
   outcome?: RepositoryReturn;
   lastError?: string;
 };
-function object(value: unknown): any {
+function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw Error("Invalid root response");
-  const r = value as any;
-  if (r.code && r.error) throw Error(r.error);
+  const r = value as Record<string, unknown>;
+  if (r.code && r.error) throw Error(String(r.error));
   return r;
 }
 function atomic(path: string, value: unknown) {
@@ -94,15 +94,17 @@ export class RootClient {
     const base = options.stateDir ?? join(homedir(), ".bruv", "remote", "roots");
     mkdirSync(base, { recursive: true, mode: 0o700 });
     chmodSync(base, 0o700);
-    const key = hash(options.target.name + "\0" + cwd);
-    const pointer = join(base, key + ".json");
+    const key = hash(`${options.target.name}\0${cwd}`);
+    const pointer = join(base, `${key}.json`);
     const db = new Database(join(base, "pointers.sqlite"));
     let directory: string;
     try {
       db.exec("PRAGMA busy_timeout=5000; BEGIN EXCLUSIVE");
-      if (existsSync(pointer) && !options.fresh)
-        directory = join(base, object(JSON.parse(readFileSync(pointer, "utf8"))).sessionId);
-      else {
+      if (existsSync(pointer) && !options.fresh) {
+        const sessionId = object(JSON.parse(readFileSync(pointer, "utf8"))).sessionId;
+        if (typeof sessionId !== "string") throw Error("Invalid root pointer session ID");
+        directory = join(base, sessionId);
+      } else {
         if (readdirSync(base).filter((name) => /^[0-9a-f-]{36}$/.test(name)).length >= 100)
           throw Error("Root session cache limit reached; preserve/export sessions before creating more");
         const sessionId = randomUUID();
@@ -141,7 +143,7 @@ export class RootClient {
                 source.source.matchesCurrent +
                 ")"
               : "current tracked source snapshot (history-free)"
-            : "server existing repository: " + options.remoteRepo,
+            : `server existing repository: ${options.remoteRepo}`,
           workspace: options.workspace,
           created: false,
           cursor: 0,
@@ -156,7 +158,7 @@ export class RootClient {
     } finally {
       db.close();
     }
-    const client = new RootClient({ ...options, cwd }, directory!);
+    const client = new RootClient({ ...options, cwd }, directory);
     const state = client.read();
     if (!isDeepStrictEqual(state.target, options.target))
       throw Error("Saved root belongs to a different pinned target/owner epoch; no request sent");
@@ -208,11 +210,11 @@ export class RootClient {
     this.queue = next.catch(() => {});
     return next;
   }
-  private async request(state: RootLocalState, request: RootRequest): Promise<any> {
+  private async request<T = Record<string, unknown>>(state: RootLocalState, request: RootRequest): Promise<T> {
     const h = object(await this.transport(state.target.host, state.target.bruvPath, { op: "hello" }));
     if (h.ownerId !== state.target.ownerId || h.epoch !== state.target.epoch)
       throw Error("Remote root owner/epoch changed; request refused");
-    return object(await this.transport(state.target.host, state.target.bruvPath, request));
+    return object(await this.transport(state.target.host, state.target.bruvPath, request)) as T;
   }
   private identity(s: RootLocalState) {
     return { ownerId: s.intent.ownerId, epoch: s.intent.epoch, sessionId: s.intent.sessionId };
@@ -255,6 +257,7 @@ export class RootClient {
       });
       if (r.offset !== Math.min(bytes.length, offset + CHUNK)) throw Error("Invalid source upload acknowledgement");
       offset = r.offset;
+      if (r.checkout !== undefined && typeof r.checkout !== "string") throw Error("Invalid root source checkout");
       checkout = r.checkout;
     }
     if (!checkout?.startsWith("/")) throw Error("Missing root source checkout");
@@ -263,8 +266,9 @@ export class RootClient {
   private record(value: unknown, s: RootLocalState): RootRecord {
     const r = object(value);
     if (!isDeepStrictEqual(r.intent, s.intent)) throw Error("Root snapshot identity or immutable intent mismatch");
-    if (!["accepted", "running", "closed", "unknown"].includes(r.state)) throw Error("Invalid root state");
-    return r;
+    if (typeof r.state !== "string" || !["accepted", "running", "closed", "unknown"].includes(r.state))
+      throw Error("Invalid root state");
+    return r as RootRecord;
   }
   async observe(): Promise<RootObservation> {
     return this.withState(async (s) => {
@@ -314,7 +318,7 @@ export class RootClient {
     try {
       const r = await this.request(s, { op: "command", ...this.identity(s), commandId, command });
       const receipt = this.receipt(r.receipt ?? r, commandId);
-      s.commands[commandId]!.receipt = receipt;
+      s.commands[commandId].receipt = receipt;
       atomic(this.path, s);
       return receipt;
     } catch (error) {
@@ -327,14 +331,18 @@ export class RootClient {
   }
   private receipt(value: unknown, id: string): RootCommandReceipt {
     const r = object(value);
-    if (r.commandId !== id || !["queued", "dispatching", "completed", "unknown"].includes(r.state))
+    if (
+      r.commandId !== id ||
+      typeof r.state !== "string" ||
+      !["queued", "dispatching", "completed", "unknown"].includes(r.state)
+    )
       throw Error("Invalid root command receipt");
-    return r;
+    return r as RootCommandReceipt;
   }
   private async reconcileSaved(s: RootLocalState, id: string): Promise<RootCommandReceipt> {
     const r = await this.request(s, { op: "command-status", ...this.identity(s), commandId: id });
     const receipt = this.receipt(r.receipt ?? r, id);
-    s.commands[id]!.receipt = receipt;
+    s.commands[id].receipt = receipt;
     atomic(this.path, s);
     return receipt;
   }
@@ -369,7 +377,7 @@ export class RootClient {
       await Bun.sleep(100);
       r = await this.withState((s) => this.reconcileSaved(s, r.commandId));
     }
-    if (r.state !== "completed") throw Error("Remote control outcome is " + r.state + "; no duplicate command sent");
+    if (r.state !== "completed") throw Error(`Remote control outcome is ${r.state}; no duplicate command sent`);
     if (r.error) throw Error(r.error);
     return r.result;
   }
@@ -386,7 +394,12 @@ export class RootClient {
       if (record.state !== "closed" || record.exitCode !== 0)
         throw Error("Source return requires confirmed closed successful root; active/unknown is not safe");
       const { result, patch } = await downloadRepositoryResult(
-        (offset) => this.request(s, { op: "repository-result", ...this.identity(s), offset }),
+        (offset) =>
+          this.request<import("../repository-download").RepositoryResultPage>(s, {
+            op: "repository-result",
+            ...this.identity(s),
+            offset,
+          }),
         s.source.snapshot,
         MAX,
         { pageError: "Invalid root repository result page", integrityError: "Root result digest or source mismatch" },
@@ -395,7 +408,7 @@ export class RootClient {
       writeFileSync(path, patch, { mode: 0o600 });
       const base = join(this.directory, "..", "repo-locks");
       mkdirSync(base, { recursive: true, mode: 0o700 });
-      const db = new Database(join(base, hash(s.sourceRoot) + ".sqlite"));
+      const db = new Database(join(base, `${hash(s.sourceRoot)}.sqlite`));
       try {
         db.exec("PRAGMA busy_timeout=5000; BEGIN EXCLUSIVE");
         s.outcome = integrateRepositoryResult(

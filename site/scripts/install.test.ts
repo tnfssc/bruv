@@ -8,13 +8,15 @@ const script = resolve(import.meta.dir, "../../scripts/install.sh");
 
 async function mockHostCommands(mocks: string) {
   const write = async (name: string, lines: string[]) => {
-    await Bun.write(join(mocks, name), lines.join("\n") + "\n");
+    await Bun.write(join(mocks, name), `${lines.join("\n")}\n`);
     await chmod(join(mocks, name), 0o755);
   };
   await write("uname", [
     "#!/bin/sh",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
     'case "$1" in -s) echo "${TEST_OS:-Linux}";; -m) echo "${TEST_ARCH:-x86_64}";; esac',
   ]);
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
   await write("id", ["#!/bin/sh", 'echo "${TEST_UID:-1000}"']);
   await write("curl", [
     "#!/bin/sh",
@@ -29,12 +31,15 @@ async function mockHostCommands(mocks: string) {
     "https://github.com/tnfssc/bruv/releases/download/v0.16.2/*) ;;",
     "*) exit 22;;",
     "esac",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
     "name=${url##*/}",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
     '[ "$name" != "${MISSING:-}" ] || exit 22',
     'cp "$FIXTURE/assets/$name" "$out"',
   ]);
   await write("mv", [
     "#!/bin/sh",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
     'if [ "${FAIL_MOVE:-}" = 1 ] && [ "$1" = -f ] && [ "$3" = "$HOME/.local/bin/bruv" ] && [ ! -e "$FIXTURE/move-failed" ]; then',
     'touch "$FIXTURE/move-failed"; exit 1',
     "fi",
@@ -49,7 +54,7 @@ async function publishRelease(assets: string, env: Record<string, string | undef
     "#!/bin/sh",
     'echo probe >> "$FIXTURE/probes"',
     'case "$1" in',
-    '--bruv-version) echo "bruv-claude-compat ' + connectorVersion + '";;',
+    `--bruv-version) echo "bruv-claude-compat ${connectorVersion}";;`,
     '--version) echo "Bruv connector";;',
     "*) exit 64;;",
     "esac",
@@ -60,17 +65,17 @@ async function publishRelease(assets: string, env: Record<string, string | undef
       ["bruv", bruv],
       ["bruv-claude-compat", connector],
     ]) {
-      const name = program + "-" + platform;
+      const name = `${program}-${platform}`;
       await Bun.write(join(assets, name), bytes);
       const hash =
         env.BAD_CHECKSUM || (env.BAD_CONNECTOR && program === "bruv-claude-compat")
           ? "0".repeat(64)
           : createHash("sha256").update(bytes).digest("hex");
-      await Bun.write(join(assets, name + ".sha256"), hash + "  " + (env.BAD_FILENAME ? "../wrong" : name) + "\n");
+      await Bun.write(join(assets, `${name}.sha256`), `${hash}  ${env.BAD_FILENAME ? "../wrong" : name}\n`);
     }
   }
   for (const name of ["LICENSE", "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_LICENSES.txt", "SOURCE.txt"])
-    await Bun.write(join(assets, name), name + " release notice");
+    await Bun.write(join(assets, name), `${name} release notice`);
 }
 
 type InstallResult = {
@@ -99,7 +104,7 @@ async function withInstall(env: Record<string, string | undefined>, check: (resu
     const child = Bun.spawn(["/bin/sh", script], {
       env: {
         ...process.env,
-        PATH: mocks + ":/usr/bin:/bin",
+        PATH: `${mocks}:/usr/bin:/bin`,
         HOME: home,
         FIXTURE: root,
         ANDROID_ROOT: "",
@@ -145,7 +150,7 @@ test("paired install, pinned downloads, notices and supported artifact mapping",
       const requests = (await Bun.file(join(f.root, "requests")).text()).trim().split("\n");
       expect(requests.filter((url) => url.endsWith("/latest"))).toHaveLength(1);
       expect(requests.slice(1).every((url) => url.includes("/download/v0.16.2/"))).toBe(true);
-      expect(requests[1]).toEndWith("/bruv-" + platform);
+      expect(requests[1]).toEndWith(`/bruv-${platform}`);
     });
   }
 });

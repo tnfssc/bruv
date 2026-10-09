@@ -8,6 +8,7 @@ import {
   setCapabilities,
 } from "../../node_modules/@earendil-works/pi-tui/dist/terminal-image.js";
 
+// biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
 const zonePrefix = /^(?:\x1b\]133;[ABC](?:\x07|\x1b\\))+/;
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
 
@@ -19,9 +20,9 @@ function uncachedTranscript(lines: string[], width: number, resetRows: (rows: st
   );
   let result = "\x1b[?2026h\x1b[?1049l\x1b[?7l";
   rows.forEach((line, row) => {
-    result += (row > 0 ? "\r\n" : "") + "\r\x1b[2K" + line;
+    result += `${row > 0 ? "\r\n" : ""}\r\x1b[2K${line}`;
   });
-  return result + "\x1b[0m\x1b[?7h\r\n\x1b[?25h\x1b[?2026l";
+  return `${result}\x1b[0m\x1b[?7h\r\n\x1b[?25h\x1b[?2026l`;
 }
 
 function fixture(lines: string[], width: number) {
@@ -76,7 +77,7 @@ test("stop preserves colors, links, images, cursor stripping, normalization and 
     "",
     "plain",
     "\x1b]133;A\x07\x1b]133;C\x1b\\prompt",
-    CURSOR_MARKER + "cursor" + CURSOR_MARKER,
+    `${CURSOR_MARKER}cursor${CURSOR_MARKER}`,
     "\x1b[31mred\x1b[0m",
     "\x1b]8;;https://example.test\x1b\\link\x1b]8;;\x1b\\",
     "tabs\tand Thai กำ Lao ກຳ",
