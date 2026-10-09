@@ -20,7 +20,7 @@ export function taskRowWithExecuteLabel(row: TaskRow, label: unknown): TaskRow {
   return title ? { ...row, title } : row;
 }
 export function taskRowKey(row: Pick<TaskRow, "source" | "id">): string {
-  return row.source + ":" + row.id;
+  return `${row.source}:${row.id}`;
 }
 const record = (value: unknown): Record<string, unknown> | undefined =>
   value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
@@ -134,22 +134,22 @@ export function formatTaskRow(row: TaskRow): string {
   const title = clean(row.title) || clean(row.fallbackTitle) || clean(row.id);
   switch (row.status) {
     case "running":
-      return "↗ " + title;
+      return `↗ ${title}`;
     case "succeeded":
-      return "✓ " + title;
+      return `✓ ${title}`;
     case "cancelled":
-      return "⊘ " + title + " — cancelled";
+      return `⊘ ${title} — cancelled`;
     case "failed":
       return (
         "✗ " +
         title +
         " — " +
-        (row.timedOut ? "timed out" : row.exitCode !== undefined ? "exit " + row.exitCode : "failed")
+        (row.timedOut ? "timed out" : row.exitCode !== undefined ? `exit ${row.exitCode}` : "failed")
       );
     case "needs-input":
-      return "? " + title + " — needs your input";
+      return `? ${title} — needs your input`;
     default:
-      return "? " + title + " — status unknown";
+      return `? ${title} — status unknown`;
   }
 }
 
@@ -189,7 +189,7 @@ export function taskStatusSummaryFromDetails(value: unknown): TaskStatusSummary[
     }
   const rows: TaskStatusSummary[] = [];
   const add = (count: number, color: TaskSummaryRow["color"], mark: string, suffix: TaskStatusSummary["status"]) => {
-    if (count > 0) rows.push({ color, text: mark + " " + count + " more tasks " + suffix, status: suffix, count });
+    if (count > 0) rows.push({ color, text: `${mark} ${count} more tasks ${suffix}`, status: suffix, count });
   };
   add((aggregate.failed as number) - counts.failed, "error", "✗", "failed");
   add((aggregate.killed as number) - counts.killed, "error", "⊘", "cancelled");

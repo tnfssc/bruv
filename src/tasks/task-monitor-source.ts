@@ -81,7 +81,7 @@ export class MergedTaskMonitorSource implements TaskMonitorSource {
       this.notice = undefined;
     } catch (error) {
       // Retain last observations: a failed cache read is not a task failure.
-      if (!this.disposed) this.notice = "SSH cache read unavailable; prior observations retained: " + String(error);
+      if (!this.disposed) this.notice = `SSH cache read unavailable; prior observations retained: ${String(error)}`;
     } finally {
       this.refreshing = false;
       this.changed();
@@ -143,7 +143,7 @@ export class MergedTaskMonitorSource implements TaskMonitorSource {
           identity: identity(job),
           output: this.outputs.get(job.id)?.output ?? "",
           at: Date.now(),
-          note: "SSH cached output unavailable: " + String(error),
+          note: `SSH cached output unavailable: ${String(error)}`,
         });
       }
     } finally {
@@ -179,12 +179,12 @@ export class MergedTaskMonitorSource implements TaskMonitorSource {
       this.stopNotes.set(
         job.id,
         result.status === "running" || result.status === "unknown"
-          ? "SSH cancellation pending (" + (result.cancelDelivery ?? "unconfirmed") + "); not stopped."
-          : "SSH terminal state observed: " + result.status,
+          ? `SSH cancellation pending (${result.cancelDelivery ?? "unconfirmed"}); not stopped.`
+          : `SSH terminal state observed: ${result.status}`,
       );
     } catch (error) {
       if (!this.disposed && this.remoteTasks.some((task) => identity(task) === identity(job)))
-        this.stopNotes.set(job.id, "SSH stop error; not confirmed stopped: " + String(error));
+        this.stopNotes.set(job.id, `SSH stop error; not confirmed stopped: ${String(error)}`);
     } finally {
       this.stopping.delete(job.id);
       this.changed();

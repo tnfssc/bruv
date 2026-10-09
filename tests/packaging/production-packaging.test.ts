@@ -70,7 +70,7 @@ test("paired build delegates once from its repository root and relays child I/O 
       expect(await child.exited).toBe(code);
       expect(JSON.parse(await new Response(child.stdout).text())).toEqual({
         cwd: root,
-        args: ["--target=bun-linux-x64", "--outfile=" + join(root, "dist/bruv-claude-compat-linux-x64")],
+        args: ["--target=bun-linux-x64", `--outfile=${join(root, "dist/bruv-claude-compat-linux-x64")}`],
         input: "build input",
       });
       expect(await new Response(child.stderr).text()).toBe("connector stderr\n");
@@ -83,8 +83,8 @@ test("paired build delegates once from its repository root and relays child I/O 
 test("every release target ships binary and launcher, checksums and shared licensing/source notices", () => {
   for (const target of ["linux-x64", "linux-arm64", "darwin-arm64", "android-arm64"]) {
     for (const name of ["bruv", "bruv-claude-compat"]) {
-      expect(assetNames as readonly string[]).toContain(name + "-" + target);
-      expect(assetNames as readonly string[]).toContain(name + "-" + target + ".sha256");
+      expect(assetNames as readonly string[]).toContain(`${name}-${target}`);
+      expect(assetNames as readonly string[]).toContain(`${name}-${target}.sha256`);
     }
   }
   for (const notice of ["LICENSE", "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_LICENSES.txt", "SOURCE.txt"])
@@ -96,6 +96,7 @@ test("every release target ships binary and launcher, checksums and shared licen
 
 test("external native release gate setup keeps verified upstream layout and env handoff", async () => {
   const script = await Bun.file(new URL("../../scripts/release/setup-native-release-gate.sh", import.meta.url)).text();
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
   expect(script).not.toMatch(/[\u0000-\u0008]/);
   expect(script).toContain('root="$RUNNER_TEMP/native-t3"');
   expect(script).toContain("official-2644/fetch-official.mjs");

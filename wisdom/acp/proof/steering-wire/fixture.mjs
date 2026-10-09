@@ -18,12 +18,12 @@ const sanitize = (x) =>
         : x;
 const record = (direction, message) =>
   fs.appendFileSync(
-    root + "wire.ndjson",
-    JSON.stringify({ time: new Date().toISOString(), pid: process.pid, direction, message: sanitize(message) }) + "\n",
+    `${root}wire.ndjson`,
+    `${JSON.stringify({ time: new Date().toISOString(), pid: process.pid, direction, message: sanitize(message) })}\n`,
   );
 const send = (m) => {
   record("agent-to-client", m);
-  process.stdout.write(JSON.stringify(m) + "\n");
+  process.stdout.write(`${JSON.stringify(m)}\n`);
 };
 const result = (id, result) => send({ jsonrpc: "2.0", id, result });
 const update = (sessionId, update) => send({ jsonrpc: "2.0", method: "session/update", params: { sessionId, update } });
@@ -62,9 +62,9 @@ readline.createInterface({ input: process.stdin }).on("line", (line) => {
         .map((x) => x.text)
         .join("\n");
       const marker = t.match(/WIRE_[A-Z_0-9]+/g)?.join(",") ?? "setup";
-      text(p.sessionId, "RESEARCH ONLY " + marker + "\n");
+      text(p.sessionId, `RESEARCH ONLY ${marker}\n`);
       if (t.includes("WIRE_LONG")) {
-        const toolCallId = "wire-tool-" + m.id;
+        const toolCallId = `wire-tool-${m.id}`;
         update(p.sessionId, {
           sessionUpdate: "tool_call",
           toolCallId,

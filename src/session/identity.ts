@@ -11,8 +11,8 @@ export function sessionIdentity(
   if (!id) return undefined;
   // Match Pi's per-cwd session directory; children still use normal JSONL storage.
   const cwd = resolve(manager.getCwd());
-  const safePath = "--" + cwd.replace(/^[/\\]/, "").replace(/[/\\:]/g, "-") + "--";
+  const safePath = `--${cwd.replace(/^[/\\]/, "").replace(/[/\\:]/g, "-")}--`;
   const directory = manager.getSessionDir() || join(getAgentDir(), "sessions", safePath);
   // This is an identity only: no fake parent session is written to disk.
-  return { file: join(directory, ".bruv-ephemeral-" + id + ".jsonl"), directory };
+  return { file: join(directory, `.bruv-ephemeral-${id}.jsonl`), directory };
 }

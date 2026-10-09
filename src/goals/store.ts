@@ -264,6 +264,6 @@ export class GoalStore {
       at: saved.updatedAt,
     });
     this.#goal = saved;
-    return this.get()!;
+    return structuredClone(saved);
   }
 }

@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Owned offline Docker/SSH lifecycle. Scenario assertions and evidence stay with callers. */
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
@@ -12,11 +13,11 @@ import {
   writeFileSync,
 } from "node:fs";
 import { join, resolve, dirname, relative, isAbsolute } from "node:path";
-export const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
+export const quote = (s: string) => `'${s.replaceAll("'", "'\\''")}'`;
 export const wait = async (label: string, fn: () => boolean, timeout = 60000) => {
   const start = Date.now();
   while (!fn()) {
-    if (Date.now() - start > timeout) throw Error("Timed out: " + label);
+    if (Date.now() - start > timeout) throw Error(`Timed out: ${label}`);
     await Bun.sleep(100);
   }
 };
@@ -80,7 +81,7 @@ export function networkNoneFixture(options: {
     });
   const run = (command: string, args: string[], options: Parameters<typeof raw>[2] = {}) => {
     const r = raw(command, args, options);
-    assert.equal(r.status, 0, command + " " + args.join(" ") + "\n" + (r.error ?? "") + r.stderr + r.stdout);
+    assert.equal(r.status, 0, `${command} ${args.join(" ")}\n${r.error ?? ""}${r.stderr}${r.stdout}`);
     return r.stdout.trim();
   };
   const docker = (...args: string[]) => run("docker", args);
@@ -89,7 +90,7 @@ export function networkNoneFixture(options: {
     imageBuilt = false;
 
   function buildOfflineImage() {
-    const imageId = docker("image", "inspect", base!, "--format", "{{.Id}}");
+    const imageId = docker("image", "inspect", requireValue(base), "--format", "{{.Id}}");
     assert.match(imageId, /^sha256:[0-9a-f]{64}$/);
     docker(
       "run",
@@ -121,7 +122,7 @@ export function networkNoneFixture(options: {
         "none",
         "--pull=false",
         "--build-arg",
-        "" + options.buildArg + "=" + imageId,
+        `${options.buildArg}=${imageId}`,
         "-t",
         name,
         build,
@@ -148,7 +149,7 @@ export function networkNoneFixture(options: {
       "--pids-limit",
       "256",
       "--mount",
-      "type=bind,src=" + join(root, "keys") + ",dst=/keys,readonly",
+      `type=bind,src=${join(root, "keys")},dst=/keys,readonly`,
       name,
     );
     containerStarted = true;
@@ -172,23 +173,23 @@ export function networkNoneFixture(options: {
     const sshConfig = join(home, ".ssh", "config");
     writeFileSync(
       join(home, ".ssh", "known_hosts"),
-      "[127.0.0.1]:" + sshPort + " " + readFileSync(join(root, "hostkey.pub"), "utf8"),
+      `[127.0.0.1]:${sshPort} ${readFileSync(join(root, "hostkey.pub"), "utf8")}`,
       { mode: 0o600 },
     );
     writeFileSync(
       sshConfig,
       [
-        "Host " + options.alias,
+        `Host ${options.alias}`,
         "  HostName 127.0.0.1",
         "  User root",
-        "  Port " + sshPort,
-        "  ProxyCommand " + proxy,
-        "  IdentityFile " + join(root, "client"),
+        `  Port ${sshPort}`,
+        `  ProxyCommand ${proxy}`,
+        `  IdentityFile ${join(root, "client")}`,
         "  IdentitiesOnly yes",
         "  IdentityAgent none",
         "  ForwardAgent no",
         "  StrictHostKeyChecking yes",
-        "  UserKnownHostsFile " + join(home, ".ssh", "known_hosts"),
+        `  UserKnownHostsFile ${join(home, ".ssh", "known_hosts")}`,
         "  GlobalKnownHostsFile /dev/null",
         "  UpdateHostKeys no",
         "  BatchMode yes",
@@ -210,7 +211,7 @@ export function networkNoneFixture(options: {
         mode: 0o755,
       },
     );
-    env.PATH = join(root, "bin") + ":" + env.PATH;
+    env.PATH = `${join(root, "bin")}:${env.PATH}`;
     const ssh = (...args: string[]) => run(sshBin, ["-F", sshConfig, options.alias, ...args]);
     await wait(
       "isolated SSH ready",

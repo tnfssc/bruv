@@ -1,3 +1,5 @@
+import type { RootLocalState } from "../../src/remote/root/client";
+import { requireValue } from "../lib/require-value";
 import { networkNoneFixture, assertFixtureOutputExternal, quote, wait } from "../fixtures/network-none-fixture";
 /** One bounded clean product presentation. Acceptance fixtures remain unchanged. */
 import assert from "node:assert/strict";
@@ -61,15 +63,16 @@ export class PresentationTerminal {
   }
 
   view() {
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
     return this.screen().replace(/\x1b\[[0-9;]*m/g, "");
   }
 
   capture(label: string, caption = "", t = 0) {
     mkdirSync(join(this.artifacts, "diagnostics"), { recursive: true });
-    writeFileSync(join(this.artifacts, "diagnostics", label + ".scrollback.txt"), this.scrollback());
-    writeFileSync(join(this.artifacts, label + ".viewport.txt"), this.screen());
+    writeFileSync(join(this.artifacts, "diagnostics", `${label}.scrollback.txt`), this.scrollback());
+    writeFileSync(join(this.artifacts, `${label}.viewport.txt`), this.screen());
     if (caption) {
-      this.shots.push({ step: label, caption, t, path: label + ".viewport.txt", capturedAt: new Date().toISOString() });
+      this.shots.push({ step: label, caption, t, path: `${label}.viewport.txt`, capturedAt: new Date().toISOString() });
       writeFileSync(join(this.artifacts, "timeline.json"), JSON.stringify(this.shots, null, 2));
     }
   }
@@ -165,17 +168,17 @@ async function main() {
     "scripts/fixtures/task-placement-clean/scenario.ts",
   ]) {
     const contents = readFileSync(join(source, file));
-    writeFileSync(join(artifacts, "tooling-sources", file.split("/").at(-1)!), contents);
+    writeFileSync(join(artifacts, "tooling-sources", requireValue(file.split("/").at(-1))), contents);
     toolingSourcesSha256[file] = createHash("sha256").update(contents).digest("hex");
   }
-  const name = "bruv-root-placement-" + process.pid + "-" + Date.now();
+  const name = `bruv-root-placement-${process.pid}-${Date.now()}`;
   const harness = networkNoneFixture({
     root,
     name,
     alias: ALIAS,
     bun,
     binary: binary,
-    base: base!,
+    base: requireValue(base),
     buildArg: "ROOT_PLACEMENT_BASE",
     files: {
       Dockerfile: join(fixture, "Dockerfile"),
@@ -206,7 +209,7 @@ async function main() {
   const statePath = join(home, ".bruv", "remote", "state.json");
   const rootsDir = join(home, ".bruv", "remote", "roots");
   const rootFiles = () => files(rootsDir).filter((f) => f.endsWith("/root.json"));
-  const rootState = (id?: string): any => {
+  const rootState = (id?: string): RootLocalState => {
     const rows = rootFiles().map(json);
     const found = id ? rows.find((s) => s.intent.sessionId === id) : rows.at(-1);
     assert(found, "missing durable root presentation pointer");
@@ -245,7 +248,7 @@ async function main() {
     const rootCommand = [
       "env",
       "-i",
-      ...Object.entries(env).map(([k, v]) => k + "=" + v),
+      ...Object.entries(env).map(([k, v]) => `${k}=${v}`),
       binary,
       "--offline",
       "--no-approve",
@@ -336,25 +339,42 @@ async function main() {
     );
     writeFileSync(join(artifacts, "returned-NOTES.md"), readFileSync(join(repo, "NOTES.md")));
     const state = rootState(id);
-    writeFileSync(join(artifacts, "server-journal.jsonl"), ssh("cat " + quote(state.record.sessionFile)));
+    writeFileSync(
+      join(artifacts, "server-journal.jsonl"),
+      ssh(`cat ${quote(requireValue(requireValue(state.record).sessionFile))}`),
+    );
     const jobLists = Object.values(state.commands)
-      .filter((c: any) => c.command.kind === "jobs.list")
-      .map((c: any) => c.receipt.result.jobs);
+      .filter((c) => c.command.kind === "jobs.list")
+      .map(
+        (c) =>
+          (
+            c.receipt.result as {
+              jobs: Array<{
+                title?: string;
+                status: string;
+                cwd: string;
+                agent: { type: string; depth: number };
+                workspace: { kind: string; sourcePath: string };
+              }>;
+            }
+          ).jobs,
+      );
     const child = jobLists
       .flat()
       .reverse()
-      .find((j: any) => j.title === "Review the project guide");
+      .find((j: { title?: string }) => j.title === "Review the project guide");
+    assert(child, "missing child job");
     assert.equal(child.status, "completed");
     assert.equal(child.agent.type, "normal");
     assert.equal(child.agent.depth, 1);
     assert.equal(child.workspace.kind, "worktree");
     assert(child.cwd.startsWith("/root/.bruv/worktrees/"));
     assert(child.workspace.sourcePath.includes(id));
-    writeFileSync(join(artifacts, "child-placement-proof.json"), JSON.stringify(child, null, 2) + "\n");
+    writeFileSync(join(artifacts, "child-placement-proof.json"), `${JSON.stringify(child, null, 2)}\n`);
     assert.equal(ssh("test ! -e /tmp/root-placement-provider-errors || cat /tmp/root-placement-provider-errors"), "");
     writeFileSync(
       join(artifacts, "capture-receipt.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           schema: "clean-product-capture-v1",
           binaryPath: binary,
@@ -405,7 +425,7 @@ async function main() {
         },
         null,
         2,
-      ) + "\n",
+      )}\n`,
     );
     passed = true;
   } catch (error) {
@@ -421,12 +441,12 @@ async function main() {
         "root-placement-provider-errors",
         "root-placement-provider.log",
       ])
-        raw("docker", ["cp", name + ":/tmp/" + file, join(artifacts, file)]);
+        raw("docker", ["cp", `${name}:/tmp/${file}`, join(artifacts, file)]);
       writeFileSync(join(artifacts, "docker.log"), raw("docker", ["logs", name]).stderr);
     }
     terminal.captureFinalAndStop(passed);
     for (const [i, file] of rootFiles().entries())
-      copyFileSync(file, join(artifacts, "diagnostics", "final-root-" + i + ".json"));
+      copyFileSync(file, join(artifacts, "diagnostics", `final-root-${i}.json`));
     harness.cleanup();
     console.log("Clean presentation artifacts:", artifacts);
   }

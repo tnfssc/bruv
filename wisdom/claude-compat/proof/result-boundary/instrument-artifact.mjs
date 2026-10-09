@@ -40,17 +40,17 @@ const funcs = [
  ['handleSdkMessage','canUseToolEffect'],
 ];
 for(const [name,next] of funcs){
- const from = section.indexOf('const '+name+' =');
- const to = section.indexOf('const '+next+' =',from);
- if(from<0||to<0) throw Error('Missing function '+name);
+ const from = section.indexOf(`const ${name} =`);
+ const to = section.indexOf(`const ${next} =`,from);
+ if(from<0||to<0) throw Error(`Missing function ${name}`);
  let s = section.slice(from,to);
  const body = s.indexOf('{',s.indexOf('function*'));
  const tail = s.lastIndexOf('});');
- if(body<0||tail<0) throw Error('Missing body '+name);
+ if(body<0||tail<0) throw Error(`Missing body ${name}`);
  let original = s.slice(body+1,tail);
- original = original.replace(name==='finalizeActiveTurn'?/(^[\t ]*)(yield\*)/gm:/(^[\t ]*)(return;)/gm,(_all,indent,token,offset)=>indent+'__bd('+JSON.stringify(name+'.line-'+s.slice(0,body+1+offset).split('\n').length)+','+(name==='finalizeActiveTurn'?'{context:input.context}':name==='releaseHeldRootFrames'?'{context}':'{message:input.message}')+');\n'+indent+token);
+ original = original.replace(name==='finalizeActiveTurn'?/(^[\t ]*)(yield\*)/gm:/(^[\t ]*)(return;)/gm,(_all,indent,token,offset)=>`${indent}__bd(${JSON.stringify(`${name}.line-${s.slice(0,body+1+offset).split('\n').length}`)},${name==='finalizeActiveTurn'?'{context:input.context}':name==='releaseHeldRootFrames'?'{context}':'{message:input.message}'});\n${indent}${token}`);
  const ctx = name==='finalizeActiveTurn'?'{context:input.context}':name==='releaseHeldRootFrames'?'{context}':'{message:input.message}';
- s = s.slice(0,body+1)+'\n__bd("'+name+'.enter",'+ctx+');try{'+original+'}catch(error){__bd("'+name+'.throw",{error});throw error;}finally{__bd("'+name+'.leave",'+ctx+');}\n});'+s.slice(tail+3);
+ s = `${s.slice(0,body+1)}\n__bd("${name}.enter",${ctx});try{${original}}catch(error){__bd("${name}.throw",{error});throw error;}finally{__bd("${name}.leave",${ctx});}\n});${s.slice(tail+3)}`;
  section=section.slice(0,from)+s+section.slice(to);
 }
 // Include the actual active context in routing/frame snapshots.
@@ -62,7 +62,7 @@ section = section.replace('flatMap$3(fnUntraced(function* (exit) {','flatMap$3(f
 section=section.replace(/^[\t ]+(?=(?:[a-zA-Z_$]+:|const |let |if \(|yield\* |return|__bd\(|\}|\]\)|\);))/gm,'');
 if(process.argv.includes('--subscriptions-only')) section=helper+binary.subarray(start,end).toString().replace(/^[\t ]+(?=(?:[a-zA-Z_$]+:|const |let |if \(|yield\* |return|\}|\]\)|\);))/gm,'');
 const size=end-start;
-if(Buffer.byteLength(section)>size) throw Error('Insufficient indentation budget '+Buffer.byteLength(section)+'>'+size);
+if(Buffer.byteLength(section)>size) throw Error(`Insufficient indentation budget ${Buffer.byteLength(section)}>${size}`);
 const patch=Buffer.from(section+' '.repeat(size-Buffer.byteLength(section)));
 patch.copy(binary,start);
 const ms=binary.indexOf('const publishToSubscribers =');
@@ -77,7 +77,7 @@ m=m.replace('yield* publishToSubscribers(entry.eventSubscribers, {','globalThis.
 m=m.replace('type: "event",\n\t\t\t\t\t\tevent\n\t\t\t\t\t});','type: "event",\n\t\t\t\t\t\tevent\n\t\t\t\t\t});globalThis.__bd?.("manager.publish.after",{event});');
 m=m.replace('flatMap$3((exit) => gen$1(function* () {','flatMap$3((exit) => gen$1(function* () {globalThis.__bd?.("manager.exit",{exit});');
 m=m.replace(/^[\t ]+(?=(?:[a-zA-Z_$]+:|const |let |if \(|yield\* |return|globalThis\.|\}|\]\)|\);))/gm,'');
-if(Buffer.byteLength(m)>me-ms)throw Error('Manager budget '+Buffer.byteLength(m)+'>'+(me-ms));
+if(Buffer.byteLength(m)>me-ms)throw Error(`Manager budget ${Buffer.byteLength(m)}>${me-ms}`);
 Buffer.from(m+' '.repeat(me-ms-Buffer.byteLength(m))).copy(binary,ms);
 const rs=binary.indexOf('const shouldStopProviderEventIngestion =',162000000);
 const re=binary.indexOf('const providerTurnStart',rs);

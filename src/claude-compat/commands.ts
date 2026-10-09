@@ -28,12 +28,12 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
     return [
       {
         name: "bruv",
-        description: "Bruv human controls (" + available().join(", ") + ")",
+        description: `Bruv human controls (${available().join(", ")})`,
         argumentHint: available().join("|"),
       },
       ...available().map((name) => ({
-        name: "bruv:" + name,
-        description: "Bruv " + name,
+        name: `bruv:${name}`,
+        description: `Bruv ${name}`,
         argumentHint: name === "questions" ? "list|detail|answer|cancel|resume|open" : "",
       })),
     ];
@@ -51,7 +51,7 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
       );
       return true;
     }
-    if (!available().includes(name)) throw new Error("Unavailable Bruv command: " + name);
+    if (!available().includes(name)) throw new Error(`Unavailable Bruv command: ${name}`);
     if (name === "status") {
       if (value) throw new Error("Usage: /bruv status");
       await options.notify(
@@ -59,7 +59,7 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
           {
             sessionId: session.sessionId,
             running: session.isStreaming,
-            model: session.model ? session.model.provider + "/" + session.model.id : null,
+            model: session.model ? `${session.model.provider}/${session.model.id}` : null,
             stats: session.getSessionStats(),
           },
           null,
@@ -93,7 +93,7 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
       if (!options.humanControls)
         throw new Error("Native question dialog is unavailable; use /bruv questions detail or answer");
       const question = await options.humanControls.openQuestion(id);
-      await options.notify(question.id + " [" + question.status + "] " + question.text, "info");
+      await options.notify(`${question.id} [${question.status}] ${question.text}`, "info");
       return true;
     }
     await runExtensionCommand(name, value);
@@ -102,7 +102,7 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
 
   async function runExtensionCommand(name: string, value: string): Promise<void> {
     const command = session.extensionRunner.getCommand(name);
-    if (!command) throw new Error("Unavailable Bruv command: " + name);
+    if (!command) throw new Error(`Unavailable Bruv command: ${name}`);
     const context = session.extensionRunner.createCommandContext();
     // Keep real command/session methods and mode. Only project notifications;
     // never claim hasUI or substitute fabricated modal/editor interactions.

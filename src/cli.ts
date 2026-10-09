@@ -50,7 +50,7 @@ if (cliArgs[0] === "--live-self-test") {
   process.exit(0);
 }
 if (cliArgs[0] === "update") {
-  if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1]!)) {
+  if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1])) {
     console.log(
       "Usage: bruv update [--check]\n\nUpdate normal bruv and sibling bruv-claude-compat together after SHA256 and version checks.\nA compatible normal-only install gains the connector. --check reports without downloading or replacing files.\nStop active Bruv/T3 sessions first. Does not install Claude or T3; user data is unchanged.\nAliases: bruv-claude-compat update, bruv claude-compat update (same arguments).\nRestart T3 after updating. The connector CLI identity is unknown to Claude version checks; a separate built-in Claude model too-old advisory can remain.",
     );
@@ -66,18 +66,18 @@ if (cliArgs[0] === "update") {
     const result = await updateBruv({
       currentVersion: bruvPackage.version,
       check: cliArgs[1] === "--check",
-      onDownload: (version) => console.log("Downloading bruv and bruv-claude-compat " + version + "..."),
+      onDownload: (version) => console.log(`Downloading bruv and bruv-claude-compat ${version}...`),
       onDownloadProgress: downloadProgress.onProgress,
     });
     downloadProgress.finish();
     console.log(
       result.status === "updated"
-        ? "Updated bruv and bruv-claude-compat to " + result.version + ". Restart Bruv/T3 sessions."
+        ? `Updated bruv and bruv-claude-compat to ${result.version}. Restart Bruv/T3 sessions.`
         : result.status === "available"
-          ? "Bruv pair update/repair available (" + result.version + "). Run bruv update to install both."
+          ? `Bruv pair update/repair available (${result.version}). Run bruv update to install both.`
           : result.status === "current"
-            ? "bruv and bruv-claude-compat are current (" + result.version + ")"
-            : "bruv and bruv-claude-compat are newer than the latest release (" + result.version + ")",
+            ? `bruv and bruv-claude-compat are current (${result.version})`
+            : `bruv and bruv-claude-compat are newer than the latest release (${result.version})`,
     );
     process.exit(0);
   } catch (error) {
@@ -131,7 +131,7 @@ if (cliArgs[0] === "--remote-control" || cliArgs[0] === "--remote-owner") {
       await runRemoteControl();
     } else {
       if (cliArgs.length !== 2) throw new Error("Usage: bruv --remote-owner <taskId>");
-      await runRemoteOwner(cliArgs[1]!);
+      await runRemoteOwner(cliArgs[1]);
     }
     process.exit(0);
   } catch (error) {
@@ -149,7 +149,7 @@ if (cliArgs[0] === "--remote-root-control" || cliArgs[0] === "--remote-root-owne
       await runRootControl();
     } else {
       if (cliArgs.length !== 2) throw new Error("Usage: bruv --remote-root-owner <sessionId>");
-      await runRootOwner(cliArgs[1]!);
+      await runRootOwner(cliArgs[1]);
     }
     process.exit(0);
   } catch (error) {

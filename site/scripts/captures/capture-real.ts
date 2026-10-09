@@ -34,12 +34,12 @@ const server = Bun.serve({
     });
   },
 });
-const origin = "http://127.0.0.1:" + server.port;
+const origin = `http://127.0.0.1:${server.port}`;
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_BIN || undefined });
 try {
   console.log("Browser:", browser.version());
   for (const capture of captures) {
-    const text = await Bun.file(resolve(assets, capture.name + ".txt")).text();
+    const text = await Bun.file(resolve(assets, `${capture.name}.txt`)).text();
     const page = await browser.newPage({ viewport: { width: 1400, height: 1100 }, deviceScaleFactor: 1 });
     await page.route("**/*", (route) =>
       new URL(route.request().url()).origin === origin ? route.continue() : route.abort(),
@@ -70,7 +70,7 @@ try {
     // Settings: honest crop of terminal rows 17–36, excluding startup warning and blank rows.
     const clip =
       capture.name === "cli-settings" ? { ...bounds, y: bounds.y + 282, height: bounds.height - 282 } : bounds;
-    await page.screenshot({ path: resolve(assets, capture.name + ".png"), clip, animations: "disabled" });
+    await page.screenshot({ path: resolve(assets, `${capture.name}.png`), clip, animations: "disabled" });
     console.log(capture.name, clip);
     await page.close();
   }

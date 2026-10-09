@@ -36,7 +36,9 @@ const ID = "bruv-live";
 const MAX_VISIBLE = 8;
 const clean = (value: string) =>
   stripVTControlCharacters(value)
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip terminal escape sequences from untrusted transcript text.
     .replace(/\x1b(?:\[[0-?]*[ -/]*[@-~]|\][^\x07]*(?:\x07|\x1b\\))?/g, "")
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip terminal and bidi controls while keeping normal whitespace.
     .replace(/[\x00-\x1f\x7f-\x9f\u202a-\u202e\u2066-\u2069]/g, " ")
     .replace(/\s+/g, " ");
 
@@ -362,7 +364,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       if (!this.alive) return;
       this.stop();
       if (this.sessionId === this.ctx.sessionManager?.getSessionId?.())
-        this.ctx.ui.notify("Live stop requested: " + message + ". No agent work was cancelled.", "warning");
+        this.ctx.ui.notify(`Live stop requested: ${message}. No agent work was cancelled.`, "warning");
     }
     stop() {
       void this.stopObserved();
@@ -483,7 +485,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         if (!this.alive) return;
         this.state = "running"; // capture may arrive synchronously inside audio.start()
         stage = "audio-start";
-        if (this.inputMode === "push-to-talk") await audio.setCaptureGate!(null);
+        if (this.inputMode === "push-to-talk") {
+          if (!audio.setCaptureGate) throw new Error("Push-to-talk capture gate is unavailable");
+          await audio.setCaptureGate(null);
+        }
         await audio.start();
         if (!this.alive) return;
         if (this.gpt) this.gptPlayback?.start();
@@ -499,7 +504,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
             stage === "main-owner"
               ? "Cannot start main Live. Wait for the text turn to finish, then retry /live. If it persists, restart Bruv; the ordinary prompt/runtime could not be acquired."
               : this.audio
-                ? "Voice startup failed [" + stage + "]; details withheld"
+                ? `Voice startup failed [${stage}]; details withheld`
                 : process.env.BRUV_LIVE_RELAY_URL
                   ? "Browser audio could not connect. Check browser microphone access, then type /live to retry."
                   : audioLaunchDiagnostic(),
@@ -767,7 +772,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
             this.render();
           },
           // Realtime messages are locally classified; raw transport/provider text never crosses this boundary.
-          onError: (e) => this.fail("Provider " + e.code + (this.provider === "openai" ? ": " + e.message : "")),
+          onError: (e) => this.fail(`Provider ${e.code}${this.provider === "openai" ? `: ${e.message}` : ""}`),
         },
         orchestration,
         this.provider,
@@ -914,7 +919,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         }
         if (owner !== sequence) return;
         selected = next;
-        ctx.ui.notify("Live mic: " + mode + ".", "info");
+        ctx.ui.notify(`Live mic: ${mode}.`, "info");
       } else if (action === "provider" || action.startsWith("provider ")) {
         if (active) {
           ctx.ui.notify("Live is busy; stop it before configuring voice providers.", "info");
@@ -966,7 +971,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         );
         let choice = models.find(({ model }) => model === requested);
         if (requested && !choice) {
-          ctx.ui.notify("Unsupported Live voice model: " + clean(requested).slice(0, 100), "error");
+          ctx.ui.notify(`Unsupported Live voice model: ${clean(requested).slice(0, 100)}`, "error");
           return;
         }
         if (!requested) {
@@ -1025,7 +1030,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         }
         if (owner !== sequence) return;
         selected = next;
-        ctx.ui.notify("Live voice: " + LIVE_PROVIDERS[selected.provider].label + " · " + selected.model + ".", "info");
+        ctx.ui.notify(`Live voice: ${LIVE_PROVIDERS[selected.provider].label} · ${selected.model}.`, "info");
       } else if (action === "mic-check") {
         if (!deps.local(ctx.mode)) {
           ctx.ui.notify("Mic check requires a local interactive terminal.", "warning");
@@ -1075,7 +1080,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           await audio.start();
           if (!controller.signal.aborted)
             ctx.ui.notify(
-              code ? "Mic check: " + audioDiagnostic(code, setup) : "Audio route ready. Sound quality not measured.",
+              code ? `Mic check: ${audioDiagnostic(code, setup)}` : "Audio route ready. Sound quality not measured.",
               code ? "warning" : "info",
             );
         } catch {
@@ -1225,7 +1230,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         } catch {
           if (alive())
             ctx.ui.notify(
-              "Could not read " + LIVE_PROVIDERS[selected.provider].label + " API key. Try /live setup.",
+              `Could not read ${LIVE_PROVIDERS[selected.provider].label} API key. Try /live setup.`,
               "warning",
             );
         } finally {

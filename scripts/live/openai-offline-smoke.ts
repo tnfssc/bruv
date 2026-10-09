@@ -24,7 +24,7 @@ const server = Bun.serve({
     },
   },
 });
-const voice = new OpenAIRealtimeSession({}, (_url, headers) => defaultSocket("ws://127.0.0.1:" + server.port, headers));
+const voice = new OpenAIRealtimeSession({}, (_url, headers) => defaultSocket(`ws://127.0.0.1:${server.port}`, headers));
 try {
   await voice.connect("fake-offline-only");
   if (voice.state !== "ready" || !configured) throw Error("not ready");
@@ -57,17 +57,17 @@ for (const [status, code] of [
   });
   const errors: string[] = [];
   const failed = new OpenAIRealtimeSession({ onError: (e) => errors.push(e.message) }, (_url, headers) =>
-    defaultSocket("ws://127.0.0.1:" + rejector.port + "/v1/realtime?model=gpt-realtime-2.1", headers),
+    defaultSocket(`ws://127.0.0.1:${rejector.port}/v1/realtime?model=gpt-realtime-2.1`, headers),
   );
   try {
     await failed.connect("fake-offline-only");
     if (
       errors.length !== 1 ||
-      !errors[0].includes("HTTP " + status) ||
+      !errors[0].includes(`HTTP ${status}`) ||
       errors[0].includes("private-body") ||
       errors[0].includes("fake-offline-only")
     )
-      throw Error("unsafe or missing HTTP " + status + ": " + errors);
+      throw Error(`unsafe or missing HTTP ${status}: ${errors}`);
     if (status === 429 && !errors[0].includes("insufficient quota")) throw Error("missing allowlisted code");
   } finally {
     failed.close();

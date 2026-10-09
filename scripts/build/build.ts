@@ -10,7 +10,7 @@ for (const argument of process.argv.slice(2)) {
   if (argument.startsWith("--outfile=")) output = argument.slice("--outfile=".length);
   else if (argument.startsWith("--live-helper=")) helper = argument.slice("--live-helper=".length);
   else if (argument.startsWith("--target=")) target = argument.slice("--target=".length);
-  else throw new Error("Unknown build option: " + argument);
+  else throw new Error(`Unknown build option: ${argument}`);
 }
 if (!output) throw new Error("--outfile requires a path");
 if (target === "") throw new Error("--target requires a value");
@@ -29,4 +29,4 @@ if (!result.success) {
   for (const log of result.logs) console.error(log);
   process.exit(1);
 }
-console.log("Built " + outfile);
+console.log(`Built ${outfile}`);

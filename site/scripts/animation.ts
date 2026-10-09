@@ -1,3 +1,4 @@
+import { requireValue } from "../../scripts/lib/require-value";
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -13,30 +14,36 @@ await mkdir(out, { recursive: true });
 
 async function snapshot(page: Page) {
   const data = await page.locator("#terminal").evaluate((el) => ({ ...(el as HTMLElement).dataset }));
-  const demos: Record<DemoId, Playback> = JSON.parse(data.demos!);
+  const demos: Record<DemoId, Playback> = JSON.parse(requireValue(data.demos));
   return {
     focus: data.focus,
-    cellWidth: +data.cellWidth!,
-    cellHeight: +data.cellHeight!,
+    cellWidth: +requireValue(data.cellWidth),
+    cellHeight: +requireValue(data.cellHeight),
     demos,
-    frame: layout(+data.cols!, +data.rows!, { scroll: +data.scroll!, focus: -1, demos }),
+    frame: layout(+requireValue(data.cols), +requireValue(data.rows), {
+      scroll: +requireValue(data.scroll),
+      focus: -1,
+      demos,
+    }),
   };
 }
 
 function demoControlPoint(state: Awaited<ReturnType<typeof snapshot>>, id: DemoId) {
-  const hit = state.frame.hits.find((hit) => hit.action === "demo:" + id + ":toggle");
-  assert(hit, id + " control in viewport");
+  const hit = state.frame.hits.find((hit) => hit.action === `demo:${id}:toggle`);
+  assert(hit, `${id} control in viewport`);
   return { x: (hit.x + 2) * state.cellWidth, y: (hit.y + 0.5) * state.cellHeight };
 }
 
 async function scrollCells(page: Page, rows: number, cellHeight: number) {
-  await page.evaluate(
-    (deltaY) =>
-      document
-        .querySelector("canvas")!
-        .dispatchEvent(new WheelEvent("wheel", { deltaY, bubbles: true, cancelable: true })),
-    rows * cellHeight,
-  );
+  await page.evaluate((deltaY) => {
+    function requireValue<T>(value: T | null | undefined): T {
+      if (value === null || value === undefined) throw new Error("Expected a value");
+      return value;
+    }
+    return requireValue(document.querySelector("canvas")).dispatchEvent(
+      new WheelEvent("wheel", { deltaY, bubbles: true, cancelable: true }),
+    );
+  }, rows * cellHeight);
   await page.waitForTimeout(120);
 }
 
@@ -75,7 +82,7 @@ try {
   await page.locator('#terminal[data-ready="true"]').waitFor();
   const align = async (id: DemoId) => {
     const state = await snapshot(page);
-    const delta = state.frame.captures.find((capture) => capture.id === id)!.y - 6;
+    const delta = requireValue(state.frame.captures.find((capture) => capture.id === id)).y - 6;
     await scrollCells(page, delta, state.cellHeight);
   };
   // Real mouse + keyboard playback. Space operates a focused playback button.
@@ -105,7 +112,7 @@ try {
   await page.waitForTimeout(350);
   assert.equal((await snapshot(page)).demos.delegate.elapsed, hidden.elapsed);
   await page.evaluate(() => {
-    delete (document as any).hidden;
+    Reflect.deleteProperty(document, "hidden");
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await page.waitForTimeout(120);
@@ -128,7 +135,7 @@ try {
     const initial = await snapshot(page);
     const point = demoControlPoint(initial, id);
     await page.mouse.move(point.x, point.y);
-    await page.screenshot({ path: resolve(out, id + "-hover.png") });
+    await page.screenshot({ path: resolve(out, `${id}-hover.png`) });
     await page.mouse.move(3, 3);
     const elapsed: number[] = [];
     for (const target of [4000, 10000, 18000, demoDuration(id) + FINAL_HOLD - 400]) {
@@ -136,16 +143,16 @@ try {
       await page.waitForTimeout(Math.max(0, target - current));
       const shot = await snapshot(page);
       elapsed.push(shot.demos[id].elapsed);
-      await page.screenshot({ path: resolve(out, id + "-" + target + ".png") });
+      await page.screenshot({ path: resolve(out, `${id}-${target}.png`) });
     }
     const final = await snapshot(page);
     assert(final.demos[id].elapsed >= demoDuration(id));
     await page.waitForTimeout(650);
     const reset = await snapshot(page);
-    assert(reset.demos[id].elapsed < 1500, id + " loops after final hold");
-    await page.screenshot({ path: resolve(out, id + "-loop-reset.png") });
+    assert(reset.demos[id].elapsed < 1500, `${id} loops after final hold`);
+    await page.screenshot({ path: resolve(out, `${id}-loop-reset.png`) });
     await page.waitForTimeout(700);
-    await page.screenshot({ path: resolve(out, id + "-loop-typing.png") });
+    await page.screenshot({ path: resolve(out, `${id}-loop-typing.png`) });
     results[id] = { elapsed, reset: reset.demos[id].elapsed, finalHold: FINAL_HOLD };
   }
   await align("delegate");
@@ -169,7 +176,7 @@ try {
   assert.deepEqual(errors, []);
   results.errors = errors;
   await mobile.close();
-  await Bun.write(resolve(out, "animation-checks.json"), JSON.stringify(results, null, 2) + "\n");
+  await Bun.write(resolve(out, "animation-checks.json"), `${JSON.stringify(results, null, 2)}\n`);
   console.log(JSON.stringify(results, null, 2));
 } finally {
   await browser.close();

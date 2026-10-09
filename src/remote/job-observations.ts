@@ -98,16 +98,16 @@ function boundedJsonText(value: unknown, limit: number): string | undefined {
 
 /** Compact parent context preserves outcome and result, not opaque delivery IDs or artifact paths. */
 export function remoteCompletionSummary(observation: RemoteJobObservation, id: string, limit = 430): string {
-  let summary = id + " cached " + observation.state;
+  let summary = `${id} cached ${observation.state}`;
   try {
     const value = JSON.parse(observation.preview ?? "{}");
-    if (value.repository?.status) summary += "; return " + String(value.repository.status);
-    if (value.error) summary += "; error " + String(value.error).slice(0, 140);
+    if (value.repository?.status) summary += `; return ${String(value.repository.status)}`;
+    if (value.error) summary += `; error ${String(value.error).slice(0, 140)}`;
     const text = messageText(value.lastAssistant?.message?.content);
-    if (text) summary += " — " + text;
-    if (value.repository?.reason) summary += "; " + String(value.repository.reason);
+    if (text) summary += ` — ${text}`;
+    if (value.repository?.reason) summary += `; ${String(value.repository.reason)}`;
   } catch {
-    summary += " — " + (observation.preview ?? "");
+    summary += ` — ${observation.preview ?? ""}`;
   }
   return summary.slice(0, limit);
 }

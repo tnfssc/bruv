@@ -17,7 +17,7 @@ export async function runAcceptance({ driverPath } = {}) {
     process.env.BRUV_RUNTIME_BINARY ?? fileURLToPath(new URL("../../dist/bruv", import.meta.url)),
   );
   await fs.access(normalBinary, fs.constants.X_OK);
-  const proof = path.resolve(process.env.PROOF_OUTPUT ?? ".cache/claude-integrated-proof-" + Date.now());
+  const proof = path.resolve(process.env.PROOF_OUTPUT ?? `.cache/claude-integrated-proof-${Date.now()}`);
   await fs.mkdir(path.dirname(proof), { recursive: true });
   await fs.mkdir(proof);
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "bruv-native-acceptance-"));
@@ -42,7 +42,7 @@ export async function runAcceptance({ driverPath } = {}) {
     await fs.chmod(pinnedConnector, 0o755);
     await fs.writeFile(
       path.join(proof, "invocation.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           connector: path.basename(connector),
           connectorSha256: createHash("sha256")
@@ -57,7 +57,7 @@ export async function runAcceptance({ driverPath } = {}) {
         },
         null,
         2,
-      ) + "\n",
+      )}\n`,
     );
     const delegation =
       process.env.ACCEPT_APP_DELEGATION === "1" ? await import("./app-delegation-model.mjs") : undefined;
@@ -114,7 +114,7 @@ export async function runAcceptance({ driverPath } = {}) {
       child.once("error", reject);
       child.once("close", resolve);
     });
-    if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
+    if (code !== 0) throw Error(`Integrated native replay failed with exit ${code}`);
     verifyModelOutcome(model, workerModel, config);
     passed = true;
   } finally {
@@ -131,15 +131,15 @@ export async function runAcceptance({ driverPath } = {}) {
     }
     await fs.writeFile(
       path.join(proof, "cleanup.json"),
-      JSON.stringify({
+      `${JSON.stringify({
         temporaryScopedStateRemoved: true,
         realCredentialsUsed: false,
         integratedReplayPassed: passed,
-      }) + "\n",
+      })}\n`,
     );
   }
 
-  console.log("Integrated native acceptance proof: " + proof);
+  console.log(`Integrated native acceptance proof: ${proof}`);
 
   function verifyModelOutcome(model, workerModel, config) {
     if ([...model.records, ...(workerModel?.records ?? [])].some((r) => r.error))
@@ -184,7 +184,7 @@ export async function runAcceptance({ driverPath } = {}) {
     } catch {}
     await fs.writeFile(
       path.join(proof, "result.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           ...result,
           passed,
@@ -207,7 +207,7 @@ export async function runAcceptance({ driverPath } = {}) {
         },
         null,
         2,
-      ) + "\n",
+      )}\n`,
     );
   }
 
@@ -216,8 +216,8 @@ export async function runAcceptance({ driverPath } = {}) {
     // Scoped worker cleanup; verify command line and state before touching any PID.
     for (const scenario of ["steer", "early", "stop", "cancel"]) {
       try {
-        const pid = Number(await fs.readFile(path.join(state, scenario + ".started"), "utf8"));
-        const cmd = await fs.readFile("/proc/" + pid + "/cmdline", "utf8");
+        const pid = Number(await fs.readFile(path.join(state, `${scenario}.started`), "utf8"));
+        const cmd = await fs.readFile(`/proc/${pid}/cmdline`, "utf8");
         if (cmd.includes(worker) && cmd.includes(state)) process.kill(pid, "SIGTERM");
       } catch {}
     }
@@ -232,16 +232,16 @@ export async function runAcceptance({ driverPath } = {}) {
         if (config?.humanControls) await (await import("./human-driver.mjs")).capture({ records: wire, config, proof });
         await fs.writeFile(
           path.join(proof, "wire-projection.ndjson"),
-          projectWire(wire)
+          `${projectWire(wire)
             .map((x) => JSON.stringify(x))
-            .join("\n") + "\n",
+            .join("\n")}\n`,
         );
       } catch {}
     }
     if (model) {
       await fs.writeFile(
         path.join(proof, "model-projection.json"),
-        JSON.stringify(
+        `${JSON.stringify(
           [...model.records, ...(workerModel?.records ?? [])].map((r) => ({
             sequence: r.sequence,
             model: r.model,
@@ -253,7 +253,7 @@ export async function runAcceptance({ driverPath } = {}) {
           })),
           null,
           2,
-        ) + "\n",
+        )}\n`,
       );
     }
     if (config?.delegationCases) {
@@ -275,7 +275,7 @@ export async function runAcceptance({ driverPath } = {}) {
 
   async function releaseRuntime(root, state, model, workerModel) {
     for (const scenario of ["done", "cancel"])
-      await fs.writeFile(path.join(state, scenario + ".release"), "cleanup").catch(() => {});
+      await fs.writeFile(path.join(state, `${scenario}.release`), "cleanup").catch(() => {});
     try {
       await model?.close();
     } finally {

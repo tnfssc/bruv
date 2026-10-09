@@ -1,3 +1,4 @@
+import { requireValue } from "../../scripts/lib/require-value";
 import { expect, spyOn, test } from "bun:test";
 import { mkdtempSync } from "node:fs";
 import { ownedFixtureEnv } from "../helpers/helpers";
@@ -666,17 +667,18 @@ test("root canonical launch preserves handoff, output-save warning and independe
   const t = new RootTranscript();
   t.messages = launchMessages([{ id: "guide", kind: "agent", title: "Review guide", status: "running" }]);
   const result = t.messages[1];
-  result.details.handoff = "Work continues. You can ask another question.";
-  result.details.outputArtifactErrors = { stdout: "disk full" };
+  const details = requireValue(result.details);
+  details.handoff = "Work continues. You can ask another question.";
+  details.outputArtifactErrors = { stdout: "disk full" };
   const handoff = renderedRows(t);
   expect(handoff).toContain("↗ Review guide — ⚠ couldn’t save full output");
   expect(handoff).toContain("Work continues. You can ask another question.");
   expect(handoff.join("\n")).not.toContain("✓ Start tasks");
-  delete result.details.handoff;
-  delete result.details.outputArtifactErrors;
+  delete details.handoff;
+  delete details.outputArtifactErrors;
   result.isError = true;
-  result.details.exitCode = 1;
-  result.details.stderr = "permission denied";
+  details.exitCode = 1;
+  details.stderr = "permission denied";
   expect(renderedRows(t)).toEqual(["↗ Review guide", "✗ Start tasks — permission denied"]);
 });
 
@@ -703,6 +705,7 @@ test("expanded root transcript keeps shipped message order, captions and raw det
     .render(120, 0)
     .map((line) => line.trimEnd())
     .join("\n")
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
     .replace(/\x1b\[[0-9;]*m/g, "");
   expect(rows).toContain("Assistant");
   expect(rows).toContain("Inspecting the guide.");

@@ -127,19 +127,26 @@ describe("release automation", () => {
 
       const allCaches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
       expect(allCaches).toHaveLength(2);
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
       const apt = allCaches.find((step) => step.with?.path === "${{ runner.temp }}/bruv-apt-cache/*.deb");
       expect(apt?.with?.key).toBe(
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
         "ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/ci/install-ci-linux-tools.sh') }}",
       );
       expect(apt?.with?.["restore-keys"]).toBeUndefined();
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
       const caches = allCaches.filter((step) => step.with?.path === "${{ runner.temp }}/bruv-bun-cache");
       expect(caches).toHaveLength(1);
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
       expect(caches[0]?.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
       expect(caches[0]?.with?.key).toBe(
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
         "bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}",
       );
       for (const cache of caches) {
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
         expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
         expect(cache.with?.["restore-keys"]).toBe("bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-");
         expect(cache.with?.path).not.toMatch(/node_modules|dist|HOME/);
       }
@@ -297,6 +304,7 @@ describe("release automation", () => {
     expect(Object.keys(workflow.on)).toEqual(["workflow_dispatch", "push"]);
     expect(workflow.on.push).toEqual({ tags: ["v*"] });
     expect(workflow.jobs.publish!.if).toBe(
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
       "${{ !cancelled() && needs.release-source.result == 'success' && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && needs.release.result == 'success' }}",
     );
     expect(workflow.jobs.publish!.needs).toEqual([
@@ -337,6 +345,7 @@ describe("release automation", () => {
     const workflow = await readWorkflow("release");
     const publish = namedStep(workflow.jobs.publish!, "Publish GitHub release");
     expect(publish.run).toContain("bun scripts/release/publish-release.ts");
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
     expect(publish.env?.GH_TOKEN).toBe("${{ github.token }}");
     const implementation = await read("scripts/release/publish-release.ts");
     expect(implementation).toContain("scripts/release/select-release-notes.ts");
@@ -371,7 +380,7 @@ describe("release automation", () => {
         stdout: "pipe",
         stderr: "pipe",
       });
-    expect(run("v" + pkg.version).exitCode).toBe(0);
+    expect(run(`v${pkg.version}`).exitCode).toBe(0);
     expect(run("v999.0.0").stderr.toString()).toContain("does not match package.json version");
   });
 

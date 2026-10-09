@@ -17,6 +17,7 @@ test("working values frame the agent separately from tool reference", () => {
   expect(executeGuidance).toEqual(executeReference);
   for (const value of workingValues) expect(collaborationGuidance()).toContain(value);
   for (const value of [
+    "Values over rules.",
     "Quick work?",
     "Go look.",
     "Find simple way",
@@ -51,9 +52,20 @@ test("shared engineering guidance favors product work over speculative defenses"
   expect(guidance).toContain("Keep essential security and data-loss protections.");
 });
 
+test("shared guidance keeps scratch in the current worktree", () => {
+  expect(collaborationGuidance()).toContain(
+    "Temp files belong in current worktree's `.tmp/`. Scratch stays with work, easy to find and clean up.",
+  );
+});
+
+test("shared prompting guidance gives values and room for judgment", () => {
+  expect(collaborationGuidance()).toContain("Values over rules. Say what matters and why. Leave room for judgment.");
+});
+
 test("shared writing guidance uses the nearby voice and keeps needed detail", () => {
   const guidance = collaborationGuidance();
   expect(guidance).toContain("use same voice as rest. Read nearby text first.");
+  expect(guidance).toContain("Match its words and rhythm in all writing. No formal talk.");
   expect(guidance).toContain("Short words. Short sentences. Plain talk.");
   expect(guidance).toContain("app text, prompts, docs, comments, notes, replies");
   expect(guidance).toContain("Cut extra ideas and sections, not just words.");
@@ -76,7 +88,9 @@ test("background notice identifies jobs and deferred results without turn-manage
 test("roles keep child identity and useful guidance without delegation-policy commentary", () => {
   expect(subagentGuidance("fast")).toContain("Find answer. Show where it came from. Say what still guess.");
   expect(subagentGuidance("normal")).toContain("Work out what to change. Make it. Check it solves the problem.");
-  expect(subagentGuidance("orchestrator")).toContain("Delegating independent code or PR work? Give it a worktree.");
+  expect(subagentGuidance("orchestrator")).toContain(
+    "Shared work is simpler in one place. Extra worktrees bring extra care.",
+  );
   expect(subagentGuidance("orchestrator")).not.toContain("Fast/normal workers are available");
   expect(subagentGuidance("normal")).not.toContain("Delegation is disabled");
   const normal = subagentGuidance("normal");
@@ -95,7 +109,7 @@ test("fast and normal root modes add no behavioral prose while retaining owned p
     expect(guidance).not.toContain("main agent in fast instruction mode");
   }
   expect(mainAgentGuidance("orchestrator", "test-owner")).toContain(
-    "Delegating independent code or PR work? Give it a worktree.",
+    "Shared work is simpler in one place. Extra worktrees bring extra care.",
   );
 });
 
@@ -104,7 +118,7 @@ test("orchestrator guidance keeps delegation mechanics without leader framing", 
   const child = subagentGuidance("orchestrator");
   expect(child).toStartWith("You are a orchestrator sub-agent.");
   for (const guidance of [root, child]) {
-    expect(guidance).toContain("Delegating independent code or PR work? Give it a worktree.");
+    expect(guidance).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
     expect(guidance).not.toContain("You lead work.");
     expect(guidance).not.toContain("Give other agents clear jobs and room to think.");
     expect(guidance).not.toContain("Put their work together for user.");
@@ -218,24 +232,26 @@ test("worktree API facts stay in reference and isolation judgment stays in orche
   expect(reference).toContain('{ kind: "inherit" }');
   expect(reference).toContain("one pinned commit");
   expect(reference).toContain("t3.json");
-  const judgment = "Delegating independent code or PR work? Give it a worktree.";
+  const judgment = "Shared work is simpler in one place. Extra worktrees bring extra care.";
   expect(subagentGuidance("orchestrator")).toContain(judgment);
   expect(mainAgentGuidance("orchestrator", "workspace-test")).toContain(judgment);
   for (const role of ["fast", "normal"]) expect(subagentGuidance(role)).not.toContain(judgment);
   expect(collaborationGuidance()).not.toContain(judgment);
 });
 
-test("orchestrators use persistent worktree locations for ongoing work", () => {
+test("orchestrators explain worktree tradeoffs without setup instructions", () => {
   for (const guidance of [
     subagentGuidance("orchestrator"),
     mainAgentGuidance("orchestrator", "worktree-location-test"),
   ]) {
-    expect(guidance).toContain('subagent({ workspace: { kind: "worktree" }, ... })');
-    expect(guidance).toContain("Use the worktree path it returns");
-    expect(guidance).toContain("Make manual worktrees in a place that lasts");
-    expect(guidance).toContain("not \u0060/tmp\u0060 or \u0060/var/tmp\u0060");
-    expect(guidance).toContain("BRUV_WORKTREE_ROOT");
-    expect(guidance).toContain("not code or release work still underway");
-    expect(guidance).toContain("Save the worktree path and branch");
+    expect(guidance).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+    expect(guidance).toContain(
+      "A worktree helps when work needs its own branch or PR. Giving work to another agent need not mean another workspace.",
+    );
+    expect(guidance).not.toContain("Give it a worktree.");
+    expect(guidance).not.toContain("for work you give another agent");
+    expect(guidance).not.toContain("Make manual worktrees");
+    expect(guidance).not.toContain("BRUV_WORKTREE_ROOT");
+    expect(guidance).not.toContain("Save the worktree path and branch");
   }
 });

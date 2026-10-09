@@ -27,7 +27,7 @@ export class NavigationTerminal implements Terminal {
     this.writes.push(data);
   }
   moveBy(lines: number) {
-    if (lines) this.write("\x1b[" + Math.abs(lines) + (lines > 0 ? "B" : "A"));
+    if (lines) this.write(`\x1b[${Math.abs(lines)}${lines > 0 ? "B" : "A"}`);
   }
   hideCursor() {
     this.write("\x1b[?25l");
@@ -46,7 +46,7 @@ export class NavigationTerminal implements Terminal {
   }
   setProgramStatus() {}
   setTitle(title: string) {
-    this.write("\x1b]0;" + title + "\x07");
+    this.write(`\x1b]0;${title}\x07`);
   }
   setProgress(_active: boolean) {}
 }

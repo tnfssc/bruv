@@ -71,7 +71,7 @@ export function samplePeakSync(sample: InteractionSample): number {
   ]);
 }
 export function summarizeInteraction(result: InteractionCase, budgetMs: number) {
-  if (!result.samples.length) throw new Error("Interaction case has no samples: " + result.id);
+  if (!result.samples.length) throw new Error(`Interaction case has no samples: ${result.id}`);
   const frames = result.samples.flatMap((sample) => sample.frameMs);
   const mutation = result.samples.map((sample) =>
     max([
@@ -108,7 +108,7 @@ export function compareInteractions(current: InteractionRun, baseline: Interacti
   const warnings: string[] = [];
   for (const key of ["bun", "platform", "arch", "cpu", "dependencies"] as const) {
     if (JSON.stringify(current.environment[key]) !== JSON.stringify(baseline.environment[key]))
-      warnings.push("Different " + key);
+      warnings.push(`Different ${key}`);
   }
   if (JSON.stringify(current.config) !== JSON.stringify(baseline.config)) warnings.push("Different run config");
   if (current.sources.fingerprint !== baseline.sources.fingerprint)
@@ -116,15 +116,15 @@ export function compareInteractions(current: InteractionRun, baseline: Interacti
   const cases = current.cases.flatMap((result) => {
     const old = baseline.cases.find((entry) => entry.id === result.id);
     if (!old) {
-      warnings.push("No baseline for " + result.id);
+      warnings.push(`No baseline for ${result.id}`);
       return [];
     }
     if (JSON.stringify(result.parameters) !== JSON.stringify(old.parameters)) {
-      warnings.push("Different parameters for " + result.id);
+      warnings.push(`Different parameters for ${result.id}`);
       return [];
     }
     if (result.scope !== old.scope) {
-      warnings.push("Different measured scope for " + result.id);
+      warnings.push(`Different measured scope for ${result.id}`);
       return [];
     }
     const sampleIdentity = (sample: InteractionSample) => [
@@ -134,7 +134,7 @@ export function compareInteractions(current: InteractionRun, baseline: Interacti
       sample.boundary,
     ];
     if (JSON.stringify(result.samples.map(sampleIdentity)) !== JSON.stringify(old.samples.map(sampleIdentity))) {
-      warnings.push("Different sample identity or measurement boundary for " + result.id);
+      warnings.push(`Different sample identity or measurement boundary for ${result.id}`);
       return [];
     }
     const contentDifferences = result.samples.filter(
@@ -143,14 +143,14 @@ export function compareInteractions(current: InteractionRun, baseline: Interacti
     const outputDifferences = result.samples.filter(
       (sample, i) => old.samples[i] && sample.outputHash !== old.samples[i].outputHash,
     ).length;
-    if (outputDifferences) warnings.push("Output fingerprints differ for " + result.id);
+    if (outputDifferences) warnings.push(`Output fingerprints differ for ${result.id}`);
     const screenDifferences = result.samples.filter(
       (sample, i) => old.samples[i] && sample.screenHash !== old.samples[i].screenHash,
     ).length;
-    if (contentDifferences) warnings.push("Input/content fingerprints differ for " + result.id);
+    if (contentDifferences) warnings.push(`Input/content fingerprints differ for ${result.id}`);
     if (screenDifferences)
       warnings.push(
-        "Screen fingerprints differ for " + result.id + " (scheduled UI may be time-dependent; inspect raw evidence)",
+        `Screen fingerprints differ for ${result.id} (scheduled UI may be time-dependent; inspect raw evidence)`,
       );
     const now = summarizeInteraction(result, current.budgetMs),
       before = summarizeInteraction(old, current.budgetMs);
@@ -168,13 +168,13 @@ export function compareInteractions(current: InteractionRun, baseline: Interacti
     ];
   });
   for (const old of baseline.cases)
-    if (!current.cases.some((entry) => entry.id === old.id)) warnings.push("Not run: " + old.id);
+    if (!current.cases.some((entry) => entry.id === old.id)) warnings.push(`Not run: ${old.id}`);
   return { warnings, cases };
 }
 const ms = (value: number | null | undefined) => (value == null ? "n/a" : value.toFixed(3));
 export function interactionTextReport(run: InteractionRun, baseline?: InteractionRun) {
   const lines = [
-    "Observed synchronous-scope budget: < " + run.budgetMs + " ms",
+    `Observed synchronous-scope budget: < ${run.budgetMs} ms`,
     "Case | mutation lower-bound max | frame max | observed sync p95/max | misses | visible ack max (elapsed) | loop delay max | input lateness max",
     ...run.cases.map((result) => {
       const s = summarizeInteraction(result, run.budgetMs);
@@ -182,8 +182,8 @@ export function interactionTextReport(run: InteractionRun, baseline?: Interactio
         result.id,
         ms(s.mutation.max),
         ms(s.frames?.max),
-        ms(s.peakSync.p95) + "/" + ms(s.peakSync.max),
-        s.peakSync.overBudget + "/" + s.peakSync.count,
+        `${ms(s.peakSync.p95)}/${ms(s.peakSync.max)}`,
+        `${s.peakSync.overBudget}/${s.peakSync.count}`,
         ms(s.ack?.max),
         ms(s.heartbeatDelay?.max),
         ms(s.inputLateness?.max),
@@ -193,14 +193,14 @@ export function interactionTextReport(run: InteractionRun, baseline?: Interactio
   const failures = interactionBudgetFailures(run);
   lines.push(
     failures.length
-      ? "OBSERVED CPU MISSES: " + failures.join(", ")
+      ? `OBSERVED CPU MISSES: ${failures.join(", ")}`
       : "All observed synchronous scopes under budget; unobserved work is NOT proven.",
   );
   lines.push(
     ...run.limits,
     ...run.cases
       .filter((c) => c.samples.some((s) => s.boundary === "missing"))
-      .map((c) => "MISSING contiguous boundary: " + c.id),
+      .map((c) => `MISSING contiguous boundary: ${c.id}`),
   );
   lines.push(
     "Inclusive/nested spans are not added. Async-prefix timing excludes continuations unless separately observed.",
@@ -212,7 +212,7 @@ export function interactionTextReport(run: InteractionRun, baseline?: Interactio
     lines.push(
       "",
       "Baseline deltas (positive = slower):",
-      ...comparison.warnings.map((warning) => "WARNING: " + warning),
+      ...comparison.warnings.map((warning) => `WARNING: ${warning}`),
       ...comparison.cases.map(
         (entry) =>
           entry.id +
@@ -242,12 +242,12 @@ export function validateInteractionRun(value: unknown): InteractionRun {
   reportNumber(r.budgetMs, "budget", true);
   const env = reportObject(r.environment, "environment");
   for (const key of ["revision", "bun", "platform", "arch", "cpu"])
-    if (typeof env[key] !== "string") invalidReport("environment." + key);
+    if (typeof env[key] !== "string") invalidReport(`environment.${key}`);
   if (typeof env.dirty !== "boolean") invalidReport("environment.dirty");
   reportStringMap(env.dependencies, "dependencies");
   const config = reportObject(r.config, "config");
   for (const key of ["repetitions", "width", "height"]) {
-    reportNumber(config[key], "config." + key, true);
+    reportNumber(config[key], `config.${key}`, true);
     if (!Number.isSafeInteger(config[key])) invalidReport("config integer");
   }
   const sources = reportObject(r.sources, "sources");
@@ -283,7 +283,7 @@ function validateInteractionSamples(samples: unknown, repetitions: number, evide
   for (const entry of samples as unknown[]) {
     const s = reportObject(entry, "sample");
     for (const key of ["action", "contentHash", "screenHash", "outputHash", "rawEvidence"])
-      if (typeof s[key] !== "string") invalidReport("sample." + key);
+      if (typeof s[key] !== "string") invalidReport(`sample.${key}`);
     if (!Object.hasOwn(evidence, s.rawEvidence as string)) invalidReport("missing raw evidence");
     reportObject(evidence[s.rawEvidence as string], "raw evidence");
     if (
@@ -332,13 +332,13 @@ function validateInteractionSpan(entry: unknown) {
   if (typeof p.name !== "string" || !["sync", "async-prefix", "frame"].includes(p.kind as string))
     invalidReport("span name/kind");
   for (const key of ["durationMs", "startedAtMs", "endedAtMs", "depth", "exclusiveMs"])
-    if (key === "durationMs" || p[key] !== undefined) reportNumber(p[key], "span." + key);
+    if (key === "durationMs" || p[key] !== undefined) reportNumber(p[key], `span.${key}`);
   if (typeof p.startedAtMs === "number" && typeof p.endedAtMs === "number" && p.endedAtMs < p.startedAtMs)
     invalidReport("span reversed bounds");
 }
 
 const invalidReport = (where: string): never => {
-  throw new Error("Invalid interaction report: " + where);
+  throw new Error(`Invalid interaction report: ${where}`);
 };
 const reportObject = (v: unknown, where: string): Record<string, unknown> => {
   if (!v || typeof v !== "object" || Array.isArray(v)) return invalidReport(where);

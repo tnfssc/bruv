@@ -4,9 +4,9 @@ const server = Bun.serve({
   port: 0,
   async fetch(r) {
     if (r.method !== "POST") return new Response("fixture only", { status: 404 });
-    const b = (await r.json()) as any;
+    const b = (await r.json()) as { messages?: { role?: string; tool_call_id?: string }[] };
     const ms = b.messages ?? [];
-    const launched = ms.some((m: any) => m.role === "tool" && m.tool_call_id === "daily-bounded");
+    const launched = ms.some((m) => m.role === "tool" && m.tool_call_id === "daily-bounded");
     const completed = JSON.stringify(ms).includes("SSH jobs completed:");
     const d = completed
       ? { role: "assistant", content: "DAILY_COORDINATOR_REMOTE_COMPLETION_ACK" }
@@ -28,7 +28,7 @@ const server = Bun.serve({
               },
             ],
           };
-    const event = (delta: any, reason: any) => ({
+    const event = (delta: typeof d | Record<string, never>, reason: "tool_calls" | "stop" | null) => ({
       id: "daily-fake",
       object: "chat.completion.chunk",
       created: 1,
@@ -36,12 +36,12 @@ const server = Bun.serve({
       choices: [{ index: 0, delta, finish_reason: reason }],
     });
     return new Response(
-      [event(d, null), event({}, d.tool_calls ? "tool_calls" : "stop")]
-        .map((e) => "data: " + JSON.stringify(e) + "\n\n")
-        .join("") + "data: [DONE]\n\n",
+      `${[event(d, null), event({}, d.tool_calls ? "tool_calls" : "stop")]
+        .map((e) => `data: ${JSON.stringify(e)}\n\n`)
+        .join("")}data: [DONE]\n\n`,
       { headers: { "content-type": "text/event-stream" } },
     );
   },
 });
 writeFileSync("/tmp/dogfood-parent-provider-port", String(server.port));
-console.log("SCOPED DAILY FAKE PROVIDER " + server.port);
+console.log(`SCOPED DAILY FAKE PROVIDER ${server.port}`);

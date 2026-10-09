@@ -44,7 +44,7 @@ test("line-bounded hooks preserve complete reference tokens and links", () => {
   for (const a of lines)
     for (const b of lines)
       for (const c of lines) {
-        const source = a + "\n" + b + "\n" + c;
+        const source = `${a}\n${b}\n${c}`;
         expect(actual.lexer(source)).toEqual(expected.lexer(source));
       }
   for (const source of [
@@ -58,7 +58,7 @@ test("line-bounded hooks preserve complete reference tokens and links", () => {
     "a".repeat(1 << 20),
     "deterministic pasted line\n".repeat(40000),
     // Preserve even Bun's original regex effort-limit result for huge headings.
-    "deterministic pasted line\n".repeat(16000) + "===",
+    `${"deterministic pasted line\n".repeat(16000)}===`,
   ])
     expect(actual.lexer(source)).toEqual(expected.lexer(source));
 }, 10_000);
@@ -66,7 +66,7 @@ test("non-GFM and pedantic parsers retain their original rules", () => {
   for (const options of [{ gfm: false }, { pedantic: true }])
     for (const a of lines)
       for (const b of lines) {
-        const source = a + "\n" + b;
+        const source = `${a}\n${b}`;
         expect(fast(options).lexer(source)).toEqual(reference(options).lexer(source));
       }
 });
@@ -126,12 +126,12 @@ test("short and long lines keep rich ANSI wrapping and complete text", () => {
     quoteBorder: identity,
     hr: identity,
     listBullet: identity,
-    bold: (s: string) => "\x1b[1m" + s + "\x1b[22m",
+    bold: (s: string) => `\x1b[1m${s}\x1b[22m`,
     italic: identity,
     strikethrough: identity,
     underline: identity,
   };
-  const source = "**bold** \x1b[31m" + "a".repeat(4096) + "\x1b[0m 中 e\u0301\nEND_VISIBLE";
+  const source = `**bold** \x1b[31m${"a".repeat(4096)}\x1b[0m 中 e\u0301\nEND_VISIBLE`;
   const component = new Markdown(source, 0, 0, theme);
   const wide = component.render(80),
     narrow = component.render(31);
@@ -140,6 +140,7 @@ test("short and long lines keep rich ANSI wrapping and complete text", () => {
   expect(
     narrow
       .join("")
+      // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
       .replace(/\x1b\[[0-9;]*m/g, "")
       .match(/a/g)?.length,
   ).toBe(4096);
@@ -154,12 +155,12 @@ test("exported block tokenizer preserves subclass hooks when Marked registers ow
     override lheading(source: string) {
       headings++;
       const token = super.lheading(source);
-      return token ? { ...token, text: "custom " + token.text } : undefined;
+      return token ? { ...token, text: `custom ${token.text}` } : undefined;
     }
     override paragraph(source: string) {
       paragraphs++;
       const token = super.paragraph(source);
-      return token ? { ...token, text: "custom " + token.text } : undefined;
+      return token ? { ...token, text: `custom ${token.text}` } : undefined;
     }
   }
   const tokenizer = new CustomTokenizer();

@@ -6,19 +6,19 @@ import path from "node:path";
 import { test } from "node:test";
 import { collect, verify } from "../../scripts/claude-native-acceptance/history-driver.mjs";
 
-const jsonl = (entries) => entries.map((entry) => JSON.stringify(entry)).join("\n") + "\n";
+const jsonl = (entries) => `${entries.map((entry) => JSON.stringify(entry)).join("\n")}\n`;
 
 function encodeSession(id, turns, importedFrom) {
-  const canonicalId = "canonical-" + id;
+  const canonicalId = `canonical-${id}`;
   const canonical = [{ type: "session", id: canonicalId }];
   const native = [];
   const importedEntries = [];
   for (const [ordinal, [uuid, parentUuid, role, marker, toolCallId]] of turns.entries()) {
-    const entryId = "source-" + uuid;
+    const entryId = `source-${uuid}`;
     canonical.push({
       type: "message",
       id: entryId,
-      parentId: parentUuid ? "source-" + parentUuid : null,
+      parentId: parentUuid ? `source-${parentUuid}` : null,
       message: {
         role,
         ...(role === "toolResult" ? { toolCallId } : {}),
@@ -72,17 +72,17 @@ async function historyFixture(t) {
   const sessions = {};
   async function saveSession(id, turns, importedFrom) {
     const { canonical, native } = encodeSession(id, turns, importedFrom);
-    const file = path.join(indexes, id + ".jsonl");
+    const file = path.join(indexes, `${id}.jsonl`);
     await fs.writeFile(file, jsonl(canonical));
-    await fs.writeFile(path.join(indexes, id + ".json"), JSON.stringify({ file }));
-    await fs.writeFile(path.join(transcripts, id + ".jsonl"), jsonl(native));
-    sessions[id] = { id, canonical, native, file, nativeFile: path.join(transcripts, id + ".jsonl") };
+    await fs.writeFile(path.join(indexes, `${id}.json`), JSON.stringify({ file }));
+    await fs.writeFile(path.join(transcripts, `${id}.jsonl`), jsonl(native));
+    sessions[id] = { id, canonical, native, file, nativeFile: path.join(transcripts, `${id}.jsonl`) };
     return sessions[id];
   }
   const original = await saveSession("root", [
     ["r-seed", null, "user", "HISTORY_SEED orchid-73"],
     ["r-tool", "r-seed", "assistant", "", "root-execute"],
-    ["r-result", "r-tool", "toolResult", "HISTORY_ROOT_AUTHORITY " + root + " HISTORY_TOOL_COMPLETED", "root-execute"],
+    ["r-result", "r-tool", "toolResult", `HISTORY_ROOT_AUTHORITY ${root} HISTORY_TOOL_COMPLETED`, "root-execute"],
     ["r-checkpoint", "r-result", "assistant", "HISTORY_CHECKPOINT orchid-73"],
     ["r-future-user", "r-checkpoint", "user", "HISTORY_ROOT_FUTURE"],
     ["r-future", "r-future-user", "assistant", "HISTORY_ROOT_FUTURE_RESPONSE"],
@@ -92,13 +92,7 @@ async function historyFixture(t) {
     [
       ["c-seed", null, "user", "HISTORY_SEED orchid-73"],
       ["c-tool", "c-seed", "assistant", "", "root-execute"],
-      [
-        "c-result",
-        "c-tool",
-        "toolResult",
-        "HISTORY_ROOT_AUTHORITY " + root + " HISTORY_TOOL_COMPLETED",
-        "root-execute",
-      ],
+      ["c-result", "c-tool", "toolResult", `HISTORY_ROOT_AUTHORITY ${root} HISTORY_TOOL_COMPLETED`, "root-execute"],
       ["c-checkpoint", "c-result", "assistant", "HISTORY_CHECKPOINT orchid-73"],
       ["c-continue", "c-checkpoint", "user", "HISTORY_CHILD_CONTINUE"],
       ["c-inspect", "c-continue", "assistant", "", "child-execute"],

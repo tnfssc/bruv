@@ -86,7 +86,7 @@ export function registerRemoteCancellationRuntime(pi: ExtensionAPI) {
         checkpoint = { report: { error: String(error) }, settled: false };
       }
       const file = join(dirname(runtime), "cancel-report.json"),
-        temp = file + "." + process.pid;
+        temp = `${file}.${process.pid}`;
       writeFileSync(temp, JSON.stringify({ at: new Date().toISOString(), ...checkpoint }), { mode: 0o600 });
       renameSync(temp, file);
     },

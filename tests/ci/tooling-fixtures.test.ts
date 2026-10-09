@@ -1,3 +1,4 @@
+import { requireValue } from "../../scripts/lib/require-value";
 import { expect, test } from "bun:test";
 import { mkdtempSync, readFileSync, writeFileSync, existsSync, mkdirSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -141,12 +142,12 @@ createInterface({ input: process.stdin }).on("line", (line) => {
 
     await rpc.wait(() => rpc.events.some((event) => event.value?.id === "trust"), "trust response");
     expect(rpc.events).toContainEqual({ type: "extension_ui_request", method: "confirm", id: "trust" });
-    const trustResponse = rpc.events.find((event) => event.value?.id === "trust");
+    const trustResponse = requireValue(rpc.events.find((event) => event.value?.id === "trust"));
     expect(trustResponse.value).toEqual({ type: "extension_ui_response", id: "trust", confirmed: false });
 
     rpc.send("fixture prompt");
     await rpc.wait(() => rpc.events.some((event) => event.value?.type === "prompt"), "prompt");
-    const prompt = rpc.events.find((event) => event.value?.type === "prompt");
+    const prompt = requireValue(rpc.events.find((event) => event.value?.type === "prompt"));
     expect(prompt.value).toEqual({ type: "prompt", message: "fixture prompt" });
 
     await expect(rpc.wait(() => false, "intentional timeout", 10)).rejects.toThrow(

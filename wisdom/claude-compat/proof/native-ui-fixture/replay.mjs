@@ -23,11 +23,11 @@ const upstream = path.resolve(process.env.T3_UPSTREAM);
 const binary = path.join(upstream, 'platform/t3');
 const browserPath = process.env.BROWSER_PATH;
 const port = Number(process.env.FIXTURE_PORT || '18783');
-const url = 'http://127.0.0.1:' + port;
+const url = `http://127.0.0.1:${port}`;
 const root = config
   ? path.join(path.dirname(config.state), 't3-runtime')
   : path.resolve('.cache/claude-native-ui-replay');
-const proof = path.resolve(process.env.PROOF_OUTPUT || '.cache/claude-native-ui-replay-proof-' + Date.now());
+const proof = path.resolve(process.env.PROOF_OUTPUT || `.cache/claude-native-ui-replay-proof-${Date.now()}`);
 const home = path.join(root, 'home');
 const project = path.join(root, 'project');
 const base = path.join(root, 't3-base');
@@ -78,8 +78,8 @@ try {
     observation = await integration?.capture?.({ page, proof });
     const body = () => page.locator('body').innerText();
     const snapshot = async (name) => {
-      await fs.writeFile(path.join(proof, name + '.txt'), (await body()).replaceAll(root, '<RUNTIME>'));
-      await page.screenshot({ path: path.join(proof, name + '.png') });
+      await fs.writeFile(path.join(proof, `${name}.txt`), (await body()).replaceAll(root, '<RUNTIME>'));
+      await page.screenshot({ path: path.join(proof, `${name}.png`) });
     };
     await openNativeComposer(page, snapshot);
     await (integration?.exercise || exercise)({ page, url, snapshot, body, assert, config, observation });
@@ -144,7 +144,7 @@ async function openNativeComposer(page, snapshot) {
   const paired = execFileSync(binary, ['pair', '--base-dir', base], { env, encoding: 'utf8' });
   const token = paired.match(/token=([A-Za-z0-9_-]+)/)?.[1];
   assert.ok(token, 'local pairing token (never exported)');
-  await page.goto(url + '/pair#token=' + token);
+  await page.goto(`${url}/pair#token=${token}`);
   await page.waitForTimeout(1500);
   // Normal native first-run flow, without external sign-in, installation, or license bypass.
   // Every replay uses fresh state. Wait for hydration instead of skipping
@@ -164,7 +164,7 @@ async function openNativeComposer(page, snapshot) {
       await page.getByText('Set up T3 Code', { exact: true }).waitFor({ state: 'hidden' });
     }
   }
-  await page.goto(url + '/settings/providers');
+  await page.goto(`${url}/settings/providers`);
   await page
     .getByRole('button', {
       name: integration ? 'Select Bruv local deterministic acceptance (not Claude)' : 'Select Claude',
@@ -210,10 +210,10 @@ async function publishProof(wire, version, before) {
   if (integration) {
     assert.equal(await binaryHash(), before);
     await integration.verify({ wire, config, proof, t3Version: version, t3BinarySha256: before });
-    console.log('PASS actual connector integrated replay. Proof: ' + proof);
+    console.log(`PASS actual connector integrated replay. Proof: ${proof}`);
   } else {
     await publishFixtureProof(wire, version, before);
-    console.log('PASS native prompt, active steering, synthetic monitor, Stop, reload. Proof: ' + proof);
+    console.log(`PASS native prompt, active steering, synthetic monitor, Stop, reload. Proof: ${proof}`);
   }
 }
 async function publishFixtureProof(wire, version, before) {
@@ -242,12 +242,12 @@ async function publishFixtureProof(wire, version, before) {
   });
   await fs.writeFile(
     path.join(proof, 'wire-projection.ndjson'),
-    projection.map((x) => JSON.stringify(x)).join('\n') + '\n',
+    `${projection.map((x) => JSON.stringify(x)).join('\n')}\n`,
   );
   assert.equal(await binaryHash(), before);
   await fs.writeFile(
     path.join(proof, 'result.json'),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         researchOnly: true,
         fixtureMode: true,
@@ -269,7 +269,7 @@ async function publishFixtureProof(wire, version, before) {
       },
       null,
       2,
-    ) + '\n',
+    )}\n`,
   );
 }
 async function captureFailure(error, page, version, before) {
@@ -286,7 +286,7 @@ async function captureFailure(error, page, version, before) {
       } catch {}
     await fs.writeFile(
       path.join(proof, 'result.json'),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           integratedAcceptance: true,
           passed: false,
@@ -299,7 +299,7 @@ async function captureFailure(error, page, version, before) {
         },
         null,
         2,
-      ) + '\n',
+      )}\n`,
     );
   }
   try {

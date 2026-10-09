@@ -30,9 +30,10 @@ import type { RootClient } from "./client";
 import type { RootCommand, RootDialog, RootObservation, RootRecord } from "./contract";
 
 const plain = (s: string) => s;
-const accent = (s: string) => "\x1b[36m" + s + "\x1b[0m";
+const accent = (s: string) => `\x1b[36m${s}\x1b[0m`;
 const safe = (s: unknown) =>
   stripTerminalSequences(String(s ?? ""))
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Remove terminal control bytes from remote text.
     .replace(/[\x00-\x08\x0b-\x1f\x7f-\x9f]/g, "�")
     .slice(0, 24000);
 const theme = {
@@ -78,10 +79,38 @@ export interface RootPresentationControls {
   notice(text: string): void;
   detach(): void;
 }
-function list(value: any, key: string): any[] {
-  if (Array.isArray(value)) return value;
-  if (Array.isArray(value?.[key])) return value[key];
-  throw Error("Invalid remote " + key + " facet");
+type TranscriptContent = {
+  type: string;
+  id?: string;
+  name?: string;
+  text?: string;
+  thinking?: string;
+  arguments?: Record<string, unknown>;
+};
+type TranscriptMessage = {
+  role?: string;
+  display?: boolean;
+  content?: string | TranscriptContent[];
+  toolCallId?: string;
+  toolName?: string;
+  isError?: boolean;
+  customType?: string;
+  details?: Record<string, unknown>;
+};
+type TranscriptEvent = {
+  type: string;
+  message?: TranscriptMessage;
+  facets?: { jobs?: Array<Record<string, unknown>> };
+  jobs?: Array<Record<string, unknown>>;
+  display?: boolean;
+  title?: string;
+  text?: string;
+};
+function list<T = Record<string, unknown>>(value: unknown, key: string): T[] {
+  const object = value as Record<string, unknown> | undefined;
+  if (Array.isArray(value)) return value as T[];
+  if (Array.isArray(object?.[key])) return object[key] as T[];
+  throw Error(`Invalid remote ${key} facet`);
 }
 /** Human actions use exactly the root command ledger, never an agent/tool execution seam. */
 export class RootControls {
@@ -122,7 +151,7 @@ export class RootControls {
   async dialog(dialog: RootDialog, attached: () => boolean = () => true): Promise<void> {
     let response: RootCommand;
     if (dialog.method === "confirm") {
-      const selected = await this.ui.choose(safe(dialog.title) + " " + safe(dialog.message), [
+      const selected = await this.ui.choose(`${safe(dialog.title)} ${safe(dialog.message)}`, [
         { value: "no", label: "No" },
         { value: "yes", label: "Yes" },
       ]);
@@ -131,14 +160,15 @@ export class RootControls {
           ? { kind: "ui.respond", id: dialog.id, cancelled: true }
           : { kind: "ui.respond", id: dialog.id, confirmed: selected === "yes" };
     } else if (dialog.method === "select") {
+      const options = dialog.options ?? [];
       const selected = await this.ui.choose(
         safe(dialog.title),
-        (dialog.options ?? []).map((label, i) => ({ value: String(i), label: safe(label) })),
+        options.map((label, i) => ({ value: String(i), label: safe(label) })),
       );
       response =
         selected === undefined
           ? { kind: "ui.respond", id: dialog.id, cancelled: true }
-          : { kind: "ui.respond", id: dialog.id, value: dialog.options![Number(selected)]! };
+          : { kind: "ui.respond", id: dialog.id, value: options[Number(selected)] };
     } else {
       const value = await this.ui.answer({
         id: dialog.id,
@@ -154,7 +184,7 @@ export class RootControls {
     }
     if (!attached()) return; // Disconnect detaches; it does not answer/cancel a server dialog.
     const receipt = await this.send(response);
-    this.ui.notice("Dialog response request " + receipt.state + " (application acknowledgement unavailable)");
+    this.ui.notice(`Dialog response request ${receipt.state} (application acknowledgement unavailable)`);
   }
   async submit(text: string): Promise<void> {
     text = text.trim();
@@ -169,17 +199,17 @@ export class RootControls {
         "Abort request " +
           r.state +
           " (presentation remains attached)" +
-          (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))),
+          (r.result === undefined ? "" : ` · ${safe(JSON.stringify(r.result))}`),
       );
       return;
     }
     if (text === "/close") {
       const r = await this.send({ kind: "close" });
-      this.ui.notice("Root close " + r.state + "; waiting for authoritative closed state before source return");
+      this.ui.notice(`Root close ${r.state}; waiting for authoritative closed state before source return`);
       return;
     }
     if (text === "/questions") {
-      const questions = list(await this.client.result({ kind: "questions.list" }), "questions").filter(
+      const questions = list<Question>(await this.client.result({ kind: "questions.list" }), "questions").filter(
         (q) => q.status === "pending",
       ) as Question[];
       if (!questions.length) {
@@ -194,7 +224,7 @@ export class RootControls {
       if (!q) return;
       const answer = await this.ui.answer(q);
       if (answer === undefined) return;
-      const current = list(await this.client.result({ kind: "questions.list" }), "questions").find(
+      const current = list<Question>(await this.client.result({ kind: "questions.list" }), "questions").find(
         (x) => x.id === q.id,
       );
       if (current?.status !== "pending" || current.version !== q.version || !isDeepStrictEqual(current.owner, q.owner))
@@ -207,17 +237,20 @@ export class RootControls {
         text: answer,
         replyId: randomUUID(),
       });
-      this.ui.notice("Answer " + r.state);
+      this.ui.notice(`Answer ${r.state}`);
       return;
     }
     if (text === "/ps") {
-      const jobs = list(await this.client.result({ kind: "jobs.list", count: 100 }), "jobs");
+      const jobs = list<{ id: string; title?: string; command?: string; status?: string; state?: string }>(
+        await this.client.result({ kind: "jobs.list", count: 100 }),
+        "jobs",
+      );
       if (!jobs.length) {
         this.ui.notice("No jobs");
         return;
       }
       const id = await this.ui.choose(
-        "Jobs on " + safe(this.client.read().target.name),
+        `Jobs on ${safe(this.client.read().target.name)}`,
         jobs.map((j) => ({
           value: j.id,
           label: safe(j.title ?? j.command ?? j.id),
@@ -226,13 +259,13 @@ export class RootControls {
       );
       const job = jobs.find((j) => j.id === id);
       if (!job) return;
-      const detail: any = await this.client.result({ kind: "jobs.inspect", id: job.id, limit: 5000 });
-      const action = await this.ui.choose(safe(detail.output ?? JSON.stringify(detail)), [
+      const detail = await this.client.result({ kind: "jobs.inspect", id: job.id, limit: 5000 });
+      const action = await this.ui.choose(safe((detail as Record<string, unknown>)?.output ?? JSON.stringify(detail)), [
         { value: "back", label: "Back" },
-        { value: "stop", label: "Cancel " + safe(job.title ?? job.command ?? job.id) },
+        { value: "stop", label: `Cancel ${safe(job.title ?? job.command ?? job.id)}` },
       ]);
       if (action !== "stop") return;
-      const confirm = await this.ui.choose("Cancel this job? " + safe(job.title ?? job.command ?? job.id), [
+      const confirm = await this.ui.choose(`Cancel this job? ${safe(job.title ?? job.command ?? job.id)}`, [
         { value: "no", label: "Keep running" },
         { value: "yes", label: "Cancel job" },
       ]);
@@ -241,7 +274,7 @@ export class RootControls {
         this.ui.notice(
           "Job cancellation request " +
             r.state +
-            (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))),
+            (r.result === undefined ? "" : ` · ${safe(JSON.stringify(r.result))}`),
         );
       }
       return;
@@ -261,19 +294,19 @@ export class RootControls {
       this.ui.notice("Prompt delivery unknown; identity saved, never automatically replayed");
   }
 }
-function messageText(message: any, details = false): string {
+function messageText(message: TranscriptMessage | undefined, details = false): string {
   if (typeof message?.content === "string") return safe(message.content);
   return (message?.content ?? [])
-    .map((c: any) => {
+    .map((c: TranscriptContent) => {
       if (c.type === "text") return safe(c.text);
       if (c.type === "thinking") return details ? safe(c.thinking ?? c.text ?? "") : "";
-      if (c.type === "toolCall" && details) return "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments));
+      if (c.type === "toolCall" && details) return `Tool: ${safe(c.name)} ${safe(JSON.stringify(c.arguments))}`;
       return "";
     })
     .filter(Boolean)
     .join("\n");
 }
-function expandedRootTranscript(messages: any[], width: number): string[] {
+function expandedRootTranscript(messages: TranscriptMessage[], width: number): string[] {
   const lines: string[] = [];
   const labels = new Map<string, string>();
   for (const m of messages) {
@@ -287,10 +320,10 @@ function expandedRootTranscript(messages: any[], width: number): string[] {
     lines.push(...new Text(accent(role), 0, 0).render(width));
     let text: string;
     if (m.role === "toolResult") {
-      const name = labels.get(m.toolCallId) ?? safe(m.toolName ?? "tool");
+      const name = labels.get(m.toolCallId ?? "") ?? safe(m.toolName ?? "tool");
       const output = typeof m.content === "string" ? safe(m.content) : messageText(m, true);
-      text = (m.isError ? name + " failed" : name + " completed") + (output ? "\n" + output : "");
-      if (m.toolCallId) text = "Tool call " + safe(m.toolCallId) + "\n" + text;
+      text = (m.isError ? `${name} failed` : `${name} completed`) + (output ? `\n${output}` : "");
+      if (m.toolCallId) text = `Tool call ${safe(m.toolCallId)}\n${text}`;
     } else text = messageText(m, true);
     lines.push(
       ...(m.role === "assistant" ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width),
@@ -304,8 +337,8 @@ const actionFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "�
 
 /** Bounded conversation projection, independent of provider settings. Server snapshot wins. */
 export class RootTranscript {
-  messages: any[] = [];
-  streaming?: any;
+  messages: TranscriptMessage[] = [];
+  streaming?: TranscriptMessage;
   progress = "";
   record?: RootRecord;
   private taskSnapshots = new Map<string, TaskRow>();
@@ -314,7 +347,8 @@ export class RootTranscript {
     this.record = observation.record;
     for (const { event } of observation.events) this.event(event);
   }
-  event(event: any) {
+  event(value: unknown) {
+    const event = value as TranscriptEvent;
     if (!event || typeof event !== "object") return;
     // These are the actual server-owned jobs.list snapshots, not model task prose.
     const facets = event.type === "root_ready" ? event.facets : event.type === "root_facets" ? event : undefined;
@@ -329,7 +363,7 @@ export class RootTranscript {
       }
     if (event.type === "message_start" || event.type === "message_update") this.streaming = event.message;
     if (event.type === "message_end") {
-      this.messages.push(event.message);
+      if (event.message) this.messages.push(event.message);
       this.messages = this.messages.slice(-200);
       this.streaming = undefined;
     }
@@ -348,7 +382,7 @@ export class RootTranscript {
       (m) =>
         m?.role === "assistant" &&
         Array.isArray(m.content) &&
-        m.content.some((c: any) => c.type === "toolCall" && (!c.id || !settled.has(c.id))),
+        m.content.some((c: TranscriptContent) => c.type === "toolCall" && (!c.id || !settled.has(c.id))),
     );
   }
   render(width: number, now = Date.now()): string[] {
@@ -373,8 +407,8 @@ export class RootTranscript {
       shownTasks.add(key);
       lines.push(truncateToWidth(formatTaskRow(row) + warning, width), "");
     };
-    const calls = new Map<string, any>();
-    const results = new Map<string, any>();
+    const calls = new Map<string, TranscriptContent>();
+    const results = new Map<string, TranscriptMessage>();
     for (const m of messages) {
       if (!m || m.display === false) continue;
       if (m.role === "toolResult" && m.toolCallId) results.set(m.toolCallId, m);
@@ -390,7 +424,7 @@ export class RootTranscript {
       lines.push(...new Text(accent(role), 0, 0).render(width));
       lines.push(...(markdown ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width), "");
     };
-    const action = (call: any, result?: any) => {
+    const action = (call: TranscriptContent | undefined, result?: TranscriptMessage) => {
       const outcome = result?.details;
       const failure = outcome?.cancelled
         ? "Cancelled"
@@ -425,7 +459,7 @@ export class RootTranscript {
           ? "⚠ couldn’t save full output"
           : "";
       const icon = result ? (failure ? "✗" : "✓") : actionFrames[Math.floor(now / 80) % actionFrames.length];
-      lines.push(truncateToWidth(icon + (title ? " " + title : "") + (reason ? " — " + reason : ""), width), "");
+      lines.push(truncateToWidth(icon + (title ? ` ${title}` : "") + (reason ? ` — ${reason}` : ""), width), "");
     };
     const shownCalls = new Set<string>();
     for (const m of messages) {
@@ -445,7 +479,7 @@ export class RootTranscript {
         continue;
       }
       if (m.role === "assistant" && Array.isArray(m.content)) {
-        let content: any[] = [];
+        let content: TranscriptContent[] = [];
         const flush = () => {
           append("Assistant", messageText({ content }), true);
           content = [];
@@ -558,7 +592,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
       if (modal) return modal.component.render(width);
       return [
         ...new Text(
-          accent("Bruv · " + client.read().target.name + " · root " + (transcript.record?.state ?? "connecting")),
+          accent(`Bruv · ${client.read().target.name} · root ${transcript.record?.state ?? "connecting"}`),
         ).render(width),
         ...transcript.render(width),
         ...new Text(safe(transcript.progress)).render(width),
@@ -622,13 +656,13 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     notice(
       client.read().sourceLabel +
         (client.read().cacheStart > 1
-          ? " · cached transcript starts at event " + client.read().cacheStart + "; older text remains on server"
+          ? ` · cached transcript starts at event ${client.read().cacheStart}; older text remains on server`
           : ""),
     );
     if (options.prompt) {
       try {
         const receipt = await client.initialPrompt(options.prompt);
-        notice(receipt.error ? "Startup prompt rejected: " + safe(receipt.error) : "Startup prompt " + receipt.state);
+        notice(receipt.error ? `Startup prompt rejected: ${safe(receipt.error)}` : `Startup prompt ${receipt.state}`);
       } catch (error) {
         notice(String(error));
       }
@@ -642,7 +676,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
           for (const receipt of receipts) {
             if (receipt.error && !reportedErrors.has(receipt.commandId)) {
               reportedErrors.add(receipt.commandId);
-              notice("Remote action rejected: " + safe(receipt.error));
+              notice(`Remote action rejected: ${safe(receipt.error)}`);
             }
           }
           let observation: RootObservation;
@@ -663,7 +697,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
               result
                 ? "Source return: " +
                     result.status +
-                    (result.reason ? " · " + result.reason : "") +
+                    (result.reason ? ` · ${result.reason}` : "") +
                     " · " +
                     result.artifact
                 : "Root closed; server-existing repository retained on destination",
@@ -674,7 +708,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
           if (cached.record) {
             transcript.record = cached.record;
           }
-          notice("Remote observation unavailable: " + String(error) + " · saved root retained");
+          notice(`Remote observation unavailable: ${String(error)} · saved root retained`);
         }
         await Promise.race([Bun.sleep(options.pollMs ?? 1000), ended]);
       }
@@ -691,7 +725,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     try {
       await client.detach();
     } catch (error) {
-      process.stderr.write("Presentation detached locally; remote detach unconfirmed: " + String(error) + "\n");
+      process.stderr.write(`Presentation detached locally; remote detach unconfirmed: ${String(error)}\n`);
     }
   }
 }

@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Owns the offline SDK runtime, instrumentation guards, and optional InteractiveMode lifetime. */
 import { createHash } from "node:crypto";
 import { join } from "node:path";
@@ -141,7 +142,7 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
     ] as const) {
       const original = target[name].bind(target) as (...args: unknown[]) => unknown;
       (target as unknown as Record<string, unknown>)[name] = (...args: unknown[]) =>
-        sync("SessionManager." + name, () => original(...args));
+        sync(`SessionManager.${name}`, () => original(...args));
     }
   };
   try {
@@ -167,7 +168,7 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
         services,
         sessionManager: input.sessionManager,
         sessionStartEvent: input.sessionStartEvent,
-        model: getModel("anthropic", "claude-sonnet-4-5")!,
+        model: requireValue(getModel("anthropic", "claude-sonnet-4-5")),
         tools: [],
       });
       return { ...created, services, diagnostics: services.diagnostics };
@@ -182,7 +183,8 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
       operation = "InteractiveMode.constructor";
       app = sync(
         operation,
-        () => new InteractiveMode(owner!, { terminal, tuiMode: "fullscreen", initialThemeSetting: "dark" }),
+        () =>
+          new InteractiveMode(requireValue(owner), { terminal, tuiMode: "fullscreen", initialThemeSetting: "dark" }),
       );
       const instance = app as unknown as Record<string, unknown>;
       for (const name of [
@@ -193,7 +195,7 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
         "renderWidgets",
       ]) {
         const original = (instance[name] as (...args: unknown[]) => unknown).bind(app);
-        instance[name] = (...args: unknown[]) => sync("InteractiveMode." + name, () => original(...args));
+        instance[name] = (...args: unknown[]) => sync(`InteractiveMode.${name}`, () => original(...args));
       }
       const renderer = instance.renderer as TuiAltScreen;
       const capture = new InteractiveNavigationCapture(renderer, terminal);
@@ -230,13 +232,13 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
         await Bun.sleep(40);
         appCapture.captureStage(name);
       }
-      if ((result as { cancelled?: boolean }).cancelled) throw new Error(name + " unexpectedly cancelled");
+      if ((result as { cancelled?: boolean }).cancelled) throw new Error(`${name} unexpectedly cancelled`);
     };
     await call("AgentSession.navigateTree(primary,no-summary)", () =>
-      owner!.session.navigateTree(history.primaryLeaf, { summarize: false }),
+      requireValue(owner).session.navigateTree(history.primaryLeaf, { summarize: false }),
     );
     await call("AgentSession.navigateTree(alternate,no-summary)", () =>
-      owner!.session.navigateTree(history.alternateLeaf, { summarize: false }),
+      requireValue(owner).session.navigateTree(history.alternateLeaf, { summarize: false }),
     );
     await call(
       app ? "InteractiveMode.handleResumeSession(disk-file)" : "AgentSessionRuntime.switchSession(disk-file)",
@@ -245,9 +247,11 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
           ? (app as unknown as { handleResumeSession(path: string): Promise<unknown> }).handleResumeSession(
               history.file,
             )
-          : owner!.switchSession(history.file),
+          : requireValue(owner).switchSession(history.file),
     );
-    await call("AgentSessionRuntime.fork(primary,at)", () => owner!.fork(history.primaryLeaf, { position: "at" }));
+    await call("AgentSessionRuntime.fork(primary,at)", () =>
+      requireValue(owner).fork(history.primaryLeaf, { position: "at" }),
+    );
     operation = "final-context";
     const current = owner.session.sessionManager;
     const context = sync("SessionManager.buildSessionContext(final)", () => current.buildSessionContext());

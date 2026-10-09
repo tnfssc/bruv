@@ -125,6 +125,7 @@ function slug(value: string): string {
 }
 
 function validateRefInput(value: string, label: string): void {
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject whitespace and control bytes in Git refs.
   if (!value || value.startsWith("-") || /[\x00-\x20\x7f]/.test(value)) throw new Error(`Invalid worktree ${label}`);
 }
 

@@ -78,30 +78,30 @@ const verifyInvalidatedEstimate = (label) => {
   materializations = 0;
   computations = 0;
   const actual = read();
-  assert.equal(computations, 1, label + " invalidates");
+  assert.equal(computations, 1, `${label} invalidates`);
   const want = expected();
-  assert.deepEqual(actual, want, label + " matches uncached SDK");
+  assert.deepEqual(actual, want, `${label} matches uncached SDK`);
   materializations = 0;
   assert.deepEqual(read(), want);
-  assert.equal(materializations, 0, label + " is cached again");
-  assert.equal(computations, 1, label + " does not recompute");
+  assert.equal(materializations, 0, `${label} is cached again`);
+  assert.equal(computations, 1, `${label} does not recompute`);
 };
 
 const verifyProjectionSeededEstimate = (label) => {
   computations = 0;
   manager.buildSessionProjection();
-  assert.equal(computations, 1, label + " required projection estimates once");
+  assert.equal(computations, 1, `${label} required projection estimates once`);
   const want = expected();
   materializations = 0;
-  assert.deepEqual(diskUsage.call(host), want, label + " request-seeded usage matches native SDK");
-  assert.equal(materializations, 0, label + " seeded disk read loads no bodies");
+  assert.deepEqual(diskUsage.call(host), want, `${label} request-seeded usage matches native SDK`);
+  assert.equal(materializations, 0, `${label} seeded disk read loads no bodies`);
   // Shake freshness may inspect the changed branch once; it remains the
   // outer owner of marker validation rather than part of this numeric cache.
-  assert.deepEqual(read(), want, label + " shake wrapper preserves SDK usage");
+  assert.deepEqual(read(), want, `${label} shake wrapper preserves SDK usage`);
   materializations = 0;
   assert.deepEqual(read(), want);
-  assert.equal(materializations, 0, label + " warm wrapped read loads no bodies");
-  assert.equal(computations, 1, label + " cached read does not estimate again");
+  assert.equal(materializations, 0, `${label} warm wrapped read loads no bodies`);
+  assert.equal(computations, 1, `${label} cached read does not estimate again`);
 };
 
 function verifyWarmFooterReads() {

@@ -30,7 +30,7 @@ export function siteMetadata(raw?: string, page = "") {
       "</loc></url><url><loc>" +
       escapeHtml(new URL("text.html", url).href) +
       "</loc></url></urlset>\n",
-    robots: "User-agent: *\nAllow: /\nSitemap: " + new URL("sitemap.xml", url).href + "\n",
+    robots: `User-agent: *\nAllow: /\nSitemap: ${new URL("sitemap.xml", url).href}\n`,
   };
 }
 export function textContent(animated = true) {
@@ -50,7 +50,7 @@ export function textContent(animated = true) {
     landing.features
       .map((f, i) => {
         const id = demoIds[i];
-        const transcript = '<pre class="demo-transcript">' + escapeHtml(demoTranscript(id)) + "</pre>";
+        const transcript = `<pre class="demo-transcript">${escapeHtml(demoTranscript(id))}</pre>`;
         const visual = animated
           ? '<pre class="demo-screen" aria-hidden="true" hidden>' +
             cellRowsHtml(demoFrame(id, 68, demoDuration(id)).rows) +
@@ -154,7 +154,7 @@ export async function build(raw = process.env.BASE_URL) {
   }
   console.log(
     "Built self-contained terminal website in site/dist" +
-      (raw ? " (" + raw + ")" : "; set BASE_URL for canonical/sitemap metadata."),
+      (raw ? ` (${raw})` : "; set BASE_URL for canonical/sitemap metadata."),
   );
 }
 if (import.meta.main) await build();

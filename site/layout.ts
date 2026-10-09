@@ -1,3 +1,4 @@
+import { requireValue } from "../scripts/lib/require-value";
 import { INSTALL_COMMAND, INSTALL_SOURCE_URL } from "./install-command";
 import { siteContent, landing } from "./content";
 import { wordmark } from "./brand";
@@ -24,6 +25,7 @@ export const palette = {
 };
 const clean = (s: string) =>
   s
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
     .replace(/[\x00-\x1f\x7f]/g, "")
     .replace(/[\u2013\u2014]/g, "-")
     .replace(/[\u2018\u2019]/g, "'")
@@ -76,9 +78,9 @@ function demoPanel(id: DemoId, x: number, y: number, cols: number, elapsed: numb
     {
       x,
       y,
-      text: "╭" + "─".repeat(cols) + "╮",
+      text: `╭${"─".repeat(cols)}╮`,
       style: palette.border,
-      action: "demo:" + id + ":toggle",
+      action: `demo:${id}:toggle`,
       height: demo.rows.length + 2,
       demo: id,
     },
@@ -102,7 +104,7 @@ function demoPanel(id: DemoId, x: number, y: number, cols: number, elapsed: numb
     pieces.push({ x: x + 1 + cols, y: rowY, text: "│", style: palette.border });
   }
   const bottom = capture.y + capture.rows.length;
-  pieces.push({ x, y: bottom, text: "╰" + "─".repeat(cols) + "╯", style: palette.border });
+  pieces.push({ x, y: bottom, text: `╰${"─".repeat(cols)}╯`, style: palette.border });
   return { pieces, capture, end: bottom + 1 };
 }
 
@@ -121,7 +123,7 @@ function composeLanding(
     pieces.push({
       x,
       y,
-      text: primary ? "  " + label + "  " : "[ " + label + " ]",
+      text: primary ? `  ${label}  ` : `[ ${label} ]`,
       style: palette.accent,
       action,
       primary,
@@ -214,14 +216,14 @@ export function layout(cols: number, rows: number, state: State) {
         width: [...p.text].length,
         height: Math.min(row + (p.height ?? 1), bottom + 1) - Math.max(top, row),
         label: p.action.startsWith("demo:")
-          ? (state.demos?.[p.demo!]?.paused ? "Play " : "Pause ") + p.demo + " demo"
+          ? `${(state.demos?.[requireValue(p.demo)]?.paused ? "Play " : "Pause ") + p.demo} demo`
           : p.text.trim(),
         action: p.action,
       });
       if (row >= top)
         put(p.x, row, p.text, !p.demo && (state.focus === index || p.primary) ? palette.selected : p.style);
       if (p.demo && (state.focus === index || state.hover === p.demo)) {
-        const label = "[ " + (state.demos?.[p.demo]?.paused ? "Play" : "Pause") + " ]";
+        const label = `[ ${state.demos?.[p.demo]?.paused ? "Play" : "Pause"} ]`;
         // Use the border (or the first visible row), never add a layout row.
         controls.push({
           x: p.x + p.text.length - label.length - 1,
@@ -234,11 +236,11 @@ export function layout(cols: number, rows: number, state: State) {
   }
   for (const c of controls) put(c.x, c.y, c.text, c.style);
   const ansiRows = grid.map((row, i) => {
-    let ansi = "\x1b[" + (i + 1) + ";1H",
+    let ansi = `\x1b[${i + 1};1H`,
       prev = "";
     for (const cell of row) {
       if (cell.style !== prev) {
-        ansi += "\x1b[0;" + cell.style + "m";
+        ansi += `\x1b[0;${cell.style}m`;
         prev = cell.style;
       }
       ansi += cell.c;
@@ -246,7 +248,7 @@ export function layout(cols: number, rows: number, state: State) {
     return ansi;
   });
   return {
-    ansi: "\x1b[?25l\x1b[?7l\x1b[H" + ansiRows.join("") + "\x1b[0m",
+    ansi: `\x1b[?25l\x1b[?7l\x1b[H${ansiRows.join("")}\x1b[0m`,
     ansiRows,
     hits,
     scroll,

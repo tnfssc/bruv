@@ -1,41 +1,46 @@
+import { requireValue } from "../lib/require-value";
 // Run with bun scripts/terminal-perf/benchmark-task-row-render.ts. No provider or terminal needed.
 // Compare this same fixture across revisions; times are evidence, not test thresholds.
 import { ToolExecutionComponent, initTheme } from "@earendil-works/pi-coding-agent";
-import { Container, Text } from "@earendil-works/pi-tui";
+import { theme } from "../../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme.js";
+import { Container, Text, type TUI } from "@earendil-works/pi-tui";
 import { installSdkTaskRows } from "../../src/ui/sdk-task-rows";
 import { taskRowFromLaunch, type TaskRow } from "../../src/ui/task-rows";
 
 initTheme("dark", false);
-const theme = { fg: (_color: string, text: string) => text } as any;
+const rowTheme = Object.create(theme) as typeof theme;
+rowTheme.fg = (_color: string, text: string) => text;
 for (const mode of ["no-tasks", "persisted-tasks", "live-tasks-expanded"] as const) {
   for (const count of [100, 500, 1000]) {
     const live: TaskRow[] = [];
     let snapshots = 0;
-    const restore = installSdkTaskRows(theme, () => {
+    const restore = installSdkTaskRows(rowTheme, () => {
       snapshots++;
       return live;
     });
     try {
       const chat = new Container();
       for (let index = 0; index < count; index++) {
-        const call = "call-" + index;
-        const task = taskRowFromLaunch(
-          { id: "task-" + index, kind: "command", status: "completed", title: "Check " + index },
-          call,
-        )!;
+        const call = `call-${index}`;
+        const task = requireValue(
+          taskRowFromLaunch(
+            { id: `task-${index}`, kind: "command", status: "completed", title: `Check ${index}` },
+            call,
+          ),
+        );
         if (mode === "live-tasks-expanded") live.push(task);
         const tool = new ToolExecutionComponent(
           "execute",
           call,
-          { code: "1", label: "Check " + index },
+          { code: "1", label: `Check ${index}` },
           {},
           {
             name: "execute",
             renderShell: "self",
             renderCall: () => new Text("✓ Check", 0, 0),
             renderResult: () => new Text("Done", 0, 0),
-          } as any,
-          { requestRender() {} } as any,
+          } as const,
+          { requestRender() {} } as TUI,
           process.cwd(),
         );
         tool.updateResult({

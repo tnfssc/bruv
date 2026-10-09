@@ -180,10 +180,10 @@ async function assertReleased({ runtime, pid, events }) {
 }
 
 for (const mode of ["setup-failure", "close-failure"]) {
-  test("history replay releases owned resources after " + mode, async () => {
+  test(`history replay releases owned resources after ${mode}`, async () => {
     await replayFixture(mode, async (result) => {
       assert.notEqual(result.code, 0);
-      assert.match(result.stderr, new RegExp(mode.split("-")[0] + " failed"));
+      assert.match(result.stderr, new RegExp(`${mode.split("-")[0]} failed`));
       await assertReleased(result);
     });
   });
@@ -211,7 +211,7 @@ test("history replay verifies before closing the browser and releasing the serve
 });
 
 for (const mode of ["exercise-failure", "binary-change"]) {
-  test("history replay captures failure proof before browser and runtime teardown after " + mode, async () => {
+  test(`history replay captures failure proof before browser and runtime teardown after ${mode}`, async () => {
     await replayFixture(mode, async (result) => {
       await assertFailureProof(result, mode !== "binary-change");
       assert.ok(result.events.indexOf("failure-screenshot") < result.events.indexOf("browser-close"));

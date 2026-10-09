@@ -67,7 +67,7 @@ test("partition-${i}", () => { expect(1 + 1).toBe(2); appendFileSync(process.env
       REAL_BUN: process.execPath,
       NATIVE_SUITE: nativeSuite ? "1" : "0",
       PARTITION_LOG: join(root, "partition.log"),
-      PATH: bin + ":" + process.env.PATH,
+      PATH: `${bin}:${process.env.PATH}`,
       CALLS: callsPath,
       FAIL: failCommand,
       TMPDIR: parentTmp,
@@ -87,7 +87,7 @@ function expectOwnedTempCleaned({ parentTmp, calls }: ReturnType<typeof runCi>) 
   const temps = new Set(calls.map((call) => call.tempDirectory));
   expect(temps.size).toBe(1);
   const [temp] = temps;
-  expect(temp).toStartWith(parentTmp + "/bruv-ci.");
+  expect(temp).toStartWith(`${parentTmp}/bruv-ci.`);
   expect(existsSync(temp!)).toBe(false);
   expect(readFileSync(join(parentTmp, "user-session"), "utf8")).toBe("leave alone");
 }
@@ -102,8 +102,8 @@ test("Linux builds the pair without preparing or validating bundled web", () => 
     "run format:check",
     "run lint",
     "run check",
-    "run perf:resources --profile ci --out " + join(root, "artifacts/ci/resources"),
-    "run perf:resources --profile stress --out " + join(root, "artifacts/ci/resources"),
+    `run perf:resources --profile ci --out ${join(root, "artifacts/ci/resources")}`,
+    `run perf:resources --profile stress --out ${join(root, "artifacts/ci/resources")}`,
     "run build",
     "scripts/ci/offline-openai-default-transport.ts",
     "test --parallel=3 ./tests",
@@ -145,8 +145,8 @@ test("Release log destination uses the same Linux commands, env and owned temp",
     expect(calls.every((call) => call.cwd === root)).toBe(true);
   }
   for (const log of ["install", "format", "lint", "typecheck", "build", "openai-transport", "tests", "smoke"]) {
-    expect(readFileSync(join(release.root, "artifacts/release/ci", log + ".log"), "utf8")).toEqual(
-      readFileSync(join(ci.root, "artifacts/ci", log + ".log"), "utf8"),
+    expect(readFileSync(join(release.root, "artifacts/release/ci", `${log}.log`), "utf8")).toEqual(
+      readFileSync(join(ci.root, "artifacts/ci", `${log}.log`), "utf8"),
     );
   }
   expect(readFileSync(join(release.root, "artifacts/release/ci/tests.log"), "utf8")).toContain("llm=0");
@@ -185,25 +185,32 @@ test("production CI caches downloads only and delegates paired validation to the
   expect(workflow).not.toContain("Compute pinned web producer key");
   const cacheWorkflows = ["ci.yml", "release.yml"];
   for (const filename of cacheWorkflows) {
-    const text = await Bun.file(resolve(import.meta.dir, "../../.github/workflows/" + filename)).text();
+    const text = await Bun.file(resolve(import.meta.dir, `../../.github/workflows/${filename}`)).text();
     const parsed = Bun.YAML.parse(text) as {
       jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
     };
     let downloadCaches = 0;
     for (const job of Object.values(parsed.jobs)) {
-      if (filename === "ci.yml")
-        for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache")))
+      if (filename === "ci.yml") {
+        for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache"))) {
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
           expect(["${{ runner.temp }}/bruv-bun-cache", "${{ runner.temp }}/bruv-apt-cache/*.deb"]).toContain(
             step.with?.path ?? "",
           );
+        }
+      }
       for (const step of job.steps.filter(
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
         (step) => step.uses?.startsWith("actions/cache") && step.with?.path === "${{ runner.temp }}/bruv-bun-cache",
       )) {
         downloadCaches++;
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
         expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
         expect(step.with?.key).toBe(
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
           "bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}",
         );
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
         expect(step.with?.["restore-keys"]).toBe("bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-");
         expect(step.with?.key).not.toContain("bun-1.4.2-");
         expect(step.with?.["restore-keys"]).not.toContain("bun-1.4.2-");
@@ -256,7 +263,7 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
 });
 
 for (const shard of ["1/3", "2/3", "3/3"]) {
-  test("Linux shard " + shard + " keeps every gate and three bounded workers", () => {
+  test(`Linux shard ${shard} keeps every gate and three bounded workers`, () => {
     const complete = runCi();
     const sharded = runCi({ shard });
     expectOwnedTempCleaned(sharded);
@@ -265,7 +272,7 @@ for (const shard of ["1/3", "2/3", "3/3"]) {
       complete.calls.map((call) =>
         call.command
           .replace(join(complete.root, "artifacts/ci/resources"), join(sharded.root, "artifacts/ci/resources"))
-          .replace("test --parallel=3 ./tests", "test --parallel=3 ./tests --shard=" + shard),
+          .replace("test --parallel=3 ./tests", `test --parallel=3 ./tests --shard=${shard}`),
       ),
     );
     expect(readFileSync(join(sharded.root, "artifacts/ci/tests.log"), "utf8")).toContain("llm=0");
@@ -281,7 +288,7 @@ test("failed sharded tests retain logs and prevent smoke", () => {
 });
 
 for (const shard of ["", "0/3", "4/3", "1/2", "1", "1/3 --only", "01/3"]) {
-  test("invalid shard fails closed before installing: " + JSON.stringify(shard), () => {
+  test(`invalid shard fails closed before installing: ${JSON.stringify(shard)}`, () => {
     const run = runCi({ shard });
     expect(run.result.status).toBe(2);
     expect(run.calls).toEqual([]);

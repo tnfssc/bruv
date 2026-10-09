@@ -5,9 +5,16 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { z } from "zod";
 
 /** Stateful real SDK peer; host shutdown happens only when the test says so. */
-export async function httpMcpLifecycleFixture({ timeout = 2000 }: { timeout?: number } = {}) {
+export async function httpMcpLifecycleFixture({
+  timeout = 2000,
+  threadConfiguration,
+}: {
+  timeout?: number;
+  threadConfiguration?: () => Promise<unknown> | unknown;
+} = {}) {
   const sessions = new Map<string, StreamableHTTPServerTransport>();
   const requests: { method: string; rpc?: string; session?: string }[] = [];
+  const configurationCalls: unknown[] = [];
   let rejectDelete = false;
   let deleteDelay = 0;
 
@@ -26,6 +33,15 @@ export async function httpMcpLifecycleFixture({ timeout = 2000 }: { timeout?: nu
     server.registerTool("echo", { inputSchema: { text: z.string() } }, async ({ text }) => ({
       content: [{ type: "text", text }],
     }));
+    if (threadConfiguration)
+      server.registerTool("t3_thread_configuration", { inputSchema: {} }, async (args) => {
+        configurationCalls.push(args);
+        const value = await threadConfiguration();
+        return {
+          content: [{ type: "text", text: JSON.stringify(value) }],
+          structuredContent: value as Record<string, unknown>,
+        };
+      });
     await server.connect(transport);
     return transport;
   }
@@ -57,6 +73,7 @@ export async function httpMcpLifecycleFixture({ timeout = 2000 }: { timeout?: nu
   return {
     config: { mcpServers: { "t3-code": { type: "http", url: "http://127.0.0.1:" + port + "/mcp", timeout } } },
     requests,
+    configurationCalls,
     activeSessions: () => sessions.size,
     delayDeletion: (milliseconds: number) => {
       deleteDelay = milliseconds;

@@ -1,3 +1,5 @@
+import type { ProbeMethods as Methods, ProbeInteractiveMode } from "./sdk-probe-types";
+import { requireValue } from "../lib/require-value";
 /** Actual initialized InteractiveMode callbacks, NOT a component-only or provider benchmark. */
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
@@ -50,7 +52,6 @@ export type ToolEventOptions = {
   argsBytes?: number;
   finalBytes?: number;
 };
-type Methods = Record<string, any>; // Pinned SDK private seams, named in evidence.
 export type ToolEventCallback = {
   scope: "async-prefix";
   index: number;
@@ -149,7 +150,7 @@ class RecordingTerminal implements Terminal {
     this.writes.push(data);
   }
   moveBy(n: number) {
-    if (n) this.write("\x1b[" + Math.abs(n) + (n > 0 ? "B" : "A"));
+    if (n) this.write(`\x1b[${Math.abs(n)}${n > 0 ? "B" : "A"}`);
   }
   hideCursor() {
     this.write("\x1b[?25l");
@@ -168,7 +169,7 @@ class RecordingTerminal implements Terminal {
   }
   setProgramStatus() {}
   setTitle(text: string) {
-    this.write("\x1b]0;" + text + "\x07");
+    this.write(`\x1b]0;${text}\x07`);
   }
   setProgress(_active: boolean) {}
 }
@@ -176,11 +177,12 @@ class RecordingTerminal implements Terminal {
 /** Block provider fetch and other TCP/HTTP egress; no auth secrets are needed or supplied. */
 function guardNetwork(onAttempt: () => void): () => void {
   const restores: Array<() => void> = [];
-  function deny(target: Methods, method: string) {
+  function deny(object: object, method: string) {
+    const target = object as Methods;
     const descriptor = Object.getOwnPropertyDescriptor(target, method);
     target[method] = () => {
       onAttempt();
-      throw new Error("tool-event workload forbids network: " + method);
+      throw new Error(`tool-event workload forbids network: ${method}`);
     };
     restores.push(() => {
       if (descriptor) Object.defineProperty(target, method, descriptor);
@@ -240,7 +242,7 @@ export function buildToolEventBurst(options: Required<ToolEventOptions>) {
       ? {
           records: Array.from({ length: Math.max(1, Math.ceil(argsBytes / 64)) }, (_, i) => ({
             index: i,
-            text: "structured record " + i,
+            text: `structured record ${i}`,
             flags: [true, false],
             nested: { value: i },
           })),
@@ -266,7 +268,7 @@ export function buildToolEventBurst(options: Required<ToolEventOptions>) {
       assistantMessageEvent: {
         type: "toolcall_delta",
         contentIndex: 0,
-        delta: "controlled partial " + i,
+        delta: `controlled partial ${i}`,
         partial: message,
       },
     });
@@ -274,7 +276,7 @@ export function buildToolEventBurst(options: Required<ToolEventOptions>) {
   events.push({ type: "message_end", message: assistant(args) });
   events.push({ type: "tool_execution_start", toolCallId: "event-probe-tool", toolName: name, args });
   for (let i = 0; i < burstCount; i++) {
-    const marker = "INTERMEDIATE_EVENT_" + i + "_ONLY";
+    const marker = `INTERMEDIATE_EVENT_${i}_ONLY`;
     intermediateMarkers.push(marker);
     events.push({
       type: "tool_execution_update",
@@ -282,12 +284,12 @@ export function buildToolEventBurst(options: Required<ToolEventOptions>) {
       toolName: name,
       args,
       partialResult: {
-        content: [{ type: "text", text: marker + "\n" + fill(units[shape], Math.min(finalBytes, (i + 1) * 128)) }],
+        content: [{ type: "text", text: `${marker}\n${fill(units[shape], Math.min(finalBytes, (i + 1) * 128))}` }],
         details: { exitCode: 0 },
       },
     });
   }
-  const finalMarker = "FINAL_EVENT_PAYLOAD_" + outcome.toUpperCase();
+  const finalMarker = `FINAL_EVENT_PAYLOAD_${outcome.toUpperCase()}`;
   const text =
     finalMarker +
     "\n" +
@@ -375,7 +377,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
     ["finalBytes", 262144],
   ] as const) {
     if (!Number.isSafeInteger(options[key]) || options[key] < (key === "burstCount" ? 1 : 0) || options[key] > max)
-      throw new Error("Bounded sequential probe: invalid " + key);
+      throw new Error(`Bounded sequential probe: invalid ${key}`);
   }
   const payload = buildToolEventBurst(options);
   const cleanups: Array<() => void> = [];
@@ -383,7 +385,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
   let dir: string | undefined,
     manager: SessionManager | undefined,
     session: AgentSession | undefined,
-    mode: Methods | undefined;
+    mode: ProbeInteractiveMode | undefined;
   let profiler: TerminalActionProfiler | undefined;
   let collecting = false,
     used = false,
@@ -399,7 +401,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
   const requests: Array<{ atMs: number; messages: unknown[] }> = [];
   const sourceHashes: Record<string, string> = {};
   let historyHash = "";
-  let finalComponent: Methods | undefined;
+  let finalComponent: { result?: Parameters<ToolExecutionComponent["updateResult"]>[0] } | undefined;
   function countWrap(target: Methods, method: string, increment: () => void) {
     const descriptor = Object.getOwnPropertyDescriptor(target, method),
       original = target[method];
@@ -415,7 +417,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
   async function framesAfter(before: number) {
     // Bounded observation wait OUTSIDE all CPU boundaries, never renderNow in action.
     for (let i = 0; i < 200 && frames.length <= before; i++) await sleep(5);
-    if (frames.length <= before) throw new Error("No actual scheduled frame for " + phase);
+    if (frames.length <= before) throw new Error(`No actual scheduled frame for ${phase}`);
   }
   function queueInput(action: string, data: string): Promise<void> {
     const queuedAtMs = now(),
@@ -424,7 +426,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
       setTimeout(() => {
         const enteredAtMs = now();
         try {
-          profiler!.runAction("input:" + action, () => terminal.input(data));
+          requireValue(profiler).runAction(`input:${action}`, () => terminal.input(data));
           const returnedAtMs = now();
           inputs.push({
             action,
@@ -434,7 +436,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
             enteredAtMs,
             returnedAtMs,
             latenessMs: Math.max(0, enteredAtMs - expectedAtMs),
-            editorText: mode!.editor.getText(),
+            editorText: requireValue(mode).editor.getText(),
           });
           resolve();
         } catch (error) {
@@ -444,7 +446,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
     );
   }
   // No await: only direct callbacks belong to this contiguous measured slice.
-  function dispatchToolBurst(mode: Methods): ToolEventEvidence["burst"] {
+  function dispatchToolBurst(mode: ProbeInteractiveMode): ToolEventEvidence["burst"] {
     const beforeFrames = frames.length,
       beforeCallbacks = callbacks.length,
       beforeUpdates = updateCount,
@@ -472,7 +474,11 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
   }
 
   // Unlike the injected burst, Enter must run through the subscribed SDK session.
-  async function sendEditorThroughSession(mode: Methods, session: AgentSession, profiler: TerminalActionProfiler) {
+  async function sendEditorThroughSession(
+    mode: ProbeInteractiveMode,
+    session: AgentSession,
+    profiler: TerminalActionProfiler,
+  ) {
     phase = "send-enter";
     const beforeSend = frames.length;
     // Identical one-turn body of Pi run(), without its infinite loop/startup network work.
@@ -540,8 +546,8 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
         });
         const history: unknown[] = [];
         for (let i = 0; i < options.historyTurns; i++) {
-          const user = { role: "user" as const, content: "tool event history " + i, timestamp: 1700000000000 + i };
-          const answer = response("settled history " + i);
+          const user = { role: "user" as const, content: `tool event history ${i}`, timestamp: 1700000000000 + i };
+          const answer = response(`settled history ${i}`);
           manager.appendMessage(user);
           manager.appendMessage(answer);
           history.push(user, answer);
@@ -621,11 +627,15 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
             throw new Error("Session replacement forbidden");
           },
         );
-        mode = new InteractiveMode(host, { terminal, tuiMode: "fullscreen" }) as unknown as Methods;
+        mode = new InteractiveMode(host, { terminal, tuiMode: "fullscreen" }) as unknown as ProbeInteractiveMode;
         await mode.init();
         if (typeof mode.getRegisteredToolDefinition("execute")?.renderResult !== "function")
           throw new Error("SDK did not admit production execute renderer");
-        const renderer = mode.renderer as Methods;
+        const renderer = mode.renderer as unknown as {
+          doRender(...args: unknown[]): void;
+          renderNow(): void;
+          getScreenLines(): string[];
+        };
         const original = mode.handleEvent;
         mode.handleEvent = function (event: AgentSessionEvent) {
           if (!collecting) return original.call(this, event);
@@ -645,11 +655,13 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
           const beforeUpdates = updateCount,
             beforeResults = resultCount;
           callbacks.push(callback);
-          let value: unknown;
+          let value: Promise<void> | undefined;
           try {
             // Exactly one whole-call boundary; no callback-internal spans or await.
-            value = profiler!.runAction("event:" + event.type + ":" + callback.index, () => original.call(this, event));
-            return value;
+            value = requireValue(profiler).runAction(`event:${event.type}:${callback.index}`, () =>
+              original.call(this, event),
+            );
+            return requireValue(value);
           } finally {
             callback.endMs = now();
             callback.updateDisplayCount = updateCount - beforeUpdates;
@@ -694,7 +706,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
         profiler = attachTerminalActionProfiler(renderer, {
           capacity: 16384,
           heartbeatIntervalMs: 4,
-          traceInfo: { fixture: "tool-event", seam: "direct-handleEvent", source: sourceHashes.workload! },
+          traceInfo: { fixture: "tool-event", seam: "direct-handleEvent", source: requireValue(sourceHashes.workload) },
         });
         // Only setup drain. Expanded final output must be genuinely visible, not inferred from component state.
         terminal.input("\x0f");
@@ -711,7 +723,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
       if (!mode || !session || !manager || !profiler || used)
         throw new Error("One action after setup, in a fresh process");
       used = true;
-      const beforeBytes = await stat(manager.getSessionFile()!)
+      const beforeBytes = await stat(requireValue(manager.getSessionFile()))
         .then((s) => s.size)
         .catch(() => 0);
       collecting = true;
@@ -735,14 +747,14 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
         ["scroll-up", "\x1b[5~"],
         ["scroll-down", "\x1b[6~"],
       ]) {
-        phase = action!;
+        phase = requireValue(action);
         const before = frames.length;
-        await queueInput(action!, data!);
+        await queueInput(requireValue(action), requireValue(data));
         await framesAfter(before);
       }
       await sendEditorThroughSession(mode, session, profiler);
       collecting = false;
-      const afterBytes = await stat(manager.getSessionFile()!)
+      const afterBytes = await stat(requireValue(manager.getSessionFile()))
         .then((s) => s.size)
         .catch(() => 0);
       const output = terminal.writes.join("");
@@ -772,7 +784,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
           events: payload.events,
           hash: hash(JSON.stringify(payload.events)),
           argsBytes: Buffer.byteLength(JSON.stringify(payload.args)),
-          finalBytes: Buffer.byteLength(payload.result.content[0]!.text),
+          finalBytes: Buffer.byteLength(requireValue(payload.result.content[0]).text),
           finalHash: hash(JSON.stringify(payload.result)),
         },
         callbacks,
@@ -832,7 +844,7 @@ if (import.meta.main) {
   const workload = createToolEventWorkload(options);
   try {
     await workload.setup();
-    const bytes = Buffer.from(JSON.stringify(await workload.action(), null, 2) + "\n", "utf8");
+    const bytes = Buffer.from(`${JSON.stringify(await workload.action(), null, 2)}\n`, "utf8");
     await new Promise<void>((resolve, reject) =>
       process.stdout.write(bytes, (error) => (error ? reject(error) : resolve())),
     );

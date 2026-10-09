@@ -1,3 +1,5 @@
+import type {} from "./browser-hooks";
+import { requireValue } from "../../scripts/lib/require-value";
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -19,8 +21,13 @@ async function checkCells(page: Page) {
   await page.mouse.move(3, 3);
   await page.waitForTimeout(40);
   const snap = await page.evaluate(() => {
-    const t = (window as any).__terminal,
-      h = document.querySelector<HTMLElement>("#terminal")!;
+    function requireValue<T>(value: T | null | undefined): T {
+      if (value === null || value === undefined) throw new Error("Expected a value");
+      return value;
+    }
+
+    const t = window.__terminal,
+      h = requireValue(document.querySelector<HTMLElement>("#terminal"));
     const before = t.renderer.getCanvas().toDataURL();
     t.renderer.render(t.wasmTerm, true);
     return {
@@ -29,7 +36,7 @@ async function checkCells(page: Page) {
       lines: Array.from({ length: t.rows }, (_, y) => t.buffer.active.getLine(y)?.translateToString(true)),
       cells: Array.from({ length: t.rows }, (_, y) =>
         Array.from({ length: t.cols }, (_, x) => {
-          const c = t.buffer.active.getLine(y)?.getCell(x);
+          const c = requireValue(t.buffer.active.getLine(y)?.getCell(x));
           return { glyph: c.getChars(), fg: c.getFgColor(), bg: c.getBgColor(), bold: c.isBold() };
         }),
       ),
@@ -43,7 +50,7 @@ async function checkCells(page: Page) {
       focus: -1,
       installCommand: d.installCommand,
       installUrl: d.installUrl,
-      demos: JSON.parse(d.demos!),
+      demos: JSON.parse(requireValue(d.demos)),
     };
   let f = layout(Number(d.cols), Number(d.rows), state);
   state.focus = f.hits.findIndex((h) => h.label === d.focus);
@@ -53,6 +60,7 @@ async function checkCells(page: Page) {
   assert.equal(snap.overflow, false);
   assert.deepEqual(
     snap.lines,
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
     f.ansiRows.map((row) => row.replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "").trimEnd()),
   );
   let verified = 0;
@@ -62,8 +70,8 @@ async function checkCells(page: Page) {
       if (ty < f.clip.top || ty >= f.clip.bottom) return;
       let x = capture.x;
       row.forEach((run) => {
-        const fg = run.style.match(/38;2;(\d+);(\d+);(\d+)/)!,
-          bg = run.style.match(/48;2;(\d+);(\d+);(\d+)/)!;
+        const fg = requireValue(run.style.match(/38;2;(\d+);(\d+);(\d+)/)),
+          bg = requireValue(run.style.match(/48;2;(\d+);(\d+);(\d+)/));
         for (const glyph of run.text) {
           const c = snap.cells[ty][x++];
           assert.equal(c.glyph || " ", glyph);
@@ -89,24 +97,35 @@ async function validateDesktopScrolling(page: Page) {
   await page.keyboard.press("Home");
   await page.waitForTimeout(50);
   await page.evaluate(() => {
-    const t = (window as any).__terminal,
-      w = window as any;
+    function requireValue<T>(value: T | null | undefined): T {
+      if (value === null || value === undefined) throw new Error("Expected a value");
+      return value;
+    }
+
+    const t = window.__terminal,
+      w = window;
     w.__writes = 0;
     const original = t.write.bind(t);
-    t.write = (...args: any[]) => {
+    t.write = (...args: Parameters<typeof t.write>) => {
       w.__writes++;
       return original(...args);
     };
     for (let i = 0; i < 100; i++)
-      document
-        .querySelector("canvas")!
-        .dispatchEvent(new WheelEvent("wheel", { deltaY: 1, bubbles: true, cancelable: true }));
+      requireValue(document.querySelector("canvas")).dispatchEvent(
+        new WheelEvent("wheel", { deltaY: 1, bubbles: true, cancelable: true }),
+      );
   });
   await page.waitForTimeout(100);
-  const burst = await page.evaluate(() => ({
-    writes: (window as any).__writes,
-    scroll: Number(document.querySelector<HTMLElement>("#terminal")!.dataset.scroll),
-  }));
+  const burst = await page.evaluate(() => {
+    function requireValue<T>(value: T | null | undefined): T {
+      if (value === null || value === undefined) throw new Error("Expected a value");
+      return value;
+    }
+    return {
+      writes: window.__writes,
+      scroll: Number(requireValue(document.querySelector<HTMLElement>("#terminal")).dataset.scroll),
+    };
+  });
   assert.deepEqual(burst, { writes: 1, scroll: 5 });
   const checked = await checkCells(page);
   assert(checked.verified > 0);
@@ -129,8 +148,8 @@ async function validateDesktopNavigation(page: Page, url: string, homeFrame: Ret
   // Browser links are normal location navigation, exercised without leaving for the network.
   await page
     .context()
-    .route(siteContent.repository + "**", (route) => route.fulfill({ body: "Repository destination" }));
-  const h = homeFrame.hits.find((h) => h.action === "install")!;
+    .route(`${siteContent.repository}**`, (route) => route.fulfill({ body: "Repository destination" }));
+  const h = requireValue(homeFrame.hits.find((h) => h.action === "install"));
   const metrics = await page.locator("#terminal").evaluate((el) => ({ ...(el as HTMLElement).dataset }));
   await page.mouse.click((h.x + 2) * Number(metrics.cellWidth), (h.y + 0.5) * Number(metrics.cellHeight));
   await page.waitForTimeout(100);
@@ -170,17 +189,17 @@ async function validateNarrowScreens(page: Page, url: string) {
     await page.goto(url);
     await ready(page);
     const first = await checkCells(page);
-    await page.screenshot({ path: resolve(evidence, "mobile-" + width + ".png") });
+    await page.screenshot({ path: resolve(evidence, `mobile-${width}.png`) });
     for (let i = 0; i < Math.max(0, first.f.capture.y - 6); i++) await page.keyboard.press("ArrowDown");
     await page.waitForTimeout(100);
     const c = await checkCells(page);
     assert(c.verified > 0);
-    results["mobile" + width] = { cols: c.f.capture.cols, cells: c.verified };
-    await page.screenshot({ path: resolve(evidence, "mobile-" + width + "-capture.png") });
+    results[`mobile${width}`] = { cols: c.f.capture.cols, cells: c.verified };
+    await page.screenshot({ path: resolve(evidence, `mobile-${width}-capture.png`) });
     await page.keyboard.press("End");
     await page.waitForTimeout(70);
     await checkCells(page);
-    await page.screenshot({ path: resolve(evidence, "mobile-" + width + "-end.png") });
+    await page.screenshot({ path: resolve(evidence, `mobile-${width}-end.png`) });
   }
   return results;
 }
@@ -200,7 +219,7 @@ async function validateTouchInput(page: Page) {
   await page.keyboard.press("Home");
   await page.waitForTimeout(80);
   const tapFrame = await checkCells(page);
-  const source = tapFrame.f.hits.find((h) => h.action === siteContent.repository)!;
+  const source = requireValue(tapFrame.f.hits.find((h) => h.action === siteContent.repository));
   const tapMetrics = await page.locator("#terminal").evaluate((el) => ({ ...(el as HTMLElement).dataset }));
   await page.context().route(siteContent.repository, (route) => route.fulfill({ body: "Source destination" }));
   const point = {
@@ -273,7 +292,7 @@ try {
   const fallback = await validateTextFallbacks(browser, server.url.href);
   assert.deepEqual(errors, []);
   const results = { ...desktop, ...mobile, ...fallback, errors };
-  await Bun.write(resolve(evidence, "checks.json"), JSON.stringify(results, null, 2) + "\n");
+  await Bun.write(resolve(evidence, "checks.json"), `${JSON.stringify(results, null, 2)}\n`);
   console.log(JSON.stringify(results, null, 2));
 } finally {
   await browser.close();

@@ -1,9 +1,12 @@
+import { LiveServerMessage } from "@google/genai";
+import { requireValue } from "../lib/require-value";
 /** Opt-in Linux virtual-Pulse acceptance; never imported by the ordinary test suite. */
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { access } from "node:fs/promises";
 import { resolve } from "node:path";
 import { LiveAudio, audioEnvironment } from "../../src/live/audio";
+import type { LiveAdapter } from "../../src/live/types";
 import { VoiceSession } from "../../src/live/session";
 import { createDefaultLiveCredentialService } from "../../src/live/credentials";
 import { PlaybackScheduler } from "../../src/live/playback";
@@ -27,7 +30,7 @@ let cleaning = false;
 const within = async <T>(promise: Promise<T>, ms: number): Promise<T> => {
   const remain = cleaning ? ms : Math.min(ms, deadline - Date.now());
   if (remain <= 0) throw new Error("Acceptance deadline exceeded");
-  let timer: ReturnType<typeof setTimeout>;
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     return await Promise.race([
       promise,
@@ -36,7 +39,7 @@ const within = async <T>(promise: Promise<T>, ms: number): Promise<T> => {
       }),
     ]);
   } finally {
-    clearTimeout(timer!);
+    clearTimeout(timer);
   }
 };
 const env = audioEnvironment();
@@ -52,7 +55,7 @@ const run = async (cmd: string, argv: string[], ms = 4000): Promise<Buffer> => {
   p.stderr.resume();
   const code = await within(
     new Promise<number>((ok, bad) => {
-      p.once("error", () => bad(new Error(cmd + " unavailable")));
+      p.once("error", () => bad(new Error(`${cmd} unavailable`)));
       p.once("close", (c) => ok(c ?? -1));
     }),
     ms,
@@ -60,7 +63,7 @@ const run = async (cmd: string, argv: string[], ms = 4000): Promise<Buffer> => {
     p.kill("SIGKILL");
     throw e;
   });
-  if (code !== 0) throw new Error(cmd + " failed");
+  if (code !== 0) throw new Error(`${cmd} failed`);
   return Buffer.concat(parts);
 };
 const listen = (cmd: string, argv: string[]): ChildProcessWithoutNullStreams => {
@@ -143,19 +146,19 @@ function tailCorrelation(sent: Buffer, heard: Buffer): { score: number; atMs: nu
 
 // Pulse JSON's numeric sink/source fields are authoritative; the text output's
 // indented labels also occur inside properties and are not safe to parse as routes.
-type Endpoint = { index: number; name: string };
-const listing = async (kind: string): Promise<any[]> => {
+type Endpoint = { index: number; name: string; properties?: Record<string, string>; sink?: number; source?: number };
+const listing = async (kind: string): Promise<Endpoint[]> => {
   const value = JSON.parse((await run("pactl", ["-f", "json", "list", kind])).toString());
   if (!Array.isArray(value)) throw new Error("Invalid Pulse endpoint listing");
   return value;
 };
 const endpoint = (items: Endpoint[], name: string): number => {
   const hits = items.filter((x) => x.name === name && Number.isInteger(x.index));
-  if (hits.length !== 1) throw new Error("Virtual endpoint unavailable: " + name);
+  if (hits.length !== 1) throw new Error(`Virtual endpoint unavailable: ${name}`);
   return hits[0].index;
 };
 async function assertRoute(kind: "sink-inputs" | "source-outputs", pid: number, expected: number) {
-  let matches: any[] = [];
+  let matches: Endpoint[] = [];
   for (let i = 0; i < 20; i++) {
     matches = (await listing(kind)).filter((x) => x.properties?.["application.process.id"] === String(pid));
     if (matches.length) break;
@@ -163,42 +166,47 @@ async function assertRoute(kind: "sink-inputs" | "source-outputs", pid: number, 
   }
   const field = kind === "sink-inputs" ? "sink" : "source";
   if (matches.length !== 1 || !Number.isInteger(matches[0][field]) || matches[0][field] !== expected)
-    throw new Error(kind + " was not routed to its virtual endpoint");
+    throw new Error(`${kind} was not routed to its virtual endpoint`);
 }
 async function checkRoutes(pid: number, mic: string, output: string) {
   await assertRoute("sink-inputs", pid, endpoint(await listing("sinks"), output));
-  await assertRoute("source-outputs", pid, endpoint(await listing("sources"), mic + ".monitor"));
+  await assertRoute("source-outputs", pid, endpoint(await listing("sources"), `${mic}.monitor`));
 }
 
 // Fixture transport supplies one normal provider turn; audible proof stays in the acceptance journey.
 function fixtureAdapter(result: Buffer, turnCompleteSent: () => void) {
-  return (() => ({
+  const adapter: LiveAdapter = () => ({
     live: {
-      connect: async ({ callbacks }: any) => {
+      connect: async ({ callbacks }) => {
         setTimeout(() => {
           for (let offset = 0; offset < result.length; offset += 9600) {
-            callbacks.onmessage({
-              serverContent: {
-                modelTurn: {
-                  parts: [
-                    {
-                      inlineData: {
-                        mimeType: "audio/pcm;rate=24000",
-                        data: result.subarray(offset, offset + 9600).toString("base64"),
+            callbacks.onmessage(
+              Object.assign(new LiveServerMessage(), {
+                serverContent: {
+                  modelTurn: {
+                    parts: [
+                      {
+                        inlineData: {
+                          mimeType: "audio/pcm;rate=24000",
+                          data: result.subarray(offset, offset + 9600).toString("base64"),
+                        },
                       },
-                    },
-                  ],
+                    ],
+                  },
                 },
-              },
-            });
+              }),
+            );
           }
-          callbacks.onmessage({ serverContent: { turnComplete: true } });
+          callbacks.onmessage(Object.assign(new LiveServerMessage(), { serverContent: { turnComplete: true } }));
           turnCompleteSent();
         }, 5);
-        return { close() {}, sendRealtimeInput() {} };
+        return { close() {}, sendRealtimeInput() {} } as unknown as Awaited<
+          ReturnType<ReturnType<LiveAdapter>["live"]["connect"]>
+        >;
       },
     },
-  })) as any;
+  });
+  return adapter;
 }
 
 async function provePlaybackInterruption(
@@ -250,9 +258,9 @@ async function main() {
   await run("pactl", ["info"]);
   const helper = resolve(process.env.BRUV_LIVE_HELPER ?? "dist/live-audio-linux");
   await access(helper);
-  const tag = "bruv_accept_" + process.pid + "_" + randomBytes(5).toString("hex");
-  const mic = tag + "_input",
-    output = tag + "_output";
+  const tag = `bruv_accept_${process.pid}_${randomBytes(5).toString("hex")}`;
+  const mic = `${tag}_input`,
+    output = `${tag}_output`;
   const modules: string[] = [];
   const children: ChildProcessWithoutNullStreams[] = [];
   let audio: LiveAudio | undefined;
@@ -260,19 +268,23 @@ async function main() {
   let playback: PlaybackScheduler | undefined;
   try {
     for (const sink of [mic, output]) {
-      const id = (await run("pactl", ["load-module", "module-null-sink", "sink_name=" + sink])).toString().trim();
+      const id = (await run("pactl", ["load-module", "module-null-sink", `sink_name=${sink}`])).toString().trim();
       if (!/^\d+$/.test(id)) throw new Error("Cannot load virtual sink");
       modules.push(id);
     }
     const monitor = listen("parec", [
-      "--device=" + output + ".monitor",
+      `--device=${output}.monitor`,
       "--format=s16le",
       "--rate=24000",
       "--channels=1",
       "--raw",
     ]);
     children.push(monitor);
-    await assertRoute("source-outputs", monitor.pid!, endpoint(await listing("sources"), output + ".monitor"));
+    await assertRoute(
+      "source-outputs",
+      requireValue(monitor.pid),
+      endpoint(await listing("sources"), `${output}.monitor`),
+    );
     const outputParts: Buffer[] = [];
     let outputBytes = 0;
     monitor.stdout.on("data", (b: Buffer) => {
@@ -281,11 +293,11 @@ async function main() {
       else outputParts.push(b);
     });
     // Always inject the REAL helper process; only this harness bypasses the controller's TTY guard.
-    env.LIVE_SOURCE = mic + ".monitor";
+    env.LIVE_SOURCE = `${mic}.monitor`;
     env.LIVE_SINK = output;
-    env.PULSE_SOURCE = mic + ".monitor";
+    env.PULSE_SOURCE = `${mic}.monitor`;
     env.PULSE_SINK = output;
-    const worker = listen(helper, ["--source", mic + ".monitor", "--sink", output]);
+    const worker = listen(helper, ["--source", `${mic}.monitor`, "--sink", output]);
     children.push(worker);
     const failures: string[] = [];
     let sentFrames = 0,
@@ -319,13 +331,13 @@ async function main() {
     playback = new PlaybackScheduler({
       send: (b, gen) => {
         sentFrames++;
-        return audio!.play(b, gen);
+        return requireValue(audio).play(b, gen);
       },
-      flush: (gen) => audio!.flush(gen),
+      flush: (gen) => requireValue(audio).flush(gen),
       onError: () => failures.push("playback"),
     });
     await within(audio.start(), 8000);
-    await checkRoutes(worker.pid!, mic, output);
+    await checkRoutes(requireValue(worker.pid), mic, output);
     playback.start();
     // Fixture injects ONLY provider messages; it does not replace the native helper or scheduler.
     if (!paid) {
@@ -339,11 +351,11 @@ async function main() {
         {
           onAudio: (data, gen) => {
             outputAudio = true;
-            if (!playback!.enqueue(Buffer.from(data, "base64"), gen)) failures.push("enqueue");
+            if (!requireValue(playback).enqueue(Buffer.from(data, "base64"), gen)) failures.push("enqueue");
           },
           onTurnComplete: () => {
             turns++;
-            playback!.turnComplete(voice!.generation);
+            requireValue(playback).turnComplete(requireValue(voice).generation);
           },
           onError: () => failures.push("voice"),
         },
@@ -377,19 +389,23 @@ async function main() {
               turns,
               outputAudio,
               failures,
-              pending: playback!.state.pendingBytes,
-              queuedMs: audio!.diagnostics.queuedMs,
+              pending: requireValue(playback).state.pendingBytes,
+              queuedMs: requireValue(audio).diagnostics.queuedMs,
             }),
         );
       });
       await within(
         (async () => {
-          while (audio!.diagnostics.queuedMs !== 0 || playback!.state.pendingBytes !== 0 || playback!.state.inFlight)
+          while (
+            requireValue(audio).diagnostics.queuedMs !== 0 ||
+            requireValue(playback).state.pendingBytes !== 0 ||
+            requireValue(playback).state.inFlight
+          )
             await sleep(50);
         })(),
         3500,
       );
-      await checkRoutes(worker.pid!, mic, output);
+      await checkRoutes(requireValue(worker.pid), mic, output);
       const rendered = Buffer.concat(outputParts);
       const tailProof = peak(rendered, 830);
       if (tailProof.score < 0.65 || !turns || !outputAudio || !captured || completeAt <= 0 || completeAt >= Date.now())
@@ -412,7 +428,7 @@ async function main() {
           outputAudio = true;
           const pcm = Buffer.from(data, "base64");
           providerParts.push(pcm);
-          if (!playback!.enqueue(pcm, gen)) failures.push("enqueue");
+          if (!requireValue(playback).enqueue(pcm, gen)) failures.push("enqueue");
         },
         onInputTranscript: (t) => {
           if (t.text) inputTranscript = true;
@@ -420,10 +436,10 @@ async function main() {
         onOutputTranscript: (t) => {
           if (t.text) outputTranscript = true;
         },
-        onInterrupted: (gen) => playback!.interrupt(gen),
+        onInterrupted: (gen) => requireValue(playback).interrupt(gen),
         onTurnComplete: () => {
           turns++;
-          playback!.turnComplete(voice!.generation);
+          requireValue(playback).turnComplete(requireValue(voice).generation);
           completeAt = Date.now();
         },
         onError: () => failures.push("voice"),
@@ -460,14 +476,14 @@ async function main() {
       env.PULSE_SINK = mic;
       const speaker = listen("pacat", [
         "--playback",
-        "--device=" + mic,
+        `--device=${mic}`,
         "--format=s16le",
         "--rate=16000",
         "--channels=1",
         "--raw",
       ]);
       children.push(speaker);
-      await assertRoute("sink-inputs", speaker.pid!, endpoint(await listing("sinks"), mic));
+      await assertRoute("sink-inputs", requireValue(speaker.pid), endpoint(await listing("sinks"), mic));
       speaker.stdin.end(Buffer.concat(speechParts));
       await within(
         new Promise<void>((yes, no) =>
@@ -482,9 +498,9 @@ async function main() {
           while (
             !(
               turns &&
-              playback!.state.pendingBytes === 0 &&
-              !playback!.state.inFlight &&
-              audio!.diagnostics.queuedMs === 0
+              requireValue(playback).state.pendingBytes === 0 &&
+              !requireValue(playback).state.inFlight &&
+              requireValue(audio).diagnostics.queuedMs === 0
             )
           ) {
             if (failures.length) throw new Error("Pipeline failed");
@@ -494,7 +510,7 @@ async function main() {
         25_000,
       );
       await sleep(350);
-      await checkRoutes(worker.pid!, mic, output);
+      await checkRoutes(requireValue(worker.pid), mic, output);
       const correlation = tailCorrelation(Buffer.concat(providerParts), Buffer.concat(outputParts));
       const ok =
         inputTranscript &&
@@ -525,7 +541,7 @@ async function main() {
     cleaning = true;
     voice?.close();
     playback?.close();
-    if (audio) await within(audio.stop(), 2500).catch(() => audio!.close());
+    if (audio) await within(audio.stop(), 2500).catch(() => requireValue(audio).close());
     for (const p of children) {
       p.kill("SIGTERM");
       setTimeout(() => p.kill("SIGKILL"), 400).unref();
@@ -544,7 +560,7 @@ main().catch((error) => {
   console.error(
     paid
       ? "Provider acceptance failed (details suppressed)"
-      : "Fixture acceptance failed: " + (error instanceof Error ? error.message : "unknown"),
+      : `Fixture acceptance failed: ${error instanceof Error ? error.message : "unknown"}`,
   );
   process.exitCode = 1;
 });

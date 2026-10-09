@@ -1,3 +1,4 @@
+import { requireValue } from "../scripts/lib/require-value";
 import { expect, test } from "bun:test";
 import { demoDuration, demoFrame, demoHeight, demoIds, demoTranscript } from "./demos";
 import { layout } from "./layout";
@@ -87,7 +88,7 @@ test("footer compacts and highlights active tasks, then clears them on completio
     const taskStyle = active[start].style;
     expect(taskStyle).not.toBe(active[start + label.length].style);
     for (const cell of active.slice(start, start + label.length)) expect(cell.style).toBe(taskStyle);
-    const finished = demoFrame("background", cols, demoDuration("background")).rows.at(-1)!;
+    const finished = requireValue(demoFrame("background", cols, demoDuration("background")).rows.at(-1));
     expect(finished.map((cell) => cell.text).join("")).not.toContain(label);
     expect(finished.every((cell) => cell.style === finished[0].style)).toBe(true);
   }

@@ -21,7 +21,7 @@ function request(model, user) {
     model,
     __sequence: 1,
     tools: ["__orchestrator_capabilities", "__delegate_task", "__task_status", "__task_cancel", "execute"].map(
-      (name) => ({ function: { name: name === "execute" ? name : "mcp__t3-code" + name } }),
+      (name) => ({ function: { name: name === "execute" ? name : `mcp__t3-code${name}` } }),
     ),
     messages: [{ role: "user", content: user }],
   };
@@ -59,7 +59,7 @@ test("loopback Responses SSE requests real injected delegation and enforces actu
       reasoning: { effort: "high", summary: "auto" },
       tools: [{ type: "function", name: "mcp__t3-code__delegate_task", parameters: { type: "object" } }],
     };
-    const result = await fetch("http://127.0.0.1:" + endpoint.port + "/v1/responses", {
+    const result = await fetch(`http://127.0.0.1:${endpoint.port}/v1/responses`, {
       method: "POST",
       body: JSON.stringify(input),
     });
@@ -69,7 +69,7 @@ test("loopback Responses SSE requests real injected delegation and enforces actu
     assert.match(sse, /mcp__t3-code__delegate_task/);
     assert.match(sse, /response.completed/);
     assert.equal(endpoint.records[0].reasoningEffort, "high");
-    const wrong = await fetch("http://127.0.0.1:" + endpoint.port + "/v1/responses", {
+    const wrong = await fetch(`http://127.0.0.1:${endpoint.port}/v1/responses`, {
       method: "POST",
       body: JSON.stringify({ ...input, reasoning: { effort: "low", summary: "auto" } }),
     });
@@ -90,7 +90,7 @@ test("root cancellation re-reads actual nonterminal status before confirming and
       model: "local-deterministic-v1",
       __sequence: 1,
       tools: ["task_status", "execute"].map((name) => ({
-        function: { name: name === "execute" ? name : "mcp__t3-code__" + name },
+        function: { name: name === "execute" ? name : `mcp__t3-code__${name}` },
       })),
       messages: [
         { role: "user", content: "APP_CANCEL" },
@@ -111,37 +111,37 @@ test("root cancellation re-reads actual nonterminal status before confirming and
 test("root launch checks capabilities, preserves request identity, and records only the returned native task", async (t) => {
   const state = await stateDirectory(t);
   for (const scenario of ["done", "cancel"]) {
-    let body = request(modelId, "APP_DELEGATE_" + scenario.toUpperCase());
+    let body = request(modelId, `APP_DELEGATE_${scenario.toUpperCase()}`);
     assert.equal(called(await reply(body, { state })).name, "mcp__t3-code__orchestrator_capabilities");
     await assert.rejects(
       reply(withToolResult(body, "No configured worker"), { state }),
       /capabilities omit named worker.model/,
     );
-    const capabilities = workerInstance + " " + workerSlug;
+    const capabilities = `${workerInstance} ${workerSlug}`;
     body = withToolResult(body, capabilities);
     const launch = called(await reply(body, { state }));
     assert.equal(launch.name, "mcp__t3-code__delegate_task");
-    assert.equal(launch.input.clientRequestId, "actual-native-" + scenario);
-    assert.equal(launch.input.title, "Native normal " + scenario);
-    assert.match(launch.input.task, new RegExp("APP_CHILD_" + scenario.toUpperCase()));
+    assert.equal(launch.input.clientRequestId, `actual-native-${scenario}`);
+    assert.equal(launch.input.title, `Native normal ${scenario}`);
+    assert.match(launch.input.task, new RegExp(`APP_CHILD_${scenario.toUpperCase()}`));
     assert.equal(await fs.readFile(path.join(state, "capabilities.json"), "utf8"), capabilities);
     await assert.rejects(
       reply(withToolResult(body, { taskId: "incomplete" }), { state }),
       /did not return a taskId.childThreadId/,
     );
-    const task = { taskId: "fixture-" + scenario, childThreadId: "fixture-child-" + scenario };
+    const task = { taskId: `fixture-${scenario}`, childThreadId: `fixture-child-${scenario}` };
     body = withToolResult(body, [{ type: "text", text: JSON.stringify(task) }]);
-    assert.equal((await reply(body, { state })).content, "APP_TASK_PENDING_REAL_" + scenario);
-    assert.deepEqual(JSON.parse(await fs.readFile(path.join(state, scenario + ".task.json"), "utf8")), task);
+    assert.equal((await reply(body, { state })).content, `APP_TASK_PENDING_REAL_${scenario}`);
+    assert.deepEqual(JSON.parse(await fs.readFile(path.join(state, `${scenario}.task.json`), "utf8")), task);
   }
 });
 
 test("normal worker must pass both delegation denials and scope checks before release and result", async (t) => {
   const state = await stateDirectory(t);
   for (const scenario of ["done", "cancel"]) {
-    let body = request(workerId, "APP_CHILD_" + scenario.toUpperCase());
-    const task = { taskId: "fixture-" + scenario, childThreadId: "fixture-child" };
-    await fs.writeFile(path.join(state, scenario + ".task.json"), JSON.stringify(task));
+    let body = request(workerId, `APP_CHILD_${scenario.toUpperCase()}`);
+    const task = { taskId: `fixture-${scenario}`, childThreadId: "fixture-child" };
+    await fs.writeFile(path.join(state, `${scenario}.task.json`), JSON.stringify(task));
     assert.deepEqual(called(await reply(body, { state })), {
       name: "mcp__t3-code__delegate_task",
       input: { task: "Worker must be denied", clientRequestId: "worker-denied" },
@@ -168,15 +168,15 @@ test("normal worker must pass both delegation denials and scope checks before re
       reply(withToolResult(body, { ...task, status: "running" }), { state }),
       /Child credential could read root app task/,
     );
-    await assert.rejects(fs.access(path.join(state, scenario + ".started")), { code: "ENOENT" });
+    await assert.rejects(fs.access(path.join(state, `${scenario}.started`)), { code: "ENOENT" });
     body = withToolResult(body, "does not belong to thread");
-    await fs.writeFile(path.join(state, scenario + ".release"), "fixture release");
-    assert.equal((await reply(body, { state })).content, "APP_CHILD_RESULT_REAL_" + scenario);
+    await fs.writeFile(path.join(state, `${scenario}.release`), "fixture release");
+    assert.equal((await reply(body, { state })).content, `APP_CHILD_RESULT_REAL_${scenario}`);
     assert.match(
-      await fs.readFile(path.join(state, scenario + ".scope-denial.json"), "utf8"),
+      await fs.readFile(path.join(state, `${scenario}.scope-denial.json`), "utf8"),
       /does not belong to thread/,
     );
-    assert.match(await fs.readFile(path.join(state, scenario + ".started"), "utf8"), /reached scoped execute/);
+    assert.match(await fs.readFile(path.join(state, `${scenario}.started`), "utf8"), /reached scoped execute/);
   }
 });
 

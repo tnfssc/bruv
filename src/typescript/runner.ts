@@ -247,7 +247,7 @@ function createEsmGraphRegistrar(): (filename: string) => void {
         : contents;
     registerStaticEsmDependencies(moduleJavascript, filename, registerEsmGraph);
     const loader = extension === ".jsx" ? "jsx" : "js";
-    const filter = new RegExp("^" + filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$");
+    const filter = new RegExp(`^${filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`);
     Bun.plugin({
       name: `bruv-execute-esm-${crypto.randomUUID()}`,
       setup(builder) {

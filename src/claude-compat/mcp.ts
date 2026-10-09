@@ -97,6 +97,7 @@ export class InjectedMcpSession {
   private readonly connections = new Map<string, Connection>();
   private readonly registry = new Map<string, InjectedMcpTool>();
   private readonly appHttpServers = new Map<string, InjectedMcpServer>();
+  private authenticatedT3 = false;
   private closed = false;
   private closing?: Promise<void>;
   private resuming?: Promise<void>;
@@ -113,6 +114,12 @@ export class InjectedMcpSession {
       selectedTools: options.selectedTools && [...options.selectedTools],
       appOwnedServers: [...(options.appOwnedServers ?? [])],
     });
+    const t3 = parsed.mcpServers["t3-code"];
+    session.authenticatedT3 =
+      options.appOwnedServers.includes("t3-code") &&
+      !!t3 &&
+      "url" in t3 &&
+      /^Bearer \S+$/.test(t3.headers?.Authorization ?? "");
     if (options.signal) {
       options.signal.throwIfAborted();
       const abort = () => {
@@ -304,11 +311,65 @@ export class InjectedMcpSession {
     }
   }
 
+  /** Connector-only current-thread read. No model tool selection or idle permission bypass. */
+  get hasAuthenticatedT3(): boolean {
+    return this.authenticatedT3;
+  }
+
+  async readCurrentThreadFastMode(model: string, turnSignal: AbortSignal): Promise<boolean> {
+    if (!this.authenticatedT3) throw new Error("No authenticated T3 configuration connection");
+    const connection = this.connections.get("t3-code");
+    if (connection?.status !== "connected") throw new Error("T3 configuration connection is not open");
+    const signal = AbortSignal.any([this.lifetime.signal, turnSignal]);
+    try {
+      signal.throwIfAborted();
+      const result = (await connection.client.callTool(
+        { name: "t3_thread_configuration", arguments: {} },
+        CallToolResultSchema,
+        { signal, timeout: connection.timeout },
+      )) as CallToolResult;
+      signal.throwIfAborted();
+      if (result.isError) throw new Error();
+      const value =
+        result.structuredContent ??
+        JSON.parse(
+          result.content
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("\n"),
+        );
+      const config = z
+        .object({
+          threadId: z.string().min(1),
+          modelSelection: z.object({
+            instanceId: z.string().min(1),
+            model: z.string().min(1),
+            options: z.array(z.object({ id: z.string(), value: z.union([z.boolean(), z.string()]) })).optional(),
+          }),
+        })
+        .parse(value);
+      // The authenticated endpoint binds the current thread/provider instance.
+      // The owning Pi model supplies the exact provider/model identity available at launch.
+      if (config.modelSelection.model !== model) throw new Error();
+      const fast = config.modelSelection.options?.filter((option) => option.id === "fastMode") ?? [];
+      if (fast.length > 1 || (fast.length === 1 && typeof fast[0]?.value !== "boolean")) throw new Error();
+      return fast[0]?.value === true;
+    } catch {
+      throw new Error("T3 Fast configuration is unavailable or does not match the owning model");
+    }
+  }
+
   /** Release app-owned HTTP leases while the owning run's host is still alive.
    * External MCP servers keep their ordinary persistent connection lifetime. */
+  private requireConnection(name: string) {
+    const connection = this.connections.get(name);
+    if (!connection) throw new McpOperationError("connection-failed", "App-owned MCP connection is missing");
+    return connection;
+  }
+
   async parkAppOwned(): Promise<void> {
     const results = await Promise.allSettled(
-      [...this.appHttpServers.keys()].map((name) => this.closeConnection(this.connections.get(name)!)),
+      [...this.appHttpServers.keys()].map((name) => this.closeConnection(this.requireConnection(name))),
     );
     this.assertClosed(results);
   }
@@ -318,14 +379,14 @@ export class InjectedMcpSession {
     this.resuming ??= (async () => {
       if (this.closed) throw new McpOperationError("closed", "MCP session is closed");
       for (const [name, server] of this.appHttpServers) {
-        const connection = this.connections.get(name)!;
+        const connection = this.requireConnection(name);
         if (connection.closing) await connection.closing;
         if (connection.status === "closed") {
           try {
             const resumed = await this.startConnection(name, server);
             resumed.status = "connected";
           } catch {
-            await this.closeConnection(this.connections.get(name)!);
+            await this.closeConnection(this.requireConnection(name));
             throw new McpOperationError("connection-failed", "App-owned MCP reconnect failed or was denied");
           }
         }

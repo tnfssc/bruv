@@ -15,7 +15,7 @@ export async function runSubagentAcceptance({
   driverPath = path.join(here, "subagent-driver.mjs"),
   scenario = "subagent",
 } = {}) {
-  if (!["subagent", "command"].includes(scenario)) throw Error("Unknown native acceptance scenario: " + scenario);
+  if (!["subagent", "command"].includes(scenario)) throw Error(`Unknown native acceptance scenario: ${scenario}`);
   const connector = process.env.BRUV_CONNECTOR_EXECUTABLE;
   if (!connector)
     throw Error("Set BRUV_CONNECTOR_EXECUTABLE to the actual built connector. Synthetic fixture is prohibited.");
@@ -24,7 +24,7 @@ export async function runSubagentAcceptance({
     process.env.BRUV_RUNTIME_BINARY ?? fileURLToPath(new URL("../../dist/bruv", import.meta.url)),
   );
   await fs.access(normalBinary, fs.constants.X_OK);
-  const proof = path.resolve(process.env.PROOF_OUTPUT ?? ".cache/claude-local-subagent-proof-" + Date.now());
+  const proof = path.resolve(process.env.PROOF_OUTPUT ?? `.cache/claude-local-subagent-proof-${Date.now()}`);
   await fs.mkdir(path.dirname(proof), { recursive: true });
   await fs.mkdir(proof);
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "bruv-native-acceptance-"));
@@ -63,21 +63,21 @@ export async function runSubagentAcceptance({
         await fs.rm(root, { recursive: true, force: true });
         await fs.writeFile(
           path.join(proof, "cleanup.json"),
-          JSON.stringify({
+          `${JSON.stringify({
             temporaryScopedStateRemoved: true,
             realCredentialsUsed: false,
             integratedReplayPassed: passed,
-          }) + "\n",
+          })}\n`,
         );
       }
     }
   }
-  console.log("Integrated native acceptance proof: " + proof);
+  console.log(`Integrated native acceptance proof: ${proof}`);
 
   async function recordInvocation(pinnedConnector) {
     await fs.writeFile(
       path.join(proof, "invocation.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           connector: path.basename(connector),
           connectorSha256: createHash("sha256")
@@ -92,7 +92,7 @@ export async function runSubagentAcceptance({
         },
         null,
         2,
-      ) + "\n",
+      )}\n`,
     );
   }
 
@@ -166,7 +166,7 @@ export async function runSubagentAcceptance({
       child.once("error", reject);
       child.once("close", resolve);
     });
-    if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
+    if (code !== 0) throw Error(`Integrated native replay failed with exit ${code}`);
   }
 
   function verifyModelDelivery(records) {
@@ -185,8 +185,8 @@ export async function runSubagentAcceptance({
     // Scoped worker cleanup; verify command line and state before touching any PID.
     for (const scenario of ["child", "cancel", "stop"]) {
       try {
-        const pid = Number(await fs.readFile(path.join(state, scenario + ".ready"), "utf8"));
-        const cmd = await fs.readFile("/proc/" + pid + "/cmdline", "utf8");
+        const pid = Number(await fs.readFile(path.join(state, `${scenario}.ready`), "utf8"));
+        const cmd = await fs.readFile(`/proc/${pid}/cmdline`, "utf8");
         if (cmd.includes(normalBinary) && cmd.includes("--execute-worker")) process.kill(pid, "SIGTERM");
       } catch {}
     }
@@ -199,7 +199,7 @@ export async function runSubagentAcceptance({
     } catch {}
     await fs.writeFile(
       path.join(proof, "result.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           ...result,
           passed,
@@ -210,7 +210,7 @@ export async function runSubagentAcceptance({
         },
         null,
         2,
-      ) + "\n",
+      )}\n`,
     );
     try {
       const { projectWire } = await import("./driver.mjs");
@@ -221,15 +221,15 @@ export async function runSubagentAcceptance({
         .map(JSON.parse);
       await fs.writeFile(
         path.join(proof, "wire-projection.ndjson"),
-        projectWire(wire)
+        `${projectWire(wire)
           .map((x) => JSON.stringify(x))
-          .join("\n") + "\n",
+          .join("\n")}\n`,
       );
     } catch {}
     if (records) {
       await fs.writeFile(
         path.join(proof, "model-projection.json"),
-        JSON.stringify(
+        `${JSON.stringify(
           records.map((r) => ({
             sequence: r.sequence,
             model: r.model,
@@ -239,7 +239,7 @@ export async function runSubagentAcceptance({
           })),
           null,
           2,
-        ) + "\n",
+        )}\n`,
       );
     }
     for (const file of await fs.readdir(proof)) {
@@ -254,13 +254,13 @@ export async function runSubagentAcceptance({
     const { pathToFileURL } = await import("node:url");
     const files = await fs.readdir(path.join(agent, "native-history"), { recursive: true });
     const children = files.filter((f) => f.includes("subagents") && f.endsWith(".jsonl"));
-    if (children.length !== 3) throw Error("Expected three actual native child histories, got " + children.length);
+    if (children.length !== 3) throw Error(`Expected three actual native child histories, got ${children.length}`);
     const exported = [];
     let totalMessages = 0;
     for (const childFile of children) {
       const file = path.join(agent, "native-history", childFile);
       const rows = (await fs.readFile(file, "utf8")).trim().split("\n").map(JSON.parse);
-      const meta = JSON.parse(await fs.readFile(file.slice(0, -6) + ".meta.json", "utf8"));
+      const meta = JSON.parse(await fs.readFile(`${file.slice(0, -6)}.meta.json`, "utf8"));
       if (
         !rows.length ||
         !rows.every((r) => r.bruv?.sourceSessionId === meta.bruvSourceSessionId && r.bruv?.sourceMessageId)
@@ -312,12 +312,12 @@ export async function runSubagentAcceptance({
       !JSON.stringify(completed[0].native).includes('"tool_result"')
     )
       throw Error("Native completed child history missing actual tool/result/answer");
-    const redact = (value) => JSON.stringify(value, null, 2).replaceAll(path.dirname(agent), "<FIXTURE>") + "\n";
+    const redact = (value) => `${JSON.stringify(value, null, 2).replaceAll(path.dirname(agent), "<FIXTURE>")}\n`;
     await fs.writeFile(path.join(proof, "child-history.json"), redact(exported));
     const result = JSON.parse(await fs.readFile(path.join(proof, "result.json"), "utf8"));
     await fs.writeFile(
       path.join(proof, "result.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           ...result,
           childSdkVersion: "0.3.276",
@@ -326,7 +326,7 @@ export async function runSubagentAcceptance({
         },
         null,
         2,
-      ) + "\n",
+      )}\n`,
     );
   }
 }

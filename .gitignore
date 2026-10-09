@@ -10,6 +10,7 @@ artifacts/
 .agents/notes/.*
 
 .cache/
+/.tmp/
 
 # Local voice credentials must never enter a worktree.
 live.env

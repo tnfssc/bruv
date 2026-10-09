@@ -238,14 +238,14 @@ function uniquePathLength(store: DiskEntryStore, leaf: EntryMetadata): number {
   let prefix = 0;
   slow = leaf;
   while (slow !== fast) {
-    slow = next(slow)!;
-    fast = next(fast)!;
+    slow = next(slow);
+    fast = next(fast);
     prefix++;
   }
   let cycle = 1;
-  fast = next(slow)!;
+  fast = next(slow);
   while (slow !== fast) {
-    fast = next(fast)!;
+    fast = next(fast);
     cycle++;
   }
   return prefix + cycle;
@@ -258,6 +258,7 @@ function uniquePathLength(store: DiskEntryStore, leaf: EntryMetadata): number {
 function walkMetadata(
   store: DiskEntryStore,
   leafId: string | null | undefined,
+  // biome-ignore lint/suspicious/noConfusingVoidType: Visitors may stop traversal with false or return nothing to keep walking.
   visit: (metadata: EntryMetadata) => void | boolean,
 ): void {
   const leaf = leafId ? store.byId.get(leafId) : undefined;
@@ -268,7 +269,7 @@ function walkMetadata(
     if (visit(current) === false) break;
     const parent = current.parentId ? store.byId.get(current.parentId) : undefined;
     if (parent && parent.offset >= current.offset && !checked) {
-      limit = uniquePathLength(store, leaf!);
+      limit = uniquePathLength(store, leaf ?? current);
       checked = true;
     }
     current = parent;
@@ -289,6 +290,7 @@ function pathMetadata(store: DiskEntryStore, leafId: string | null | undefined):
  */
 export function visitDiskBackedBranch(
   manager: object,
+  // biome-ignore lint/suspicious/noConfusingVoidType: Visitors may stop traversal with false or return nothing to keep walking.
   visit: (metadata: EntryMetadata) => void | boolean,
 ): true | undefined {
   const owned = states.get(manager as SessionManager);
@@ -306,7 +308,11 @@ export function selectDiskBackedBranchEntries(
 ): SessionEntry[] | undefined {
   const entries: SessionEntry[] = [];
   const indexed = visitDiskBackedBranch(manager, (metadata) => {
-    if (select(metadata)) entries.push((manager as SessionManager).getEntry(metadata.id)!);
+    if (select(metadata)) {
+      const entry = (manager as SessionManager).getEntry(metadata.id);
+      if (!entry) throw new Error("Missing indexed session entry");
+      entries.push(entry);
+    }
   });
   return indexed ? entries.reverse() : undefined;
 }
@@ -331,11 +337,17 @@ function modelContextMetadata(
   let thinkingLevel: string | undefined;
   let model: { provider: string; modelId: string } | null = null;
   visitDiskBackedBranch(manager, (meta) => {
-    if (thinkingLevel === undefined && meta.type === "thinking_level_change") thinkingLevel = meta.thinkingLevel!;
+    if (thinkingLevel === undefined && meta.type === "thinking_level_change") thinkingLevel = meta.thinkingLevel;
     if (model === null) {
-      if (meta.type === "model_change") model = { provider: meta.provider!, modelId: meta.modelId! };
-      else if (meta.type === "message" && meta.messageRole === "assistant")
-        model = { provider: meta.messageProvider!, modelId: meta.messageModel! };
+      if (meta.type === "model_change" && meta.provider !== undefined && meta.modelId !== undefined)
+        model = { provider: meta.provider, modelId: meta.modelId };
+      else if (
+        meta.type === "message" &&
+        meta.messageRole === "assistant" &&
+        meta.messageProvider !== undefined &&
+        meta.messageModel !== undefined
+      )
+        model = { provider: meta.messageProvider, modelId: meta.messageModel };
     }
     if (!compaction && meta.type === "compaction") {
       compaction = meta;
@@ -459,7 +471,9 @@ function installDiskBackedContextUsage(): (
         rememberTokens(manager, tokens);
       } else {
         manager.buildSessionProjection();
-        tokens = contextUsageCache.get(manager)!.tokens;
+        const cached = contextUsageCache.get(manager);
+        if (!cached) throw new Error("Session projection did not record context usage");
+        tokens = cached.tokens;
       }
     }
     return { tokens, contextWindow, percent: tokens === null ? null : (tokens / contextWindow) * 100 };
@@ -477,7 +491,8 @@ function installDiskBackedContextUsage(): (
         getBranch: () => path as unknown as SessionEntry[],
         getModelContextBranch: () => path as unknown as SessionEntry[],
       },
-    } as unknown as AgentSession)!;
+    } as unknown as AgentSession);
+    if (!usage) throw new Error("Missing context usage from the pinned SDK estimator");
     rememberTokens(manager, usage.tokens);
   };
 }
@@ -492,8 +507,9 @@ export function installDiskBackedSessionManager(): void {
 
   const recordContextUsage = installDiskBackedContextUsage();
 
-  const klass: any = SessionManager;
-  const prototype: any = SessionManager.prototype;
+  const klass = SessionManager;
+  const prototype = SessionManager.prototype as unknown as Omit<SessionManager, keyof ManagerInternals> &
+    ManagerInternals;
   const original = {
     create: klass.create,
     newSession: prototype.newSession,
@@ -612,7 +628,7 @@ export function installDiskBackedSessionManager(): void {
       (meta) =>
         ({
           ...metadataSkeleton(meta),
-          ...(meta.type === "message" ? { message: response!.message } : {}),
+          ...(meta.type === "message" && response ? { message: response.message } : {}),
           ...(meta.type === "model_change" ? { provider: meta.provider, modelId: meta.modelId } : {}),
           ...(meta.type === "thinking_level_change" ? { thinkingLevel: meta.thinkingLevel } : {}),
         }) as SessionEntry,
@@ -788,7 +804,8 @@ export function installDiskBackedSessionManager(): void {
       nodes.set(meta.id, node);
     }
     for (const meta of owned.store.entries) {
-      const node = nodes.get(meta.id)!;
+      const node = nodes.get(meta.id);
+      if (!node) throw new Error("Missing indexed session tree node");
       const parent = meta.parentId && meta.parentId !== meta.id ? nodes.get(meta.parentId) : undefined;
       if (parent) parent.children.push(node);
       else roots.push(node);
@@ -796,8 +813,8 @@ export function installDiskBackedSessionManager(): void {
     const stack = [...roots];
     const visited = new Set<SessionTreeNode>();
     while (stack.length) {
-      const node = stack.pop()!;
-      if (visited.has(node)) continue;
+      const node = stack.pop();
+      if (!node || visited.has(node)) continue;
       visited.add(node);
       node.children.sort((a, b) => new Date(a.entry.timestamp).getTime() - new Date(b.entry.timestamp).getTime());
       stack.push(...node.children);
@@ -937,12 +954,13 @@ export function installDiskBackedSessionManager(): void {
     if (!existsSync(source) || statSync(source).size === 0)
       throw new Error(`Cannot fork: source session file is empty or invalid: ${source}`);
     const sourceHeader = readSessionFileHeader(source);
-    if (!sourceHeader) throw new Error("Cannot fork: source session has no header: " + source);
+    if (!sourceHeader) throw new Error(`Cannot fork: source session has no header: ${source}`);
     const sourceVersion = sourceHeader.version ?? 1;
     const manager = original.create.call(SessionManager, targetCwd, sessionDir, { ...options, parentSession: source });
     return withTemporaryManager(manager, () => {
       const target = internals(manager);
-      const targetPath = target.sessionFile!;
+      const targetPath = target.sessionFile;
+      if (!targetPath) throw new Error("Fork requires a persisted session file");
       const header = { ...(target.fileEntries[0] as SessionHeader), version: sourceVersion };
       const store = DiskEntryStore.published(targetPath, header, DEFAULT_SESSION_CACHE_BYTES, true);
       scanJsonl(source, ({ entry }) => {
@@ -969,8 +987,7 @@ export function getDiskBackedBranch(
   const entries: SessionEntry[] = [];
   walkMetadata(owned.store, fromId ?? internals(manager as SessionManager).leafId, (meta) => {
     if (select(meta)) {
-      if (entries.length >= maxEntries)
-        throw new Error("Active history branch exceeds the " + maxEntries + "-entry limit");
+      if (entries.length >= maxEntries) throw new Error(`Active history branch exceeds the ${maxEntries}-entry limit`);
       entries.push(metadataSkeleton(meta));
     }
   });

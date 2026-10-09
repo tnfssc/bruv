@@ -75,10 +75,10 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
         : !supportedPlatform
           ? "Native Live supports macOS and Linux only"
           : !operatorEnabled
-            ? "Connector-host audio requires explicit operator opt-in naming " + deviceHost
+            ? `Connector-host audio requires explicit operator opt-in naming ${deviceHost}`
             : !humanChoices
               ? "A correlated native human-choice callback is required before opening local devices"
-              : "Each start/check still requires human consent for devices on " + deviceHost,
+              : `Each start/check still requires human consent for devices on ${deviceHost}`,
     };
   }
   function cancel() {
@@ -99,7 +99,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       !controller.signal.aborted && !closed && manager === ctx.sessionManager && branch === identity(ctx);
     async function choose(question: string, labels: string[]): Promise<string | undefined> {
       if (!humanChoices || !request || !valid()) return undefined;
-      const toolUseId = "bruv-live:" + randomUUID();
+      const toolUseId = `bruv-live:${randomUUID()}`;
       const response = await request(
         {
           subtype: "can_use_tool",
@@ -141,7 +141,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
         const next = "More choices";
         const cancelLabel = "Cancel";
         const choices = paged ? [...page, next, cancelLabel] : page.length < 2 ? [...page, cancelLabel] : page;
-        const answer = await choose(title + (paged ? " (page " + (offset / 2 + 1) + ")" : ""), choices);
+        const answer = await choose(title + (paged ? ` (page ${offset / 2 + 1})` : ""), choices);
         if (!answer) return undefined;
         if (paged && answer === next) {
           offset = offset + 2 >= labels.length ? 0 : offset + 2;
@@ -160,7 +160,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       ...ctx.ui,
       select,
       confirm: async (title: string, message: string) =>
-        (await choose(title + " — devices on " + deviceHost + ". " + message, ["Yes", "No"])) === "Yes",
+        (await choose(`${title} — devices on ${deviceHost}. ${message}`, ["Yes", "No"])) === "Yes",
       input: unavailable,
       editor: unavailable,
       custom: unavailable,
@@ -176,7 +176,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
     if (action === "stop") {
       const result = await stop(ctx);
       options.notify(
-        result.stopped ? "Live off. Agent jobs unchanged." : "Live stop: " + result.errors.join("; "),
+        result.stopped ? "Live off. Agent jobs unchanged." : `Live stop: ${result.errors.join("; ")}`,
         result.stopped ? "info" : "warning",
       );
       return;
@@ -248,18 +248,20 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
             : "This local device check does not connect to a voice provider. ") +
           "Live uses this same Bruv session. Stop voice leaves agent jobs unchanged.";
         if (
-          (await nativeUI.select(question, ["Allow devices on " + deviceHost, "Cancel"])) !==
-          "Allow devices on " + deviceHost
+          (await nativeUI.select(question, [`Allow devices on ${deviceHost}`, "Cancel"])) !==
+          `Allow devices on ${deviceHost}`
         )
           return;
       }
       if (controller.signal.aborted || pending !== controller || branch !== identity(ctx)) return;
       const nativeContext = { ...ctx, ui: nativeUI };
-      await handler!(action, nativeContext);
+      const liveHandler = handler;
+      if (!liveHandler) throw new Error("Native Live is not installed");
+      await liveHandler(action, nativeContext);
       // No native Live footer exists: show the real result, including an off
       // state after cancelled setup or failed startup, rather than invent success.
       if (["start", "setup"].includes(action) && !controller.signal.aborted && pending === controller && belongs(ctx))
-        await handler!("status", nativeContext);
+        await liveHandler("status", nativeContext);
     } catch {
       if (!controller.signal.aborted)
         options.notify(

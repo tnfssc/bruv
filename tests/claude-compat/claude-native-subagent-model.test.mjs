@@ -86,7 +86,7 @@ test("cancellation requires confirmed inspection and Stop leaves teardown with t
 test("loopback SSE uses real provider tool delta and bounded explicit token accounting", async () => {
   const model = await startModel(options);
   try {
-    const response = await fetch("http://127.0.0.1:" + model.port + "/v1/chat/completions", {
+    const response = await fetch(`http://127.0.0.1:${model.port}/v1/chat/completions`, {
       method: "POST",
       body: JSON.stringify(request("ACCEPT_LOCAL_SUBAGENT")),
     });
@@ -125,9 +125,9 @@ for (const [marker, scenario] of [
       { log: (...args) => output.push(args) },
       (resume, delay) => {
         waits.push(delay);
-        assert.equal(readFileSync(path.join(state, scenario + ".ready"), "utf8"), "301");
+        assert.equal(readFileSync(path.join(state, `${scenario}.ready`), "utf8"), "301");
         assert.deepEqual(output, []);
-        writeFileSync(path.join(state, scenario + ".release"), "release");
+        writeFileSync(path.join(state, `${scenario}.release`), "release");
         resume();
       },
     );

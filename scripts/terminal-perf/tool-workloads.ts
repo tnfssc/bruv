@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Provider-free SDK event mutations + complete Pi frames. Not an execution/provider benchmark. */
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -182,10 +183,10 @@ function payload(shape: ToolShape) {
   const tasks: TaskRow[] =
     shape === "task-rows"
       ? Array.from({ length: 48 }, (_, i) => ({
-          id: "row-" + i,
+          id: `row-${i}`,
           source: i % 3 === 0 ? "local" : i % 3 === 1 ? "native" : "ssh",
           sourceCallId: "live-call",
-          title: "Inspect deterministic module " + i,
+          title: `Inspect deterministic module ${i}`,
           status: i % 7 === 0 ? "failed" : "succeeded",
           terminal: true,
           exitCode: i % 7 === 0 ? 1 : 0,
@@ -193,22 +194,21 @@ function payload(shape: ToolShape) {
       : [];
   switch (shape) {
     case "single-line":
-      text = "long-line:" + "x界🙂".repeat(8192);
+      text = `long-line:${"x界🙂".repeat(8192)}`;
       break; // 64 KiB UTF-8, one logical line
     case "multiline":
-      text = Array.from({ length: 2048 }, (_, i) => "output " + i + " " + "bounded evidence ".repeat(3)).join("\n");
+      text = Array.from({ length: 2048 }, (_, i) => `output ${i} ${"bounded evidence ".repeat(3)}`).join("\n");
       break;
     case "ansi":
-      text = Array.from(
-        { length: 1024 },
-        (_, i) => "\x1b[31merror " + i + "\x1b[0m \x1b[1mstatus\x1b[0m wide 界🙂",
-      ).join("\n");
+      text = Array.from({ length: 1024 }, (_, i) => `\x1b[31merror ${i}\x1b[0m \x1b[1mstatus\x1b[0m wide 界🙂`).join(
+        "\n",
+      );
       break;
     case "markdown":
       text = Array.from(
         { length: 256 },
         (_, i) =>
-          "## Evidence " + i + "\n\n- **item** [link](https://example.test)\n\n```ts\nconsole.log(" + i + ")\n```\n",
+          `## Evidence ${i}\n\n- **item** [link](https://example.test)\n\n\`\`\`ts\nconsole.log(${i})\n\`\`\`\n`,
       ).join("\n");
       break;
     case "json":
@@ -225,13 +225,13 @@ function payload(shape: ToolShape) {
     case "code-preview":
       code = Array.from(
         { length: 1024 },
-        (_, i) => "const value" + i + " = { index: " + i + ', title: "bounded code preview" };',
+        (_, i) => `const value${i} = { index: ${i}, title: "bounded code preview" };`,
       ).join("\n");
       break;
     case "failure":
       text =
         "Error: deterministic tool failure\n" +
-        Array.from({ length: 256 }, (_, i) => "    at module" + i + " (fixture.ts:" + i + ":1)").join("\n");
+        Array.from({ length: 256 }, (_, i) => `    at module${i} (fixture.ts:${i}:1)`).join("\n");
       details.exitCode = 1;
       break;
     case "artifact-warning":
@@ -252,13 +252,13 @@ function payload(shape: ToolShape) {
       code = JSON.stringify(Array.from({ length: 512 }, (_, i) => ({ index: i, label: "generic SDK argument" })));
       break;
   }
-  const args = shape === "sdk-json-args" ? { items: JSON.parse(code) } : { label: "Inspect " + shape, code };
+  const args = shape === "sdk-json-args" ? { items: JSON.parse(code) } : { label: `Inspect ${shape}`, code };
   const content: Array<{ type: string; text?: string; data?: string; mimeType?: string }> = [{ type: "text", text }];
   if (shape === "png-image") content.push({ type: "image", data: png(), mimeType: "image/png" });
   const result = { content, details, isError: shape === "failure" };
   const partial = { content: [{ type: "text", text: text.slice(0, Math.min(text.length, 4096)) }], isError: false };
   const error = {
-    content: [{ type: "text", text: "Error: deterministic completion failure\n" + text }],
+    content: [{ type: "text", text: `Error: deterministic completion failure\n${text}` }],
     details: { ...details, exitCode: 1 },
     isError: true,
   };
@@ -418,19 +418,19 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
 
   function constructSettledHistory() {
     for (let i = 0; i < options.historySize; i++) {
-      const id = "settled-" + i;
+      const id = `settled-${i}`;
       if (i % 4 === 0) {
-        chat.addChild(new UserMessageComponent("Inspect fixture module " + i));
-        entries.push({ type: "message", id: "user-" + i, message: { role: "user" } });
+        chat.addChild(new UserMessageComponent(`Inspect fixture module ${i}`));
+        entries.push({ type: "message", id: `user-${i}`, message: { role: "user" } });
       }
-      const component = construct(id, { label: "Inspect module " + i, code: 'console.log("settled evidence")' });
+      const component = construct(id, { label: `Inspect module ${i}`, code: 'console.log("settled evidence")' });
       component.markExecutionStarted();
       work.starts++;
       const row: TaskRow = {
-        id: "history-task-" + i,
+        id: `history-task-${i}`,
         source: "local",
         sourceCallId: id,
-        title: "Module " + i,
+        title: `Module ${i}`,
         status: "succeeded",
         terminal: true,
         exitCode: 0,
@@ -447,7 +447,7 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
         { type: "message", id, message: { role: "assistant", content: [{ type: "toolCall", id }] } },
         {
           type: "message",
-          id: "result-" + id,
+          id: `result-${id}`,
           message: { role: "toolResult", toolCallId: id, details: { taskRows: [row] } },
         },
       );
@@ -525,7 +525,7 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
   }
   const fixture: ToolWorkload = {
     version: 1,
-    name: "tools/" + options.shape + "/" + options.historySize,
+    name: `tools/${options.shape}/${options.historySize}`,
     options,
     content,
     setup() {
@@ -562,12 +562,12 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
                 ? data.args
                 : options.shape === "sdk-json-args"
                   ? { items: [] }
-                  : { label: "Inspect " + options.shape, code: "" },
+                  : { label: `Inspect ${options.shape}`, code: "" },
               options.shape === "sdk-json-args",
             );
           });
           measure(segments, "publish-tool-and-branch", () => {
-            chat.addChild(live!);
+            chat.addChild(requireValue(live));
             entries.push({
               type: "message",
               id: "live-assistant",
@@ -578,40 +578,40 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
         case "args-stream":
           measure(segments, "ToolExecutionComponent.updateArgs(stream)", () => {
             work.updateArgs++;
-            live!.updateArgs(
+            requireValue(live).updateArgs(
               options.shape === "sdk-json-args"
                 ? { items: data.args.items.slice(0, 256) }
-                : { label: "Inspect " + options.shape, code: data.code.slice(0, Math.ceil(data.code.length / 2)) },
+                : { label: `Inspect ${options.shape}`, code: data.code.slice(0, Math.ceil(data.code.length / 2)) },
             );
           });
           break;
         case "args-complete":
           measure(segments, "ToolExecutionComponent.updateArgs(complete)", () => {
             work.updateArgs++;
-            live!.updateArgs(data.args);
+            requireValue(live).updateArgs(data.args);
           });
           measure(segments, "ToolExecutionComponent.setArgsComplete", () => {
             work.argsComplete++;
-            live!.setArgsComplete();
+            requireValue(live).setArgsComplete();
           });
           break;
         case "start":
           measure(segments, "ToolExecutionComponent.markExecutionStarted", () => {
             work.starts++;
-            live!.markExecutionStarted();
+            requireValue(live).markExecutionStarted();
           });
           break;
         case "partial":
           measure(segments, "ToolExecutionComponent.updateResult(partial)", () => {
             work.updateResult++;
-            live!.updateResult(data.partial, true);
+            requireValue(live).updateResult(data.partial, true);
           });
           break;
         case "complete":
         case "error":
-          measure(segments, "ToolExecutionComponent.updateResult(" + stage + ")", () => {
+          measure(segments, `ToolExecutionComponent.updateResult(${stage})`, () => {
             work.updateResult++;
-            live!.updateResult(stage === "error" ? data.error : data.result, false);
+            requireValue(live).updateResult(stage === "error" ? data.error : data.result, false);
           });
           measure(segments, "publish-result-and-task-snapshot", () => {
             rows.splice(options.historySize, rows.length, ...data.tasks);
@@ -633,11 +633,11 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
         case "collapse":
           measure(segments, "ActivityController.sync", () => activity.sync());
           measure(segments, "ActivityController.toggleDetails/withAnchor", () => {
-            const group = activity.groups.find((group) => group.tools.includes(live!));
+            const group = activity.groups.find((group) => group.tools.includes(requireValue(live)));
             if (!group) throw new Error("Live activity group not found");
             if (expanded !== (stage === "reveal")) {
               work.expansions++;
-              activity.toggleDetails(group, live!);
+              activity.toggleDetails(group, requireValue(live));
               expanded = stage === "reveal";
             }
           });
@@ -705,13 +705,13 @@ if (import.meta.main) {
   const flags = new Map<string, string>();
   for (let i = 0; i < args.length; i += 2) {
     if (
-      !["--shape", "--history", "--repetitions", "--initial-args", "--out"].includes(args[i]!) ||
+      !["--shape", "--history", "--repetitions", "--initial-args", "--out"].includes(requireValue(args[i])) ||
       args[i + 1] === undefined
     )
       throw new Error(
         "Usage: bun scripts/terminal-perf/tool-workloads.ts --shape single-line --history 8 --repetitions 3 --initial-args empty --out artifacts/terminal-perf/tools/run.json",
       );
-    flags.set(args[i]!, args[i + 1]!);
+    flags.set(requireValue(args[i]), requireValue(args[i + 1]));
   }
   const options: ToolWorkloadOptions = {
     shape: (flags.get("--shape") ?? "short") as ToolShape,
@@ -747,7 +747,7 @@ if (import.meta.main) {
   };
   const result = { metadata, ...runToolProbe(options, Number(flags.get("--repetitions") ?? 3)) };
   const output = flags.get("--out") ?? "artifacts/terminal-perf/tools/run.json";
-  await Bun.write(output, JSON.stringify(result, null, 2) + "\n");
+  await Bun.write(output, `${JSON.stringify(result, null, 2)}\n`);
   console.log(
     JSON.stringify({
       output,

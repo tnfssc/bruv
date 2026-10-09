@@ -277,7 +277,7 @@ describe("local worktree workspace", () => {
         scripts: [
           {
             name: "setup",
-            command: "touch " + markerPath,
+            command: `touch ${markerPath}`,
             runOnWorktreeCreate: true,
             async: false,
           },
@@ -376,7 +376,7 @@ describe("local worktree workspace", () => {
         scripts: [
           {
             name: "setup",
-            command: "/bin/sh -c 'while [ ! -f \"" + releasePath + "\" ]; do sleep 0.01; done; exit 7'",
+            command: `/bin/sh -c 'while [ ! -f "${releasePath}" ]; do sleep 0.01; done; exit 7'`,
             runOnWorktreeCreate: true,
             async: true,
           },

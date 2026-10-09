@@ -119,18 +119,20 @@ export function registerRootRuntime(pi: ExtensionAPI, services: RootJobs): void 
               const request = JSON.parse(text.trim());
               if (request.token !== token || !context) throw Error("Invalid root facet authority");
               const value = await dispatchRootFacet(context, services, request.command);
-              connection.end(JSON.stringify({ ok: true, value }) + "\n");
+              connection.end(`${JSON.stringify({ ok: true, value })}\n`);
             } catch (error) {
-              connection.end(JSON.stringify({ ok: false, error: String(error) }) + "\n");
+              connection.end(`${JSON.stringify({ ok: false, error: String(error) })}\n`);
             }
           })
           .catch(() => {});
       });
       connection.on("error", () => {});
     });
+    const listener = server;
+    if (!listener) throw Error("Root facet server was not initialized");
     await new Promise<void>((resolve, reject) => {
-      server!.once("error", reject);
-      server!.listen(socket, resolve);
+      listener.once("error", reject);
+      listener.listen(socket, resolve);
     });
     const { chmodSync } = await import("node:fs");
     chmodSync(socket, 0o600);
@@ -160,7 +162,7 @@ export function rootFacetRequest(
       if (error) reject(error);
       else resolve(value);
     }
-    connection.on("connect", () => connection.write(JSON.stringify({ token, command }) + "\n"));
+    connection.on("connect", () => connection.write(`${JSON.stringify({ token, command })}\n`));
     connection.on("data", (chunk) => {
       text += chunk.toString();
       if (Buffer.byteLength(text) > 4 * 1024 * 1024) return done(Error("Oversized root facet response"));

@@ -20,8 +20,8 @@ export async function studyTrial(options: {
     responses: 0,
   };
   const speech: string[] = [];
-  const ws = new WebSocket(options.url ?? "wss://api.openai.com/v1/realtime?model=" + encodeURIComponent(model), {
-    headers: { Authorization: "Bearer " + key },
+  const ws = new WebSocket(options.url ?? `wss://api.openai.com/v1/realtime?model=${encodeURIComponent(model)}`, {
+    headers: { Authorization: `Bearer ${key}` },
   });
   const send = (event: object) => ws.send(JSON.stringify(event));
   let done = false,
@@ -35,7 +35,7 @@ export async function studyTrial(options: {
       resolve();
     };
     const timer = setTimeout(() => {
-      result.errors.push("deadline " + options.deadlineMs / 1000 + "s");
+      result.errors.push(`deadline ${options.deadlineMs / 1000}s`);
       end();
     }, options.deadlineMs);
     ws.on("open", () =>
@@ -60,7 +60,11 @@ export async function studyTrial(options: {
     );
 
     ws.on("message", (data) => {
-      let m: any;
+      let m:
+        | { type: "session.updated" | "response.done" }
+        | { type: "response.output_audio_transcript.delta" | "response.output_text.delta"; delta: string }
+        | { type: "response.function_call_arguments.done"; arguments: string; name: string; call_id: string }
+        | { type: "error"; error?: { code?: string; type?: string; param?: string } };
       try {
         m = JSON.parse(String(data));
       } catch {
@@ -100,7 +104,7 @@ export async function studyTrial(options: {
       }
     });
     ws.on("error", (e) => {
-      result.errors.push("socket: " + String(e.message).replace(/sk-[A-Za-z0-9_-]+/g, "<redacted>"));
+      result.errors.push(`socket: ${String(e.message).replace(/sk-[A-Za-z0-9_-]+/g, "<redacted>")}`);
       end();
     });
     ws.on("close", end);

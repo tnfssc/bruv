@@ -38,10 +38,10 @@ export type SourcePreparation = {
   omissionReason?: string;
 };
 export const SOURCE_CHOICES = ["Include pinned files", "Omit untracked files", "Cancel task"];
-const jobId = (taskId: string) => "ssh:" + Buffer.from(taskId).toString("base64url");
+const jobId = (taskId: string) => `ssh:${Buffer.from(taskId).toString("base64url")}`;
 const digest = (data: Buffer | string) => createHash("sha256").update(data).digest("hex");
 function atomic(path: string, value: unknown) {
-  const temp = path + "." + randomUUID();
+  const temp = `${path}.${randomUUID()}`;
   writeFileSync(temp, JSON.stringify(value), { flag: "wx", mode: 0o600 });
   renameSync(temp, path);
 }
@@ -94,7 +94,8 @@ export class SourceApprovalService {
         const file = this.file(taskId);
         if (!existsSync(file)) return [];
         const record = JSON.parse(readFileSync(file, "utf8")) as SourcePreparation;
-        return record.intent.jobSessionFile === sessionFile ? [this.get(sessionFile, taskId)!] : [];
+        const owned = record.intent.jobSessionFile === sessionFile ? this.get(sessionFile, taskId) : undefined;
+        return owned ? [owned] : [];
       });
   }
   private async locked<T>(work: () => Promise<T>): Promise<T> {
@@ -120,16 +121,15 @@ export class SourceApprovalService {
       const pinned = saved ?? this.pinSource(intent, ctx, afterSequence);
       if (pinned.state === "cancelled") return pinned;
       const awaiting = pinned.questionId ? pinned : await this.requestApproval(pinned, ctx);
-      return this.acceptAnswer(awaiting, this.questions.get(ctx, awaiting.questionId!));
+      if (!awaiting.questionId) throw Error("Source approval question was not created");
+      return this.acceptAnswer(awaiting, this.questions.get(ctx, awaiting.questionId));
     });
   }
   private pinSource(intent: SourceIntent, ctx: QuestionContext, afterSequence: number): SourcePreparation {
-    const questionOwner = {
-      sessionId: ctx.sessionManager.getSessionId(),
-      branchId: ctx.sessionManager.getLeafId()!,
-    };
-    if (!questionOwner.sessionId || !questionOwner.branchId)
-      throw Error("Source approval requires a durable parent branch");
+    const sessionId = ctx.sessionManager.getSessionId();
+    const branchId = ctx.sessionManager.getLeafId();
+    if (!sessionId || !branchId) throw Error("Source approval requires a durable parent branch");
+    const questionOwner = { sessionId, branchId };
     let questionText =
       "Include these exact pinned untracked files in current-source handoff?\n" +
       JSON.stringify({
@@ -151,7 +151,7 @@ export class SourceApprovalService {
     const omit = captureRepository(intent.localRoot, join(dir, "omit"));
     if (include.base !== omit.base || include.head !== omit.head)
       throw Error("Tracked source changed during approval preparation");
-    questionText += "\nPinned included snapshot SHA-256: " + digest(readFileSync(include.bundle));
+    questionText += `\nPinned included snapshot SHA-256: ${digest(readFileSync(include.bundle))}`;
     if (questionText.length > 4000) throw Error("Source approval intent exceeds question display limit");
     const record: SourcePreparation = {
       version: 1,
@@ -162,7 +162,7 @@ export class SourceApprovalService {
       intent,
       questionOwner,
       questionText,
-      dedupKey: "source-" + randomUUID(),
+      dedupKey: `source-${randomUUID()}`,
       include: { snapshot: include, sha256: digest(readFileSync(include.bundle)) },
       omit: { snapshot: omit, sha256: digest(readFileSync(omit.bundle)) },
       state: "waiting",
@@ -218,9 +218,11 @@ export class SourceApprovalService {
       (q.status === "answered" || q.status === "resolved") &&
       q.answeredFrom === "cli" &&
       !!q.replyId &&
+      q.replyVersion !== undefined &&
+      record.questionVersion !== undefined &&
       Number.isSafeInteger(q.replyVersion) &&
-      q.replyVersion! >= record.questionVersion! &&
-      q.version > q.replyVersion!;
+      q.replyVersion >= record.questionVersion &&
+      q.version > q.replyVersion;
     if (human && q.answer === SOURCE_CHOICES[2]) {
       const cancelled: SourcePreparation = { ...record, state: "cancelled" };
       atomic(this.file(record.intent.taskId), cancelled);
