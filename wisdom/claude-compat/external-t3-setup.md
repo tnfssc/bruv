@@ -11,7 +11,7 @@ Install official T3 desktop or web separately from
 [upstream releases](https://github.com/pingdotgg/t3code/releases); verify the
 published checksums. Open the desktop application normally, or run `t3`
 for web. **No custom T3 command arguments or parent startup environment are
-part of Bruv setup.** `bruv web` only prints this guidance: no downloads,
+part of Bruv setup.** `bruv web --setup` only prints this guidance: no downloads,
 subprocess, settings writes or migration.
 
 Full UI-only native history assumes the **upstream provider-scoped SDK history
@@ -79,7 +79,7 @@ Leave launch arguments empty; T3 owns native launch/probe flags. Environment
 assignments are NOT launch arguments. Use absolute binary/history UI paths, not ~ or literal $HOME. The connector
 expands only ~ and ~/ in the two optional BRUV overrides (including paths with
 spaces), not shell variables or ~otheruser.
-bruv web prints paths from the current executable/home; remote instances require
+bruv web --setup prints paths from the current executable/home; remote instances require
 paths on the remote machine.
 
 **Corrected upstream contract:** provider homePath scopes the connector child and

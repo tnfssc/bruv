@@ -1,0 +1,20 @@
+import { resolve } from "node:path";
+
+/** Bundle browser code at build time; the installed binary needs no node_modules. */
+export async function prepareWebAssets(root: string, write: (target: string, content: string) => Promise<void>) {
+  const build = await Bun.build({
+    entrypoints: [resolve(root, "src/web/browser.ts")],
+    target: "browser",
+    minify: true,
+  });
+  if (!build.success) throw new Error(build.logs.map(String).join("\n"));
+  const out = resolve(root, "dist/runtime-assets/web");
+  await write(resolve(out, "terminal.js.asset"), await build.outputs[0]!.text());
+  await write(resolve(out, "index.html.asset"), await Bun.file(resolve(root, "src/web/index.html")).text());
+  await write(
+    resolve(out, "terminal.css.asset"),
+    (await Bun.file(resolve(root, "node_modules/@xterm/xterm/css/xterm.css")).text()) +
+      "\n" +
+      (await Bun.file(resolve(root, "src/web/browser.css")).text()),
+  );
+}

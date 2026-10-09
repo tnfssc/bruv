@@ -111,14 +111,7 @@ export function externalT3Guide(binary = process.execPath, home = homedir()): st
   ].join("\n");
 }
 
-/** Setup guidance only: no bundled UI, subprocess, settings seeding or fallback. */
+/** Compatibility export; the terminal implementation lives outside T3. */
 export async function runWeb(args: string[]): Promise<number> {
-  if (args.some((arg) => !["--help", "-h", "--setup"].includes(arg))) {
-    console.error(
-      "bruv web no longer launches a bundled server. Run bruv web for provider Settings setup, then start official T3 normally.",
-    );
-    return 2;
-  }
-  console.log(externalT3Guide());
-  return 0;
+  return (await import("../../web/launcher")).runWeb(args);
 }

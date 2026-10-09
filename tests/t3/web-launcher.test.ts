@@ -63,34 +63,36 @@ test("guide retains history limitations and safe paired updates without parent w
   expect(guide).toContain("Update T3 separately");
 });
 
-test("web only prints setup for accepted flags", async () => {
+test("web --setup retains the external guide", async () => {
   const log = spyOn(console, "log").mockImplementation(() => {});
-  const error = spyOn(console, "error").mockImplementation(() => {});
   try {
-    for (const args of [[], ["--help"], ["-h"], ["--setup"]]) {
-      log.mockClear();
-      expect(await runWeb(args)).toBe(0);
-      expect(log).toHaveBeenCalledTimes(1);
-      expect(log).toHaveBeenCalledWith(externalT3Guide());
-    }
-    expect(error).not.toHaveBeenCalled();
+    expect(await runWeb(["--setup"])).toBe(0);
+    expect(log).toHaveBeenCalledWith(externalT3Guide());
   } finally {
     log.mockRestore();
-    error.mockRestore();
   }
 });
 
-test("web rejects former server flags without printing setup", async () => {
+test("web help describes a real browser terminal", async () => {
   const log = spyOn(console, "log").mockImplementation(() => {});
-  const error = spyOn(console, "error").mockImplementation(() => {});
   try {
-    expect(await runWeb(["--port", "3773"])).toBe(2);
-    expect(log).not.toHaveBeenCalled();
-    expect(error).toHaveBeenCalledWith(
-      "bruv web no longer launches a bundled server. Run bruv web for provider Settings setup, then start official T3 normally.",
-    );
+    for (const flag of ["--help", "-h"]) {
+      expect(await runWeb([flag])).toBe(0);
+      expect(log.mock.calls.at(-1)?.[0]).toContain("real Bruv TUI");
+    }
   } finally {
     log.mockRestore();
+  }
+});
+
+test("web rejects unsafe bind and invalid port options", async () => {
+  const error = spyOn(console, "error").mockImplementation(() => {});
+  try {
+    expect(await runWeb(["--host", "0.0.0.0"])).toBe(2);
+    expect(await runWeb(["--port", "oops"])).toBe(2);
+    expect(await runWeb(["--port", "65536"])).toBe(2);
+    expect(await runWeb(["--unknown"])).toBe(2);
+  } finally {
     error.mockRestore();
   }
 });

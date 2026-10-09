@@ -1,0 +1,40 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: #111318;
+  color: #d9dce5;
+  font: 14px system-ui;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+header {
+  display: flex;
+  gap: 18px;
+  padding: 10px 14px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #30343d;
+}
+#status {
+  color: #a9b0c1;
+}
+#terminal {
+  flex: 1;
+  min-height: 0;
+  padding: 8px;
+}
+.xterm {
+  height: 100%;
+}
+@media (max-width: 600px) {
+  header {
+    display: block;
+  }
+  #status {
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}

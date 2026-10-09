@@ -10,6 +10,10 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
   for (const path of [
     "package.json",
     "scripts/build/prepare-assets.ts",
+    "scripts/build/web-assets.ts",
+    "src/web/browser.ts",
+    "src/web/index.html",
+    "src/web/browser.css",
     "scripts/build/pi-host-adaptation.ts",
     "scripts/build/pi-host-recovery.ts",
     "node_modules/@silvia-odwyer/photon-node/photon_rs_bg.wasm",
@@ -21,6 +25,9 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
   // Host adaptation may write to Pi. Copy it; never link the shared dependency into this fixture.
   const piPackage = "node_modules/@earendil-works/pi-coding-agent";
   await cp(join(root, piPackage), join(fixture, piPackage), { recursive: true });
+  for (const name of ["@xterm/xterm", "@xterm/addon-fit"]) {
+    await cp(join(root, "node_modules", name), join(fixture, "node_modules", name), { recursive: true });
+  }
 }
 
 async function filesWithMtimes(assets: string): Promise<Array<{ path: string; mtimeMs: number }>> {
@@ -62,13 +69,16 @@ describe("build asset preparation", () => {
         "theme/dark.json",
         "theme/light.json",
         "theme/theme-schema.json",
+        "web/index.html.asset",
+        "web/terminal.css.asset",
+        "web/terminal.js.asset",
       ]);
 
       expect(await readdir(fixture)).not.toContain("runtime-assets");
       // Path-only staging changes must preserve the exact upstream bytes, including
       // bundled vendor license banners. Only package metadata is generated here.
       for (const { path } of generated) {
-        if (path === "package.json") continue;
+        if (path === "package.json" || path.startsWith("web/")) continue;
         const source =
           path === "photon_rs_bg.wasm"
             ? join(fixture, "node_modules/@silvia-odwyer/photon-node", path)
@@ -80,6 +90,16 @@ describe("build asset preparation", () => {
               );
         expect(await readFile(join(assets, path))).toEqual(await readFile(source));
       }
+
+      expect(await readFile(join(assets, "web/index.html.asset"), "utf8")).toBe(
+        await readFile(join(fixture, "src/web/index.html"), "utf8"),
+      );
+      expect(await readFile(join(assets, "web/terminal.css.asset"), "utf8")).toContain(
+        await readFile(join(fixture, "node_modules/@xterm/xterm/css/xterm.css"), "utf8"),
+      );
+      const browserCode = await readFile(join(assets, "web/terminal.js.asset"), "utf8");
+      expect(browserCode).toContain("xterm");
+      expect(browserCode).not.toContain('from "@xterm');
 
       // Old timestamps make a rewrite observable without relying on a sleep or clock resolution.
       const oldTime = new Date("2000-01-01T00:00:00Z");

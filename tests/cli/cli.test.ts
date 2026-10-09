@@ -147,7 +147,7 @@ describe("source bruv startup boundaries", () => {
     const connector = await invoke(["claude-compat", "--help"]);
     expect(connector.code).toBe(0);
     expect(connector.stdout).toStartWith("bruv-claude-compat");
-    const web = await invoke(["web"]);
+    const web = await invoke(["web", "--setup"]);
     expect(web.code).toBe(0);
     expect(web.stdout).toContain("Setup guide only");
     expect(await Bun.file(join(runtime(), "package.json")).exists()).toBe(false);
