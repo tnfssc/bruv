@@ -13,7 +13,12 @@ export async function prepareWebAssets(
   if (!build.success) throw new Error(build.logs.map(String).join("\n"));
   const out = resolve(root, "dist/runtime-assets/web");
   await write(resolve(out, "terminal.js.asset"), await build.outputs[0]!.text());
-  await write(resolve(out, "index.html.asset"), await Bun.file(resolve(root, "src/web/index.html")).text());
+  const wordmark = await Bun.file(resolve(root, "site/assets/brand/bruv-wordmark-light.svg")).text();
+  const icon = await Bun.file(resolve(root, "site/assets/brand/bruv-icon.svg")).text();
+  const html = (await Bun.file(resolve(root, "src/web/index.html")).text())
+    .replace("<!-- BRUV_WORDMARK -->", wordmark)
+    .replace("__BRUV_ICON__", "data:image/svg+xml," + encodeURIComponent(icon));
+  await write(resolve(out, "index.html.asset"), html);
   await write(
     resolve(out, "JetBrainsMonoNerdFontMono-Regular.woff2.asset"),
     await Bun.file(resolve(root, "src/web/fonts/JetBrainsMonoNerdFontMono-Regular.woff2")).bytes(),

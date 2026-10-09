@@ -73,6 +73,12 @@ try {
   page.on("pageerror", (error) => failures.push(String(error)));
   await page.goto(url);
   await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
+  assert.equal(await page.locator(".brand svg").getAttribute("viewBox"), "0 0 530 188", "Canonical Bruv wordmark");
+  const favicon = await page.locator('link[rel="icon"]').getAttribute("href");
+  assert.equal(
+    decodeURIComponent(favicon.slice("data:image/svg+xml,".length)),
+    await readFile(join(project, "site/assets/brand/bruv-icon.svg"), "utf8"),
+  );
   const initial = await api();
   async function rename(name) {
     await page.locator("#tab-menu-toggle").click();

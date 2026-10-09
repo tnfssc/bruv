@@ -9,6 +9,8 @@ const root = resolve(import.meta.dir, "../..");
 async function copyPreparationInputs(fixture: string): Promise<void> {
   for (const path of [
     "package.json",
+    "site/assets/brand/bruv-wordmark-light.svg",
+    "site/assets/brand/bruv-icon.svg",
     "scripts/build/prepare-assets.ts",
     "scripts/build/web-assets.ts",
     "src/web/browser.ts",
@@ -96,9 +98,16 @@ describe("build asset preparation", () => {
         expect(await readFile(join(assets, path))).toEqual(await readFile(source));
       }
 
-      expect(await readFile(join(assets, "web/index.html.asset"), "utf8")).toBe(
-        await readFile(join(fixture, "src/web/index.html"), "utf8"),
+      const html = await readFile(join(assets, "web/index.html.asset"), "utf8");
+      const wordmark = await readFile(join(fixture, "site/assets/brand/bruv-wordmark-light.svg"), "utf8");
+      const icon = await readFile(join(fixture, "site/assets/brand/bruv-icon.svg"), "utf8");
+      expect(html).toBe(
+        (await readFile(join(fixture, "src/web/index.html"), "utf8"))
+          .replace("<!-- BRUV_WORDMARK -->", wordmark)
+          .replace("__BRUV_ICON__", "data:image/svg+xml," + encodeURIComponent(icon)),
       );
+      expect(html).toContain(wordmark);
+      expect(html).not.toContain("<!-- BRUV_WORDMARK -->");
       expect(await readFile(join(assets, "web/terminal.css.asset"), "utf8")).toContain(
         await readFile(join(fixture, "node_modules/@xterm/xterm/css/xterm.css"), "utf8"),
       );

@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content"><title>Bruv terminal</title><link rel="stylesheet" href="/terminal.css"><script type="module" src="/terminal.js"></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content"><title>Bruv terminal</title><link rel="icon" type="image/svg+xml" href="__BRUV_ICON__"><link rel="stylesheet" href="/terminal.css"><script type="module" src="/terminal.js"></script></head>
 <body>
   <div class="workspace-layout">
     <button id="drawer-backdrop" aria-label="Close workspaces" hidden></button>
     <aside id="workspace-sidebar" aria-label="Workspaces">
-      <div class="brand-row"><strong class="brand"><span aria-hidden="true">b.</span> bruv</strong><button class="icon-button drawer-close" id="close-drawer" aria-label="Close workspaces">×</button></div>
+      <div class="brand-row"><span class="brand"><!-- BRUV_WORDMARK --></span><button class="icon-button drawer-close" id="close-drawer" aria-label="Close workspaces">×</button></div>
       <div class="sidebar-heading"><span>Workspaces</span><button class="icon-button" type="button" id="add-workspace" aria-label="Add workspace" title="Add workspace">+</button><button class="icon-button" id="workspace-menu-toggle" aria-label="Workspace actions" aria-haspopup="menu" aria-expanded="false" aria-controls="workspace-menu">⋯</button></div>
       <nav id="workspace-list" aria-label="Choose workspace"></nav>
     </aside>
