@@ -22,8 +22,25 @@ class Element {
   setAttribute(key: string, value: string) {
     this.attributes[key] = value;
   }
+  parentElement: Element | null = null;
+  className = "";
+  onFocus?: () => void;
+  get firstElementChild() {
+    return this.children[0] ?? null;
+  }
   append(element: Element) {
-    this.children.push(element);
+    this.insertBefore(element, null);
+  }
+  insertBefore(element: Element, before: Element | null) {
+    element.remove();
+    element.parentElement = this;
+    const index = before ? this.children.indexOf(before) : this.children.length;
+    this.children.splice(index, 0, element);
+  }
+  replaceWith(element: Element) {
+    const parent = this.parentElement!;
+    parent.insertBefore(element, this);
+    this.remove();
   }
   replaceChildren() {
     this.children = [];
@@ -57,8 +74,13 @@ class Element {
   click() {
     this.fire("click");
   }
-  focus() {}
-  remove() {}
+  focus() {
+    this.onFocus?.();
+  }
+  remove() {
+    if (this.parentElement) this.parentElement.children = this.parentElement.children.filter((child) => child !== this);
+    this.parentElement = null;
+  }
 }
 async function browser(device?: (options: any) => Promise<{ close(): Promise<void> }>) {
   const nodes = new Map<string, Element>();
@@ -126,11 +148,21 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
   const document = Object.assign(new Element(), {
     hidden: false,
     body: new Element(),
-    activeElement: null,
+    activeElement: null as Element | null,
     fonts: { load: async () => [] },
     querySelector: (selector: string) => node(selector.slice(1)),
-    createElement: () => new Element(),
-    getElementById: (id: string) => node(id),
+    createElement: () => {
+      const element = new Element();
+      element.onFocus = () => {
+        document.activeElement = element;
+      };
+      return element;
+    },
+    getElementById: (id: string) => {
+      const find = (element: Element): Element | undefined =>
+        element.id === id ? element : element.children.map(find).find(Boolean);
+      return [...nodes.values()].map(find).find(Boolean) ?? nodes.get(id) ?? null;
+    },
   });
   const window = new Element();
   const frames: (() => void)[] = [];
@@ -391,30 +423,106 @@ test("compact status keeps connection and voice labels accessible", async () => 
   expect(b.node("terminal-status").textContent).toContain("Bruv exited");
 });
 
-test("dialogs cancel safely and rename the captured tab, not a later selection", async () => {
+const key = (key: string) => ({ key, preventDefault() {}, stopPropagation() {} });
+test("inline rename saves only its captured tab and retains its input through snapshots", async () => {
   const b = await browser();
   b.snapshot(snapshot(1));
-  b.ready("a");
   b.requests[0].resolve(snapshot(1));
   await tick();
   const count = b.requests.length;
+  b.node("tab-list").children[0].children[0].fire("dblclick");
+  const input = b.node("tab-list").children[0].children[0];
+  input.value = "  Build  ";
+  const next = snapshot(2);
+  next.workspaces[0].tabs[0].name = "Remote name";
+  b.snapshot(next);
+  expect(b.node("tab-list").children[0].children[0]).toBe(input);
+  expect(b.document.activeElement).toBe(input);
+  expect(input.value).toBe("  Build  ");
+  input.fire("keydown", key("Enter"));
+  await tick();
+  expect(b.requests).toHaveLength(count + 1);
+  expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
+  expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
+});
+
+test("deleting another tab before the editor preserves the input and saves the right ID", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("tab-list").children[1].children[0].fire("dblclick");
+  const input = b.node("tab-list").children[1].children[0];
+  input.value = "Second draft";
+  const next = snapshot(2);
+  next.workspaces[0].tabs.shift();
+  b.snapshot(next);
+  expect(b.node("tab-list").children[0].children[0]).toBe(input);
+  expect(b.document.activeElement).toBe(input);
+  input.fire("keydown", key("Enter"));
+  expect(b.requests.at(-1)?.path).toBe("/api/tabs/b");
+  expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Second draft" });
+});
+
+test("F2, Escape, blur and blank names do not submit; a removed editor exits safely", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  const count = b.requests.length;
+  const entry = () => b.node("tab-list").children[0].children[0];
+  for (const end of ["Escape", "blur", "Enter"]) {
+    entry().fire("keydown", key("F2"));
+    expect(entry().className).toBe("tab-name-input");
+    entry().value = end === "Enter" ? "   " : "Never saved";
+    if (end === "blur") entry().fire("blur");
+    else entry().fire("keydown", key(end));
+    expect(entry().className).toBe("tab-select");
+    expect(b.requests).toHaveLength(count);
+  }
+  entry().fire("dblclick");
+  const removed = entry();
+  const next = snapshot(2);
+  next.workspaces[0].tabs.shift();
+  b.snapshot(next);
+  removed.fire("keydown", key("Enter"));
+  expect(b.requests).toHaveLength(count);
+  expect(entry().textContent).toBe("B");
+});
+
+test("touch double-tap starts inline rename and close still needs confirmation", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  const entry = b.node("tab-list").children[0].children[0];
+  entry.fire("pointerup", { pointerType: "touch", timeStamp: 100, preventDefault() {} });
+  entry.fire("pointerup", { pointerType: "touch", timeStamp: 300, preventDefault() {} });
+  const input = b.node("tab-list").children[0].children[0];
+  expect(input.className).toBe("tab-name-input");
+  input.fire("keydown", key("Escape"));
   void b.node("close-tab").fire("click");
   expect(b.node("workspace-dialog").open).toBe(true);
   expect(b.node("dialog-description").textContent).toContain("for everyone");
   b.node("dialog-cancel").fire("click");
   await tick();
-  expect(b.requests).toHaveLength(count);
-  void b.node("rename-tab").fire("click");
-  b.node("dialog-input").value = "  ";
-  b.node("dialog-form").fire("submit", { preventDefault() {} });
-  expect(b.node("workspace-dialog").open).toBe(true);
-  expect(b.requests).toHaveLength(count);
-  b.node("tab-list").children[1].children[0].fire("click");
-  b.node("dialog-input").value = "  Build  ";
+  expect(b.requests).toHaveLength(1);
+});
+
+test("Escape then immediate reopen cannot lose destructive confirmation to a late close event", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  void b.node("close-tab").fire("click");
+  b.node("workspace-dialog").fire("cancel", { preventDefault() {} });
+  void b.node("close-tab").fire("click");
+  // This event belongs to the cancelled dialog, not the fresh confirmation.
+  b.node("workspace-dialog").fire("close");
   b.node("dialog-form").fire("submit", { preventDefault() {} });
   await tick();
   expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
-  expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
+  expect(b.requests.at(-1)?.options.method).toBe("DELETE");
 });
 
 test("per-tab close cancels safely and deletes the captured inactive tab", async () => {

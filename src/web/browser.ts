@@ -155,7 +155,6 @@ function askDialog(options: DialogOptions): Promise<string | null> {
   dialogInput.value = options.value ?? "";
   action("dialog-submit").textContent = options.submit;
   action("dialog-submit").className = options.destructive ? "danger" : "primary-button";
-  dialog.returnValue = "";
   dialog.showModal();
   if (options.label) {
     dialogInput.focus();
@@ -171,12 +170,19 @@ document.querySelector<HTMLFormElement>("#dialog-form")!.addEventListener("submi
     dialogInput.focus();
     return;
   }
-  dialog.close("save");
+  finishDialog(dialogInput.value);
 });
-action("dialog-cancel").addEventListener("click", () => dialog.close());
-dialog.addEventListener("close", () => {
-  dialogResult?.(dialog.returnValue === "save" ? dialogInput.value : null);
+function finishDialog(value: string | null) {
+  // Settle before closing: native focus returns before the queued close event.
+  const resolve = dialogResult;
   dialogResult = undefined;
+  dialog.close();
+  resolve?.(value);
+}
+action("dialog-cancel").addEventListener("click", () => finishDialog(null));
+dialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  finishDialog(null);
 });
 
 // Storage can be blocked by browser privacy settings. The full URL still works.
@@ -278,6 +284,75 @@ function updateTabOverflow() {
   tabList.setAttribute("data-end-clipped", String(tabList.scrollWidth - tabList.clientWidth - tabList.scrollLeft > 1));
 }
 tabList.addEventListener("scroll", updateTabOverflow);
+// Keep the input node in place across shared snapshots. Only Enter submits.
+let editingTab: { id: string; input: HTMLInputElement; original: string } | undefined;
+let lastTouch: { id: string; time: number } | undefined;
+function finishRename(save: boolean, restoreFocus = true) {
+  const edit = editingTab;
+  if (!edit) return;
+  editingTab = undefined;
+  const name = edit.input.value.trim();
+  render();
+  if (restoreFocus) document.getElementById("tab-" + edit.id)?.focus({ preventScroll: true });
+  if (save && name && name !== edit.original && workspace()?.tabs.some((tab) => tab.id === edit.id))
+    void change("/api/tabs/" + encodeURIComponent(edit.id), "PATCH", { name });
+}
+function startRename(id: string) {
+  if (busy || editingTab || !token) return;
+  const tab = workspace()?.tabs.find((tab) => tab.id === id);
+  const entry = document.getElementById("tab-" + id);
+  if (!tab || !entry) return;
+  const input = document.createElement("input");
+  input.className = "tab-name-input";
+  input.autocomplete = "off";
+  input.spellcheck = false;
+  input.id = "tab-name-" + id;
+  input.setAttribute("aria-label", "Tab name");
+  input.title = "Enter to save · Escape or leave to cancel";
+  input.value = tab.name;
+  input.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+    if (event.key === "Enter" && !event.isComposing) {
+      event.preventDefault();
+      finishRename(true);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      finishRename(false);
+    }
+  });
+  input.addEventListener("blur", () => finishRename(false, false));
+  editingTab = { id, input, original: tab.name };
+  entry.replaceWith(input);
+  input.focus({ preventScroll: true });
+  input.select();
+}
+function tabButton(tab: Tab) {
+  const entry = button("", "", () => {
+    if (!editingTab) selectTab(tab.id);
+  });
+  entry.className = "tab-select";
+  entry.id = "tab-" + tab.id;
+  entry.setAttribute("role", "tab");
+  entry.setAttribute("aria-controls", "terminal-" + tab.id);
+  entry.setAttribute("aria-keyshortcuts", "F2");
+  entry.addEventListener("dblclick", () => startRename(tab.id));
+  entry.addEventListener("keydown", (event) => {
+    if (event.key === "F2") {
+      event.preventDefault();
+      startRename(tab.id);
+    }
+  });
+  entry.addEventListener("pointerup", (event) => {
+    if (event.pointerType !== "touch") return;
+    const time = event.timeStamp;
+    if (lastTouch?.id === tab.id && time - lastTouch.time < 450) {
+      lastTouch = undefined;
+      event.preventDefault();
+      startRename(tab.id);
+    } else lastTouch = { id: tab.id, time };
+  });
+  return entry;
+}
 let scrolledTab: string | undefined;
 function render() {
   const focusedTabControl = document.activeElement?.id;
@@ -305,33 +380,53 @@ function render() {
     workspaceList.append(entry);
   }
   const current = workspace();
-  tabList.replaceChildren();
+  if (editingTab && !current?.tabs.some((tab) => tab.id === editingTab?.id)) editingTab = undefined;
+  const previous = new Map(Array.from(tabList.children).map((shell) => [shell.id, shell]));
+  for (const [id, shell] of previous) {
+    if (!current?.tabs.some((tab) => "tab-shell-" + tab.id === id)) {
+      shell.remove();
+      previous.delete(id);
+    }
+  }
+  let index = 0;
   for (const tab of current?.tabs ?? []) {
-    const shell = document.createElement("div");
+    const shellId = "tab-shell-" + tab.id;
+    const shell = previous.get(shellId) ?? document.createElement("div");
+    previous.delete(shellId);
+    shell.id = shellId;
     shell.className = "terminal-tab";
     shell.setAttribute("role", "presentation");
     const active = tab.id === selectedTabs[selectedWorkspace];
     shell.setAttribute("data-active", String(active));
-    const entry = button(
-      tab.name + (sessions.get(tab.id)?.halted || tab.exited ? " · ended" : ""),
-      "Select tab " + tab.name,
-      () => selectTab(tab.id),
-    );
-    entry.className = "tab-select";
-    entry.id = "tab-" + tab.id;
-    entry.setAttribute("role", "tab");
-    entry.setAttribute("aria-selected", String(active));
-    entry.setAttribute("aria-controls", "terminal-" + tab.id);
-    entry.title = tab.name;
-    entry.tabIndex = active ? 0 : -1;
-    const close = button("×", "Close tab " + tab.name, () => void closeTab(tab));
-    close.id = "tab-close-" + tab.id;
-    close.className = "tab-close";
+    if (editingTab?.id !== tab.id) {
+      let entry = shell.firstElementChild as HTMLButtonElement | null;
+      if (!entry || entry.className !== "tab-select") {
+        const replacement = tabButton(tab);
+        if (entry) entry.replaceWith(replacement);
+        else shell.append(replacement);
+        entry = replacement;
+      }
+      entry.textContent = tab.name + (sessions.get(tab.id)?.halted || tab.exited ? " · ended" : "");
+      entry.setAttribute("aria-label", "Select tab " + tab.name);
+      entry.setAttribute("aria-selected", String(active));
+      entry.title = tab.name + " · Double-click or double-tap to rename (F2)";
+      entry.tabIndex = active ? 0 : -1;
+    }
+    let close = shell.children[1] as HTMLButtonElement | undefined;
+    if (!close) {
+      close = button("×", "", () => {
+        const currentTab = workspace()?.tabs.find((item) => item.id === tab.id);
+        if (currentTab) void closeTab(currentTab);
+      });
+      close.id = "tab-close-" + tab.id;
+      close.className = "tab-close";
+      shell.append(close);
+    }
+    close.setAttribute("aria-label", "Close tab " + tab.name);
     close.title = "Close tab " + tab.name;
     close.disabled = busy;
-    shell.append(entry);
-    shell.append(close);
-    tabList.append(shell);
+    if (tabList.children[index] !== shell) tabList.insertBefore(shell, tabList.children[index] ?? null);
+    index++;
   }
   tabList.scrollLeft = tabScroll;
   if (focusedTabControl?.startsWith("tab-")) document.getElementById(focusedTabControl)?.focus({ preventScroll: true });
@@ -361,7 +456,6 @@ function render() {
   for (const id of ["add-workspace", "reload-workspaces"]) action(id).disabled = busy || !token;
   action("remove-workspace").disabled = busy || !current;
   action("new-tab").disabled = busy || !current;
-  action("rename-tab").disabled = busy || !active;
   action("close-tab").disabled = busy || !active;
   persistSelection();
   renderStatus();
@@ -738,20 +832,6 @@ action("new-tab").addEventListener("click", () => {
       selectedTabs[current.id] = tab.id;
     }
   });
-});
-action("rename-tab").addEventListener("click", async () => {
-  const tab = workspace()?.tabs.find((tab) => tab.id === selected()?.id);
-  if (!tab) return;
-  const name = (
-    await askDialog({
-      title: "Rename tab",
-      description: "Give this terminal a name.",
-      label: "Tab name",
-      value: tab.name,
-      submit: "Save",
-    })
-  )?.trim();
-  if (name) void change("/api/tabs/" + encodeURIComponent(tab.id), "PATCH", { name });
 });
 async function closeTab(tab: Tab) {
   const wasActive = selected()?.id === tab.id;

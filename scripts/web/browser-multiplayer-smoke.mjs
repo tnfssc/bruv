@@ -170,8 +170,15 @@ try {
     await page.keyboard.press("Escape");
     await page.keyboard.press("Enter");
   }
+  async function rename(page, name) {
+    await page.locator('[role="tab"][aria-selected="true"]').dblclick();
+    await page.getByRole("textbox", { name: "Tab name", exact: true }).fill(name);
+    await page.keyboard.press("Enter");
+    await page.locator(".tab-name-input").waitFor({ state: "hidden" });
+    await page.getByRole("tab", { name: "Select tab " + name, exact: true }).waitFor();
+  }
   async function dialog(page, selector, answer) {
-    if (["#rename-tab", "#close-tab"].includes(selector)) await page.locator("#tab-menu-toggle").click();
+    if (selector === "#close-tab") await page.locator("#tab-menu-toggle").click();
     if (selector === "#remove-workspace") {
       if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
       await page.locator("#workspace-menu-toggle").click();
@@ -214,7 +221,7 @@ try {
   assert(second);
   assert.equal(current.workspaces.length, 2);
   await b.locator("#new-tab").click();
-  await dialog(b, "#rename-tab", "from-B");
+  await rename(b, "from-B");
   const bSelectionBefore = await selected(b);
   await select(a, second, second.tabs[0].id);
   await a.getByRole("tab", { name: "Select tab from-B", exact: true }).waitFor();
@@ -230,16 +237,38 @@ try {
     "Browser snapshots diverged",
   );
   const selectedBefore = await selected(a);
-  await dialog(b, "#rename-tab", "renamed-remotely");
+  const bEditId = (await selected(b)).slice(4);
+  assert.notEqual(selectedBefore, "tab-" + bEditId, "Viewers keep independent selection");
+  await a.locator('[id="' + selectedBefore + '"]').dblclick();
+  const draft = a.getByRole("textbox", { name: "Tab name", exact: true });
+  await draft.fill("local draft");
+  await draft.evaluate((el) => {
+    window.renameInput = el;
+    el.setSelectionRange(2, 7);
+  });
+  await rename(b, "renamed-remotely");
   await a.getByRole("tab", { name: "Select tab renamed-remotely", exact: true }).waitFor();
-  assert.equal(await selected(a), selectedBefore, "Remote rename stole focus");
+  assert(await draft.evaluate((el) => el === window.renameInput && document.activeElement === el));
+  assert.equal(await draft.inputValue(), "local draft");
+  assert.deepEqual(await draft.evaluate((el) => [el.selectionStart, el.selectionEnd]), [2, 7]);
+  await a.keyboard.press("Enter");
+  await a.getByRole("tab", { name: "Select tab local draft", exact: true }).waitFor();
+  assert.equal(await selected(a), selectedBefore, "Remote rename stole selection");
+  const renamedTabs = (await state()).workspaces.find((w) => w.id === second.id).tabs;
+  assert.equal(renamedTabs.find((t) => "tab-" + t.id === selectedBefore).name, "local draft");
+  assert.equal(renamedTabs.find((t) => t.id === bEditId).name, "renamed-remotely", "Draft cannot rename another tab");
+  // Deletion from another viewer cancels an edit without submitting it.
+  await a.locator('[id="tab-' + bEditId + '"]').dblclick();
+  await draft.fill("deleted draft");
   await dialog(b, "#close-tab", false);
   assert.equal((await state()).workspaces.find((w) => w.id === second.id).tabs.length, 4);
+  assert.equal(await draft.inputValue(), "deleted draft", "Remote close cancellation keeps the draft");
   await dialog(b, "#close-tab", true);
   await until(
     async () => (await a.getByRole("tab").count()) === 3 && (await b.getByRole("tab").count()) === 3,
     "Close did not propagate",
   );
+  assert.equal(await draft.count(), 0, "Deleted tab exits edit mode");
   await select(a, first, tab.id);
   await select(b, first, tab.id);
   await submit(a, "!sleep 2; printf 'JOB_%s\\n' survives-reload");
@@ -251,7 +280,7 @@ try {
   );
   assert.equal((await state()).workspaces[0].tabs[0].pid, pid);
   await a.evaluate(() => window.stateSocket.close(4000, "reconnect fixture"));
-  await dialog(b, "#rename-tab", "shared first");
+  await rename(b, "shared first");
   await a.getByRole("tab", { name: "Select tab shared first", exact: true }).waitFor();
   // Shared dimensions must settle, not resize forever between different viewports.
   await a.setViewportSize({ width: 1100, height: 750 });
@@ -290,8 +319,16 @@ try {
   assert.deepEqual((await state()).voice, voice, "Another browser command cannot steal active owner");
   assert.equal(await b.evaluate(() => window.mediaTracks.length), 0);
   assert(await a.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")));
-  await a.screenshot({ caret: "initial", path: join(project, "artifacts/web-multiplayer-owner.png") });
-  await b.screenshot({ caret: "initial", path: join(project, "artifacts/web-multiplayer-observer.png") });
+  await a.screenshot({
+    caret: "initial",
+    caret: "initial",
+    path: join(project, "artifacts/web-multiplayer-owner.png"),
+  });
+  await b.screenshot({
+    caret: "initial",
+    caret: "initial",
+    path: join(project, "artifacts/web-multiplayer-observer.png"),
+  });
   await a.setViewportSize({ width: 390, height: 680 });
   await Bun.sleep(200);
   await a.locator(".voice-control").focus();
@@ -318,7 +355,11 @@ try {
     "Voice tooltip uses the shared menu gap",
   );
   await Bun.write(join(project, "artifacts/voice-alignment.json"), JSON.stringify(voiceGeometry, null, 2));
-  await a.screenshot({ caret: "initial", path: join(project, "artifacts/web-multiplayer-owner-phone.png") });
+  await a.screenshot({
+    caret: "initial",
+    caret: "initial",
+    path: join(project, "artifacts/web-multiplayer-owner-phone.png"),
+  });
   await a.setViewportSize({ width: 1100, height: 800 });
   await submit(a, "/fixture-live stop");
   await until(async () => (await state()).voice === null, "Explicit release not shared");
@@ -399,6 +440,7 @@ try {
     try {
       console.error("BROWSER", index, await page.locator("body").innerText());
       await page.screenshot({
+        caret: "initial",
         caret: "initial",
         path: join(project, "artifacts/web-multiplayer-failure-" + index + ".png"),
       });

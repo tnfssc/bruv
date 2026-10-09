@@ -133,8 +133,14 @@ try {
   await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
   assert.equal(new URL(page.url()).hash, "", "Token removed from address bar");
 
+  async function rename(name) {
+    await page.locator('[role="tab"][aria-selected="true"]').dblclick();
+    await page.getByRole("textbox", { name: "Tab name", exact: true }).fill(name);
+    await page.keyboard.press("Enter");
+    await page.getByRole("tab", { name: "Select tab " + name, exact: true }).waitFor();
+  }
   async function dialogClick(selector, answer) {
-    if (["#rename-tab", "#close-tab"].includes(selector)) await page.locator("#tab-menu-toggle").click();
+    if (selector === "#close-tab") await page.locator("#tab-menu-toggle").click();
     if (selector === "#remove-workspace") {
       if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
       await page.locator("#workspace-menu-toggle").click();
@@ -181,13 +187,13 @@ try {
   assert.equal(current.workspaces[0].cwd, firstCwd);
   await page.locator("#new-tab").click();
   await until(async () => (await state()).workspaces[0].tabs.length === 2, "Second tab not created");
-  await dialogClick("#rename-tab", "one second");
+  await rename("one second");
   await until(async () => (await state()).workspaces[0].tabs.some((t) => t.name === "one second"), "Rename not saved");
   await dialogClick("#add-workspace", secondCwd);
   await until(async () => (await state()).workspaces.length === 2, "Second workspace not created");
   await page.locator("#new-tab").click();
   await until(async () => (await state()).workspaces[1].tabs.length === 2, "Fourth tab not created");
-  await dialogClick("#rename-tab", "two second");
+  await rename("two second");
   await until(
     async () => (await state()).workspaces[1].tabs.some((t) => t.name === "two second"),
     "Second rename not saved",
@@ -312,7 +318,7 @@ try {
   await select(other.workspace, other.tab);
   assert.equal(await page.locator("#audio-status").innerText(), label, "Switching did not move voice");
 
-  await page.screenshot({ path: join(project, "artifacts/web-workspaces-voice-owner.png") });
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-voice-owner.png") });
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   assert(
     await page.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")),
@@ -402,13 +408,13 @@ try {
     "Only visible terminal resized",
   );
   assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), "Narrow page overflow");
-  await page.screenshot({ path: join(project, "artifacts/web-workspaces-narrow.png") });
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-narrow.png") });
   await page.locator("#open-drawer").click();
-  await page.screenshot({ path: join(project, "artifacts/web-workspaces-drawer.png") });
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-drawer.png") });
   await page.keyboard.press("Escape");
   await page.setViewportSize({ width: 1100, height: 720 });
   await page.waitForTimeout(300);
-  await page.screenshot({ path: join(project, "artifacts/web-workspaces-wide.png") });
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-wide.png") });
   // Arrow navigation is local to this workspace's tab strip.
   await page.locator('[id="tab-' + owner.tab.id + '"]').focus();
   await page.keyboard.press("ArrowRight");
@@ -511,7 +517,7 @@ try {
   assert.deepEqual(failures, []);
 } catch (error) {
   console.error("WORKSPACES_FAILURE", await page?.locator("body").innerText());
-  await page?.screenshot({ path: join(project, "artifacts/web-workspaces-failure.png") });
+  await page?.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-failure.png") });
   throw error;
 } finally {
   await browser?.close();

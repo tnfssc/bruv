@@ -109,7 +109,7 @@ try {
     return response.json();
   }
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_BIN, headless: true, args: ["--no-sandbox"] });
-  page = await browser.newPage({ viewport: { width: 1100, height: 720 } });
+  page = await browser.newPage({ viewport: { width: 1100, height: 720 }, hasTouch: true });
   const failures = [];
   page.on("pageerror", (error) => {
     failures.push(String(error));
@@ -130,9 +130,8 @@ try {
     );
   }
   async function rename(name) {
-    await page.locator("#tab-menu-toggle").click();
-    await page.keyboard.press("Enter");
-    await page.locator("#dialog-input").fill(name);
+    await page.locator('[role="tab"][aria-selected="true"]').dblclick();
+    await page.getByRole("textbox", { name: "Tab name", exact: true }).fill(name);
     await page.keyboard.press("Enter");
     await until(
       async () => (await api()).workspaces.some((w) => w.tabs.some((t) => t.name === name)),
@@ -188,36 +187,52 @@ try {
   await page.setViewportSize({ width: 1100, height: 720 });
   await page.waitForTimeout(250);
 
-  // Menu arrows, Escape, dialog focus, validation, and cancellation.
+  // Direct editing, keyboard access and safe cancellation; close stays in the menu.
   await page.locator("#tab-menu-toggle").focus();
   await page.keyboard.press("Enter");
-  assert.equal(await page.evaluate(() => document.activeElement?.id), "rename-tab");
-  await page.keyboard.press("ArrowDown");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "close-tab");
+  assert.equal(await page.locator("#rename-tab").count(), 0);
   await screenshot({ path: join(proof, "tab-menu.png") });
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "tab-menu-toggle");
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Enter");
-  assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-input");
-  await screenshot({ path: join(proof, "rename-dialog.png") });
-  await page.locator("#dialog-submit").focus();
-  assert.equal(
-    await page.locator("#dialog-submit").evaluate((e) => getComputedStyle(e).outlineOffset),
-    "2px",
-    "Primary focus ring stays distinct from its fill",
-  );
-  await screenshot({ path: join(proof, "alignment-primary-focus.png") });
-  await page.locator("#dialog-input").fill("   ");
-  await page.keyboard.press("Enter");
-  assert(await page.locator("#workspace-dialog").isVisible(), "Blank rename stays open");
+  const firstTab = initial.workspaces[0].tabs[0];
+  const title = page.locator('[id="tab-' + firstTab.id + '"]');
+  const editor = page.getByRole("textbox", { name: "Tab name", exact: true });
+  const titleBox = await title.boundingBox();
+  await title.dblclick();
+  const editBox = await editor.boundingBox();
+  for (const key of ["x", "y", "width", "height"])
+    assert(Math.abs(editBox[key] - titleBox[key]) < 0.6, "Inline edit keeps title geometry: " + key);
+  await editor.fill("Unsubmitted draft");
+  await screenshot({ path: join(proof, "inline-rename-desktop.png") });
   await page.keyboard.press("Escape");
-  assert.equal(
-    await page.evaluate(() => document.activeElement?.id),
-    "tab-menu-toggle",
-    "Dialog returns focus to menu trigger",
-  );
+  assert.equal(await page.evaluate(() => document.activeElement?.id), "tab-" + firstTab.id);
   assert.equal((await api()).workspaces[0].tabs[0].name, "Terminal");
+  await title.press("F2");
+  await editor.fill("   ");
+  await page.keyboard.press("Enter");
+  assert.equal((await api()).workspaces[0].tabs[0].name, "Terminal");
+  await title.press("F2");
+  await editor.fill("Cancelled on blur");
+  await page.getByRole("tab", { name: "Select tab Tests", exact: true }).click();
+  assert.equal(await editor.count(), 0);
+  assert.equal((await api()).workspaces[0].tabs[0].name, "Terminal");
+  await page.getByRole("tab", { name: "Select tab Tests", exact: true }).press("Home");
+  await title.press("F2");
+  await editor.fill("  Terminal keyboard  ");
+  // A snapshot must not replace the node, focus, draft or text selection.
+  await editor.evaluate((el) => {
+    window.renameInput = el;
+    el.setSelectionRange(4, 10);
+  });
+  await api("/api/tabs/" + firstTab.id, "PATCH", { name: "Remote title" });
+  await page.waitForFunction(() => document.querySelector(".tab-close")?.title === "Close tab Remote title");
+  assert(await editor.evaluate((el) => el === window.renameInput && document.activeElement === el));
+  assert.equal(await editor.inputValue(), "  Terminal keyboard  ");
+  assert.deepEqual(await editor.evaluate((el) => [el.selectionStart, el.selectionEnd]), [4, 10]);
+  await page.keyboard.press("Enter");
+  await until(async () => (await api()).workspaces[0].tabs[0].name === "Terminal keyboard", "Keyboard rename missing");
+  await rename("Terminal");
 
   await page.setViewportSize({ width: 390, height: 680 });
   await page.waitForTimeout(300);
@@ -255,6 +270,20 @@ try {
   );
   await screenshot({ path: join(proof, "phone-close-dialog.png") });
   await page.keyboard.press("Escape");
+
+  // Use real touchscreen taps on the phone layout, not a synthetic dblclick.
+  await title.tap();
+  await title.tap();
+  await editor.waitFor();
+  await editor.fill("Phone draft");
+  await screenshot({ path: join(proof, "inline-rename-phone.png") });
+  await page.keyboard.press("Escape");
+  await title.tap();
+  await title.tap();
+  await editor.fill("Phone saved");
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  await page.keyboard.press("Enter");
+  await until(async () => (await api()).workspaces[0].tabs[0].name === "Phone saved", "Double-tap rename missing");
 
   // Long names do not expand the page; the full name stays accessible.
   await rename("Investigate shared terminal replay and reconnect");
@@ -400,7 +429,9 @@ try {
       viewports: ["1100x720", "390x680"],
       terminalHeight,
       menuKeyboard: true,
-      dialogFocus: true,
+      inlineRename: true,
+      touchRename: true,
+      sharedEditFocus: true,
       cancelSafe: true,
       drawerFocus: true,
       emptyStates: true,
