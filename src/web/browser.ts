@@ -561,7 +561,31 @@ function attach(tab: Tab) {
     fontSize: 14,
     scrollback: 5000,
     disableStdin: true,
-    theme: { background: "#111318" },
+    // Vesper sources and the pure-black override: wisdom/web/vesper-theme.md.
+    theme: {
+      background: "#000000",
+      foreground: "#ffffff",
+      cursor: "#ffc799",
+      cursorAccent: "#000000",
+      selectionBackground: "#ffffff25",
+      selectionForeground: "#ffffff",
+      black: "#101010",
+      red: "#f5a191",
+      green: "#90b99f",
+      yellow: "#e6b99d",
+      blue: "#aca1cf",
+      magenta: "#e29eca",
+      cyan: "#ea83a5",
+      white: "#a0a0a0",
+      brightBlack: "#7e7e7e",
+      brightRed: "#ff8080",
+      brightGreen: "#99ffe4",
+      brightYellow: "#ffc799",
+      brightBlue: "#b9aeda",
+      brightMagenta: "#ecaad6",
+      brightCyan: "#f591b2",
+      brightWhite: "#ffffff",
+    },
   });
   const fit = new FitAddon();
   term.loadAddon(fit);

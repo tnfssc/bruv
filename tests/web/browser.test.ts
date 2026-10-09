@@ -403,3 +403,34 @@ test("dialogs cancel safely and rename the captured tab, not a later selection",
   expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
   expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
 });
+
+test("each terminal uses the pure-black Vesper palette", () => {
+  const b = browser();
+  b.snapshot(snapshot(1));
+  for (const terminal of b.terminals) {
+    expect(terminal.options.theme).toEqual({
+      background: "#000000",
+      foreground: "#ffffff",
+      cursor: "#ffc799",
+      cursorAccent: "#000000",
+      selectionBackground: "#ffffff25",
+      selectionForeground: "#ffffff",
+      black: "#101010",
+      red: "#f5a191",
+      green: "#90b99f",
+      yellow: "#e6b99d",
+      blue: "#aca1cf",
+      magenta: "#e29eca",
+      cyan: "#ea83a5",
+      white: "#a0a0a0",
+      brightBlack: "#7e7e7e",
+      brightRed: "#ff8080",
+      brightGreen: "#99ffe4",
+      brightYellow: "#ffc799",
+      brightBlue: "#b9aeda",
+      brightMagenta: "#ecaad6",
+      brightCyan: "#f591b2",
+      brightWhite: "#ffffff",
+    });
+  }
+});

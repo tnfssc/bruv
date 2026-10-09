@@ -1,3 +1,7 @@
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import vesper from "./vesper.json";
 import { isCompiledInvocation } from "../update";
 import { externalT3Guide } from "../t3/web/launcher";
 import { loadWebAssets } from "./assets";
@@ -22,6 +26,7 @@ export async function runWeb(args: string[]): Promise<number> {
   let hostname = "127.0.0.1";
   let port = 3773;
   let cliArgs: string[] = [];
+  let themeDirectory: string | undefined;
   try {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
@@ -41,7 +46,12 @@ export async function runWeb(args: string[]): Promise<number> {
       } else throw new Error("Unknown web option: " + arg);
     }
     if (cliArgs[0] === "web") throw new Error("Cannot launch bruv web inside its own terminal");
-    const app = startWebServer({ hostname, port, command: webCommand(cliArgs), assets: await loadWebAssets() });
+    // Per-run theme flags leave native CLI defaults and saved settings alone.
+    themeDirectory = await mkdtemp(join(tmpdir(), "bruv-web-theme-"));
+    const themePath = join(themeDirectory, "vesper.json");
+    await writeFile(themePath, JSON.stringify(vesper));
+    const command = webCommand(["--theme", themePath, "--use-theme", vesper.name, ...cliArgs]);
+    const app = startWebServer({ hostname, port, command, assets: await loadWebAssets() });
     console.log("Bruv browser terminal: " + app.url);
     console.log("Keep this process running. Ctrl-C stops the server and its CLI. The URL grants terminal control.");
     return await new Promise<number>((resolve) => {
@@ -69,5 +79,7 @@ export async function runWeb(args: string[]): Promise<number> {
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     return 2;
+  } finally {
+    if (themeDirectory) await rm(themeDirectory, { recursive: true, force: true });
   }
 }

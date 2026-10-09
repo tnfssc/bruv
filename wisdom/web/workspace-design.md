@@ -6,6 +6,8 @@ No old shipped worktree edits. No push, PR, release, or install.
 
 ## Design
 
+Palette update: [pure-black Vesper workspace](vesper-theme.md) supersedes the charcoal/sage colors below, not the layout.
+
 The PR65 demo passed functional checks but failed design acceptance. A real terminal is necessary, not sufficient. The old phone shell used about 300px before the terminal began. Cards and always-visible action buttons competed with the work.
 
 The new shell uses a 212px charcoal sidebar, folder marks, subtle selected rows, and truncated secondary paths. Connected tabs use a restrained surface and sage underline. Add stays visible; rename/close and reload/remove move to keyboard menus. Folder, rename, and destructive flows use compact HTML dialogs, not browser prompt/confirm sheets. Destructive dialogs name the shared effect and focus Cancel. Menu-opened dialogs return focus to the trigger.
