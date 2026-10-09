@@ -42,6 +42,10 @@ Run focused web/Live relay tests, environment scrubbing, launcher and asset-fixt
 
 Run `dist/bruv web` from the desired launch folder. Use the sidebar and each workspace’s tab strip. Remote access remains the documented same-host/same-port loopback SSH tunnel. A token controls all workspace CLIs; do not share it. Closing asks before terminating terminals and never removes folders.
 
-Workspace and tab ownership is in memory. No server-restart restore. Refresh replay remains bounded raw output (2 MiB per tab), best effort after past resizes; expired replay reports a gap. Linux/Bun 1.4.2 and fake Chromium media are tested. Physical microphone quality, audible speech and paid-provider voice remain unverified. No push, release or PR.
+Workspace and tab ownership is in memory. No server-restart restore. Refresh replay remains bounded raw output (2 MiB per tab), best effort after past resizes; expired replay reports a gap. Linux/Bun 1.4.2 and fake Chromium media are tested. Physical microphone quality, audible speech and paid-provider voice remain unverified. At worker handoff there was no push, release or PR.
 
 Wisdom added here and the usage guide updated. Values unchanged: whole-path proof, one clear owner, async lifecycle checks and honest evidence already cover this work.
+
+## Parent acceptance and delivery
+
+Parent inspected the integrated server mutations and wide, narrow, and voice-owner screenshots. Layout matches the requested workspace sidebar and per-workspace terminal tabs. Parent reran server/multiplexer tests: 18 passed, 0 failed, 130 assertions. The completed first experiment worktree remains untouched. Deliver this branch as a draft PR against develop, including the earlier local terminal/audio foundation. No merge, release, or installed-binary replacement. The PR records delivery facts; do not add notes to the completed worktree after publishing.
