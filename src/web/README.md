@@ -1,57 +1,54 @@
 # Browser terminal
 
-Run `bruv web` in a project. Open the printed URL. This is xterm.js attached to a native Bun PTY running the ordinary Bruv CLI, not a chat frontend or bundled T3. No shell wrapper is inserted.
+Run `bruv web` in a project. Open the printed token URL. This is xterm.js attached to a native Bun PTY running the ordinary Bruv CLI, not a separate chat app.
 
-- Default: 127.0.0.1:3773. Use --port 0 for a free port and --host ::1 for IPv6.
-- Only loopback bind is allowed. Tunnel it for remote use; browse the same hostname and port printed by the server (the Origin/Host checks are exact).
-- Arguments after -- go to Bruv, e.g. bruv web -- --offline --provider openai --model gpt-4o.
-- bruv web --setup retains the external T3 guide. --help explains the terminal.
-- The token URL grants terminal control with the server user's rights. Do not share it. It is scrubbed from the address bar and kept in sessionStorage for refresh, not localStorage. HTTP API clients send Authorization: Bearer TOKEN and Origin: the exact printed origin. Browser WebSockets offer protocols bruv and bruv-token.TOKEN; the server selects bruv.
-- Public static assets do not grant control. No PTY starts until an authenticated terminal socket connects.
-- One browser controls one CLI per server. A new attachment detaches the previous browser. Disconnect keeps the CLI alive. Input while disconnected is discarded, never queued or replayed.
-- Existing-tab reconnect uses an output sequence cursor and keeps its xterm state. Refresh starts a fresh renderer and replays from zero. Replay is a bounded raw terminal stream (2 MiB), not a durable terminal snapshot or resize history. Refresh after earlier resizes is best effort; the next CLI redraw repairs it. Expired replay explicitly reports a gap and will not display a guessed screen or spawn another CLI. Restart bruv web to begin again.
-- Output/socket queues are bounded. Slow sockets disconnect and can replay if still within the window. Exit reports the real CLI code; it does not create a replacement process.
-- Ctrl-C/SIGTERM on the server shuts it down. POSIX cleanup sends TERM to the PTY's owned process group, escalates to KILL after 1.5 s, awaits the CLI, and closes the PTY. Detached/new-session jobs are outside that group; this is not a promise to cancel durable Bruv jobs.
+## Remote use
 
-## Audio integration interface (no audio implemented here)
+On the remote machine:
 
-Use startWebServer from src/web/server.ts with an optional extension:
-
-```ts
-import { startWebServer, type WebExtension } from "./server";
-const extension: WebExtension = {
-  fetch(request, server) {
-    if (new URL(request.url).pathname !== "/api/audio") return undefined;
-    if (server.upgrade(request, {
-      data: { channel: "audio", /* own connection metadata */ },
-      headers: { "Sec-WebSocket-Protocol": "bruv" },
-    })) return "upgraded";
-    return new Response("WebSocket required", { status: 426 });
-  },
-  websocket: {
-    message(socket, payload) { /* own audio protocol */ },
-    // Optional open, close, drain callbacks.
-  },
-  async stop() { /* release relay resources; do not stop Bruv jobs */ },
-};
-const app = startWebServer({ command, assets, extension });
+```sh
+bruv web --port 3773
 ```
 
-All /api/* routes first pass shared Host + token + exact Origin checks. Terminal reserves /api/terminal and socket data.channel === "terminal". Use a different channel. Extension fetch returns a Response, "upgraded" after a successful upgrade, or undefined for an unhandled route (404). Do not return undefined after upgrading. The socket payload is string | Buffer; data is SocketData with channel plus arbitrary own fields. Callbacks are dispatched by channel. Global socket limits are 128 KiB per message, 2 MiB backpressure, 60 s idle with pings. Extension stop is awaited along with PTY cleanup by app.stop(), which is idempotent. Returned app fields: server, terminal, token, origin, url, stop().
+On your laptop:
 
-Launcher integration point: src/web/launcher.ts constructs the server. Audio owner/parent can build an extension there; terminal code imports no src/live module. Browser audio controls can use the token resolved by src/web/browser.ts and the same protocol pair. Asset entry point is scripts/build/web-assets.ts, called by prepare-assets; generated HTML/JS/CSS are embedded file imports in src/web/assets.ts.
+```sh
+ssh -N -L 3773:127.0.0.1:3773 your-host
+```
+
+Open the printed `http://127.0.0.1:3773/#token=...` URL on the laptop. Use the same hostname and port: Host and Origin must match. The localhost tunnel is a secure browser context for microphone permission. The server binds loopback only; public HTTP and reverse-proxy deployment are not supported in this experiment. Treat the token URL like a shell password. Anyone with it can control this terminal.
+
+Click **Enable microphone**, allow browser permission, then type `/live` in the terminal. Existing Live model/key setup still applies. `/live mic-check` checks the browser route without a provider call. The browser captures and plays audio; the remote process owns the provider, agent, files, and tools. No remote audio device is needed. Click **Disable microphone** or use `/live stop` to end voice. Coding jobs are not cancelled. Enable the microphone again explicitly for the next voice session.
+
+## Behavior
+
+- One server owns one terminal. Herdr is not part of this change.
+- `--port 0` chooses a free local port. Remote tunnels should use a fixed matching port.
+- Arguments after `--` go to Bruv. Example: `bruv web -- --offline --provider openai --model gpt-4o`.
+- `bruv web --setup` retains the separate external T3 setup guide.
+- The CLI starts on the first authenticated terminal connection. Static pages alone grant no control.
+- A new browser attachment detaches the previous browser. Disconnect keeps the CLI alive. Input is disabled while disconnected; it is never queued and replayed later. Browser voice is released, not silently restarted.
+- Reconnect keeps the existing xterm screen and resumes from its output cursor. Refresh replays a bounded raw stream (2 MiB). This is not a durable snapshot or resize history. Refresh after earlier resizes is best effort; the next CLI redraw repairs it. Expired replay reports a gap instead of guessing a screen or starting a second CLI.
+- Server Ctrl-C/SIGTERM sends TERM to its PTY process group, then KILL after 1.5 seconds if needed. Detached jobs are outside that group. This differs from turning off voice.
+- Linux with Bun 1.4.2 is tested. Other platforms and real physical microphone quality are not yet verified.
+
+## Code map
+
+`launcher.ts` starts the server. `terminal.ts` owns the PTY and replay. `browser.ts` owns xterm and explicit audio controls. Browser assets are bundled by `scripts/build/web-assets.ts` and embedded through `assets.ts`; the installed binary needs no browser-side CDN or node_modules.
+
+`server.ts` reserves `/api/terminal` and `/api/live/audio`. Terminal sockets use token subprotocols and exact Origin/Host checks. Browser audio uses the same token and Origin checks plus a fresh capability for the controlling browser attachment. Disconnect or replacement closes both audio peers on the server. CLI audio has no Origin and authenticates with a separate secret passed only to the owning CLI. Tool and delegated-worker environment copies strip the relay credentials. The server-local audio identity is `terminal`; each server has a fresh secret. Audio sockets use channel `live-audio`. `/audio-worklet.js` serves the capture worklet from the same origin, so CSP does not need blob scripts.
+
+Other optional extensions still use authenticated `/api/*` routes and their own socket channels. Return `"upgraded"` after successful upgrades. Their stop hooks are awaited with PTY cleanup.
 
 ## Checks
 
-bun run build
+```sh
 bun run check
-bun test tests/web tests/t3/web-launcher.test.ts tests/architecture.test.ts tests/cli tests/packaging
-bun run smoke -- --reuse-build
+bun run build
+bun test tests/web tests/live/browser-audio.test.ts tests/t3/web-launcher.test.ts
+# Use installed test tools; Playwright is not a production dependency.
+CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-smoke.mjs
+CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-audio-probe.ts
+```
 
-Optional real-browser smoke (Playwright is a test tool, not a production dependency):
-
-bun add --no-save playwright
-bun node_modules/playwright/cli.js install chromium
-bun scripts/web/browser-smoke.mjs
-
-The browser smoke starts the compiled bruv web command in an owned offline fixture, types into its real editor, reconnects, refreshes, resizes to 390 px, captures ignored artifacts, and sends SIGTERM. Fixtures are retained under /tmp/bruv-web-* for inspection. No paid/provider or physical mic acceptance is claimed.
+The first browser check runs the compiled CLI, enables fake browser media, pastes and runs `/live mic-check`, confirms device release, and checks typing, reconnect, refresh, narrow layout, and shutdown. The second checks real browser capture frames, playback queues, capture gates, interruption flush, stop, and explicit reconnect. Fake media and a fake-provider command test are not audible-speech or paid-provider acceptance. Physical speech quality remains a manual check.

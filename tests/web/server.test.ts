@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { afterEach, expect, test } from "bun:test";
 import WebSocket from "ws";
 import { startWebServer } from "../../src/web/server";
@@ -190,3 +191,81 @@ test("failed CLI startup reports an error and reconnect never retries it", async
   expect(second.messages.some((message) => message.type === "error")).toBe(false);
   expect(app.terminal.pid).toBeUndefined();
 });
+
+test("built-in audio authenticates both peers and disconnect leaves the terminal process alive", async () => {
+  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
+  const route = app.origin + "/api/live/audio?role=browser&session=terminal";
+  for (const headers of [
+    {},
+    { Origin: app.origin },
+    { Origin: "http://evil.example", Authorization: "Bearer " + app.token },
+  ] as Record<string, string>[]) {
+    expect((await fetch(route, { headers })).status).toBe(403);
+  }
+  const worklet = await fetch(app.origin + "/audio-worklet.js");
+  expect(worklet.status).toBe(200);
+  expect(worklet.headers.get("content-security-policy")).toContain("script-src 'self'");
+  expect(await worklet.text()).toContain("registerProcessor('bruv-capture'");
+  const terminal = connect(app);
+  await until(() => terminal.messages.some((m) => m.type === "audio-owner"));
+  const owner = terminal.messages.find((m) => m.type === "audio-owner").id;
+  const browser = new WebSocket(
+    route.replace(/^http/, "ws"),
+    ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],
+    {
+      headers: { Origin: app.origin },
+    },
+  );
+  sockets.push(browser);
+  browser.on("message", (raw) => {
+    if (JSON.parse(String(raw)).type === "start") browser.send('{"type":"ready"}');
+  });
+  await until(() => terminal.text().includes("AUDIO_RUNNING"));
+  expect(browser.protocol).toBe("bruv-audio");
+  const pid = app.terminal.pid;
+  browser.close();
+  await until(() => terminal.text().includes("AUDIO_CLOSED"));
+  expect(app.terminal.pid).toBe(pid);
+  terminal.socket.send(JSON.stringify({ type: "input", data: "still-running" }));
+  await until(() => terminal.text().includes("INPUT still-running"));
+});
+
+for (const mode of ["disconnect", "replace"] as const) {
+  test("terminal " + mode + " releases browser audio on the server while CLI survives", async () => {
+    const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
+    const terminal = connect(app);
+    await until(() => terminal.messages.some((m) => m.type === "audio-owner"));
+    const owner = terminal.messages.find((m) => m.type === "audio-owner").id;
+    const browser = new WebSocket(
+      app.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=terminal",
+      ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],
+      { headers: { Origin: app.origin } },
+    );
+    sockets.push(browser);
+    browser.on("message", (raw) => {
+      if (JSON.parse(String(raw)).type === "start") browser.send('{"type":"ready"}');
+    });
+    await until(() => terminal.text().includes("AUDIO_RUNNING"));
+    const pid = app.terminal.pid;
+    if (mode === "disconnect") terminal.socket.close();
+    const replacement = mode === "replace" ? connect(app) : undefined;
+    await until(() => browser.readyState === WebSocket.CLOSED);
+    const active = replacement ?? connect(app);
+    await until(() => active.text().includes("AUDIO_CLOSED"));
+    // An old tab keeps the shared terminal token, but its audio attachment is stale.
+    expect(
+      (
+        await fetch(app.origin + "/api/live/audio?role=browser&session=terminal", {
+          headers: {
+            Origin: app.origin,
+            Authorization: "Bearer " + app.token,
+            "Sec-WebSocket-Protocol": "bruv-audio, bruv-owner." + owner,
+          },
+        })
+      ).status,
+    ).toBe(403);
+    expect(app.terminal.pid).toBe(pid);
+    active.socket.send(JSON.stringify({ type: "input", data: "survived-" + mode }));
+    await until(() => active.text().includes("INPUT survived-" + mode));
+  });
+}

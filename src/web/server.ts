@@ -1,5 +1,7 @@
 import { randomBytes, timingSafeEqual } from "node:crypto";
-import type { Server, WebSocketHandler } from "bun";
+import type { Server, ServerWebSocket, WebSocketHandler } from "bun";
+import { createAudioRelay, type AudioRelayData } from "./audio-relay";
+import { CAPTURE_WORKLET } from "./browser-audio";
 import { SOCKET_BYTES, TerminalSession, type SocketData } from "./terminal";
 
 export interface WebAssets {
@@ -33,7 +35,8 @@ export function startWebServer(options: WebServerOptions) {
   if (!["127.0.0.1", "::1", "localhost"].includes(hostname))
     throw new Error("bruv web only binds loopback; use an SSH tunnel for remote access.");
   const token = randomBytes(32).toString("hex");
-  const terminal = new TerminalSession(options.command, options.cwd ?? process.cwd(), options.env);
+  const childEnv = { ...(options.env ?? process.env) };
+  const terminal = new TerminalSession(options.command, options.cwd ?? process.cwd(), childEnv);
   let origin = "";
   const sameToken = (candidate: string) => {
     const bytes = Buffer.from(candidate);
@@ -51,6 +54,22 @@ export function startWebServer(options: WebServerOptions) {
         ?.slice(11) ?? "";
     return request.headers.get("origin") === origin && sameToken(bearer || protocol);
   };
+  let terminalController: ServerWebSocket<SocketData> | undefined;
+  const audioOrigins: string[] = [];
+  const relay = createAudioRelay({
+    allowedOrigins: audioOrigins,
+    authorizeBrowser: (request, id) =>
+      id === "terminal" &&
+      terminalController?.readyState === 1 &&
+      authenticated(request) &&
+      request.headers
+        .get("sec-websocket-protocol")
+        ?.split(",")
+        .map((value) => value.trim())
+        .includes("bruv-owner." + terminalController.data.audioOwner) === true,
+  });
+  const audioSecret = relay.registerSession("terminal");
+  const audioSocket = (socket: ServerWebSocket<SocketData>) => socket as unknown as ServerWebSocket<AudioRelayData>;
   const headers = {
     "Cache-Control": "no-store",
     "Referrer-Policy": "no-referrer",
@@ -68,6 +87,9 @@ export function startWebServer(options: WebServerOptions) {
       const url = new URL(request.url);
       // Reject alternate Host headers, including DNS rebinding to loopback.
       if (url.origin !== origin) return response("Invalid host", "text/plain", 403);
+      // CLI peers have no browser Origin and authenticate with their private relay secret.
+      // Browser peers still use the normal terminal token and exact Origin check.
+      if (relay.matches(request)) return relay.upgrade(request, server);
       if (url.pathname.startsWith("/api/")) {
         if (!authenticated(request)) return response("Forbidden", "text/plain", 403);
         if (url.pathname === "/api/terminal") {
@@ -76,7 +98,7 @@ export function startWebServer(options: WebServerOptions) {
           if (!Number.isSafeInteger(after) || after < 0) return response("Invalid replay cursor", "text/plain", 400);
           if (
             server.upgrade(request, {
-              data: { channel: "terminal", after },
+              data: { channel: "terminal", after, audioOwner: randomBytes(16).toString("hex") },
               headers: { "Sec-WebSocket-Protocol": "bruv" },
             })
           )
@@ -88,6 +110,7 @@ export function startWebServer(options: WebServerOptions) {
         return result ?? response("Not found", "text/plain", 404);
       }
       if (request.method !== "GET") return response("Method not allowed", "text/plain", 405);
+      if (url.pathname === "/audio-worklet.js") return response(CAPTURE_WORKLET, "text/javascript; charset=utf-8");
       if (url.pathname === "/") return response(options.assets.html, "text/html; charset=utf-8");
       if (url.pathname === "/terminal.js") return response(options.assets.javascript, "text/javascript; charset=utf-8");
       if (url.pathname === "/terminal.css") return response(options.assets.css, "text/css; charset=utf-8");
@@ -100,15 +123,27 @@ export function startWebServer(options: WebServerOptions) {
       idleTimeout: 60,
       sendPings: true,
       open(socket) {
-        if (socket.data.channel === "terminal") terminal.attach(socket);
+        if (socket.data.channel === "terminal") {
+          if (terminalController && terminalController !== socket) relay.releaseSession("terminal");
+          terminalController = socket;
+          terminal.attach(socket);
+          socket.send(JSON.stringify({ type: "audio-owner", id: socket.data.audioOwner }));
+        } else if (socket.data.channel === "live-audio") relay.websocket.open(audioSocket(socket));
         else extension?.websocket?.open?.(socket);
       },
       message(socket, message) {
         if (socket.data.channel === "terminal") terminal.message(socket, message);
+        else if (socket.data.channel === "live-audio") relay.websocket.message(audioSocket(socket), message);
         else extension?.websocket?.message(socket, message);
       },
       close(socket, code, reason) {
-        if (socket.data.channel === "terminal") terminal.detach(socket);
+        if (socket.data.channel === "terminal") {
+          if (terminalController === socket) {
+            terminalController = undefined;
+            relay.releaseSession("terminal");
+          }
+          terminal.detach(socket);
+        } else if (socket.data.channel === "live-audio") relay.websocket.close(audioSocket(socket));
         else extension?.websocket?.close?.(socket, code, reason);
       },
       drain(socket) {
@@ -117,6 +152,9 @@ export function startWebServer(options: WebServerOptions) {
     },
   });
   origin = server.url.origin;
+  audioOrigins.push(origin);
+  childEnv.BRUV_LIVE_RELAY_URL = origin.replace(/^http/, "ws") + relay.pathname + "?role=cli&session=terminal";
+  childEnv.BRUV_LIVE_RELAY_SECRET = audioSecret;
   let stopped: Promise<void> | undefined;
   return {
     server,
@@ -127,6 +165,7 @@ export function startWebServer(options: WebServerOptions) {
     stop() {
       return (stopped ??= (async () => {
         // Stop accepting connections immediately, then tear down owned resources.
+        relay.unregisterSession("terminal");
         server.stop(true);
         await Promise.all([terminal.stop(), extension?.stop?.()]);
       })());

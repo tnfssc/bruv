@@ -4,7 +4,7 @@ import { loadWebAssets } from "./assets";
 import { startWebServer } from "./server";
 
 export const WEB_HELP =
-  "Usage: bruv web [--port PORT] [--host 127.0.0.1|::1|localhost] [-- CLI_ARGS...]\n\nRuns the real Bruv TUI in a local browser terminal. Open the printed token URL.\nOne browser controls the session; disconnect keeps the CLI alive. Ctrl-C here stops it.\nLoopback only; use an SSH tunnel for remote access. Treat the URL as a shell credential.\nUse bruv web --setup for the separate external T3 provider setup guide.";
+  "Usage: bruv web [--port PORT] [--host 127.0.0.1|::1|localhost] [-- CLI_ARGS...]\n\nRuns the real Bruv TUI in a local browser terminal. Open the printed token URL.\nOne browser controls the session; disconnect keeps the CLI alive. Ctrl-C here stops it.\nLoopback only; use an SSH tunnel for remote access. Treat the URL as a shell credential.\nClick Enable microphone, then type /live. Your browser handles microphone and speakers; agents run here.\nUse bruv web --setup for the separate external T3 provider setup guide.";
 
 export function webCommand(args: string[]): string[] {
   return isCompiledInvocation() ? [process.execPath, ...args] : [process.execPath, process.argv[1]!, ...args];

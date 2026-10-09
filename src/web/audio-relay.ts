@@ -3,7 +3,7 @@ import type { ServerWebSocket } from "bun";
 import { AUDIO_MAX_BUFFER, AUDIO_MAX_MESSAGE, parseAudio } from "../live/browser-protocol";
 
 export type AudioRelayData = {
-  channel: "audio";
+  channel: "live-audio";
   sessionId: string;
   role: "cli" | "browser";
   authenticated: boolean;
@@ -56,6 +56,11 @@ export function createAudioRelay(options: AudioRelayOptions) {
       sessions.set(sessionId, { secret, pending: new Set() });
       return secret;
     },
+    /** Release current voice without revoking the surviving CLI's launch secret. */
+    releaseSession(sessionId: string) {
+      const s = sessions.get(sessionId);
+      if (s) closeSession(s);
+    },
     /** Call on terminal disposal/logout; closes audio sockets, not jobs. */
     unregisterSession(sessionId: string) {
       const s = sessions.get(sessionId);
@@ -69,7 +74,9 @@ export function createAudioRelay(options: AudioRelayOptions) {
     },
     async upgrade(
       request: Request,
-      server: { upgrade(request: Request, options: { data: AudioRelayData }): boolean },
+      server: {
+        upgrade(request: Request, options: { data: AudioRelayData; headers?: Record<string, string> }): boolean;
+      },
     ): Promise<Response | undefined> {
       const url = new URL(request.url);
       if (url.pathname !== pathname) return new Response("Not found", { status: 404 });
@@ -87,7 +94,14 @@ export function createAudioRelay(options: AudioRelayOptions) {
           return new Response("Forbidden", { status: 403 });
         if (s.browser) return new Response("Voice already attached", { status: 409 });
       } else if (origin) return new Response("Forbidden", { status: 403 });
-      return server.upgrade(request, { data: { channel: "audio", sessionId, role, authenticated: role === "browser" } })
+      const protocols = request.headers
+        .get("sec-websocket-protocol")
+        ?.split(",")
+        .map((value) => value.trim());
+      return server.upgrade(request, {
+        data: { channel: "live-audio", sessionId, role, authenticated: role === "browser" },
+        ...(protocols?.includes("bruv-audio") ? { headers: { "Sec-WebSocket-Protocol": "bruv-audio" } } : {}),
+      })
         ? undefined
         : new Response("WebSocket required", { status: 400 });
     },

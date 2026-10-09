@@ -1,3 +1,4 @@
+import { connectBrowserAudio } from "./browser-audio";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 
@@ -17,6 +18,62 @@ let sequence = 0;
 let halted = false;
 let ready = false;
 let reconnect: ReturnType<typeof setTimeout> | undefined;
+const audioButton = document.querySelector<HTMLButtonElement>("#audio-toggle")!;
+const audioStatus = document.querySelector<HTMLElement>("#audio-status")!;
+let audio: Awaited<ReturnType<typeof connectBrowserAudio>> | undefined;
+let audioPending = false;
+let audioOwner: string | undefined;
+async function releaseAudio() {
+  const current = audio;
+  audio = undefined;
+  await current?.close();
+  audioButton.textContent = "Enable microphone";
+  audioStatus.textContent = "Voice off";
+}
+audioButton.addEventListener("click", async () => {
+  if (audioPending || !ready || !token || !audioOwner) return;
+  if (audio) {
+    await releaseAudio();
+    return;
+  }
+  audioPending = true;
+  audioButton.disabled = true;
+  try {
+    const device = await connectBrowserAudio({
+      url: location.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=terminal",
+      token,
+      owner: audioOwner,
+      onState(state) {
+        audioStatus.textContent =
+          state === "enabled"
+            ? "Mic enabled · type /live"
+            : state === "running"
+              ? "Live · this terminal"
+              : state === "connecting"
+                ? "Requesting microphone…"
+                : state === "error"
+                  ? "Audio failed · try enabling again"
+                  : "Voice off";
+        if (state === "closed" || state === "error") {
+          audio = undefined;
+          audioButton.textContent = "Enable microphone";
+        }
+      },
+    });
+    if (!ready) {
+      await device.close();
+      return;
+    }
+    audio = device;
+    audioButton.textContent = "Disable microphone";
+    term.focus();
+  } catch (error) {
+    audioStatus.textContent = error instanceof Error ? error.message : "Could not enable microphone";
+  } finally {
+    audioPending = false;
+    audioButton.disabled = !ready;
+  }
+});
 const send = (message: object) => {
   if (ready && socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify(message));
 };
@@ -44,10 +101,14 @@ function connect() {
     const message = JSON.parse(event.data);
     if (message.type === "ready") {
       ready = true;
+      audioButton.disabled = true;
       term.options.disableStdin = false;
       status.textContent = "Connected · real Bruv TUI · one browser controls this terminal";
       resize();
       term.focus();
+    } else if (message.type === "audio-owner") {
+      audioOwner = message.id;
+      audioButton.disabled = !ready;
     } else if (message.type === "output") {
       if (message.seq <= sequence) return;
       if (message.seq !== sequence + 1) {
@@ -62,6 +123,8 @@ function connect() {
       halted = true;
       ready = false;
       term.options.disableStdin = true;
+      audioButton.disabled = true;
+      void releaseAudio();
       status.textContent = "Bruv exited (" + message.code + "). Restart bruv web for a new terminal.";
     } else if (message.type === "gap" || message.type === "error") {
       halted = true;
@@ -71,6 +134,9 @@ function connect() {
   };
   socket.onclose = (event) => {
     ready = false;
+    audioButton.disabled = true;
+    audioOwner = undefined;
+    void releaseAudio();
     term.options.disableStdin = true;
     if (halted) return;
     if (event.code === 1000 || event.code === 1008) {
@@ -89,5 +155,6 @@ window.addEventListener("beforeunload", () => {
   halted = true;
   clearTimeout(reconnect);
   socket?.close();
+  void releaseAudio();
 });
 connect();

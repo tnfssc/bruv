@@ -38,3 +38,22 @@ header {
     margin-top: 4px;
   }
 }
+
+header {
+  flex-wrap: wrap;
+}
+#audio-toggle {
+  color: inherit;
+  background: #282d38;
+  border: 1px solid #606978;
+  border-radius: 5px;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+#audio-toggle:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+#audio-status {
+  font-size: 12px;
+}

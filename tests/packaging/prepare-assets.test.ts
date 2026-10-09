@@ -12,6 +12,8 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
     "scripts/build/prepare-assets.ts",
     "scripts/build/web-assets.ts",
     "src/web/browser.ts",
+    "src/web/browser-audio.ts",
+    "src/live/browser-protocol.ts",
     "src/web/index.html",
     "src/web/browser.css",
     "scripts/build/pi-host-adaptation.ts",

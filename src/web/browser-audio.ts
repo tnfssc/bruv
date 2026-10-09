@@ -37,6 +37,9 @@ registerProcessor('bruv-capture', BruvCapture);
 export interface BrowserAudioOptions {
   /** Authenticated same-origin endpoint, role=browser, exact server-issued session ID. No secret. */
   url: string;
+  /** Terminal capability sent in WS protocols, never in a request URL. */
+  token?: string;
+  owner?: string;
   onState?: (state: "connecting" | "enabled" | "running" | "closed" | "error") => void;
 }
 /** Call directly from a click. Does not follow terminal selection; create one instance per session. */
@@ -124,12 +127,7 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
       track.onended = () => {
         void fail();
       };
-    const moduleUrl = URL.createObjectURL(new Blob([CAPTURE_WORKLET], { type: "text/javascript" }));
-    try {
-      await context.audioWorklet.addModule(moduleUrl);
-    } finally {
-      URL.revokeObjectURL(moduleUrl);
-    }
+    await context.audioWorklet.addModule("/audio-worklet.js");
     source = context.createMediaStreamSource(stream);
     const worklet = new AudioWorkletNode(context, "bruv-capture", {
       numberOfInputs: 1,
@@ -146,7 +144,13 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
       for (const byte of bytes) text += String.fromCharCode(byte);
       send({ type: "capture", data: btoa(text), ...(data.epoch === undefined ? {} : { epoch: data.epoch }) });
     };
-    const socket = new WebSocket(url);
+    const socket = options.token
+      ? new WebSocket(url, [
+          "bruv-audio",
+          "bruv-token." + options.token,
+          ...(options.owner ? ["bruv-owner." + options.owner] : []),
+        ])
+      : new WebSocket(url);
     ws = socket;
     const opened = new Promise<void>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error("Browser audio connection timed out")), 10_000);

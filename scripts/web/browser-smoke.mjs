@@ -1,4 +1,7 @@
-import { chromium } from "playwright";
+import { pathToFileURL } from "node:url";
+const { chromium } = await import(
+  process.env.PLAYWRIGHT_CORE ? pathToFileURL(process.env.PLAYWRIGHT_CORE).href : "playwright"
+);
 import { mkdtemp, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -32,12 +35,18 @@ void (async () => {
   for await (const d of proc.stderr) errors += new TextDecoder().decode(d);
 })();
 let browser;
+let page;
 try {
   for (let i = 0; i < 200 && !output.includes("#token="); i++) await Bun.sleep(25);
   const url = output.match(/http:\/\/\S+/)?.[0];
   if (!url) throw new Error("No URL " + output + " " + errors);
-  browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
-  const page = await browser.newPage({ viewport: { width: 1100, height: 720 } });
+  browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_BIN,
+    headless: true,
+    args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
+  });
+  page = await browser.newPage({ viewport: { width: 1100, height: 720 } });
+  page.setDefaultTimeout(15000);
   const failures = [];
   page.on("pageerror", (e) => failures.push(String(e)));
   await page.addInitScript(() => {
@@ -45,15 +54,59 @@ try {
     class InspectSocket extends W {
       constructor(url, protocols) {
         super(url, protocols);
-        window.terminalSocket = this;
+        if (String(url).includes("/api/terminal")) window.terminalSocket = this;
       }
     }
     window.WebSocket = InspectSocket;
+    window.mediaTracks = [];
+    window.audioContexts = [];
+    const gum = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+    navigator.mediaDevices.getUserMedia = async (...args) => {
+      const stream = await gum(...args);
+      window.mediaTracks.push(...stream.getTracks());
+      return stream;
+    };
+    const AC = window.AudioContext;
+    window.AudioContext = class extends AC {
+      constructor(...args) {
+        super(...args);
+        window.audioContexts.push(this);
+      }
+    };
   });
   await page.goto(url);
   await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
   await page.waitForTimeout(1500);
   console.log("SCREEN", await page.locator(".xterm-rows").innerText());
+  if (await page.evaluate(() => window.mediaTracks.length)) throw new Error("Microphone opened before click");
+  await page.getByRole("button", { name: "Enable microphone" }).click();
+  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
+  console.log("MIC_ENABLED");
+  await page.locator(".xterm-helper-textarea").evaluate((element) => {
+    const clipboardData = new DataTransfer();
+    clipboardData.setData("text/plain", "/live mic-check");
+    element.dispatchEvent(new ClipboardEvent("paste", { clipboardData, bubbles: true }));
+  });
+  await page.waitForTimeout(150);
+  await page.keyboard.press("Enter");
+  console.log("TERMINAL", await page.locator(".xterm-rows").innerText());
+  await page.waitForFunction(() =>
+    document.querySelector(".xterm-rows")?.textContent?.includes("Audio crosses the session relay"),
+  );
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() =>
+    document.querySelector(".xterm-rows")?.textContent?.includes("Audio route ready. Sound quality not measured."),
+  );
+  await page.waitForFunction(
+    () =>
+      window.mediaTracks.length > 0 &&
+      window.mediaTracks.every((t) => t.readyState === "ended") &&
+      window.audioContexts.every((c) => c.state === "closed"),
+  );
+  console.log(
+    "LIVE_MIC_CHECK",
+    "compiled CLI + browser fake microphone + real relay + strict CSP passed; no provider calls",
+  );
   await page.keyboard.type("browser PTY input");
   await page.waitForTimeout(300);
   if (!(await page.locator(".xterm-rows").innerText()).includes("browser PTY input"))
@@ -76,6 +129,10 @@ try {
     throw new Error("Horizontal page overflow");
   console.log("BROWSER_OK", failures, "FIXTURE", root);
   if (failures.length) throw new Error(failures.join("\n"));
+} catch (error) {
+  console.error("BROWSER_FAILURE", await page?.locator("body").innerText());
+  await page?.screenshot({ path: project + "/artifacts/web-terminal-failure.png" });
+  throw error;
 } finally {
   await browser?.close();
   proc.kill("SIGTERM");

@@ -67,3 +67,7 @@ relay.unregisterSession(id);
 ```
 
 Do not call browser enable automatically at startup (activation/consent). Do not silently reconnect an old browser capture after /live stop. The mic-check startup proof does not verify speech recognition, acoustic echo cancellation, interruption audibility, or remote TLS/cookie deployment. Parent still owns wiring and a real browser/provider/manual acceptance pass.
+
+## Parent integration follow-up
+
+The terminal and browser controls are now wired. See [integrated experiment](browser-terminal-live.md) for real Chromium and compiled CLI evidence. Socket channel is now live-audio. The browser passes its terminal token through WebSocket subprotocols, and loads /audio-worklet.js from the same origin instead of a blob URL. The earlier mount sketch describes the worker handoff, not current server wiring.
