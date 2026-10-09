@@ -304,6 +304,7 @@ aside {
   min-height: 0;
   min-width: 0;
   position: relative;
+  overflow: hidden;
   margin: 10px 12px 6px;
 }
 .terminal-pane {
@@ -542,6 +543,7 @@ dialog input {
 #status,
 #audio-status {
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 @media (pointer: coarse) {
   .workspace-remove {
@@ -551,5 +553,9 @@ dialog input {
 @media (max-width: 700px) {
   #folder-input {
     font-size: 16px;
+  }
+  #terminal-status button,
+  #voice-status button {
+    min-height: 32px;
   }
 }
