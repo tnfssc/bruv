@@ -52,6 +52,8 @@ async function until(check, message, timeout = 15000) {
   }
 }
 // UI proof uses the compiled app and real PTYs. Inspect the saved frames too.
+// Preserve caret styling: Playwright caret hiding corrupts focused xterm DOM captures in Chromium.
+const screenshot = (options) => page.screenshot({ caret: "initial", ...options });
 const proof = join(project, "artifacts/workspace-design");
 await mkdir(proof, { recursive: true });
 try {
@@ -139,7 +141,7 @@ try {
     "Connection detail is keyboard-accessible",
   );
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
-  await page.screenshot({ path: join(proof, "populated-desktop.png") });
+  await screenshot({ path: join(proof, "populated-desktop.png") });
 
   // Menu arrows, Escape, dialog focus, validation, and cancellation.
   await page.locator("#tab-menu-toggle").focus();
@@ -147,13 +149,13 @@ try {
   assert.equal(await page.evaluate(() => document.activeElement?.id), "rename-tab");
   await page.keyboard.press("ArrowDown");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "close-tab");
-  await page.screenshot({ path: join(proof, "tab-menu.png") });
+  await screenshot({ path: join(proof, "tab-menu.png") });
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "tab-menu-toggle");
   await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-input");
-  await page.screenshot({ path: join(proof, "rename-dialog.png") });
+  await screenshot({ path: join(proof, "rename-dialog.png") });
   await page.locator("#dialog-input").fill("   ");
   await page.keyboard.press("Enter");
   assert(await page.locator("#workspace-dialog").isVisible(), "Blank rename stays open");
@@ -171,12 +173,12 @@ try {
   const terminalHeight = await page.locator("#terminal").evaluate((el) => el.clientHeight);
   assert(terminalHeight > 620, "Phone terminal keeps most of the screen");
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
-  await page.screenshot({ path: join(proof, "populated-phone.png") });
+  await screenshot({ path: join(proof, "populated-phone.png") });
   await page.locator("#open-drawer").click();
   assert.equal(await page.evaluate(() => document.activeElement?.id), "close-drawer");
   await page.keyboard.press("Shift+Tab");
   assert(await page.evaluate(() => !!document.activeElement?.closest("#workspace-sidebar")), "Drawer traps focus");
-  await page.screenshot({ path: join(proof, "populated-drawer.png") });
+  await screenshot({ path: join(proof, "populated-drawer.png") });
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "open-drawer");
   await page.locator("#tab-menu-toggle").click();
@@ -186,7 +188,7 @@ try {
     "dialog-cancel",
     "Destructive dialog focuses cancel",
   );
-  await page.screenshot({ path: join(proof, "phone-close-dialog.png") });
+  await screenshot({ path: join(proof, "phone-close-dialog.png") });
   await page.keyboard.press("Escape");
 
   // Long names do not expand the page; the full name stays accessible.
@@ -195,7 +197,7 @@ try {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: join(proof, "phone-long-tab.png") });
+  await screenshot({ path: join(proof, "phone-long-tab.png") });
   // Close controls are siblings of tabs. An inactive close never selects it.
   const workspaceId = (await api()).workspaces[0].id;
   for (let i = 0; i < 5; i++) await api("/api/workspaces/" + workspaceId + "/tabs", "POST", {});
@@ -219,7 +221,7 @@ try {
   assert.match(longTitle.full, /shared terminal replay and reconnect/);
   assert(longTitle.clipped, "Long title truncates without losing its full name");
   await page.locator(".tab-close").first().hover();
-  await page.screenshot({ path: join(proof, "tabs-desktop-close-hover.png") });
+  await screenshot({ path: join(proof, "tabs-desktop-close-hover.png") });
   await page.setViewportSize({ width: 390, height: 680 });
   await page.waitForTimeout(300);
   await page.getByRole("tab").first().focus();
@@ -243,10 +245,10 @@ try {
   );
   await page.waitForTimeout(500);
   await selectedTab().focus();
-  await page.screenshot({ path: join(proof, "tabs-phone-overflow-active.png") });
+  await screenshot({ path: join(proof, "tabs-phone-overflow-active.png") });
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: join(proof, "tabs-phone-overflow-terminal.png") });
+  await screenshot({ path: join(proof, "tabs-phone-overflow-terminal.png") });
   await selectedTab().focus();
   await page.keyboard.press("Home");
   await page.waitForTimeout(300);
@@ -268,7 +270,7 @@ try {
   const target = many[1];
   const closeTarget = page.locator('[id="tab-close-' + target.id + '"]');
   await closeTarget.focus();
-  await page.screenshot({ path: join(proof, "tabs-phone-close-focus.png") });
+  await screenshot({ path: join(proof, "tabs-phone-close-focus.png") });
   await closeTarget.press("Enter");
   assert.equal(await selectedTab().getAttribute("id"), activeBefore, "Inactive close leaves local selection alone");
   assert.equal(await page.evaluate(() => document.activeElement.id), "dialog-cancel");
@@ -301,7 +303,7 @@ try {
   });
   await readyToType();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: join(proof, "tabs-phone-close-return.png") });
+  await screenshot({ path: join(proof, "tabs-phone-close-return.png") });
   const remaining = (await api()).workspaces[0].tabs;
   for (const tab of remaining.slice(0, -1)) await api("/api/tabs/" + tab.id, "DELETE", { confirm: true });
   await page.waitForFunction(() => document.querySelectorAll('[role="tab"]').length === 1);
@@ -309,14 +311,14 @@ try {
   await page.locator("#dialog-submit").click();
   await page.waitForFunction(() => document.activeElement?.id === "new-tab");
   await page.getByRole("heading", { name: "Ready when you are." }).waitFor();
-  await page.screenshot({ path: join(proof, "empty-tabs-phone.png") });
+  await screenshot({ path: join(proof, "empty-tabs-phone.png") });
   await page.locator("#empty-action").click();
   await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
   for (const workspace of (await api()).workspaces)
     await api("/api/workspaces/" + workspace.id, "DELETE", { confirm: true });
   await page.getByRole("heading", { name: "Your terminal, together." }).waitFor();
   await page.setViewportSize({ width: 1100, height: 720 });
-  await page.screenshot({ path: join(proof, "empty-workspaces-desktop.png") });
+  await screenshot({ path: join(proof, "empty-workspaces-desktop.png") });
   assert.deepEqual(failures, []);
   console.log(
     JSON.stringify({

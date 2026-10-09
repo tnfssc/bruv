@@ -28,3 +28,5 @@ The machine's /tmp filled during browser checks. Chromium then crashed even on a
 Observed gap: some xterm captures after focus changes show sparse paint despite populated DOM text; other captures of the same panes show the real output. Both overflow focus states are saved. This varied across runs, so neither tab focus nor terminal focus is a paint guarantee. The strip and PTY regression pass, but parent should judge this capture/paint gap before publishing. No speculative renderer fix retained.
 
 No Safari/iOS, physical touch/keyboard, physical microphone, paid provider, or full repository suite claim. Server, voice/input ownership, persistence, and root CLI are unchanged. Existing values already cover real rendered proof and safe test cleanup; no values edit needed.
+
+Parent integration follow-up: the sparse capture was reproduced with Playwright default caret suppression and avoided with caret:initial, while DOM text/style/geometry stayed unchanged. The integrated design probe preserves caret styling for snapshots. No blink override, compositor workaround or renderer behavior change retained. See tabs-brand-delivery.md for evidence and single-PR delivery.

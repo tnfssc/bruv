@@ -21,3 +21,13 @@ Keep existing PR64 (base develop, remote head bruv/web-workspaces-tabs). Do not 
 This corrects too many small PRs for one user-facing task. Existing whole-task delivery and minimal-parts values apply; no new general value needed.
 
 Branding checks: typecheck/build passed; packaging/font asset tests 2 passed (29 assertions). Actual Chromium design proof passed desktop1100×720 and phone390×680, including exact canonical favicon content. Parent viewed populated desktop and mobile drawer images in artifacts/workspace-design/. Tab redesign still pending.
+
+Consolidation happened at 7e1a3257: ancestry checks passed for all four remote web branch tips, then fast-forward pushed to origin/bruv/web-workspaces-tabs. GitHub automatically marked65/67/68 MERGED into that branch (and retargeted the stack) on2026-10-09T14:15:09Z. PR64 alone stays OPEN against develop. No develop merge occurred. The explicit close attempt was unnecessary; read states before retrying. Continue updates on64 only.
+
+## Integrated checks
+
+CI repair fbf10a73 is integrated as e533aaad, preserving logo and native status-button accessibility. Chrome tabs2a9749f9 is integrated as45323091. Combined format/lint and check/build pass. Focused web/audio/packaging suites:71 passed,609 assertions,14 files. Worker CI repair full Linux gate passed3212 tests with31 existing skips; hosted final-head CI still must pass.
+
+Parent reproduced the reported sparse focused-terminal capture. Before/after DOM text, colors and geometry remained identical. Playwright default caret suppression produced blank content; caret:initial captured the full terminal. Disabling screenshot animations also repainted it, but changing xterm cursorBlink or promoting rows to a layer did not solve default captures. Those speculative product changes were removed. Design screenshots now preserve actual caret styling instead of mutating the page for capture. Keep both focused-tab and focused-terminal frames. Probe evidence is ignored under artifacts/paint-probe/, artifacts/tabs-brand/ and artifacts/workspace-design/paint-*.
+
+Final caret-preserving design probe passed. Parent viewed desktop, close-hover, phone overflow with terminal focus, and close-return captures. Both overflow focus states retain the real uname output; close-return is a newly selected idle CLI. Final build/check and format/lint passed. Deliver only to origin/bruv/web-workspaces-tabs for PR64. Hosted CI remains the next gate; do not call it green based solely on local results.
