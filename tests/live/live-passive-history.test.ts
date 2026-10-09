@@ -124,7 +124,7 @@ test("legacy missing speech and repeated delegations never manufacture a user re
   expect(missing[0]).toMatchObject({
     role: "custom",
     display: false,
-    content: "Historical voice request was incomplete; no actionable request retained.",
+    content: "Past voice request incomplete; no actionable request retained.",
   });
   const repeated = withoutPassiveLiveHistory([message(0), message(0)]);
   expect(repeated.filter((m) => m.role === "user")).toHaveLength(1);
@@ -144,7 +144,7 @@ test("the reported old loss prefix cannot replay as user instructions when its a
   ];
   const context = withoutPassiveLiveHistory(history);
   expect(context.filter((m) => m.role === "user")).toHaveLength(0);
-  expect(JSON.stringify(context)).toContain("Historical voice request was incomplete");
+  expect(JSON.stringify(context)).toContain("Past voice request incomplete");
   expect(JSON.stringify(context)).not.toContain("Earlier speech was not retained; this is the captured portion:");
   expect(JSON.stringify(history)).toContain("Earlier speech was not retained"); // audit is not rewritten
 });

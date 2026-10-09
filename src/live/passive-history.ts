@@ -87,7 +87,7 @@ function projectUserTurn(
     display: false,
     timestamp: message.timestamp,
     content: recovered?.missing
-      ? "Historical voice request was incomplete; no actionable request retained."
+      ? "Past voice request incomplete; no actionable request retained."
       : "Provisional voice transcription" +
         (recovered?.overlap ? "; overlapping or late fragments, not reconciled" : ""),
   };

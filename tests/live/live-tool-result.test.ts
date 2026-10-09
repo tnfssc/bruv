@@ -23,7 +23,7 @@ test("large and image-bearing results have a bounded wire preview and complete r
 test("unserializable tool results report failure instead of fabricating success", async () => {
   const cyclic: any = {};
   cyclic.self = cyclic;
-  expect(await voiceToolResult(cyclic)).toEqual({ error: "Tool result could not be serialized" });
+  expect(await voiceToolResult(cyclic)).toEqual({ error: "Could not serialize tool result." });
 });
 
 test("small image still identifies visual modality loss and retains data in artifact", async () => {
@@ -31,6 +31,9 @@ test("small image still identifies visual modality loss and retains data in arti
   const value = { content: [{ type: "image", data: "aGVsbG8=", mimeType: "image/png" }] };
   const mapped = await voiceToolResult(value, directory);
   expect(mapped.imageNotVisuallyRendered).toBe(true);
+  expect(mapped.note).toBe(
+    "Full JSON result: artifactPath. Read with execute. Preview may end mid-value. Image bytes stay in the file; JSON output does not show images.",
+  );
   expect(mapped.truncated).toBe(false);
   expect(JSON.parse(await readFile(mapped.artifactPath as string, "utf8"))).toEqual({ output: value });
 });
@@ -81,7 +84,7 @@ test("artifact storage failure returns an error, not a preview with an unreadabl
   await writeFile(blockedDirectory, "file blocks artifact directory creation");
   const value = "x".repeat(64 * 1024);
   expect(await voiceToolResult(value, blockedDirectory)).toEqual({
-    error: "Tool result could not be delivered or saved",
+    error: "Could not deliver or save tool result.",
     bytes: Buffer.byteLength(JSON.stringify({ output: value })),
   });
 });
