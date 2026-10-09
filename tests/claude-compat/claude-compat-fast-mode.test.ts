@@ -268,22 +268,27 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     }
   });
 
-  test("real JobService launch inherits effective authorization, not composer labels or worker type", async () => {
+  test("native human Fast commands persist consent and JobService children inherit it, not composer labels or worker type", async () => {
     const dir = await mkdtemp(join(tmpdir(), "bruv-fast-inherit-"));
     const models = await ModelRuntime.create({
       credentials: AuthStorage.inMemory({ openai: credential(true) }),
       modelsPath: null,
       allowModelNetwork: false,
     });
+    const frames: any[] = [];
+    const sessionManager = SessionManager.create(dir, join(dir, "sessions"));
+    // Pi buffers setup-only sessions. Seed an existing thread without a provider call.
+    sessionManager.appendMessage({ role: "user", content: "offline existing thread", timestamp: Date.now() });
     const parent = await createClaudeCompatRuntime({
       cwd: dir,
       agentDir: dir,
       modelRuntime: models,
       model: "openai/gpt-5.3-codex",
-      fastMode: true,
-      sessionManager: SessionManager.inMemory(dir),
+      sessionManager,
       settingsManager: SettingsManager.inMemory({ cacheWarming: "off" }),
-      emit() {},
+      emit(frame) {
+        frames.push(frame);
+      },
     });
     const manager = new TaskManager(() => {}),
       launches: TaskLaunch[] = [];
@@ -330,8 +335,63 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
     let child: Awaited<ReturnType<typeof createClaudeCompatRuntime>> | undefined;
     try {
+      const discovery = (await parent.controls.initialize!(
+        { type: "control_request", request_id: "init", request: { subtype: "initialize" } },
+        signal,
+      )) as any;
+      expect(discovery.commands.find((command: any) => command.name === "bruv").argumentHint).toContain("fast");
+      expect(discovery.commands.find((command: any) => command.name === "bruv:fast")).toMatchObject({
+        description: "Fast for this thread uses premium usage. New supported children inherit it.",
+        argumentHint: "on --accept-cost|off|status",
+      });
+      const command = async (text: string) => {
+        await parent.onUser(
+          {
+            type: "user",
+            uuid: randomUUID(),
+            session_id: parent.session.sessionId,
+            parent_tool_use_id: null,
+            message: { role: "user", content: text },
+          },
+          signal,
+        );
+        return frames.filter((frame) => frame.type === "result").at(-1).result as string;
+      };
+      const settings = () =>
+        sessionManager.getBranch().filter((entry) => entry.type === "custom" && entry.customType === NATIVE_FAST_ENTRY);
       const ctx = parent.session.extensionRunner.createContext();
+      const model = parent.session.model;
+      const thinking = parent.session.thinkingLevel;
+      expect(await command("/bruv fast status")).toContain("off (no model-bound setting");
+      expect(await command("/bruv fast on")).toContain("/bruv fast on --accept-cost");
+      expect(frames.filter((frame) => frame.type === "result").at(-1).result).toContain("premium usage");
+      expect(nativeFastEnabled(ctx)).toBe(false);
+      expect(settings()).toHaveLength(0);
+      for (const args of [
+        "on --accept-cost=true",
+        "on --ACCEPT-COST",
+        "on --accept-cost extra",
+        "on --accept-cost --accept-cost",
+        "off --accept-cost",
+        "status --accept-cost",
+      ]) {
+        expect(await command("/bruv fast " + args)).toContain("Usage:");
+        expect(settings()).toHaveLength(0);
+      }
+      expect(await command("/bruv fast on --accept-cost")).toContain("Native fast mode on");
+      expect(settings()).toHaveLength(1);
+      expect((settings()[0] as any).data).toMatchObject({
+        enabled: true,
+        costAcknowledged: true,
+        sessionId: parent.session.sessionId,
+        provider: "openai",
+        model: "gpt-5.3-codex",
+        oauth: true,
+      });
       expect(nativeFastEnabled(ctx)).toBe(true);
+      expect(await command("/bruv:fast status")).toContain("fast on");
+      expect(parent.session.model).toBe(model);
+      expect(parent.session.thinkingLevel).toBe(thinking);
       await service.handle("subagent", { type: "fast", prompt: "offline child", waitSeconds: 0 }, ctx, signal);
       expect(launches.at(-1)!.env?.[NATIVE_FAST_CHILD_ENV]).toBe("1");
       process.env[NATIVE_FAST_CHILD_ENV] = launches.at(-1)!.env![NATIVE_FAST_CHILD_ENV];
@@ -363,17 +423,16 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         )
         .result();
       expect(body.service_tier).toBe("priority");
-      await parent.controls.apply_flag_settings!(
-        {
-          type: "control_request",
-          request_id: "off",
-          request: {
-            subtype: "apply_flag_settings",
-            settings: { fastMode: false },
-          },
-        },
-        signal,
-      );
+      expect(await command("/bruv fast off")).toContain("Native fast mode off");
+      expect(await command("/bruv fast status")).toContain("off (explicit default/standard tier)");
+      expect(settings().map((entry: any) => entry.data.enabled)).toEqual([true, false]);
+      const persisted = SessionManager.open(sessionManager.getSessionFile()!);
+      expect(
+        persisted
+          .getBranch()
+          .filter((entry) => entry.type === "custom" && entry.customType === NATIVE_FAST_ENTRY)
+          .map((entry: any) => entry.data.enabled),
+      ).toEqual([true, false]);
       expect(nativeFastEnabled(ctx)).toBe(false);
       await service.handle("subagent", { type: "fast", prompt: "standard child", waitSeconds: 0 }, ctx, signal);
       expect(launches.at(-1)!.env?.[NATIVE_FAST_CHILD_ENV]).toBe("0");

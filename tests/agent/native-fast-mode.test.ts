@@ -382,6 +382,31 @@ test("/fast is safe status; on requires consent and state is session/model/branc
   expect((await wirePayload(accepted)).service_tier).toBeUndefined();
 });
 
+test("command-local cost consent works in RPC but does not bypass auth or admit extra flags", async () => {
+  const model = getModel("openai-codex", "gpt-5.6-luna")!;
+  const h = harness(model, {
+    mode: "rpc",
+    accept: false,
+    confirm: async () => {
+      throw new Error("RPC must not ask for TUI confirmation");
+    },
+  });
+  await h.command.handler("on --accept-cost", h.ctx);
+  expect(h.entries.at(-1).data).toMatchObject({ enabled: true, costAcknowledged: true });
+  expect((await wirePayload(h)).service_tier).toBe("priority");
+
+  const wrongAuth = harness(model, { mode: "rpc", accept: false });
+  wrongAuth.ctx.modelRegistry.isUsingOAuth = () => false;
+  await wrongAuth.command.handler("on --accept-cost", wrongAuth.ctx);
+  expect(wrongAuth.entries).toEqual([]);
+  expect(wrongAuth.notices.at(-1).message).toContain("ChatGPT OAuth");
+
+  const globalConsent = harness(model, { mode: "rpc", accept: true });
+  await globalConsent.command.handler("on --unknown", globalConsent.ctx);
+  expect(globalConsent.entries).toEqual([]);
+  expect(globalConsent.notices.at(-1).message).toContain("Usage:");
+});
+
 test("enabling and restoring fast fail visibly without the pinned runtime seam", async () => {
   const model = getModel("openai", "gpt-5.3-codex")!;
   const h = harness(model, { mode: "print", accept: true });

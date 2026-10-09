@@ -63,3 +63,5 @@ User permits Bruv changes, still forbids T3 patching. Prefer an explicit human F
 Implementation task_1174b544 owns /home/tnfssc/.bruv/worktrees/t3-1d0882e1-5442693331ce-task_1174b544, branch bruv/add-bruv-fast-controls-for-t3-threads-1174b544. It exposes Fast in the native /bruv command catalog and adds narrowly scoped `on --accept-cost` consent to the existing native Fast handler. Target commands: `/bruv fast on --accept-cost`, `/bruv fast off`, `/bruv fast status`. Existing Fast persistence, model/auth checks and child inheritance remain the owners. No paid probes or installed changes by the worker.
 
 Research task_8a59287b checks whether authenticated host configuration offers a simpler automatic bridge, including per-turn freshness. The parent will assess its result, review the command patch, test integration, and decide deployment next. Both task results are pending.
+
+The Bruv-only command implementation is recorded in [Fast command workaround](bruv-fast-command-workaround.md).

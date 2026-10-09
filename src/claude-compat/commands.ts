@@ -11,7 +11,7 @@ export interface ClaudeCompatCommandOptions {
   notify(text: string, level: "info" | "warning" | "error"): void | Promise<void>;
   humanControls?: Pick<ReturnType<typeof createClaudeCompatHumanControls>, "openQuestion">;
 }
-const extensionNames = ["goal", "questions", "mode", "live"] as const;
+const extensionNames = ["goal", "questions", "mode", "live", "fast"] as const;
 
 /** Call dispatchUserCommand ONLY at the validated native user-frame admission seam.
  * Do not register this as a model tool or reinterpret assistant/worker text as commands.
@@ -33,8 +33,16 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
       },
       ...available().map((name) => ({
         name: "bruv:" + name,
-        description: "Bruv " + name,
-        argumentHint: name === "questions" ? "list|detail|answer|cancel|resume|open" : "",
+        description:
+          name === "fast"
+            ? "Fast for this thread uses premium usage. New supported children inherit it."
+            : "Bruv " + name,
+        argumentHint:
+          name === "fast"
+            ? "on --accept-cost|off|status"
+            : name === "questions"
+              ? "list|detail|answer|cancel|resume|open"
+              : "",
       })),
     ];
   }
@@ -46,7 +54,7 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
       await options.notify(
         "/bruv " +
           available().join(" | ") +
-          " · /bruv questions open <id> reopens the saved native question. TUI pickers, audio and resume-return dialogs are not available here.",
+          " · /bruv fast on --accept-cost enables premium usage for this thread and new supported children. /bruv fast off|status. /bruv questions open <id> reopens the saved native question. TUI pickers, audio and resume-return dialogs are not available here.",
         "info",
       );
       return true;

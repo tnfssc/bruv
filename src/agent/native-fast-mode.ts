@@ -565,15 +565,24 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
   };
 
   pi.registerCommand("fast", {
-    description: "Show or set opt-in provider-native fast mode (on, off, status)",
+    description: "Fast uses premium usage for this session and new supported children (on --accept-cost, off, status)",
     getArgumentCompletions: (prefix) => {
       const value = prefix.trim().toLowerCase();
-      return ["on", "off", "status"].filter((item) => item.startsWith(value)).map((value) => ({ value, label: value }));
+      return ["on", "on --accept-cost", "off", "status"]
+        .filter((item) => item.startsWith(value))
+        .map((value) => ({ value, label: value }));
     },
     handler: async (args, ctx) => {
       const operationId = crypto.randomUUID();
       const compatibilityError = bindContext(ctx);
-      const action = args.trim().toLowerCase() || "status";
+      const parts = args.trim() ? args.trim().split(/\s+/) : [];
+      const action = (parts[0] ?? "status").toLowerCase();
+      const commandConsent = action === "on" && parts.length === 2 && parts[1] === "--accept-cost";
+      if (!["on", "off", "status"].includes(action) || (parts.length > 1 && !commandConsent)) {
+        commandDiagnostic(ctx, FAST_REFUSED_INVALID_COMMAND, "blocked", operationId);
+        ctx.ui.notify("Usage: /fast on [--accept-cost] | off | status", "error");
+        return;
+      }
       if (action === "status") {
         const active = currentSetting(ctx);
         const description = !active
@@ -583,11 +592,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
             : "off (explicit default/standard tier)";
         ctx.ui.notify(`Native fast mode: ${description}. Model and thinking are unchanged.`, "info");
         refreshStatus(ctx);
-        return;
-      }
-      if (action !== "on" && action !== "off") {
-        commandDiagnostic(ctx, FAST_REFUSED_INVALID_COMMAND, "blocked", operationId);
-        ctx.ui.notify("Usage: /fast on|off|status", "error");
         return;
       }
       const model = ctx.model;
@@ -632,7 +636,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
           );
           return;
         }
-        let accepted = pi.getFlag("accept-cost") === true;
+        let accepted = commandConsent || pi.getFlag("accept-cost") === true;
         if (!accepted && ctx.mode === "tui")
           accepted = await ctx.ui.confirm(
             "Enable premium fast mode?",
@@ -642,7 +646,10 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
           );
         if (!accepted) {
           commandDiagnostic(ctx, FAST_CANCELLED_COST, "cancelled", operationId, "caller");
-          ctx.ui.notify("Fast mode was not enabled. Use the TUI confirmation or launch with --accept-cost.", "warning");
+          ctx.ui.notify(
+            "Fast uses premium usage for this session and new supported children. Nothing was enabled. Use /bruv fast on --accept-cost (or /fast on --accept-cost in the TUI), confirm in the TUI, or launch with --accept-cost.",
+            "warning",
+          );
           return;
         }
       }
