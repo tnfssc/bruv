@@ -471,15 +471,17 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
             if (!options.mcp?.hasAuthenticatedT3 || options.auxiliary) return;
             // Queued follow-ups reach this awaited boundary only when Pi consumes them.
             // Steers, task wakes and tool rounds never enter this set.
+            const turnSignal = toolTurn.signal;
             try {
               await frontend.flush();
               if (!nativeFast || !ctx.model) throw new Error("Native Fast is unavailable");
               nativeFast.setWithCostConsent(
-                await options.mcp.readCurrentThreadFastMode(ctx.model.provider + "/" + ctx.model.id),
+                await options.mcp.readCurrentThreadFastMode(ctx.model.provider + "/" + ctx.model.id, turnSignal),
               );
             } catch {
               // A failed read must not leave an old premium authorization in force.
               nativeFast?.setWithCostConsent(false);
+              if (turnSignal.aborted) return;
               frontend.notice("T3 Fast could not be applied to this model. Fast is off for this turn.", "error");
               await frontend.flush();
             }
@@ -775,6 +777,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       if (message.uuid) messageIds.set(created, message.uuid);
     };
     const cancel = () => {
+      toolTurn.abort(signal.reason);
       frontend.interrupt();
       currentMainOwner(session.sessionManager)?.stopForeground();
       void session.abort();

@@ -505,6 +505,45 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     }
   });
 
+  test.each(["interrupt", "input abort", "close"] as const)(
+    "%s cancels a pending Fast read before provider dispatch",
+    async (operation) => {
+      const h = await fixture();
+      h.gateRead();
+      const input = new AbortController();
+      let running: Promise<unknown> | undefined;
+      let stopping: Promise<unknown> | undefined;
+      try {
+        running = h.runtime.onUser(user(h.runtime, "stop before provider"), input.signal);
+        await until(() => h.peer.configurationCalls.length === 1);
+        if (operation === "input abort") {
+          input.abort(new Error("Stopped"));
+          stopping = running;
+        } else {
+          stopping =
+            operation === "close"
+              ? h.runtime.close()
+              : h.runtime.controls.interrupt!(
+                  { type: "control_request", request_id: "stop", request: { subtype: "interrupt" } },
+                  signal,
+                );
+        }
+        const stopped = await Promise.race([stopping.then(() => true), Bun.sleep(2000).then(() => false)]);
+        expect(stopped).toBe(true);
+        await running;
+        expect(h.bodies).toHaveLength(0);
+        const settings = h.runtime.session.sessionManager
+          .getBranch()
+          .filter((entry) => entry.type === "custom" && entry.customType === NATIVE_FAST_ENTRY);
+        expect(settings.some((entry: any) => entry.data.enabled === true)).toBe(false);
+      } finally {
+        h.releaseRead();
+        await Promise.allSettled([running, stopping]);
+        await h.close();
+      }
+    },
+  );
+
   test("tool rounds keep the consumed turn's Fast choice", async () => {
     let calls = 0,
       toolCalls = 0;

@@ -316,16 +316,19 @@ export class InjectedMcpSession {
     return this.authenticatedT3;
   }
 
-  async readCurrentThreadFastMode(model: string): Promise<boolean> {
+  async readCurrentThreadFastMode(model: string, turnSignal: AbortSignal): Promise<boolean> {
     if (!this.authenticatedT3) throw new Error("No authenticated T3 configuration connection");
     const connection = this.connections.get("t3-code");
     if (!connection || connection.status !== "connected") throw new Error("T3 configuration connection is not open");
+    const signal = AbortSignal.any([this.lifetime.signal, turnSignal]);
     try {
+      signal.throwIfAborted();
       const result = (await connection.client.callTool(
         { name: "t3_thread_configuration", arguments: {} },
         CallToolResultSchema,
-        { signal: this.lifetime.signal, timeout: connection.timeout },
+        { signal, timeout: connection.timeout },
       )) as CallToolResult;
+      signal.throwIfAborted();
       if (result.isError) throw new Error();
       const value =
         result.structuredContent ??
