@@ -406,8 +406,8 @@ test("dialogs cancel safely and rename the captured tab, not a later selection",
   expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
 });
 
-test("each terminal uses the pure-black Vesper palette", () => {
-  const b = browser();
+test("each terminal uses the pure-black Vesper palette", async () => {
+  const b = await browser();
   b.snapshot(snapshot(1));
   for (const terminal of b.terminals) {
     expect(terminal.options.theme).toEqual({
