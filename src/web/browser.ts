@@ -17,6 +17,7 @@ type Session = {
   term: Terminal;
   fit: FitAddon;
   element: HTMLElement;
+  cancelTouch: () => void;
   socket?: WebSocket;
   sequence: number;
   ready: boolean;
@@ -548,6 +549,7 @@ function send(session: Session, message: object) {
   if (session.ready && session.socket?.readyState === WebSocket.OPEN) session.socket.send(JSON.stringify(message));
 }
 function hideSession(session: Session) {
+  session.cancelTouch();
   send(session, { type: "visibility", active: false });
   session.viewport = undefined;
 }
@@ -818,12 +820,13 @@ function attach(tab: Tab) {
   const fit = new FitAddon();
   term.loadAddon(fit);
   term.open(element);
-  installTerminalTouch(element, term);
+  const cancelTouch = installTerminalTouch(element, term);
   const session: Session = {
     id: tab.id,
     term,
     fit,
     element,
+    cancelTouch,
     sequence: 0,
     ready: false,
     halted: false,
@@ -846,6 +849,7 @@ function applyState(next: WorkspaceState) {
     session.halted = true;
     clearTimeout(session.reconnect);
     session.socket?.close();
+    session.cancelTouch();
     session.term.dispose();
     session.element.remove();
   }

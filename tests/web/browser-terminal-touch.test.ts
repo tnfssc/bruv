@@ -12,6 +12,8 @@ function fixture(type = "normal") {
   const wheel: any[] = [],
     lines: number[] = [];
   const element = {
+    hidden: false,
+    isConnected: true,
     addEventListener: (name: string, fn: (event: any) => void) => listeners.set(name, fn),
     querySelector: () => ({ clientHeight: 200, dispatchEvent: (event: any) => wheel.push(event) }),
   };
@@ -28,11 +30,13 @@ function fixture(type = "normal") {
     element,
     term,
   });
-  runInContext(source + "\ninstallTerminalTouch(element, term);", context);
+  runInContext(source + "\nglobalThis.cancel = installTerminalTouch(element, term);", context);
   let prevented = 0;
   return {
     wheel,
     lines,
+    element,
+    cancel: () => (context.cancel as () => void)(),
     get prevented() {
       return prevented;
     },
@@ -79,3 +83,41 @@ test("taps and multi-touch do not scroll or steal input", () => {
   expect(f.lines).toEqual([]);
   expect(f.prevented).toBe(0);
 });
+
+for (const type of ["normal", "alternate"]) {
+  for (const unavailable of ["hidden", "disconnected"]) {
+    test(type + " buffer ignores " + unavailable + " pane touches", () => {
+      const f = fixture(type);
+      f.fire("touchstart", 100);
+      if (unavailable === "hidden") f.element.hidden = true;
+      else f.element.isConnected = false;
+      f.fire("touchmove", 140);
+      f.fire("touchstart", 100);
+      f.element.hidden = false;
+      f.element.isConnected = true;
+      f.fire("touchmove", 180);
+      expect(f.wheel).toEqual([]);
+      expect(f.lines).toEqual([]);
+      expect(f.prevented).toBe(0);
+    });
+  }
+}
+
+for (const type of ["normal", "alternate"]) {
+  test(type + " buffer cancellation survives hide and show before the next move", () => {
+    const f = fixture(type);
+    f.fire("touchstart", 100);
+    f.element.hidden = true;
+    f.cancel();
+    f.element.hidden = false;
+    f.fire("touchmove", 140);
+    expect(f.wheel).toEqual([]);
+    expect(f.lines).toEqual([]);
+    expect(f.prevented).toBe(0);
+    f.fire("touchstart", 100);
+    f.fire("touchmove", 140);
+    expect(f.prevented).toBe(1);
+    if (type === "normal") expect(f.lines).toEqual([-4]);
+    else expect(f.wheel).toHaveLength(1);
+  });
+}

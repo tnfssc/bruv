@@ -7,6 +7,11 @@ import { createContext, runInContext } from "node:vm";
 const source = new Bun.Transpiler({ loader: "ts" }).transformSync(
   readFileSync(new URL("../../src/web/browser.ts", import.meta.url), "utf8").replace(/^import .*;\n/gm, ""),
 );
+const touchSource = new Bun.Transpiler({ loader: "ts" }).transformSync(
+  readFileSync(new URL("../../src/web/browser-terminal-touch.ts", import.meta.url), "utf8")
+    .replace(/^import .*;\n/gm, "")
+    .replace("export function", "function"),
+);
 class Element {
   hidden = false;
   disabled = false;
@@ -34,6 +39,9 @@ class Element {
     return this.children.at(-1) ?? null;
   }
   parentElement: Element | null = null;
+  get isConnected() {
+    return this.parentElement !== null;
+  }
   className = "";
   classList = { contains: (name: string) => this.className.split(" ").includes(name) };
   onFocus?: () => void;
@@ -119,7 +127,22 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
       terminals.push(this);
     }
     loadAddon() {}
-    open() {}
+    buffer = { active: { type: "normal" } };
+    lines: number[] = [];
+    wheels: any[] = [];
+    data = (_data: string) => {};
+    scrollLines(lines: number) {
+      this.lines.push(lines);
+    }
+    open(element: Element) {
+      const screen = Object.assign(new Element(), {
+        dispatchEvent: (event: any) => {
+          this.wheels.push(event);
+          this.data("\x1b[A");
+        },
+      });
+      element.querySelector = () => screen;
+    }
     focused = 0;
     focus() {
       this.focused++;
@@ -127,7 +150,9 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     dispose() {
       this.disposed = true;
     }
-    onData() {}
+    onData(callback: (data: string) => void) {
+      this.data = callback;
+    }
     onBinary() {}
     resize(cols: number, rows: number) {
       this.cols = cols;
@@ -206,7 +231,14 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
   let audioOptions: any;
   const context = createContext({
     Terminal,
-    installTerminalTouch() {},
+    WheelEvent: class {
+      constructor(
+        public type: string,
+        options: any,
+      ) {
+        Object.assign(this, options);
+      }
+    },
     FitAddon,
     document,
     window,
@@ -249,7 +281,7 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
       };
     },
   });
-  runInContext(source, context);
+  runInContext(touchSource + "\n" + source, context);
   await tick();
   const events = () => sockets.filter((socket) => socket.url.endsWith("/api/events")).at(-1)!;
   const terminal = (id: string) => sockets.filter((socket) => socket.url.includes("tab=" + id + "&")).at(-1)!;
@@ -898,4 +930,79 @@ test("a failed rename keeps the editor, draft and focus for retry", async () => 
   expect(b.document.activeElement).toBe(input);
   input.fire("keydown", key("Enter"));
   expect(JSON.parse(b.requests.at(-1)!.options.body)).toEqual({ name: "Keep my draft" });
+});
+
+const touch = (y: number) => ({
+  touches: [{ clientX: 20, clientY: y }],
+  preventDefault() {},
+});
+for (const type of ["alternate", "normal"]) {
+  test(type + " held touch cannot forward after tab hide or resume on return", async () => {
+    const b = await browser();
+    b.snapshot(snapshot(1));
+    b.ready("a");
+    b.ready("b");
+    const pane = b.document.getElementById("terminal-a")!;
+    const term = b.terminals[0];
+    term.buffer.active.type = type;
+    const socket = b.terminal("a");
+    const inputs = () => socket.sent.filter((message: any) => message.type === "input");
+    const select = (index: number) => {
+      b.node("tab-list").children[index].children[0].fire("click");
+      b.flushFrames();
+    };
+    pane.fire("touchstart", touch(100));
+    select(1);
+    expect(pane.hidden).toBe(true);
+    expect(socket.readyState).toBe(1);
+    pane.fire("touchmove", touch(140));
+    expect(inputs()).toEqual([]);
+    expect(term.lines).toEqual([]);
+    expect(term.wheels).toEqual([]);
+    select(0);
+    pane.fire("touchstart", touch(100));
+    select(1);
+    select(0);
+    pane.fire("touchmove", touch(140));
+    expect(inputs()).toEqual([]);
+    expect(term.lines).toEqual([]);
+    expect(term.wheels).toEqual([]);
+    pane.fire("touchstart", touch(100));
+    pane.fire("touchmove", touch(140));
+    if (type === "alternate") {
+      expect(inputs()).toEqual([{ type: "input", data: "\x1b[A" }]);
+      expect(term.wheels).toHaveLength(1);
+    } else {
+      expect(inputs()).toEqual([]);
+      expect(term.lines.length).toBe(1);
+      expect(term.lines[0]).toBeLessThan(0);
+    }
+  });
+}
+
+test("document hide and pane disposal cancel held touches", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  const pane = b.document.getElementById("terminal-a")!;
+  const term = b.terminals[0];
+  term.buffer.active.type = "alternate";
+  pane.fire("touchstart", touch(100));
+  b.document.hidden = true;
+  b.document.fire("visibilitychange");
+  b.document.hidden = false;
+  b.document.fire("visibilitychange");
+  pane.fire("touchmove", touch(140));
+  expect(term.wheels).toEqual([]);
+  pane.fire("touchstart", touch(100));
+  const next = snapshot(2);
+  next.workspaces[0].tabs = [{ id: "b", name: "B" }];
+  b.snapshot(next);
+  expect(term.disposed).toBe(true);
+  expect(pane.isConnected).toBe(false);
+  // Reattach the old node to prove disposal cleared the gesture, not just the guard.
+  b.node("terminal").append(pane);
+  pane.hidden = false;
+  pane.fire("touchmove", touch(140));
+  expect(term.wheels).toEqual([]);
 });

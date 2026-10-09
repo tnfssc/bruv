@@ -3,11 +3,12 @@ import type { Terminal } from "@xterm/xterm";
 // xterm handles wheel input, but not finger swipes. Keep CLI history in its
 // existing wheel path; normal scrollback uses xterm's public scrolling API.
 export function installTerminalTouch(element: HTMLElement, term: Terminal) {
+  // The pane owner cancels held touches when hiding or disposing.
   let gesture: { y: number; startX: number; startY: number; lines: number; scrolling: boolean } | undefined;
   element.addEventListener(
     "touchstart",
     (event) => {
-      if (event.touches.length !== 1) {
+      if (element.hidden || !element.isConnected || event.touches.length !== 1) {
         gesture = undefined;
         return;
       }
@@ -25,7 +26,7 @@ export function installTerminalTouch(element: HTMLElement, term: Terminal) {
   element.addEventListener(
     "touchmove",
     (event) => {
-      if (!gesture || event.touches.length !== 1) {
+      if (element.hidden || !element.isConnected || !gesture || event.touches.length !== 1) {
         gesture = undefined;
         return;
       }
@@ -63,9 +64,10 @@ export function installTerminalTouch(element: HTMLElement, term: Terminal) {
     },
     { passive: false },
   );
-  const end = () => {
+  const cancel = () => {
     gesture = undefined;
   };
-  element.addEventListener("touchend", end);
-  element.addEventListener("touchcancel", end);
+  element.addEventListener("touchend", cancel);
+  element.addEventListener("touchcancel", cancel);
+  return cancel;
 }
