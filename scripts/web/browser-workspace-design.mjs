@@ -522,7 +522,11 @@ try {
   await screenshot({ path: join(proof, "tabs-phone-overflow-terminal.png") });
   await selectedTab().focus();
   await page.keyboard.press("Home");
-  await page.waitForTimeout(300);
+  await page.waitForFunction(() => {
+    const shell = document.querySelector('[role="tab"][aria-selected="true"]').parentElement.getBoundingClientRect();
+    const list = document.querySelector("#tab-list").getBoundingClientRect();
+    return shell.left >= list.left - 1 && shell.right <= list.right + 1;
+  });
   const activeBefore = await selectedTab().getAttribute("id");
   const manualScroll = await page.locator("#tab-list").evaluate((el) => {
     el.scrollLeft = el.scrollWidth;
@@ -541,7 +545,12 @@ try {
   const target = many[1];
   const closeTarget = page.locator('[id="tab-close-' + target.id + '"]');
   // A partial tab has no orphan close target. Reveal its whole shell without selecting it.
-  await closeTarget.evaluate((el) => el.parentElement.scrollIntoView({ block: "nearest", inline: "nearest" }));
+  await closeTarget.evaluate(
+    (el) =>
+      (document.querySelector("#tab-list").scrollLeft +=
+        el.parentElement.getBoundingClientRect().left -
+        document.querySelector("#tab-list").getBoundingClientRect().left),
+  );
   await closeTarget.waitFor({ state: "visible" });
   await closeTarget.focus();
   await screenshot({ path: join(proof, "tabs-phone-close-focus.png") });
@@ -565,7 +574,12 @@ try {
   assert.equal(await selectedTab().getAttribute("id"), activeBefore, "Confirmed inactive close leaves selection alone");
   assert.equal((await api()).workspaces[0].tabs.length, 7);
   const firstClose = page.locator('[id="tab-close-' + many[0].id + '"]');
-  await firstClose.evaluate((el) => el.parentElement.scrollIntoView({ block: "nearest", inline: "nearest" }));
+  await firstClose.evaluate(
+    (el) =>
+      (document.querySelector("#tab-list").scrollLeft +=
+        el.parentElement.getBoundingClientRect().left -
+        document.querySelector("#tab-list").getBoundingClientRect().left),
+  );
   await firstClose.waitFor({ state: "visible" });
   await firstClose.click();
   await page.locator("#dialog-submit").click();

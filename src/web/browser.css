@@ -207,7 +207,7 @@ aside {
   flex: 0 0 auto;
   width: max-content;
   min-width: 112px;
-  max-width: 210px;
+  max-width: min(210px, 100%);
   border-radius: 9px 9px 0 0;
   padding: 0 6px 0 7px;
   color: var(--muted);
@@ -447,7 +447,7 @@ dialog input {
   }
   .terminal-tab {
     min-width: 96px;
-    max-width: 196px;
+    max-width: min(196px, 100%);
     padding-left: 4px;
   }
   #tab-list .tab-select,

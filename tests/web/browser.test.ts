@@ -850,3 +850,18 @@ test("a pending folder failure reopens its phone drawer and keeps the draft", as
   expect(b.document.activeElement).toBe(b.node("folder-input"));
   expect(b.node("cancel-folder").disabled).toBe(false);
 });
+
+test("removing a preceding workspace keeps the surviving row and its focused control", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  const row = b.node("workspace-list").children[1];
+  const remove = row.children[1];
+  remove.focus();
+  const next = snapshot(2);
+  next.workspaces.shift();
+  b.snapshot(next);
+  expect(b.node("workspace-list").children[0]).toBe(row);
+  expect(b.document.activeElement).toBe(remove);
+});

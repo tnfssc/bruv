@@ -245,11 +245,16 @@ function selectTab(id: string) {
   render();
   selected()?.term.focus();
 }
-function revealSelectedTab() {
-  document
-    .getElementById("tab-" + selectedTabs[selectedWorkspace])
-    ?.parentElement?.scrollIntoView({ block: "nearest", inline: "nearest" });
+function revealTabShell(shell: HTMLElement | null) {
+  if (!shell) return;
+  const rect = shell.getBoundingClientRect();
+  const bounds = tabList.getBoundingClientRect();
+  if (rect.left < bounds.left) tabList.scrollLeft += rect.left - bounds.left;
+  else if (rect.right > bounds.right) tabList.scrollLeft += rect.right - bounds.right;
   updateTabOverflow();
+}
+function revealSelectedTab() {
+  revealTabShell(document.getElementById("tab-" + selectedTabs[selectedWorkspace])?.parentElement ?? null);
 }
 function updateTabOverflow() {
   const bounds = tabList.getBoundingClientRect();
@@ -348,6 +353,12 @@ let scrolledTab: string | undefined;
 // Shared snapshots update rows, not their identity or local focus.
 function renderWorkspaces() {
   const rows = new Map(Array.from(workspaceList.children).map((row) => [row.id, row]));
+  for (const [id, row] of rows) {
+    if (!state.workspaces.some((item) => "workspace-row-" + item.id === id)) {
+      row.remove();
+      rows.delete(id);
+    }
+  }
   let index = 0;
   for (const item of state.workspaces) {
     const id = "workspace-row-" + item.id;
@@ -980,8 +991,7 @@ async function closeTab(tab: Tab) {
       document.getElementById("tab-" + selected()?.id) ??
       (workspace() ? action("empty-action") : folderInput);
     if (invoker.classList.contains("tab-close")) {
-      invoker.parentElement?.scrollIntoView({ block: "nearest", inline: "nearest" });
-      updateTabOverflow();
+      revealTabShell(invoker.parentElement);
     }
     invoker.focus();
     return;

@@ -51,3 +51,9 @@ Latest compiled proof at a6824584 finished with no page errors and owned server 
 The first CLI history probe used the collapsed !seq preview, which fit in the viewport; neither wheel nor swipe moved it. This is not touch acceptance. The updated probe expands real history with Ctrl+O before testing and requires both gestures to move output. No physical-device claim.
 
 Design probe now reaches eight-tab keyboard overflow. Its old inactive-close step targeted a deliberately clipped shell, whose close control is correctly hidden. Probe now reveals the whole shell without selecting it. Cancel reveals that invoker again if a shared rename widened the tab. The old confirmed-inactive-close expectation was strip focus; it now checks surviving xterm focus, matching the chosen design.
+
+## Final navigation refinements
+
+Expanded real CLI history now moves for both swipe and wheel after Ctrl+O. The compiled probe asserts both changes, records actual rows, and retains original PID 882817 after View lost/New terminal. touch-history-phone.png was viewed with full CLI output and its Jump to latest affordance. This is Chromium emulation, not physical-phone acceptance.
+
+The isolated inactive-close geometry probe shows a complete Tests shell at x=238.9..334.9 inside a x=58.9..347 strip, close visible, while another tab stays selected. The long headed design run still had delayed native scroll/focus interactions. Tab reveal is now scoped to the strip's own scrollLeft, not scrollIntoView on outer ancestors. Home proof waits for the selected shell to be revealed before manual scrolling. Long tabs cap width at the strip's available width, so narrow phones can still expose a whole close target. Workspace row removal prunes absent rows before ordering survivors, just like the tab strip, so an earlier row deletion need not detach a focused surviving row.
