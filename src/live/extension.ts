@@ -27,6 +27,7 @@ import { PlaybackScheduler } from "./playback";
 import { LIVE_PROVIDERS, type LiveModelId, OPENAI_LIVE_MODEL, OPENAI_REALTIME_MODELS } from "./providers";
 import { VoiceSession } from "./session";
 import { runLiveSetup } from "./setup";
+import { BrowserLiveAudio, browserAudioEnvironment } from "./browser-audio";
 import { compactLiveStatus, liveLocalOnly } from "./status";
 import type { VoiceCallbacks, VoiceOrchestration, VoiceProvider } from "./types";
 
@@ -81,7 +82,7 @@ const defaults: LiveDependencies = {
     return speakerCheckSummary(await runSpeakerCheck(args.audio, args.signal));
   },
   local: (mode) =>
-    (process.platform === "darwin" || process.platform === "linux") &&
+    (Boolean(process.env.BRUV_LIVE_RELAY_URL) || process.platform === "darwin" || process.platform === "linux") &&
     liveLocalOnly(mode, process.env, Boolean(process.stdin.isTTY && process.stdout.isTTY)),
   credentials: createDefaultLiveCredentialService,
   key: async (signal, provider = "google") =>
@@ -110,7 +111,10 @@ const defaults: LiveDependencies = {
       : new VoiceSession(callbacks, undefined, orchestration, model, { inputMode });
   },
   owner: acquireMainOwner,
-  audio: (callbacks, signal) => LiveAudio.launch({ callbacks, signal }),
+  audio: (callbacks, signal) => {
+    const relay = browserAudioEnvironment();
+    return relay ? BrowserLiveAudio.launch({ ...relay, callbacks, signal }) : LiveAudio.launch({ callbacks, signal });
+  },
 };
 
 type NativeAudio = Awaited<ReturnType<LiveDependencies["audio"]>>;
@@ -489,7 +493,9 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
               ? "Cannot start main Live. Wait for the text turn to finish, then retry /live. If it persists, restart Bruv; the ordinary prompt/runtime could not be acquired."
               : this.audio
                 ? "Voice startup failed [" + stage + "]; details withheld"
-                : audioLaunchDiagnostic(),
+                : process.env.BRUV_LIVE_RELAY_URL
+                  ? "Browser audio could not connect. Click Enable audio for this terminal session, then retry /live"
+                  : audioLaunchDiagnostic(),
           );
       }
     }
@@ -554,7 +560,8 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           },
           error: (code, _message, detail) => this.fail(audioDiagnostic(code, detail)),
           closed: () => {
-            if (this.alive) this.fail(audioDiagnostic("helper_failure"));
+            if (this.alive)
+              this.fail(audioDiagnostic(process.env.BRUV_LIVE_RELAY_URL ? "browser_disconnected" : "helper_failure"));
           },
         },
         this.controller.signal,
@@ -1022,7 +1029,9 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         try {
           consent = await ctx.ui.confirm(
             "Mic check",
-            "Open microphone and speakers briefly? No playback, provider or agent tools. Audio is discarded, not saved or sent. macOS may ask for microphone access.",
+            process.env.BRUV_LIVE_RELAY_URL
+              ? "Open this browser microphone briefly? Audio crosses the session relay for this check, then is discarded. No provider or agent tools."
+              : "Open microphone and speakers briefly? No playback, provider or agent tools. Audio is discarded, not saved or sent. macOS may ask for microphone access.",
           );
         } catch {
           /* dialog closed */
@@ -1085,7 +1094,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         try {
           consent = await ctx.ui.confirm(
             "Speaker check",
-            "Play a quiet test sound and briefly open the microphone? Lower speaker volume and stay quiet. Local only: no provider or agent tools. Audio stays in memory and is discarded.",
+            "Play a quiet test sound and briefly open the microphone? Lower speaker volume and stay quiet. No provider or agent tools. Device audio stays in memory and is discarded; browser audio crosses the session relay.",
           );
         } catch {
           /* dialog closed */
@@ -1129,7 +1138,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         );
       } else if (action === "start" || action === "setup") {
         if (!deps.local(ctx.mode)) {
-          ctx.ui.notify("Live requires a local interactive macOS or Linux terminal.", "warning");
+          ctx.ui.notify(
+            "Live requires a local interactive terminal or an explicitly configured browser audio relay.",
+            "warning",
+          );
           return;
         }
         if (current || stoppingRun || entry || confirmation !== undefined || probe || speakerProbe || saving) {
