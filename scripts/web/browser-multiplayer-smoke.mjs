@@ -321,11 +321,9 @@ try {
   assert(await a.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")));
   await a.screenshot({
     caret: "initial",
-    caret: "initial",
     path: join(project, "artifacts/web-multiplayer-owner.png"),
   });
   await b.screenshot({
-    caret: "initial",
     caret: "initial",
     path: join(project, "artifacts/web-multiplayer-observer.png"),
   });
@@ -356,7 +354,6 @@ try {
   );
   await Bun.write(join(project, "artifacts/voice-alignment.json"), JSON.stringify(voiceGeometry, null, 2));
   await a.screenshot({
-    caret: "initial",
     caret: "initial",
     path: join(project, "artifacts/web-multiplayer-owner-phone.png"),
   });
@@ -440,7 +437,6 @@ try {
     try {
       console.error("BROWSER", index, await page.locator("body").innerText());
       await page.screenshot({
-        caret: "initial",
         caret: "initial",
         path: join(project, "artifacts/web-multiplayer-failure-" + index + ".png"),
       });

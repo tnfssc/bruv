@@ -72,3 +72,11 @@ PTY/input/output/reload assertions pass. Parent should judge those raw frames.
 
 No Safari/iOS, physical phone/keyboard/mic, paid voice calls, full repo suite,
 push, new PR or hosted CI claim. Parent integrates and checks PR64 CI.
+
+## CI follow-up
+
+Hosted run37967203074 stopped all three Linux shards at lint: four screenshot calls in browser-multiplayer-smoke.mjs repeated caret:initial. CI policy failed because Linux failed; native audio and macOS passed. Remove only the duplicate keys, preserving capture behavior. The original focused formatting check did not run lint. Run repo lint before the corrective push and watch hosted CI on PR64.
+
+Repair worktree: /home/tnfssc/.bruv/worktrees/bruv-web-inline-ci. Branch: bruv/web-inline-ci. Base656b146d. Values stay unchanged: existing shipped-path checks apply. No new product or renderer behavior.
+
+Repair verification: repository `bun run lint` and `bun run format:check` both exit0. Existing warnings remain. No tests or settings were weakened. Hosted rerun remains pending.
