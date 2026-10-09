@@ -56,12 +56,12 @@ The first signed commit failed because the machine's /tmp tmpfs is full (16 GiB)
 
 Next after the user's choice: build a distinct version from this pinned source and commit, package the full runtime, smoke-test it with isolated userdata and no automatic continuation. The build script is apps/server/scripts/cli.ts build-exe; it requires Node 25.7+ and targets Node 26.8.2. The current shell has Node 24.21.0. Use an owned build runtime if needed. scripts/build-cli-archive.ts needs the executable, client assets, resource monitor, and native external dependencies. Use the supported updater with T3CODE_RELEASE_BASE_URL for an exact patched version. Do not hot-overwrite the active 2702 runtime.
 
-## Bruv-only workaround (in progress)
+## Bruv-only workaround
 
 User permits Bruv changes, still forbids T3 patching. Prefer an explicit human Fast command over a hidden settings sync. T3’s composer remains broken, so do not pretend its toggle controls this workaround.
 
 Implementation task_1174b544 owns /home/tnfssc/.bruv/worktrees/t3-1d0882e1-5442693331ce-task_1174b544, branch bruv/add-bruv-fast-controls-for-t3-threads-1174b544. It exposes Fast in the native /bruv command catalog and adds narrowly scoped `on --accept-cost` consent to the existing native Fast handler. Target commands: `/bruv fast on --accept-cost`, `/bruv fast off`, `/bruv fast status`. Existing Fast persistence, model/auth checks and child inheritance remain the owners. No paid probes or installed changes by the worker.
 
-Research task_8a59287b checks whether authenticated host configuration offers a simpler automatic bridge, including per-turn freshness. The parent will assess its result, review the command patch, test integration, and decide deployment next. Both task results are pending.
+Research task_8a59287b checks whether authenticated host configuration offers a simpler automatic bridge, including per-turn freshness. The research result rules out silent recovery because saved options are not tied to the active run. The parent integrated the command patch, ran focused tests and packaged smoke, and installed only Bruv. See the workaround note for exact proof and remaining limits.
 
 The Bruv-only command implementation is recorded in [Fast command workaround](bruv-fast-command-workaround.md).

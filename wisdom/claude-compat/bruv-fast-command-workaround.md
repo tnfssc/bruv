@@ -34,3 +34,15 @@ One initial run failed only at a new disk reopen assertion: Pi does not create a
 This is source-level proof, not installed/runtime UI acceptance. No build was deployed or service restarted. Parent reviews and integrates the commit. Provider billing remains authoritative; tests prove priority request serialization, not charged usage or latency.
 
 Values reviewed and unchanged. Existing values already cover explicit user choices, one owner, real-path proof, truthful UI claims, and worktree-owned temp state.
+
+## Parent integration and local install
+
+Integrated as c2dfc6ca on t3/fix-subagent-model-speed. Parent reviewed the parser, command admission, persistence and inheritance tests. The only cherry-pick conflict was the live handoff note; both the official-only decision and workaround link were kept. A bounded shell output initially shortened that note during resolution; restored the complete file from Git before amending the integration commit.
+
+Parent reran the four focused suites in an isolated environment: 52 tests / 372 assertions passed, plus the nested Fast connector cases. Built the normal binary and connector pair with an owned TMPDIR. A packaged NDJSON smoke test initialized the real connector, found bruv:fast, checked status, bare-on refusal, explicit on, status and off. It sent no model prompt and used only fake OAuth credentials in owned storage. The first smoke launch omitted the required consent for bypassPermissions; reran with ordinary default permissions instead. No permission guard was relaxed.
+
+Installed only the tested Bruv pair via scripts/release/install-local.sh with BRUV_SKIP_BUILD=1. The installed pair reports 0.16.23. This is a local build with the command patch, not a newly published release. Repeated the isolated NDJSON smoke against /home/tnfssc/.local/bin/bruv; it passed. Old 0.16.22 binaries are retained at this parent worktree's .tmp/fast-build/previous-bin for rollback. T3 remains official 2702 and was not restarted or modified. Existing connector processes still have old code; start a new Bruv thread/process to discover and use the command.
+
+Research task_8a59287b rejected silent MCP recovery: t3_thread_configuration exposes current saved options, not active-run options. T3 can save the next turn's Fast choice while the current run continues with the same model. Matching model/provider cannot prove the run's billing choice. The explicit human command avoids that mismatch and needs no new hidden settings owner.
+
+No real provider tier, latency, or billing claim. The child request test proves mocked priority serialization; the installed smoke proves command dispatch and state. Composer Fast selection and child badges remain outside this workaround. Values unchanged: existing explicit-choice, one-owner, and proof-scope guidance applies.
