@@ -6,7 +6,7 @@ Parent integration: /home/tnfssc/.bruv/worktrees/bruv-update-download-feedback
 Branch: fix/update-download-feedback. Base: 0610c218.
 Timeout worker: task_005977ae, /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_005977ae.
 Progress worker: task_2f20e906, /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_2f20e906.
-Both workers must commit locally. Parent must review and combine them here, test the real output, then check files and commits. No push, release or installed replacement was requested.
+Both workers must commit locally. Parent must review and combine them here, test the real output, then check files and commits. User later asked to open a PR; push and PR creation are now requested. No release or installed replacement was requested.
 
 ## Network evidence
 
@@ -38,6 +38,10 @@ Example final progress line:
 
     Downloading bruv-linux-x64 7.0 MiB / 88.2 MiB (7%) · 60.0 KiB/s · ETA 23m 5s
 
-Both workers finished and their changes are combined. Final standalone typecheck, focused formatting (six files), and git diff --check pass. No push, PR, release or local installation was requested. This branch stays local until that handoff is asked for. The installed updater will not gain this behavior merely because source is fixed. Stop/restart guidance for real pair replacement stays unchanged.
+Both workers finished and their changes are combined. Final standalone typecheck, focused formatting (six files), and git diff --check pass. User asked to make a PR after the local checks passed. Push this branch and open against develop. No release or local installation was requested. The installed updater will not gain this behavior merely because source is fixed. Stop/restart guidance for real pair replacement stays unchanged.
 
 Wisdom adds the task evidence and both worker notes; paired-update links the follow-ups. Values stay unchanged: this is one feature's time budget and display behavior, already covered by honest proof and visible real work.
+
+## PR handoff
+
+User asked to make a PR on 2026-10-09. Keep the tested code and wisdom together. Open fix/update-download-feedback against develop. No merge, release or installed update is part of this request. Values stay unchanged; this is delivery of the same checked feature.
