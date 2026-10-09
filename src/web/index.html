@@ -1,3 +1,19 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bruv terminal</title><link rel="stylesheet" href="/terminal.css"><script type="module" src="/terminal.js"></script></head>
-<body><header><strong>Bruv</strong><span id="status" role="status">Starting terminal…</span><button type="button" id="audio-toggle" disabled>Enable microphone</button><span id="audio-status" role="status">Voice off</span></header><main id="terminal"></main></body></html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content"><title>Bruv terminal</title><link rel="stylesheet" href="/terminal.css"><script type="module" src="/terminal.js"></script></head>
+<body>
+  <header><strong>Bruv</strong><span id="status" role="status">Starting terminal…</span><button type="button" id="audio-toggle" disabled>Enable microphone</button><span id="audio-status" role="status">Voice off</span></header>
+  <div id="notice" role="alert"></div>
+  <div class="workspace-layout">
+    <aside aria-label="Workspaces">
+      <div class="sidebar-heading"><strong>Workspaces</strong><button type="button" id="add-workspace">Add</button><button type="button" id="reload-workspaces" aria-label="Reload workspaces">↻</button></div>
+      <nav id="workspace-list" aria-label="Choose workspace"></nav>
+      <button type="button" id="remove-workspace">Remove workspace</button>
+    </aside>
+    <main class="terminal-area">
+      <div class="tab-bar"><div id="tab-list" role="tablist" aria-label="Terminal tabs"></div><div class="tab-actions"><button type="button" id="new-tab">New tab</button><button type="button" id="rename-tab">Rename</button><button type="button" id="close-tab">Close tab</button></div></div>
+      <div id="terminal"><p id="empty-terminal">Add an existing folder to start a terminal. Removing a workspace never deletes its folder.</p></div>
+    </main>
+  </div>
+</body>
+</html>
