@@ -8,6 +8,10 @@
 
 An opinionated coding agent. Built on [Pi](https://pi.dev).
 
+| ![bruv delegates a fix to a subagent in its own Git worktree](site/assets/demos/delegate.gif) | ![bruv runs tests in the background while answering another question](site/assets/demos/background.gif) |
+| --- | --- |
+| ![bruv reads project wisdom, finishes a regression test, and saves the next steps](site/assets/demos/wisdom.gif) | ![Live mode starts, listens while Space is held, then speaks a reply and shows its transcript](site/assets/demos/live.gif) |
+
 </div>
 
 ### Install
@@ -45,25 +49,3 @@ bruv -p "Describe this tree"  # Run one prompt and exit
 bruv -c                       # Continue the latest session
 bruv -r                       # Pick a saved session to resume
 ```
-
-### Demos
-
-Scripted terminal demos from [the website](https://bruv.sharath.page), plus Live mode.
-
-**Give the fix its own branch**
-
-![bruv delegates a fix to a subagent in its own Git worktree](site/assets/demos/delegate.gif)
-
-**Keep talking while tests run**
-
-![bruv runs tests in the background while answering another question](site/assets/demos/background.gif)
-
-**Pick up where you left off**
-
-![bruv reads project wisdom, finishes a regression test, and saves the next steps](site/assets/demos/wisdom.gif)
-
-**Talk to bruv**
-
-Start with `/live start`, then hold Space to speak. Requires a configured voice provider and local audio.
-
-![Live mode starts, listens while Space is held, then speaks a reply and shows its transcript](site/assets/demos/live.gif)
