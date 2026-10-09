@@ -8,6 +8,10 @@
 
 An opinionated coding agent. Built on [Pi](https://pi.dev).
 
+| ![bruv delegates a fix to a subagent in its own Git worktree](site/assets/demos/delegate.gif) | ![bruv runs tests in the background while answering another question](site/assets/demos/background.gif) |
+| --- | --- |
+| ![bruv reads project wisdom, finishes a regression test, and saves the next steps](site/assets/demos/wisdom.gif) | ![Live mode starts, listens while Space is held, then speaks a reply and shows its transcript](site/assets/demos/live.gif) |
+
 </div>
 
 ### Install

@@ -22,6 +22,7 @@ test("working values frame the agent separately from tool reference", () => {
     "Find simple way",
     "Share work.",
     "Solve real problem.",
+    "All writing:",
     "Assume fresh start.",
   ])
     expect(workingValues.some((line) => line.startsWith(value))).toBe(true);
@@ -48,6 +49,17 @@ test("shared engineering guidance favors product work over speculative defenses"
   expect(guidance).toContain("Fix observed problems. Accept known gaps.");
   expect(guidance).toContain("No speculative guards, fallbacks, state, or test matrices.");
   expect(guidance).toContain("Keep essential security and data-loss protections.");
+});
+
+test("shared writing guidance uses the nearby voice and keeps needed detail", () => {
+  const guidance = collaborationGuidance();
+  expect(guidance).toContain("use same voice as rest. Read nearby text first.");
+  expect(guidance).toContain("Short words. Short sentences. Plain talk.");
+  expect(guidance).toContain("app text, prompts, docs, comments, notes, replies");
+  expect(guidance).toContain("Cut extra ideas and sections, not just words.");
+  expect(guidance).toContain("No tell it again.");
+  expect(guidance).toContain("Better layout can save words.");
+  expect(guidance).toContain("Keep needed facts, steps, warnings, reasons. Need depth? Keep it.");
 });
 
 test("background notice identifies jobs and deferred results without turn-management coaching", () => {
