@@ -1,5 +1,13 @@
 # Fast lost before Bruv launch
 
+## Current decision: official releases only
+
+On 2026-10-09 the user rejected T3 patching. Do not build, install, or deploy the local host patch. Only consider an official update. This overrides all earlier patched-build and restart plans below. The local patch is retained as research, not approved release work.
+
+Rechecked official releases at 20:24 UTC: newest nightly v0.0.46-nightly.20261009.2886 and newest preview v0.0.46-preview.20261009.2891 both still omit the instance catalog at all four compiler calls. Their compiler still defaults to the bundled Claude catalog. Latest stable is v0.0.45 (2026-10-02). No available official update was found to fix this loss. No update or restart was performed. Saved question q_99ac63f5-2a1f-425a-92fe-767b2beed4ea is resolved with the user’s official-only answer.
+
+Next: use an official release once its source fixes this path. No scheduled watcher was requested or started. Values unchanged: the existing rule to preserve the user’s choices covers this boundary.
+
 Work in progress on t3/fix-subagent-model-speed. User sees Astra High Fast spawn Sol High, not Fast. Do not dismiss the missing Fast label as cosmetic.
 
 ## Live evidence
