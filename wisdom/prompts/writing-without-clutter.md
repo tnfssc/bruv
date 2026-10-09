@@ -1,15 +1,23 @@
-# Write without clutter
+# Write like rest. No extra talk.
 
-The user cut the original README and the first GIF pass, then made the scope clear: this value applies to everything we write, including the app. They next asked to put it in the system prompt. See [the two cleanups and scope correction](../landing-page/readme-gifs.md#the-users-two-cleanups).
+The user cut the original README, then cut the GIF pass. We wrote too much. They kept the pitch, install, commands, and four GIFs in one small grid. See [both cuts](../landing-page/readme-gifs.md#the-users-two-cleanups).
 
-Added one bullet to Working together in `src/prompts/system.md`. It covers app text, prompts, docs, comments, notes, and replies. Cut repeated ideas and sections. Do not narrate what a UI, image, command, or example already says. Use layout and structure. Keep useful depth, facts, steps, warnings, and reasons. This is not a token cap or a rule to make every answer tiny.
+They said this applies to all writing. App text too. We put it in value 8, then `src/prompts/system.md`. But we changed the voice again. The user called that out: "again you dont follow exsting language voice. this repeated so many times bruv".
 
-`src/prompts.ts` embeds this source as `collaborationGuidance()` and extracts its bullets as `workingValues`. Roots and children use that shared guidance. Live uses the ordinary prompt hook too. Do not make another copy in each role or voice prompt. Explicit user-owned system prompts still control their own instructions. A source edit does not update a running compiled binary; rebuild it to get the new text.
+Read nearby text first. Match its words and rhythm. No say we follow the voice, then write in our own. The old wisdom prompt already says "Short words. Short sentences. Plain talk." Use that voice.
 
-Added a small wording check and included the new bullet in the existing working-values assertions. Existing prompt-delivery checks test that the shared values reach the model context.
+Rewrote the writing bullet and value 8. No new value or prompt layer. Cut extra ideas, not just words. Screen or example says it? No tell it again. Keep needed facts, steps, warnings, reasons. Need depth? Keep it.
 
-Worktree: `/home/tnfssc/.bruv/worktrees/bruv-writing-system-prompt`. Branch: `docs/writing-system-prompt`, from `64b72c0c`. PR base: `docs/writing-without-clutter` (#61). Prior worktrees stay untouched.
+## Where it reaches
 
-`bun install --frozen-lockfile`, `bun run prepare:assets`, and all 45 tests in `tests/prompts` passed. That includes the real prompt-delivery checks. `git diff --check` passed. Format before the final commit and push this task as its own PR. No release or deployed binary change is claimed.
+`src/prompts.ts` embeds `system.md`. `collaborationGuidance()` gives the text. `workingValues` gives its bullets. Roots, children, and Live use it. No need a copy for each role. User-owned system prompts still win. A running binary keeps its old text. Rebuild to get the change.
 
-Value 8 stays unchanged: this task puts the existing value in runtime guidance. No new general lesson.
+Tests check the wording and that values reach the model context. Green tests alone do not prove voice. Read the changed text beside what was there.
+
+## This pass
+
+Worktree: `/home/tnfssc/.bruv/worktrees/bruv-writing-voice`. Branch: `fix/writing-voice`. Started from `d5b9091b`. PR base: `docs/writing-system-prompt` (#62). Old worktrees stay as they are.
+
+Read the new bullet beside the old ones and `src/prompts/wisdom.md`. All 45 prompt tests passed, including prompt delivery. `git diff --check` passed. No release or running binary changed.
+
+Value 8 changed to the same plain voice as the prompt. The lesson stays the same; reading and matching nearby text is now part of it.
