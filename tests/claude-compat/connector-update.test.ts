@@ -157,26 +157,38 @@ describe("offline paired installation (synthetic downloaded normal)", () => {
       const result = await run([...updateCommand(entry), "--check"], { env: env() });
       expect(result.code).toBe(0);
       expect(result.stdout).toContain("Bruv pair update/repair available (" + releaseVersion + ")");
+      expect(result.stdout).not.toContain("Downloading");
       expect(await installedBytes()).toEqual(before);
       expect(await requests()).toEqual([RELEASES_URL]);
       await expectStageCleaned();
     },
   );
 
-  test.each(["subcommand", "launcher"] as const)("%s: verifies and publishes both siblings", async (entry) => {
-    const before = await installedBytes();
-    const result = await run(updateCommand(entry), { env: env() });
-    expect(result.code).toBe(0);
-    expect(result.stdout).toContain(
-      "Updated bruv and bruv-claude-compat to " + releaseVersion + ". Restart Bruv/T3 sessions.",
-    );
-    const after = await installedBytes();
-    expect(after.normal).not.toEqual(before.normal);
-    expect(after.connector).toEqual(await readFile(join(compiledFixtureDir, "bruv-claude-compat")));
-    await expectPairVersion(releaseVersion);
-    expect(await requests()).toEqual(pairDownloads(releaseVersion));
-    await expectStageCleaned();
-  });
+  test.each(["normal", "subcommand", "launcher"] as const)(
+    "%s: verifies and publishes both siblings",
+    async (entry) => {
+      const before = await installedBytes();
+      const result = await run(updateCommand(entry), { env: env() });
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain(
+        "Updated bruv and bruv-claude-compat to " + releaseVersion + ". Restart Bruv/T3 sessions.",
+      );
+      const progress = result.stdout.split("\n").filter((line) => /^(Downloading|Downloaded) bruv-/.test(line));
+      expect(progress).toHaveLength(4);
+      expect(progress[0]).toBe("Downloading " + normalAsset + " 0 B");
+      expect(progress[1]).toStartWith("Downloaded " + normalAsset + " ");
+      expect(progress[2]).toBe("Downloading " + connectorAsset + " 0 B");
+      expect(progress[3]).toStartWith("Downloaded " + connectorAsset + " ");
+      expect(result.stdout).not.toContain("\x1b");
+      expect(result.stdout).not.toContain("\r");
+      const after = await installedBytes();
+      expect(after.normal).not.toEqual(before.normal);
+      expect(after.connector).toEqual(await readFile(join(compiledFixtureDir, "bruv-claude-compat")));
+      await expectPairVersion(releaseVersion);
+      expect(await requests()).toEqual(pairDownloads(releaseVersion));
+      await expectStageCleaned();
+    },
+  );
 
   test("subcommand repairs a missing same-version connector", async () => {
     await rm(installation.connector);
