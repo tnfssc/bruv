@@ -150,3 +150,7 @@ The installer pins one release, verifies the matched CLI/connector checksums and
 ## Handoff
 
 [Landing-page wisdom](../wisdom/landing-page/README.md) records decisions and checks. Old gallery, raster and multi-page screenshots are historical. The `assets` command regenerates historical data under `captures/settings/`; this is not part of the normal build or current animated demos. Historical capture inputs and fidelity tests live in `captures/settings/`.
+
+## README GIFs
+
+Run `bun run gifs` to export the website demos and a README-only Live mode example. See [the asset notes](assets/demos/README.md) for requirements and sources. This does not change either website view.

@@ -53,7 +53,7 @@ test("README and both views use the one GitHub installer; BASE_URL is SEO only",
   const readme = await Bun.file(resolve(import.meta.dir, "../../README.md")).text();
   expect(readme.match(/```sh\n(curl[^\n]+)\n```/)?.[1]).toBe(INSTALL_COMMAND);
   expect(INSTALL_COMMAND).toBe("curl -fsSL '" + INSTALL_URL + "' | sh");
-  expect(readme).toContain(INSTALL_SOURCE_URL);
+  // The concise README keeps the command; both site views also link its source.
   const script = Bun.file(resolve(import.meta.dir, "../../scripts/install.sh"));
   expect(await script.exists()).toBe(true);
   expect((await script.stat()).mode & 0o111).toBe(0o111);

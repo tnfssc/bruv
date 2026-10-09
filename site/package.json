@@ -6,11 +6,12 @@
     "build": "bun scripts/build.ts",
     "preview": "bun scripts/preview.ts",
     "assets": "bun scripts/captures/extract-cells.ts",
-    "test": "bun test scripts/build.test.ts captures/settings/capture.test.ts scripts/scroll.test.ts demos.test.ts scripts/html-animation.test.ts scripts/startup.test.ts scripts/install.test.ts scripts/install-ui.test.ts && bun scripts/validate.ts",
+    "test": "bun test scripts/build.test.ts captures/settings/capture.test.ts scripts/scroll.test.ts demos.test.ts scripts/html-animation.test.ts scripts/startup.test.ts scripts/install.test.ts scripts/install-ui.test.ts scripts/readme-gifs.test.ts && bun scripts/validate.ts",
     "test:scroll": "bun test scripts/scroll.test.ts && bun scripts/validate.ts",
     "test:animation": "bun scripts/animation.ts",
     "test:html": "bun test scripts/html-animation.test.ts",
-    "test:install": "bun test scripts/install.test.ts scripts/install-ui.test.ts"
+    "test:install": "bun test scripts/install.test.ts scripts/install-ui.test.ts",
+    "gifs": "bun scripts/readme-gifs.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.11.1",
