@@ -62,7 +62,7 @@ try {
             .map(([, flag]) => flag);
           const cell = {
             text: c.getChars() || " ",
-            style: [...flags, "38;2;" + rgb(c.getFgColor()), "48;2;" + rgb(c.getBgColor())].join(";"),
+            style: [...flags, `38;2;${rgb(c.getFgColor())}`, `48;2;${rgb(c.getBgColor())}`].join(";"),
           };
           const prev = runs.at(-1);
           if (prev?.style === cell.style) prev.text += cell.text;
@@ -83,7 +83,7 @@ try {
     cols: crop.cols,
     rows,
   };
-  await Bun.write(resolve(root, "captures/settings/settings-cells.json"), JSON.stringify(data, null, 2) + "\n");
+  await Bun.write(resolve(root, "captures/settings/settings-cells.json"), `${JSON.stringify(data, null, 2)}\n`);
   console.log("Extracted", rows.length, "rows of faithful glyph/color/style runs from Ghostty.");
 } finally {
   await browser.close();

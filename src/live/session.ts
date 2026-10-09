@@ -421,7 +421,8 @@ export class VoiceSession {
             return;
           }
           // PlaybackScheduler bounds retained PCM; a streamed turn has no total-duration budget.
-          this.emit(() => this.callbacks.onAudio?.(audio.data!, this.playbackEpochValue));
+          const data = audio.data;
+          this.emit(() => this.callbacks.onAudio?.(data, this.playbackEpochValue));
           if (this.stateValue !== "ready") return;
         }
       for (const [value, input] of [

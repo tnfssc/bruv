@@ -10,7 +10,7 @@ export type Request = Readonly<{ id: string; grantId: string; taskId: string; ki
 export type Reply = Readonly<{ requestId: string; grantId: string; taskId: string; value?: string; error?: string }>;
 const inside = (root: string, target: string) => {
   const rel = relative(root, target);
-  return !!rel && rel !== ".." && !rel.startsWith(".." + sep) && !isAbsolute(rel);
+  return !!rel && rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
 };
 
 /** Bounded, fatal UTF-8 read; reject symlinks at every path element. Node path-based APIs

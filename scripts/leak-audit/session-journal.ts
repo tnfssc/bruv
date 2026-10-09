@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Isolated retention probe; no existing session or files are touched. */
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { heapStats } from "bun:jsc";
@@ -24,12 +25,16 @@ async function sample(label: string) {
 await sample("baseline");
 for (let batch = 1; batch <= 4; batch++) {
   for (let i = 0; i < 128; i++)
-    manager!.appendMessage({ role: "user", content: randomBytes(48 * 1024).toString("base64"), timestamp: Date.now() });
-  const kept = manager!.appendMessage({ role: "user", content: "retained tail", timestamp: Date.now() });
-  manager!.appendCompaction("Small summary", kept, 100000);
-  await sample("after compaction " + batch);
+    requireValue(manager).appendMessage({
+      role: "user",
+      content: randomBytes(48 * 1024).toString("base64"),
+      timestamp: Date.now(),
+    });
+  const kept = requireValue(manager).appendMessage({ role: "user", content: "retained tail", timestamp: Date.now() });
+  requireValue(manager).appendCompaction("Small summary", kept, 100000);
+  await sample(`after compaction ${batch}`);
 }
-manager!.newSession();
+requireValue(manager).newSession();
 await sample("newSession resets journal");
 
 for (let i = 0; i < 5; i++) {

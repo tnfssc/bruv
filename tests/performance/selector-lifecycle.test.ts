@@ -1,3 +1,4 @@
+import { requireValue } from "../../scripts/lib/require-value";
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -41,9 +42,9 @@ test("selector projection matches pinned pre-patch geometry and 80/20-column out
   expect(result.snapshots).toHaveLength(14);
   expect(result.accepted).toBe("alternate");
   expect(result.cancelled).toBe(1);
-  const folded = result.snapshots.find((s) => s.name === "fold");
-  expect(folded.visible.map((n: any) => n.id)).toEqual(["root", "second-leaf"]);
-  expect(result.snapshots.find((s) => s.name === "empty-search").visible).toEqual([]);
+  const folded = requireValue(result.snapshots.find((s) => s.name === "fold"));
+  expect(requireValue(folded.visible).map((n) => n.id)).toEqual(["root", "second-leaf"]);
+  expect(requireValue(result.snapshots.find((s) => s.name === "empty-search")).visible).toEqual([]);
 });
 
 test("native session entry count retains in-memory semantics", () => {
@@ -104,7 +105,7 @@ function writeBranchedHistory(root: string): string {
   const timestamp = "2026-01-01T00:00:00.000Z";
   writeFileSync(
     file,
-    [
+    `${[
       { type: "session", version: 3, id: "count", timestamp, cwd: root },
       {
         type: "message",
@@ -131,7 +132,7 @@ function writeBranchedHistory(root: string): string {
       },
     ]
       .map((entry) => JSON.stringify(entry))
-      .join("\n") + "\n",
+      .join("\n")}\n`,
   );
   return file;
 }

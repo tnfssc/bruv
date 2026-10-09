@@ -16,13 +16,13 @@ const results = {
 };
 const trace = join(base, "trace.ndjson");
 writeFileSync(trace, "");
-const log = (kind, data) => appendFileSync(trace, JSON.stringify({ time: Date.now(), kind, data }) + "\n");
+const log = (kind, data) => appendFileSync(trace, `${JSON.stringify({ time: Date.now(), kind, data })}\n`);
 const home = join(base, "home"),
   work = join(base, "work"),
   agentDir = join(base, "agent");
 for (const d of [home, work, agentDir]) mkdirSync(d, { recursive: true });
 const env = {
-  PATH: dirname(process.execPath) + ":/usr/bin:/bin",
+  PATH: `${dirname(process.execPath)}:/usr/bin:/bin`,
   HOME: home,
   XDG_CONFIG_HOME: join(home, ".config"),
   XDG_CACHE_HOME: join(home, ".cache"),
@@ -42,14 +42,14 @@ results.env = env;
 let rid = 0;
 const prose = (text) => ({
   type: "message",
-  id: "msg_" + ++rid,
+  id: `msg_${++rid}`,
   role: "assistant",
   content: [{ type: "output_text", text, annotations: [] }],
   phase: "final_answer",
 });
 const tool = (id, code) => ({
   type: "function_call",
-  id: "fc_" + id,
+  id: `fc_${id}`,
   call_id: id,
   name: "execute",
   arguments: JSON.stringify({ label: "Local bridge research", code }),
@@ -79,7 +79,7 @@ function fixture(body) {
       };
     return { items: [prose("EXECUTE_FINISHED")] };
   }
-  if (latest.includes("RESUME_PROBE")) return { items: [prose("RESUME_OK_HISTORY_" + called.size)] };
+  if (latest.includes("RESUME_PROBE")) return { items: [prose(`RESUME_OK_HISTORY_${called.size}`)] };
   if (latest.includes("HELLO_PROBE")) return { items: [prose("HELLO_FROM_LOCAL_RESPONSES")] };
   return { items: [prose("AUTOMATIC_LATE_COMPLETION_OBSERVED")] };
 }
@@ -118,7 +118,7 @@ function* events(items) {
   yield {
     type: "response.completed",
     response: {
-      id: "resp_" + ++rid,
+      id: `resp_${++rid}`,
       status: "completed",
       output: items,
       usage: { input_tokens: 80, output_tokens: 40, total_tokens: 120 },
@@ -150,11 +150,11 @@ const server = createServer(async (req, res) => {
     if (res.destroyed) return;
   }
   res.writeHead(200, { "Content-Type": "text/event-stream", Connection: "close" });
-  for (const ev of events(f.items)) res.write("event: " + ev.type + "\ndata: " + JSON.stringify(ev) + "\n\n");
+  for (const ev of events(f.items)) res.write(`event: ${ev.type}\ndata: ${JSON.stringify(ev)}\n\n`);
   res.end();
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
-const endpoint = "http://127.0.0.1:" + server.address().port + "/v1";
+const endpoint = `http://127.0.0.1:${server.address().port}/v1`;
 writeFileSync(
   join(agentDir, "models.json"),
   JSON.stringify(
@@ -196,9 +196,9 @@ class Driver {
       env,
     });
     let b = "";
-    log(label + ":spawn", { pid: this.child.pid });
-    this.child.on("exit", (code, signal) => log(label + ":exit", { code, signal }));
-    this.child.stderr.on("data", (d) => log(label + ":stderr", d.toString()));
+    log(`${label}:spawn`, { pid: this.child.pid });
+    this.child.on("exit", (code, signal) => log(`${label}:exit`, { code, signal }));
+    this.child.stderr.on("data", (d) => log(`${label}:stderr`, d.toString()));
     this.child.stdout.on("data", (d) => {
       b += d;
       for (let n = b.indexOf("\n"); n >= 0; n = b.indexOf("\n")) {
@@ -209,10 +209,10 @@ class Driver {
         try {
           x = JSON.parse(s);
         } catch {
-          log(label + ":invalid", s);
+          log(`${label}:invalid`, s);
           continue;
         }
-        log(label + ":rx", x);
+        log(`${label}:rx`, x);
         if (x.method && x.id != null) {
           this.requests.push(x);
           this.send({
@@ -235,15 +235,15 @@ class Driver {
     });
   }
   send(x) {
-    log(this.label + ":tx", x);
-    this.child.stdin.write(JSON.stringify(x) + "\n");
+    log(`${this.label}:tx`, x);
+    this.child.stdin.write(`${JSON.stringify(x)}\n`);
   }
   call(method, params = {}, timeout = 20000) {
     return new Promise((resolve, reject) => {
       const id = ++this.seq;
       const t = setTimeout(() => {
         this.pending.delete(id);
-        reject(new Error("timeout " + method));
+        reject(new Error(`timeout ${method}`));
       }, timeout);
       this.pending.set(id, { resolve, reject, t });
       this.send({ jsonrpc: "2.0", id, method, params });

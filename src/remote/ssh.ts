@@ -4,7 +4,7 @@ import type { Transport } from "./client";
 
 export const validHost = (host: string) => /^[a-zA-Z0-9_][a-zA-Z0-9_.@-]*$/.test(host) && !host.startsWith("-");
 export const validPath = (path: string) => path === "bruv" || (path.startsWith("/") && !/[\r\n\0]/.test(path));
-const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
+const quote = (s: string) => `'${s.replaceAll("'", "'\\''")}'`;
 
 /** One SSH stdio invocation per operation. SSH's remote command is a shell string: quote only the executable. */
 export async function sshControl<T>(
@@ -37,7 +37,7 @@ export async function sshControl<T>(
         "PermitLocalCommand=no",
         "--",
         host,
-        quote(bruvPath) + " " + entrypoint,
+        `${quote(bruvPath)} ${entrypoint}`,
       ],
       { env: scrubT3BridgeEnvironment(process.env), stdio: ["pipe", "pipe", "pipe"] },
     );
@@ -77,7 +77,7 @@ export async function sshControl<T>(
     child.on("close", (code) => {
       cleanup();
       if (failure) return reject(failure);
-      if (code !== 0) return reject(new Error("SSH remote control failed: " + (err.trim() || "exit " + code)));
+      if (code !== 0) return reject(new Error(`SSH remote control failed: ${err.trim() || `exit ${code}`}`));
       try {
         resolve(JSON.parse(out));
       } catch {
@@ -85,7 +85,7 @@ export async function sshControl<T>(
       }
     });
     child.stdin.on("error", () => {});
-    child.stdin.end(JSON.stringify(request) + "\n");
+    child.stdin.end(`${JSON.stringify(request)}\n`);
   });
 }
 

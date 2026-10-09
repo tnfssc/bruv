@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { type Context, lazyStream, type Model, normalizeContext } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { type Api, type Context, lazyStream, type Model, normalizeContext } from "@earendil-works/pi-ai";
+import type { SessionEntry, ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { recordDiagnostic } from "../diagnostics.js";
 import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
@@ -94,7 +94,7 @@ function record(value: unknown): value is Payload {
 function normalizedUrl(value: string): string {
   return value.replace(/\/+$/, "");
 }
-function officialSurface(model: Pick<Model<any>, "provider" | "api" | "baseUrl">): boolean {
+function officialSurface(model: Pick<Model<Api>, "provider" | "api" | "baseUrl">): boolean {
   return (
     (model.provider === "openai" &&
       model.api === "openai-responses" &&
@@ -107,8 +107,11 @@ function officialSurface(model: Pick<Model<any>, "provider" | "api" | "baseUrl">
 function leafId(ctx: ExtensionContext): string | null {
   return (ctx.sessionManager as { getLeafId?: () => string | null }).getLeafId?.() ?? null;
 }
-function branch(ctx: ExtensionContext): any[] {
-  const manager = ctx.sessionManager as { getBranch?: () => any[]; getEntries?: () => any[] };
+function branch(ctx: ExtensionContext): SessionEntry[] {
+  const manager = ctx.sessionManager as {
+    getBranch?: () => SessionEntry[];
+    getEntries?: () => SessionEntry[];
+  };
   return manager.getBranch?.() ?? manager.getEntries?.() ?? [];
 }
 const MAX_ID_LENGTH = 256;
@@ -211,7 +214,7 @@ function persistSetting(pi: ExtensionAPI, manager: ExtensionContext["sessionMana
 }
 
 export function nativeFastSupport(
-  model: Pick<Model<any>, "provider" | "id" | "api" | "baseUrl">,
+  model: Pick<Model<Api>, "provider" | "id" | "api" | "baseUrl">,
   oauth = false,
 ): { supported: true; tier: "priority"; surface: "api" | "chatgpt" | "codex" } | { supported: false; reason: string } {
   const baseUrl = normalizedUrl(model.baseUrl);
@@ -278,7 +281,7 @@ type RequestAuthorization = {
 type RequestTierPolicy = Pick<RequestAuthorization, "tier" | "blocked">;
 
 // Compaction is request-local; otherwise the newest branch authorization wins.
-function requestTierPolicy(ctx: ExtensionContext, model: Model<any>, sessionId: string): RequestTierPolicy | undefined {
+function requestTierPolicy(ctx: ExtensionContext, model: Model<Api>, sessionId: string): RequestTierPolicy | undefined {
   if (standardTierScope.getStore() && officialSurface(model)) return { tier: "default" };
   const found = resolveSetting(ctx, model, sessionId);
   if (found.kind === "absent") return;
@@ -313,7 +316,7 @@ function requestTierPolicy(ctx: ExtensionContext, model: Model<any>, sessionId: 
 
 function captureRequestAuthorization(
   ctx: ExtensionContext | undefined,
-  model: Model<any>,
+  model: Model<Api>,
   requestedSessionId: unknown,
 ): RequestAuthorization | undefined {
   if (!ctx || typeof requestedSessionId !== "string" || requestedSessionId !== ctx.sessionManager.getSessionId())
@@ -334,8 +337,19 @@ type FastController = {
   context?: ExtensionContext;
 };
 type RuntimeSeam = {
-  streamSimple: (model: Model<any>, context: Context, options?: Record<string, any>) => unknown;
-  prepareRequest: (model: Model<any>, options?: Record<string, any>) => Promise<any>;
+  streamSimple: (
+    model: Model<Api>,
+    context: Context,
+    options?: import("@earendil-works/pi-ai").ModelsSimpleStreamOptions,
+  ) => unknown;
+  prepareRequest: (
+    model: Model<Api>,
+    options?: import("@earendil-works/pi-ai").ModelsSimpleStreamOptions,
+  ) => Promise<{
+    provider: import("@earendil-works/pi-ai").Provider;
+    model: Model<Api>;
+    options: import("@earendil-works/pi-ai").ModelsSimpleStreamOptions;
+  }>;
   isUsingOAuth: (provider: string) => boolean;
 };
 type RuntimePatch = {
@@ -351,9 +365,9 @@ const COMPATIBILITY_ERROR =
 // One immutable authorization covers preparation, payload hooks, and transport.
 function streamAuthorizedRequest(
   runtime: RuntimeSeam,
-  model: Model<any>,
+  model: Model<Api>,
   context: Context,
-  options: Record<string, any> | undefined,
+  options: import("@earendil-works/pi-ai").ModelsSimpleStreamOptions | undefined,
   authorization: RequestAuthorization,
 ) {
   // Match ModelRuntime before bypassing its streamSimple dispatch: providers
@@ -363,7 +377,7 @@ function streamAuthorizedRequest(
   const guardedOptions = {
     ...options,
     ...(authorization.tier === undefined ? {} : { serviceTier: authorization.tier }),
-    onPayload: async (payload: unknown, payloadModel: Model<any>) => {
+    onPayload: async (payload: unknown, payloadModel: Model<Api>) => {
       if (authorization.blocked) {
         fastDiagnostic(authorization.manager, FAST_GUARD_BLOCKED_AUTHORIZATION, "blocked", authorization.operationId);
         throw new Error(authorization.blocked);
@@ -428,7 +442,7 @@ function streamAuthorizedRequest(
       const key = prepared.options?.apiKey;
       const headers = { ...prepared.model.headers, ...prepared.options?.headers };
       const authOverride = Object.entries(headers).some(
-        ([name, value]) => name.toLowerCase() === "authorization" && value !== "Bearer " + key,
+        ([name, value]) => name.toLowerCase() === "authorization" && value !== `Bearer ${key}`,
       );
       if (typeof key !== "string" || !key || !key.startsWith("sk-") !== authorization.oauth || authOverride) {
         fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
@@ -528,7 +542,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
   };
 
   // Callers admit the model and billing consent; this owns the resulting checkpoint.
-  const persistSelection = (ctx: ExtensionContext, model: Model<any>, enabled: boolean): boolean => {
+  const persistSelection = (ctx: ExtensionContext, model: Model<Api>, enabled: boolean): boolean => {
     const entry: Setting = {
       version: ENTRY_VERSION,
       oauth: ctx.modelRegistry.isUsingOAuth(model),

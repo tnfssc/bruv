@@ -4,7 +4,7 @@ import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 const sha='cfa4f765ec05950a032b6c1cf9cdfff0c2391545';
-const base='https://raw.githubusercontent.com/pingdotgg/t3code/'+sha+'/';
+const base=`https://raw.githubusercontent.com/pingdotgg/t3code/${sha}/`;
 const files={
   semver:'packages/shared/src/semver.ts',
   snapshot:'apps/server/src/provider/providerSnapshot.ts',
@@ -15,16 +15,16 @@ const files={
 };
 const sources:Record<string,string>={};
 for(const [name,path] of Object.entries(files)) {
- const r=await fetch(base+path);if(!r.ok)throw Error(path+': HTTP '+r.status);
+ const r=await fetch(base+path);if(!r.ok)throw Error(`${path}: HTTP ${r.status}`);
  sources[name]=await r.text();
 }
 function part(name:string,start:string,end:string) {
- const s=sources[name]!; const a=s.indexOf(start),b=s.indexOf(end,a+start.length);
- if(a<0||b<0)throw Error(name+': missing source anchors');return s.slice(a,b);
+ const s=sources[name]; const a=s.indexOf(start),b=s.indexOf(end,a+start.length);
+ if(a<0||b<0)throw Error(`${name}: missing source anchors`);return s.slice(a,b);
 }
 const code=[
  "import assert from 'node:assert/strict';",
- sources.semver!,
+ sources.semver,
  part('snapshot','export function parseGenericCliVersion','/**'),
  "const PROVIDER_UPDATE_ACTION_TOAST_MESSAGE='Install the update now or review provider settings.';",
  part('maintenance','function deriveVersionAdvisory','export function createProviderVersionAdvisory'),
@@ -38,5 +38,5 @@ const dir=await mkdtemp(join(tmpdir(),'t3-unknown-version-'));
 try {
  const path=join(dir,'check.ts');await writeFile(path,code);
  const child=Bun.spawn([process.execPath,path],{stdout:'inherit',stderr:'inherit'});
- const result=await child.exited;if(result!==0)throw Error('Probe exited '+result);
+ const result=await child.exited;if(result!==0)throw Error(`Probe exited ${result}`);
 } finally {await rm(dir,{recursive:true,force:true});}

@@ -1,3 +1,4 @@
+import { requireValue } from "../scripts/lib/require-value";
 export type Cell = { text: string; style: string };
 
 /**
@@ -18,16 +19,16 @@ export const demoIds = ["delegate", "background", "wisdom"] as const;
 export type DemoId = (typeof demoIds)[number];
 export const demoHeight = (cols: number): number => (cols < 60 ? 27 : 23);
 
-const rgb = (r: number, g: number, b: number) => "38;2;" + r + ";" + g + ";" + b;
+const rgb = (r: number, g: number, b: number) => `38;2;${r};${g};${b}`;
 const background = "48;2;20;24;32";
 const styles = {
-  text: rgb(222, 224, 225) + ";" + background,
-  dim: rgb(126, 136, 142) + ";" + background,
-  prompt: rgb(108, 118, 123) + ";" + background,
-  accent: rgb(167, 152, 215) + ";" + background,
-  success: rgb(104, 183, 141) + ";" + background,
-  user: rgb(222, 224, 225) + ";48;2;33;59;73",
-  cursor: rgb(20, 24, 32) + ";48;2;222;224;225",
+  text: `${rgb(222, 224, 225)};${background}`,
+  dim: `${rgb(126, 136, 142)};${background}`,
+  prompt: `${rgb(108, 118, 123)};${background}`,
+  accent: `${rgb(167, 152, 215)};${background}`,
+  success: `${rgb(104, 183, 141)};${background}`,
+  user: `${rgb(222, 224, 225)};48;2;33;59;73`,
+  cursor: `${rgb(20, 24, 32)};48;2;222;224;225`,
 };
 const spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 type Block = { kind: "user" | "prose" | "tool" | "task"; text: string; state?: "working" | "running" | "done" };
@@ -259,7 +260,7 @@ function transcriptRows(shot: Shot, cols: number, spin: string): Cell[][] {
         const label =
           tools.length +
           (tools.length === 1 ? " tool called ▸" : " tools called ▸") +
-          (shot.busy ? " · " + tools.at(-1)!.text : "");
+          (shot.busy ? ` · ${requireValue(tools.at(-1)).text}` : "");
         const clipped =
           label.length > cols ? label.slice(0, Math.max(0, cols - 3)) + ".".repeat(Math.min(3, cols)) : label;
         rows.push(line(clipped, styles.text, cols));
@@ -268,10 +269,10 @@ function transcriptRows(shot: Shot, cols: number, spin: string): Cell[][] {
         const mark = block.state === "working" ? spin : block.state === "running" ? "↗" : "✓";
         const color = block.state === "done" ? styles.success : styles.accent;
         // Actual collapsed tool/task rows truncate instead of wrapping into cards.
-        rows.push(line(" " + mark + " " + block.text, color, cols));
+        rows.push(line(` ${mark} ${block.text}`, color, cols));
       } else {
         for (const text of wrap(block.text, Math.max(1, cols - 2)))
-          rows.push(line(" " + text, block.kind === "user" ? styles.user : styles.text, cols));
+          rows.push(line(` ${text}`, block.kind === "user" ? styles.user : styles.text, cols));
       }
     }
   }
@@ -280,8 +281,8 @@ function transcriptRows(shot: Shot, cols: number, spin: string): Cell[][] {
 
 function footerRow(cols: number, jobs: number): Cell[] {
   // Real compact-footer vocabulary/candidate order; no invented progress counters.
-  const full = "csv-app:main" + (jobs ? " · 1 task" : "") + " · $0.000 · ctx 4%";
-  const short = (jobs ? "1t " : "") + "$0.000 C4%";
+  const full = `csv-app:main${jobs ? " · 1 task" : ""} · $0.000 · ctx 4%`;
+  const short = `${jobs ? "1t " : ""}$0.000 C4%`;
   const left = full.length + 8 <= cols ? full : short;
   const footer = line(left, styles.dim, cols);
   const model = "studio";
@@ -318,7 +319,7 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
   inputLines.forEach((text, i) => {
     const y = editorTop + i;
     if (y < 0) return;
-    rows[y] = line((i === 0 ? (shot.busy ? spin : "") : " ") + " " + text, styles.text, cols);
+    rows[y] = line(`${i === 0 ? (shot.busy ? spin : "") : " "} ${text}`, styles.text, cols);
     if (cols) rows[y][0].style = shot.busy ? styles.accent : styles.prompt;
   });
   if (!shot.busy && cols > 2) {
@@ -335,8 +336,8 @@ export function demoTranscript(id: DemoId): string {
   const last = scripts[id][scripts[id].length - 1];
   return last.blocks
     .map((block) => {
-      if (block.kind === "user") return "You: " + block.text;
-      if (block.kind === "prose") return "bruv: " + block.text;
+      if (block.kind === "user") return `You: ${block.text}`;
+      if (block.kind === "prose") return `bruv: ${block.text}`;
       return (block.state === "running" ? "↗ " : "✓ ") + block.text;
     })
     .join("\n\n");

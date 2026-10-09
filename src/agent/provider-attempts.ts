@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { Model } from "@earendil-works/pi-ai";
+import type { Api, Model } from "@earendil-works/pi-ai";
 import { recordDiagnostic } from "../diagnostics.js";
 
 export const PROVIDER_ATTEMPT_OBSERVED = "provider_attempt_observed";
@@ -9,7 +9,7 @@ export const PROVIDER_OBSERVER_FAILED = "observer_failed";
  * after a successful HTTP response or transport-independent final event. Report direct native requests
  * only when fetch dispatch cannot be avoided. */
 export interface ProviderAttemptEvent {
-  model: Pick<Model<any>, "provider" | "id">;
+  model: Pick<Model<Api>, "provider" | "id">;
   timestamp: number;
   observedAt: "response" | "dispatch";
   /** Use a unique correlation ID that never comes from provider data. */
@@ -37,7 +37,7 @@ export function subscribeProviderAttempts(owner: object, listener: ProviderAttem
  * API compatibility and lets callers pass an ID. */
 export function reportProviderAttempt(
   owner: object,
-  model: Pick<Model<any>, "provider" | "id">,
+  model: Pick<Model<Api>, "provider" | "id">,
   observedAt: ProviderAttemptEvent["observedAt"],
   timestamp = Date.now(),
   operationId = randomUUID(),

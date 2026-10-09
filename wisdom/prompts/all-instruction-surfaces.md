@@ -68,3 +68,15 @@ Fixture root: owned mkdtemp `/var/tmp/ai-hZNVPD`. /tmp is full. Signing uses `TM
 Live real-shell/async integration is not green: the wider run had 87 pass and one 5s timeout; the narrowed run had 20 pass and two timeouts. Logs retain SIGTERM/async completion details. Bounds were not relaxed and no full-suite retry loop was run. These checks do not prove provider access, live catalog contents, real audio or model obedience.
 
 Final logs: `.tmp/final-{request-tests,live-controls,compaction,live,mode-live,typecheck,build}.log`. Three read-only audits and one final diff review found no new safety/API loss. Detailed earlier captures are timestamped; the final owned fixtures carry the latest source changes.
+
+## PR #71 develop merge
+
+This merge stays on the existing PR. Inputs are the fetched `origin/t3/6c093fbb` at `f01d6e35f6eab28590900006c53ea18911afd7dc` and `origin/develop` at `a989356d735d33e571253884862be0a88e51f6b2`. Common base: `de874ac98`. Develop includes #72's authenticated T3 Fast reads and turn cancellation, the 0.16.24 release, and #73's Biome fixes.
+
+Eight files conflicted. Kept the line pass's plain text with develop's template strings, typed remote fields, MCP connection check and foreground delivery check. The HTTP MCP fixture keeps both description/schema prose and the current-thread configuration tool. No blanket side choice. Nearby auto-merges keep develop's root-turn Fast selection and abort signal, while the auxiliary request still has one JSON-only owner.
+
+All three prompt passes stay: one execute description, no execute snippet/guidelines or spare reference, shorter state notices, and untouched external/user text. Complete request and later-turn tests stay. The merge adds no prompt layer or runtime text filter.
+
+Checks: 128 request/continuation cases, 59 Live/remote/stop cases and 99 wire/saved-answer cases pass (286 top-level cases, including isolated child runners). These cover native request ownership, authenticated Fast, external MCP prose, ordinary/custom continuations, Google/OpenAI frames, saved replies and stop acknowledgement. Typecheck, paired build, format and diff whitespace checks pass. No unmerged paths or conflict markers. No full-suite claim; known install-order, timing and environment failures stay out of scope. No provider calls. Two initial shell launches failed on fish syntax before running checks; Bash reruns pass.
+
+Worktree: `/home/tnfssc/.bruv/worktrees/t3-6c093fbb-5442693331ce-task_1d1640aa`. Branch: `bruv/resolve-pr-71-conflicts-with-develop-1d1640aa`. Logs, side diffs, scripts and owned job-attention evidence stay in `.tmp/merge71/`. Fresh short fixture root: `/var/tmp/q-hg3C3G`. Signing uses `TMPDIR=$PWD/.tmp/git-tmp`. Values stay unchanged: this merge applies the existing owners, not a new lesson. Local merge commit only; parent owns verification and the push to `t3/6c093fbb`. No new PR, force push or old-worktree edits.

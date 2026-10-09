@@ -17,7 +17,22 @@ export type Hello = {
   profile: { name: "normal"; model: string; thinking?: string; auth: "configured" | "missing" | "unknown" };
 };
 export type RemoteEvent = { seq: number; event: unknown };
-export type Task = { taskId: string; state: string; [key: string]: unknown };
+export type Task = {
+  taskId: string;
+  state: string;
+  questions?: Array<{
+    id: string;
+    status: string;
+    owner?: import("../questions/service").QuestionOwner;
+    version?: number;
+    text?: string;
+    question?: string;
+    choices?: string[];
+    allowFreeText?: boolean;
+  }>;
+  capabilityNeeds?: Array<Record<string, unknown>>;
+  [key: string]: unknown;
+};
 export type RemoteTask = {
   taskId: string;
   /** Immutable parent session attribution, committed with launch intent before SSH. */
@@ -166,7 +181,7 @@ export class RemoteClient {
       await mkdir(dir, { recursive: true, mode: 0o700 });
       // OS-backed SQLite locking releases on client death; a stale mkdir lock would
       // strand the very reconnect needed to reconcile an ambiguous launch.
-      const lock = this.path + ".lock.sqlite";
+      const lock = `${this.path}.lock.sqlite`;
       const database = openRemoteLockDatabase(lock);
       let acquired = false;
       try {
@@ -218,7 +233,7 @@ export class RemoteClient {
       throw new Error(
         "Remote cache hit its 128 MiB limit. No page/cursor was committed. Save/export the cache before continuing.",
       );
-    const tmp = this.path + "." + randomUUID();
+    const tmp = `${this.path}.${randomUUID()}`;
     try {
       const file = await open(tmp, "wx", 0o600);
       try {
@@ -485,7 +500,7 @@ export class RemoteClient {
       } catch (error) {
         task.cancelDelivery = { status: task.cancelDelivery.status, error: String(error) };
         await this.save(state);
-        throw Error("Cannot verify pinned owner; no cancel sent; local cancellation intent retained: " + String(error));
+        throw Error(`Cannot verify pinned owner; no cancel sent; local cancellation intent retained: ${String(error)}`);
       }
       if (current.ownerId !== task.ownerId || current.epoch !== task.epoch) {
         task.cancelDelivery = { status: task.cancelDelivery.status, error: "Remote owner changed; no new cancel sent" };
@@ -507,7 +522,7 @@ export class RemoteClient {
       } catch (error) {
         task.cancelDelivery = { status: "uncertain", error: String(error) };
         await this.save(state);
-        throw Error("Cancellation delivery uncertain; retry on the same pinned owner: " + String(error));
+        throw Error(`Cancellation delivery uncertain; retry on the same pinned owner: ${String(error)}`);
       }
       task.cancelDelivery = { status: "confirmed" };
       await this.save(state);
@@ -577,10 +592,10 @@ export class RemoteClient {
           task.replyDelivery[input.id] = { replyId: reply.replyId, status: "delivered" };
         delete task.lastError;
       } catch (error) {
-        task.lastError = "Native reply outcome uncertain: " + String(error);
+        task.lastError = `Native reply outcome uncertain: ${String(error)}`;
         task.replyDelivery[input.id] = { replyId: reply.replyId, status: "uncertain", error: String(error) };
         await this.save(state);
-        throw new Error(task.lastError + "; retry only this question with the same replyId");
+        throw new Error(`${task.lastError}; retry only this question with the same replyId`);
       }
       await this.save(state);
       return task;
@@ -600,7 +615,7 @@ export class RemoteClient {
     );
     const batch = Array.from(
       { length: Math.min(active.length, Math.max(0, Math.min(10, limit))) },
-      (_, i) => active[(this.syncOffset + i) % active.length]!,
+      (_, i) => active[(this.syncOffset + i) % active.length],
     );
     this.syncOffset = active.length ? (this.syncOffset + batch.length) % active.length : 0;
     for (const task of batch) {

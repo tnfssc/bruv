@@ -73,19 +73,19 @@ async function seedLinkedReturnEvidence(root) {
     wire = path.join(root, "wire.ndjson");
   await fs.writeFile(
     source,
-    JSON.stringify({
+    `${JSON.stringify({
       id: "source-1",
       type: "message",
       message: {
         role: "assistant",
         content: [{ type: "text", text: "ROOT_COMPLETION_ONCE_REAL secret prompt" }],
       },
-    }) + "\n",
+    })}\n`,
   );
   await fs.writeFile(path.join(agent, "native-sessions", "same-root.json"), JSON.stringify({ file: source }));
   await fs.writeFile(
     wire,
-    [
+    `${[
       { kind: "lifecycle", owner: 1234, value: { event: "spawn", pid: 1234, flags: ["--input-format"] } },
       {
         ...frame(
@@ -107,7 +107,7 @@ async function seedLinkedReturnEvidence(root) {
       },
     ]
       .map(JSON.stringify)
-      .join("\n") + "\n",
+      .join("\n")}\n`,
   );
   const db = new DatabaseSync(path.join(base, "state.sqlite"));
   db.exec(

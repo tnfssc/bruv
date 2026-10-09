@@ -1,3 +1,5 @@
+import type { AssistantMessage } from "@earendil-works/pi-ai/compat";
+import { requireValue } from "../../scripts/lib/require-value";
 /** Optional offline reference capture. Requires tmux, unshare and an already built Bruv. */
 import { mkdtemp, rm, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -8,13 +10,13 @@ const binary = process.env.BRUV_BINARY,
 if (!binary || !sdk) throw new Error("Set BRUV_BINARY and PI_SDK_ENTRY to reviewed local files");
 const { SessionManager } = await import(pathToFileURL(sdk).href);
 const home = await mkdtemp(join(tmpdir(), "bruv-demo-reference-"));
-const socket = "bruv-site-" + process.pid;
+const socket = `bruv-site-${process.pid}`;
 const run = (args: string[]) => {
   const p = Bun.spawnSync(["tmux", "-L", socket, ...args]);
   if (p.exitCode) throw new Error(p.stderr.toString());
   return p.stdout.toString();
 };
-const q = (s: string) => "'" + s.replaceAll("'", "'\"'\"'") + "'";
+const q = (s: string) => `'${s.replaceAll("'", "'\"'\"'")}'`;
 const out = resolve(import.meta.dir, "../../artifacts/landing-page/animated-features/source");
 await mkdir(out, { recursive: true });
 try {
@@ -24,12 +26,12 @@ try {
   const command = [
     "env",
     "-i",
-    "HOME=" + home,
+    `HOME=${home}`,
     "PATH=/usr/bin:/bin",
     "TERM=xterm-256color",
     "COLORTERM=truecolor",
     "LANG=C.UTF-8",
-    "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv/agent"),
+    `BRUV_CODING_AGENT_DIR=${join(home, ".bruv/agent")}`,
     "unshare",
     "--user",
     "--map-root-user",
@@ -54,15 +56,15 @@ try {
     run(["resize-window", "-t", "demo", "-x", String(cols), "-y", "32"]);
     await Bun.sleep(300);
     const raw = run(["capture-pane", "-t", "demo", "-p", "-e"]);
-    if (!raw.includes("1 tool called")) throw new Error("Expected reference UI did not load: " + raw);
+    if (!raw.includes("1 tool called")) throw new Error(`Expected reference UI did not load: ${raw}`);
     await Bun.write(
-      join(out, "offline-" + cols + ".ansi"),
-      raw.replaceAll(home, "/demo-project").replaceAll(home.split("/").at(-1)!, "csv-app"),
+      join(out, `offline-${cols}.ansi`),
+      raw.replaceAll(home, "/demo-project").replaceAll(requireValue(home.split("/").at(-1)), "csv-app"),
     );
   }
   await Bun.write(
     join(out, "provenance.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         script: "site/scripts/capture-demo-source.ts",
         binarySha256: new Bun.CryptoHasher("sha256").update(await Bun.file(binary).arrayBuffer()).digest("hex"),
@@ -72,9 +74,9 @@ try {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
-  console.log("Saved real offline UI reference at " + out);
+  console.log(`Saved real offline UI reference at ${out}`);
 } finally {
   try {
     run(["kill-server"]);
@@ -92,7 +94,7 @@ function createCsvReviewReplay(home: string): string {
     totalTokens: 0,
     cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
   };
-  const assistant = (content: any[]) =>
+  const assistant = (content: AssistantMessage["content"]) =>
     session.appendMessage({
       role: "assistant",
       content,

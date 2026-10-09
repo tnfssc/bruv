@@ -33,12 +33,12 @@ export async function preflightNativeHome(configDir: string | undefined, home: s
     const canonical = join(selected.path, ...selected.suffix);
     const claude = join(ordinary.path, ...ordinary.suffix);
     const inside = relative(claude, canonical);
-    if (!inside || (inside !== ".." && !inside.startsWith(".." + sep) && !isAbsolute(inside)))
+    if (!inside || (inside !== ".." && !inside.startsWith(`..${sep}`) && !isAbsolute(inside)))
       throw new Error(
         "Refusing to write the default Claude home or its contents; select a connector-owned history directory",
       );
     await access(selected.path, constants.W_OK | constants.X_OK);
   } catch (error) {
-    throw new Error("Invalid T3 provider homePath / CLAUDE_CONFIG_DIR: " + (error as Error).message);
+    throw new Error(`Invalid T3 provider homePath / CLAUDE_CONFIG_DIR: ${(error as Error).message}`);
   }
 }

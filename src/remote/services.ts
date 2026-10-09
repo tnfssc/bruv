@@ -39,11 +39,11 @@ export async function grantCapabilities(
       .update(JSON.stringify([taskId, root, selected]))
       .digest("hex");
   const capabilityStore = local(client);
-  const binding = join(capabilityStore.dir, scopeId + ".current");
+  const binding = join(capabilityStore.dir, `${scopeId}.current`);
   let id = existsSync(binding) ? JSON.parse(readFileSync(binding, "utf8")).id : scopeId;
   if (typeof id !== "string" || !safeId(id)) throw Error("Invalid saved capability grant identity");
-  if (existsSync(join(capabilityStore.dir, id + ".revoked"))) {
-    id = "grant_" + randomUUID();
+  if (existsSync(join(capabilityStore.dir, `${id}.revoked`))) {
+    id = `grant_${randomUUID()}`;
     atomic(binding, { id });
   }
   const metadata = await capabilityStore.store.grant(taskId, root, selected, id);
@@ -65,7 +65,7 @@ export function localCapabilityGrants(client: RemoteClient, taskId: string, incl
       if (
         record.taskId !== taskId ||
         record.id !== name.slice(0, -5) ||
-        (!includeRevoked && existsSync(join(dir, record.id + ".revoked")))
+        (!includeRevoked && existsSync(join(dir, `${record.id}.revoked`)))
       )
         return [];
       return [
@@ -105,10 +105,10 @@ async function replyToCapabilityRequests(client: RemoteClient, task: RemoteTask)
   for (const request of requests as Request[]) {
     if (request.taskId !== task.taskId || !safeId(request.id) || !safeId(request.grantId))
       throw Error("Capability identity mismatch");
-    if (existsSync(join(dir, request.grantId + ".revoked"))) continue;
+    if (existsSync(join(dir, `${request.grantId}.revoked`))) continue;
 
     // Freeze the locally authorized result before delivery; retries never reread the repository.
-    const path = join(dirname(client.path), "capability-replies", task.taskId, request.id + ".json");
+    const path = join(dirname(client.path), "capability-replies", task.taskId, `${request.id}.json`);
     let reply: Reply;
     if (existsSync(path)) {
       const saved = JSON.parse(readFileSync(path, "utf8"));
@@ -128,7 +128,7 @@ export async function serviceRemoteTask(client: RemoteClient, task: RemoteTask) 
     const repository = await returnRepository(client, task);
     if (repository) await client.updateTask(task.taskId, { repository });
   } catch (error) {
-    errors.push("Repository return: " + String(error));
+    errors.push(`Repository return: ${String(error)}`);
   }
   try {
     if (task.task?.artifactError) throw Error(String(task.task.artifactError));
@@ -138,7 +138,7 @@ export async function serviceRemoteTask(client: RemoteClient, task: RemoteTask) 
       await client.updateTask(task.taskId, { localArtifacts: manifest, artifactsComplete: true });
     }
   } catch (error) {
-    errors.push("Offline text artifacts: " + String(error));
+    errors.push(`Offline text artifacts: ${String(error)}`);
   }
   if (errors.length) throw Error(errors.join("; "));
   if (task.integrationError) await client.updateTask(task.taskId, { integrationError: undefined });
@@ -162,7 +162,7 @@ export async function requestLocalCapability(
     id = args.requestId ?? randomUUID();
   if (!safeId(id) || !kinds(args.kind) || typeof args.input !== "string" || Buffer.byteLength(args.input) > 4096)
     throw Error("Invalid capability request");
-  const file = join(taskDir, "capability-needs", id + ".json"),
+  const file = join(taskDir, "capability-needs", `${id}.json`),
     intent = { id, taskId, kind: args.kind, input: args.input };
   if (existsSync(file)) {
     if (JSON.stringify(JSON.parse(readFileSync(file, "utf8"))) !== JSON.stringify(intent))

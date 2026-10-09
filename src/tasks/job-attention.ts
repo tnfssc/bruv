@@ -101,7 +101,8 @@ export class JobAttentionScheduler {
 
   setWatch(id: string, enabled: boolean): TaskSummary {
     const task = this.#running(id);
-    const state = this.#states.get(id)!;
+    const state = this.#states.get(id);
+    if (!state) throw new Error(`Task ${id} has no attention state`);
     state.watchEnabled = enabled;
     if (enabled) {
       const now = this.#now();
@@ -121,7 +122,8 @@ export class JobAttentionScheduler {
       throw new Error(`Snooze minutes must be greater than 0 and at most ${MAX_SNOOZE_MINUTES}`);
     }
     const task = this.#running(id);
-    const state = this.#states.get(id)!;
+    const state = this.#states.get(id);
+    if (!state) throw new Error(`Task ${id} has no attention state`);
     const until = this.#now() + minutes * 60_000;
     state.snoozedUntilMs = until;
     state.nextReviewMs = until;
@@ -376,7 +378,7 @@ export function formatAttentionNotification(
     const block =
       `\n\n${notice.id} [${notice.reasons.join("+")}] elapsed=${duration(notice.elapsedMs)} quiet=${duration(notice.quietForMs)} output=${notice.outputBytes}B stdin=${notice.stdinOpen ? "open" : "closed"}` +
       (output
-        ? `\nRecent output: ${output.length > 500 ? "\u2026" + output.slice(-499) : output}`
+        ? `\nRecent output: ${output.length > 500 ? `\u2026${output.slice(-499)}` : output}`
         : "\nNo output seen.");
     const remaining = notices.slice(included + 1);
     const omission = remaining.length ? `\n\n${omittedBlock(remaining, limit)}` : "";

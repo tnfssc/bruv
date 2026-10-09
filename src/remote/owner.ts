@@ -53,9 +53,7 @@ type Saved = {
   overrides?: { model?: string; thinking?: string };
 };
 function processInfo(pid: number) {
-  const fields = readFileSync("/proc/" + pid + "/stat", "utf8")
-    .split(") ")[1]!
-    .split(" ");
+  const fields = readFileSync(`/proc/${pid}/stat`, "utf8").split(") ")[1].split(" ");
   return { state: fields[0], startTime: fields[19] };
 }
 function statePath(id: string) {
@@ -141,7 +139,7 @@ class OwnerEventJournal {
   }
 
   append(event: unknown): void {
-    const line = JSON.stringify({ seq: this.sequence + 1, event }) + "\n";
+    const line = `${JSON.stringify({ seq: this.sequence + 1, event })}\n`;
     if (Buffer.byteLength(line) > MAX_LINE || fstatSync(this.descriptor).size + Buffer.byteLength(line) > MAX_JOURNAL)
       throw new Error("RPC journal limit exceeded");
     const bytes = Buffer.from(line);
@@ -319,8 +317,9 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         return error("invalid_prompt", "Nonempty prompt up to 128 KiB required");
       const name = req.placement?.profile ?? "normal";
       const configured = (await loadProfiles(join(process.env.HOME ?? homedir(), ".bruv", "subagents.json")))[name];
-      if (!configured.model && !req.model)
-        return error("missing_model", "Configure remote " + name + " profile model in ~/.bruv/subagents.json");
+      const selectedModel = req.model ?? configured.model;
+      if (!selectedModel)
+        return error("missing_model", `Configure remote ${name} profile model in ~/.bruv/subagents.json`);
       if (
         req.model !== undefined &&
         (typeof req.model !== "string" || !/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(req.model))
@@ -333,7 +332,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         return error("invalid_thinking", "Invalid thinking override");
       const profile = {
         name,
-        model: req.model ?? configured.model!,
+        model: selectedModel,
         thinking: req.thinking ?? configured.thinking ?? "off",
       };
       const hash = intent(req, profile);
@@ -420,7 +419,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         if (["accepted", "running"].includes(value.task.state) && !value.task.cancelRequested) {
           value.task.capabilities = await box.pending();
           value.task.capabilityNeeds = capabilityNeeds(location(req.taskId));
-        } else await box.terminal("Task " + value.task.state);
+        } else await box.terminal(`Task ${value.task.state}`);
         if (!["accepted", "running"].includes(value.task.state)) {
           try {
             value.task.artifacts = listRemoteArtifacts(location(req.taskId));
@@ -468,7 +467,7 @@ class NativeAnswerDelivery {
       typeof req.id !== "string"
     )
       return error("invalid_answer", "Invalid targeted native reply");
-    const receipt = join(this.directory, "answers", req.replyId + ".json");
+    const receipt = join(this.directory, "answers", `${req.replyId}.json`);
     if (existsSync(receipt)) {
       const prior = read<{ request: typeof req; status: "delivered" | "uncertain" }>(receipt);
       if (JSON.stringify(prior.request) !== JSON.stringify(req))
@@ -478,7 +477,7 @@ class NativeAnswerDelivery {
         // crash window, but never rewrite an existing (possibly dispatched) same-ID slot.
         const slotPath = this.slotPath;
         const slot = existsSync(slotPath) ? read<{ replyId: string }>(slotPath) : undefined;
-        const oldReceipt = slot ? join(this.directory, "answers", slot.replyId + ".json") : undefined;
+        const oldReceipt = slot ? join(this.directory, "answers", `${slot.replyId}.json`) : undefined;
         const oldDelivered =
           oldReceipt && existsSync(oldReceipt) && read<{ status: string }>(oldReceipt).status === "delivered";
         if (!slot || (slot.replyId !== req.replyId && oldDelivered)) {
@@ -531,15 +530,15 @@ class NativeAnswerDelivery {
     request.dispatch = "uncertain";
     durableJsonReplace(this.slotPath, request);
     send({
-      id: "remote-answer-" + request.replyId,
+      id: `remote-answer-${request.replyId}`,
       type: "prompt",
-      message: "/remote-native-answer " + Buffer.from(JSON.stringify(request)).toString("base64url"),
+      message: `/remote-native-answer ${Buffer.from(JSON.stringify(request)).toString("base64url")}`,
     });
   }
 
   async acknowledge(responseId: string, success: boolean): Promise<void> {
     const request = read<AnswerSlot>(this.slotPath);
-    if (responseId !== "remote-answer-" + request.replyId) return;
+    if (responseId !== `remote-answer-${request.replyId}`) return;
     let delivered = false;
     try {
       delivered =
@@ -568,7 +567,7 @@ class NativeAnswerDelivery {
       if (current.task.state !== "running") return;
       current.task.reply = { replyId: request.replyId, status: delivered ? "delivered" : "uncertain" };
       const { dispatch: _dispatch, ...accepted } = request;
-      durableJsonReplace(join(this.directory, "answers", request.replyId + ".json"), {
+      durableJsonReplace(join(this.directory, "answers", `${request.replyId}.json`), {
         request: accepted,
         status: current.task.reply.status,
       });
@@ -661,7 +660,7 @@ async function publishTerminal(taskId: string, result: Saved) {
       cancelRequested: current.task.cancelRequested,
       reply: current.task.reply ?? result.task.reply,
     };
-    await new OwnerCapabilityMailbox(location(taskId), taskId).terminal("Task " + result.task.state);
+    await new OwnerCapabilityMailbox(location(taskId), taskId).terminal(`Task ${result.task.state}`);
     persist(taskId, current);
   });
 }
@@ -712,7 +711,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       try {
         writer.append(event);
       } catch (e) {
-        fail("Journal write failed: " + String(e));
+        fail(`Journal write failed: ${String(e)}`);
       }
     };
     await locked(async () => {
@@ -747,7 +746,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     });
     const child = ownedChild.process;
     const output = new OwnerRpcOutput(MAX_LINE);
-    const send = (command: unknown) => child.stdin.write(JSON.stringify(command) + "\n");
+    const send = (command: unknown) => child.stdin.write(`${JSON.stringify(command)}\n`);
     const persistBeforeExit = (write: Promise<void>, detail: string) => {
       const pending = write.catch((error) => fail(detail + String(error)));
       pendingWrites.add(pending);
@@ -771,7 +770,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       try {
         answers.dispatch(send);
       } catch (error) {
-        fail("Native answer dispatch uncertain: " + String(error));
+        fail(`Native answer dispatch uncertain: ${String(error)}`);
       }
     }, 200);
     controlTimer.unref();
@@ -810,13 +809,13 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         }
         nativeSettled = true;
       } catch (error) {
-        fail("Cannot verify remote task completion: " + String(error), true);
+        fail(`Cannot verify remote task completion: ${String(error)}`, true);
         return;
       }
       stopChild(true);
     };
 
-    const routeEvent = (event: any) => {
+    const routeEvent = (event: OwnerRpcEvent | null) => {
       if (event?.type === "response") {
         if (event.id === "remote-config") verifyConfigurationAndSendPrompt(event);
         else if (typeof event.id === "string" && event.id.startsWith("remote-answer-"))
@@ -918,7 +917,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       modelError ||
       (pendingQuestion
         ? "Native question unresolved when remote session exited"
-        : "RPC exited without verified native settlement (exit " + exitCode + ")");
+        : `RPC exited without verified native settlement (exit ${exitCode})`);
   try {
     await publishTerminal(taskId, taskSnapshot);
   } catch (error) {

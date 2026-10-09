@@ -11,11 +11,11 @@ export function normalOutputForConnector(output: string): string {
 }
 
 /** Unix system shell only: never a second Bun runtime, env shell or PATH bruv. */
-export async function connectorLauncher(target = "bun-" + process.platform + "-" + process.arch): Promise<string> {
-  if (!/^bun-(linux|darwin|android)-/.test(target)) throw new Error("Unsupported launcher target: " + target);
+export async function connectorLauncher(target = `bun-${process.platform}-${process.arch}`): Promise<string> {
+  if (!/^bun-(linux|darwin|android)-/.test(target)) throw new Error(`Unsupported launcher target: ${target}`);
   const interpreter = target.startsWith("bun-android-") ? "/system/bin/sh" : "/bin/sh";
   const template = await readFile(new URL("./bruv-claude-compat.sh", import.meta.url), "utf8");
-  return template.replace("#!/bin/sh", "#!" + interpreter);
+  return template.replace("#!/bin/sh", `#!${interpreter}`);
 }
 
 export async function writeConnectorLauncher(output: string, target?: string): Promise<void> {

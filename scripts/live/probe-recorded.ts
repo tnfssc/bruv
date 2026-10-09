@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Paid text-transcript Realtime fixture: intercepted tools only; never evaluates generated code.
  * BRUV_CAPABILITY_PROBE=1 bun scripts/live/probe-recorded.ts --source FILE --study-2026-09-25 --disclose-private weather:fresh:baseline
  * Sends private root/transcript to configured provider; output may echo private text. Keep output OUTSIDE repository.
@@ -20,18 +21,18 @@ const plan = input.trials.map((spec) => {
     !["fresh", "snapshot", "replay"].includes(context) ||
     !["baseline", "grounding"].includes(variant)
   )
-    throw Error("Invalid trial: " + spec);
+    throw Error(`Invalid trial: ${spec}`);
   return { target, context, variant };
 });
-const allowed = readStudy(input.source!);
+const allowed = readStudy(requireValue(input.source));
 for (const idx of Object.values(study.targets)) studyTarget(allowed, idx);
 const frame = allowed.find((x) => x.message?.role === "system")?.message?.sections;
 if (!frame?.preamble || !frame?.cwd) throw Error("Missing original Live root");
-const root = frame.preamble + "\n\n" + frame.cwd; // Original recorded sections; content is empty.
+const root = `${frame.preamble}\n\n${frame.cwd}`; // Original recorded sections; content is empty.
 const grounding =
   "\n\nIn Live you are still the main agent. execute is available now; use it for authorized actions, including shell() or subagent() inside execute. Voice input does not remove host tools. Call a tool before claiming work done; do not imply a mocked response proves runtime execution.";
 const targets: Record<string, number> = study.targets;
-function content(x: any) {
+function content(x: import("./probe-input").StudyContent | undefined) {
   return typeof x === "string" ? x : Array.isArray(x) ? x.map((y) => y.text ?? "").join("") : "";
 }
 function snapshot(index: number) {
@@ -51,8 +52,8 @@ function snapshot(index: number) {
 function prepareTrial({ target, context, variant }: (typeof plan)[number], trial: number) {
   const idx = targets[target];
   const contextText = context === "fresh" ? null : snapshot(idx);
-  const inputText = content(allowed[idx].message.content);
-  if (!inputText) throw Error("Empty target transcript: " + target);
+  const inputText = content(studyTarget(allowed, idx).message.content);
+  if (!inputText) throw Error(`Empty target transcript: ${target}`);
   const instructions = root + (variant === "grounding" ? grounding : "");
   const metadata = {
     trial,

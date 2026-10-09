@@ -3,13 +3,13 @@ import http from "node:http";
 import { readFileSync } from "node:fs";
 export const provider = "bruv-acceptance";
 export const modelId = "local-deterministic-v1";
-export const modelSlug = provider + "/" + modelId;
+export const modelSlug = `${provider}/${modelId}`;
 export function modelsConfig(port) {
   return {
     providers: {
       [provider]: {
         api: "openai-completions",
-        baseUrl: "http://127.0.0.1:" + port + "/v1",
+        baseUrl: `http://127.0.0.1:${port}/v1`,
         apiKey: "fixture-only-not-a-credential",
         models: [
           {
@@ -40,20 +40,18 @@ function isCancellationNotice(user, messages, worker, state) {
   // identifies the job when the notification's command preview was shortened.
   let actualCancelledId;
   try {
-    actualCancelledId = readFileSync(state + "/cancel.job-id", "utf8").trim();
+    actualCancelledId = readFileSync(`${state}/cancel.job-id`, "utf8").trim();
   } catch {}
   return (
     killedId === actualCancelledId ||
     messages.some(
       (m) =>
-        m.role === "tool" &&
-        text(m).includes("CANCEL_INSPECT_REAL") &&
-        new RegExp("\\b" + killedId + "\\b").test(text(m)),
+        m.role === "tool" && text(m).includes("CANCEL_INSPECT_REAL") && new RegExp(`\\b${killedId}\\b`).test(text(m)),
     )
   );
 }
 export function reply(body, { worker, state }) {
-  if (body.model !== modelId) throw Error("Wrong test model identity: " + body.model);
+  if (body.model !== modelId) throw Error(`Wrong test model identity: ${body.model}`);
   const messages = body.messages ?? [],
     lastUser = messages.findLastIndex((m) => m.role === "user");
   const user = text(messages[lastUser] ?? {}),
@@ -67,7 +65,7 @@ export function reply(body, { worker, state }) {
     tool_calls: [
       {
         index: 0,
-        id: "acceptance_" + (body.__sequence ?? 1),
+        id: `acceptance_${body.__sequence ?? 1}`,
         type: "function",
         function: { name: "execute", arguments: JSON.stringify({ label: "Acceptance real runtime exercise", code }) },
       },
@@ -75,7 +73,7 @@ export function reply(body, { worker, state }) {
   });
   const content = (value) => ({ role: "assistant", content: value });
   const workerCommand = (scenario) =>
-    JSON.stringify(process.execPath) + " " + JSON.stringify(worker) + " " + JSON.stringify(state) + " " + scenario;
+    `${JSON.stringify(process.execPath)} ${JSON.stringify(worker)} ${JSON.stringify(state)} ${scenario}`;
   const shellCode = (scenario, wait) => `
     const r = await shell(${JSON.stringify(workerCommand(scenario))}, {waitSeconds:${wait}});
     console.log(JSON.stringify(r));
@@ -98,9 +96,9 @@ export function reply(body, { worker, state }) {
   if (user.includes("HUMAN_PERMISSION_")) {
     const scenario = user.match(/HUMAN_PERMISSION_(allow|deny|stop)/)?.[1];
     if (!scenario) throw Error("Unknown permission scenario");
-    if (results) return content("HUMAN_PERMISSION_" + scenario + "_RESULT_REAL");
+    if (results) return content(`HUMAN_PERMISSION_${scenario}_RESULT_REAL`);
     return execute(`
-      await Bun.write(${JSON.stringify(state + "/permission-" + scenario + ".effect")}, "actual side effect after consent");
+      await Bun.write(${JSON.stringify(`${state}/permission-${scenario}.effect`)}, "actual side effect after consent");
       console.log("PERMISSION_SIDE_EFFECT_REAL");
     `);
   }
@@ -130,7 +128,7 @@ export function reply(body, { worker, state }) {
     if (user.includes("MANAGED_DONE_early") || results.includes("MANAGED_DONE_early"))
       return content("TASK_COMPLETED_REAL");
     if (results.includes('"background":true') && /task_/.test(results)) return content("EARLY_RETURN_REAL");
-    if (results) throw Error("Expected actual managed background launch, got " + results.slice(0, 200));
+    if (results) throw Error(`Expected actual managed background launch, got ${results.slice(0, 200)}`);
     return execute(shellCode("early", 0));
   }
   if (user.includes("ACCEPT_CANCEL")) {
@@ -141,7 +139,7 @@ export function reply(body, { worker, state }) {
     return execute(`
       const job = await shell(${JSON.stringify(workerCommand("cancel"))}, {waitSeconds:0});
       if (!job.background) throw Error("Expected fresh owned background job");
-      await Bun.write(${JSON.stringify(state + "/cancel.job-id")}, job.id);
+      await Bun.write(${JSON.stringify(`${state}/cancel.job-id`)}, job.id);
       console.log(JSON.stringify(await jobs.stop(job.id)));
       const deadline = Date.now() + 10000;
       let inspected;
@@ -174,7 +172,7 @@ export function reply(body, { worker, state }) {
   if (user.includes("ACCEPT_REOPEN")) return content("REOPEN_CONFIRMED_REAL");
   // T3 title/other auxiliary requests are local too; no fake schema output.
   if (!body.tools?.length) return content("Local acceptance thread");
-  throw Error("Unrecognized acceptance request: " + user.slice(0, 160));
+  throw Error(`Unrecognized acceptance request: ${user.slice(0, 160)}`);
 }
 export async function startModel(options) {
   const records = [];
@@ -202,16 +200,16 @@ export async function startModel(options) {
       });
       res.writeHead(200, { "content-type": "text/event-stream" });
       const chunk = (d, finish) => ({
-        id: "local-acceptance-" + requestSequence,
+        id: `local-acceptance-${requestSequence}`,
         object: "chat.completion.chunk",
         created: 1,
         model: body.model,
         choices: [{ index: 0, delta: d, finish_reason: finish }],
       });
       res.end(
-        [chunk(delta, null), chunk({}, delta.tool_calls ? "tool_calls" : "stop")]
-          .map((v) => "data: " + JSON.stringify(v) + "\n\n")
-          .join("") + "data: [DONE]\n\n",
+        `${[chunk(delta, null), chunk({}, delta.tool_calls ? "tool_calls" : "stop")]
+          .map((v) => `data: ${JSON.stringify(v)}\n\n`)
+          .join("")}data: [DONE]\n\n`,
       );
     } catch (e) {
       records.push({ sequence: requestSequence ?? sequence, error: e.message });

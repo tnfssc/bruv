@@ -21,7 +21,7 @@ export function collaborationGuidance(): string {
 
 export function backgroundHandoff(ids: string[]): string {
   if (!ids.length) return "";
-  const names = ids.slice(0, 20).join(", ") + (ids.length > 20 ? " (and " + (ids.length - 20) + " more)" : "");
+  const names = ids.slice(0, 20).join(", ") + (ids.length > 20 ? ` (and ${ids.length - 20} more)` : "");
   return handoff.trimEnd().replace("{{jobs}}", () => names);
 }
 
@@ -41,7 +41,7 @@ function mainModeMarkers(owner: string): [string, string] {
 export function mainAgentGuidance(mode: MainAgentMode, owner: string): string {
   const source = mode === "orchestrator" ? mainOrchestrator.trimEnd() : "";
   const [start, end] = mainModeMarkers(owner);
-  return start + "\n" + source + "\n" + end;
+  return `${start}\n${source}\n${end}`;
 }
 
 /** Replace only the region with this Bruv session's unguessable owner marker. */

@@ -10,8 +10,8 @@ export function cellStyle(sgr: string): string {
     ["48", "background-color"],
   ]
     .map(([code, property]) => {
-      const match = sgr.match(new RegExp(code + ";2;(\\d+);(\\d+);(\\d+)"));
-      return match ? property + ":rgb(" + match.slice(1).join(",") + ")" : "";
+      const match = sgr.match(new RegExp(`${code};2;(\\d+);(\\d+);(\\d+)`));
+      return match ? `${property}:rgb(${match.slice(1).join(",")})` : "";
     })
     .filter(Boolean)
     .join(";");
@@ -25,9 +25,9 @@ export function cellRowHtml(row: Cell[]): string {
     if (last?.style === cell.style) last.text += cell.text;
     else runs.push({ ...cell });
   }
-  return runs.map((run) => '<span style="' + cellStyle(run.style) + '">' + escapeText(run.text) + "</span>").join("");
+  return runs.map((run) => `<span style="${cellStyle(run.style)}">${escapeText(run.text)}</span>`).join("");
 }
 
 export function cellRowsHtml(rows: Cell[][]): string {
-  return rows.map((row) => '<span class="demo-row">' + cellRowHtml(row) + "</span>").join("\n");
+  return rows.map((row) => `<span class="demo-row">${cellRowHtml(row)}</span>`).join("\n");
 }

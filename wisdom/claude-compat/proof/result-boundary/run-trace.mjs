@@ -9,7 +9,7 @@ const human=process.env.TRACE_SUITE==='human';
 const command=process.env.TRACE_SUITE==='command';
 let source=await fs.readFile(path.join(here,human?'run.mjs':'run-subagent.mjs'),'utf8');
 source=source.replace('"./subagent-model.mjs"',JSON.stringify(pathToFileURL(path.join(here,'subagent-model.mjs')).href))
- .replace('const here = path.dirname(fileURLToPath(import.meta.url));','const here = '+JSON.stringify(here)+';')
+ .replace('const here = path.dirname(fileURLToPath(import.meta.url));',`const here = ${JSON.stringify(here)};`)
  .replace('path.join(here, "subagent-driver.mjs")',JSON.stringify(fileURLToPath(new URL('./trace-driver.mjs',import.meta.url))));
 if(human)source=source.replace('"./model.mjs"',JSON.stringify(pathToFileURL(path.join(here,'model.mjs')).href)).replace('path.join(here, "driver.mjs")',JSON.stringify(fileURLToPath(new URL('./trace-human-driver.mjs',import.meta.url))));
 if(human) {
@@ -24,11 +24,11 @@ if(command) {
  const from=source.indexOf('  if (model.records.some');
  const to=source.indexOf('  passed = true;',from);
  if(from<0||to<0)throw Error('Command proof launcher boundary changed');
- source=source.slice(0,from)+'  if(model.records.length)throw Error("Unexpected model call in command-only proof");\n'+source.slice(to);
+ source=`${source.slice(0,from)}  if(model.records.length)throw Error("Unexpected model call in command-only proof");\n${source.slice(to)}`;
 }
 source=source.replaceAll('"./human-driver.mjs"',JSON.stringify(pathToFileURL(path.join(here,'human-driver.mjs')).href));
 const scratch=path.join(root,'.cache');await fs.mkdir(scratch,{recursive:true});
-const launcher=path.join(scratch,'result-boundary-run-'+process.pid+'.mjs');
+const launcher=path.join(scratch,`result-boundary-run-${process.pid}.mjs`);
 await fs.writeFile(launcher,source);
 let code;
 try {
@@ -43,7 +43,7 @@ try {
    if(result.t3BinarySha256!=='2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795') {
     result.diagnosisOnly=true;result.upstreamUnmodified=false;
    }
-   await fs.writeFile(f,JSON.stringify(result,null,2)+'\n');
+   await fs.writeFile(f,`${JSON.stringify(result,null,2)}\n`);
   } catch {}
  }
 }

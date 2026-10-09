@@ -67,7 +67,7 @@ function transcript(
     };
   }
   if (message.customType === "live-provisional" && details?.kind) {
-    const prefix = details.kind + ": ";
+    const prefix = `${details.kind}: `;
     return {
       speaker: details.kind.includes("user") ? "You" : "Voice",
       text: text.startsWith(prefix) ? text.slice(prefix.length) : text,

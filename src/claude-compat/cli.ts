@@ -15,7 +15,7 @@ import light from "../../dist/runtime-assets/theme/light.json" with { type: "fil
 import themeSchema from "../../dist/runtime-assets/theme/theme-schema.json" with { type: "file" };
 import { scrubRootEnvironmentInPlace } from "../delegation-environment";
 import { nativeStorage, permissionBinding, mcpFactory, scopedSettings } from "./binding";
-import { InjectedMcpSession } from "./mcp";
+import { InjectedMcpSession, parseInjectedMcpConfig } from "./mcp";
 import { preflightNativeHome } from "./preflight";
 import { profilesPath } from "../tasks/subagent-profiles";
 import {
@@ -135,7 +135,8 @@ async function bootstrap(agentDir: string) {
 const productionRuntime: RuntimeFactory = async (options, args) => {
   if (args.mode === "stream") await preflightNativeHome(options.configDir, homedir());
   try {
-    await access(options.executablePath!);
+    if (!options.executablePath) throw new Error("No paired Bruv executable path");
+    await access(options.executablePath);
   } catch {
     throw new Error(
       "Paired Bruv executable is missing or inaccessible; set provider-instance BRUV_CLAUDE_COMPAT_BRUV_PATH to the absolute installed bruv path.",
@@ -143,7 +144,8 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   }
   await bootstrap(options.agentDir);
   const { createClaudeCompatRuntime, preflightClaudeCompatModel } = await import("./runtime");
-  const { policy, authorize, setMode } = permissionBinding(args, options.request!);
+  if (!options.request) throw new Error("No native permission request binding");
+  const { policy, authorize, setMode } = permissionBinding(args, options.request);
   const settings = await scopedSettings(args, options.cwd, options.agentDir);
   const profileSource = profilesPath();
   const appWorker = await loadAppWorkerPolicy(options.agentDir, profileSource);
@@ -176,7 +178,7 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   // The app-owned server is identified by the credential-bearing native injection,
   // never by MCP annotations or a model supplied name. The server remains the
   // authority for its active run/provider, credentials and task lifecycle.
-  const appServer = args.mcpConfig?.mcpServers && (args.mcpConfig.mcpServers as Record<string, any>)["t3-code"];
+  const appServer = args.mcpConfig ? parseInjectedMcpConfig(args.mcpConfig).mcpServers["t3-code"] : undefined;
   const appOwnedServers =
     appServer?.type === "http" && /^Bearer \S+$/.test(appServer.headers?.Authorization ?? "") ? ["t3-code"] : [];
   const prepareAppCall = (call: import("./permissions").PermissionRequest) => prepareAppWorkerCall(appWorker, call);
@@ -206,7 +208,7 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   try {
     runtime = await createClaudeCompatRuntime({
       ...options,
-      model: prepared.initialModel.provider + "/" + prepared.initialModel.id,
+      model: `${prepared.initialModel.provider}/${prepared.initialModel.id}`,
       modelRuntime: prepared.models,
       settingsManager: settings,
       permissionMode: policy.mode,
@@ -217,7 +219,8 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
       tools: policy.tools ?? ["execute", ...(mcp?.tools().map((t) => t.name) ?? [])],
       disableHooks: policy.disableHooks,
       disableSlashCommands: args.disableSlashCommands,
-      thinkingLevel: (normalWorker?.thinking ?? policy.thinking) as any,
+      thinkingLevel: (normalWorker?.thinking ??
+        policy.thinking) as import("./runtime").ClaudeCompatRuntimeOptions["thinkingLevel"],
       thinkingDisplay: policy.thinkingDisplay,
       fastMode: policy.fastMode,
       ...(process.env.BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST
@@ -279,7 +282,7 @@ export async function runConnector(
   };
   const stop = (reason: "EOF" | "SIGTERM" | "SIGINT") => {
     stopped ??= reason;
-    transport?.close(new Error("Connector stopped: " + reason));
+    transport?.close(new Error(`Connector stopped: ${reason}`));
     io.input.destroy();
     // Start cancellation immediately; the finally boundary awaits and reports it.
     void close().catch(() => {});
@@ -293,9 +296,9 @@ export async function runConnector(
       await write(
         io.output,
         args.action === "version"
-          ? CONNECTOR_DISPLAY_IDENTITY + "\n"
+          ? `${CONNECTOR_DISPLAY_IDENTITY}\n`
           : args.action === "bruv-version"
-            ? BRUV_CONNECTOR_VERSION + "\n"
+            ? `${BRUV_CONNECTOR_VERSION}\n`
             : CONNECTOR_HELP,
       );
       return 0;
@@ -332,8 +335,9 @@ export async function runConnector(
             const cancelled = new Promise<never>((_resolve, reject) => {
               if (options?.signal?.aborted) reject(options.signal.reason);
               else if (options?.signal) {
-                abort = () => reject(options.signal!.reason);
-                options.signal.addEventListener("abort", abort, { once: true });
+                const signal = options.signal;
+                abort = () => reject(signal.reason);
+                signal.addEventListener("abort", abort, { once: true });
               }
             });
             const port = transport ?? (await Promise.race([transportBound.promise, cancelled]));
@@ -357,7 +361,7 @@ export async function runConnector(
           transport?.close(error instanceof Error ? error : new Error(String(error)));
         },
         diagnostic: (error) => {
-          io.stderr.write("[bruv-claude-compat] " + detail(error) + "\n");
+          io.stderr.write(`[bruv-claude-compat] ${detail(error)}\n`);
         },
       },
       args,
@@ -370,8 +374,9 @@ export async function runConnector(
         prompt = Buffer.concat(chunks).toString("utf8");
       }
       if (!prompt.trim()) throw new Error("Auxiliary prompt is empty");
-      const result = await runtime.runAuxiliary(prompt, args.schema!);
-      if (!stopped) await write(io.output, JSON.stringify(result) + "\n");
+      if (!args.schema) throw new Error("Auxiliary output requires a JSON schema");
+      const result = await runtime.runAuxiliary(prompt, args.schema);
+      if (!stopped) await write(io.output, `${JSON.stringify(result)}\n`);
     } else if (!stopped) {
       transport = new ClaudeCompatTransport({
         input: io.input,
@@ -389,14 +394,14 @@ export async function runConnector(
     transportBound.reject(new Error("Connector closed before native transport binding"));
     transport?.close();
     if (!stopped) {
-      io.stderr.write("[bruv-claude-compat] " + detail(error) + "\n");
+      io.stderr.write(`[bruv-claude-compat] ${detail(error)}\n`);
       exitCode = 1;
     }
   } finally {
     try {
       await close();
     } catch (error) {
-      io.stderr.write("[bruv-claude-compat] shutdown failed: " + detail(error) + "\n");
+      io.stderr.write(`[bruv-claude-compat] shutdown failed: ${detail(error)}\n`);
       exitCode = 1;
     }
     transportBound.reject(new Error("Connector closed before native transport binding"));

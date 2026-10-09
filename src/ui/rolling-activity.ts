@@ -165,7 +165,7 @@ export class ActivityController {
     const currentCallIds = new Set<string>();
     for (const [index, child] of this.host.chatContainer.children.entries()) {
       if (isBoundary(child)) {
-        fallback = "boundary-" + index;
+        fallback = `boundary-${index}`;
         current = undefined;
         currentCallIds.clear();
         continue;
@@ -257,13 +257,13 @@ export class ActivityController {
       : notices + (notices === 1 ? " job notification" : " job notifications");
     return (
       title +
-      (failed ? " · " + failed + " failed" : "") +
-      (jobFailed ? " · " + jobFailed + (jobFailed === 1 ? " job failed" : " jobs failed") : "") +
-      (cancelled ? " · " + cancelled + " cancelled" : "") +
-      (running ? " · " + running + " running" : "") +
-      (unresolved ? " · " + unresolved + " unresolved" : unknownSummary ? " · status unknown" : "") +
+      (failed ? ` · ${failed} failed` : "") +
+      (jobFailed ? ` · ${jobFailed}${jobFailed === 1 ? " job failed" : " jobs failed"}` : "") +
+      (cancelled ? ` · ${cancelled} cancelled` : "") +
+      (running ? ` · ${running} running` : "") +
+      (unresolved ? ` · ${unresolved} unresolved` : unknownSummary ? " · status unknown" : "") +
       (missing && !preview ? " · result incomplete" : "") +
-      (preview ? " · " + preview : "")
+      (preview ? ` · ${preview}` : "")
     );
   }
   private padded(text: string, width: number): string[] {
@@ -391,7 +391,7 @@ export class ActivityController {
         position += row.height;
       }
     change();
-    if (reveal) {
+    if (reveal && header !== undefined) {
       // Revealing a header does not depend on post-change heights. Render the
       // changed group's native bodies now (including wrapping), but do not
       // measure the entire unrelated transcript solely to discard its anchor.
@@ -400,7 +400,7 @@ export class ActivityController {
           ? this.group(reveal)
           : undefined;
       for (const item of group?.items ?? [reveal]) item.render(this.width);
-      this.deferAnchor(header!, reveal);
+      this.deferAnchor(header, reveal);
       this.host.ui.requestRender();
       return;
     }
@@ -552,11 +552,11 @@ export function registerRollingActivity(pi: ExtensionAPI): void {
       }
       state.sync();
       const options = state.groups.flatMap((group, index) => [
-        { label: index + 1 + ". " + state.label(group), group, item: undefined as ActivityItem | undefined },
+        { label: `${index + 1}. ${state.label(group)}`, group, item: undefined as ActivityItem | undefined },
         ...group.items.map((item, itemIndex) => {
           const tool = item instanceof ToolExecutionComponent ? toolState(item) : undefined;
           const title = tool ? actionLabel(tool.args?.label, tool.toolName) : "Job notification";
-          return { label: "  " + (index + 1) + "." + (itemIndex + 1) + ". Details — " + title, group, item };
+          return { label: `  ${index + 1}.${itemIndex + 1}. Details — ${title}`, group, item };
         }),
       ]);
       const choices = options.map((option) => option.label);

@@ -9,7 +9,7 @@ const isWorker = config.delegationCases && process.argv[1] === config.workerTap;
 const instance = isWorker ? "normal" : "root";
 const instanceEnv = isWorker ? { ...process.env, ...config.workerEnv } : process.env;
 const log = (kind, value) =>
-  fs.appendFileSync(config.wire, JSON.stringify({ kind, instance, owner: child.pid, value }) + "\n", { mode: 0o600 });
+  fs.appendFileSync(config.wire, `${JSON.stringify({ kind, instance, owner: child.pid, value })}\n`, { mode: 0o600 });
 const child = spawn(config.connector, [...config.connectorArgs, ...process.argv.slice(2)], {
   env: instanceEnv,
   stdio: ["pipe", "pipe", "pipe"],
@@ -27,7 +27,7 @@ if (config.delegationCases) {
     pos = args.indexOf("--mcp-config");
   const argument = (name) => {
     const p = args.indexOf(name);
-    return p >= 0 ? args[p + 1] : args.find((a) => a.startsWith(name + "="))?.slice(name.length + 1);
+    return p >= 0 ? args[p + 1] : args.find((a) => a.startsWith(`${name}=`))?.slice(name.length + 1);
   };
   const injection = pos >= 0 ? JSON.parse(args[pos + 1])?.mcpServers?.["t3-code"] : undefined;
   const token = injection?.headers?.Authorization;

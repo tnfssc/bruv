@@ -32,7 +32,7 @@ try {
     result.diagnosisOnly=true;result.upstreamUnmodified=false;result.passed=false;code=1;
    }
    else {result.diagnosisOnly=false;result.upstreamUnmodified=true;}
-   await fs.writeFile(f,JSON.stringify(result,null,2)+'\n');
+   await fs.writeFile(f,`${JSON.stringify(result,null,2)}\n`);
   } catch {}
  }
 }

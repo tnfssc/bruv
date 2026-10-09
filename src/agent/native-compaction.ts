@@ -3,7 +3,7 @@ import { restoreLeaf } from "../session/restore-leaf";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { isDeepStrictEqual } from "node:util";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
-import { calculateCost, type Model, type Usage } from "@earendil-works/pi-ai";
+import { type Api, calculateCost, type Model, type Usage } from "@earendil-works/pi-ai";
 import { getPiUserAgent } from "@earendil-works/pi-ai/utils/pi-user-agent";
 import { buildContextEntries } from "@earendil-works/pi-coding-agent";
 import type {
@@ -49,7 +49,7 @@ export type NativeCodexCompactionDetails = {
 type CapturedRequest = {
   sessionId: string;
   leafId: string | null;
-  model: Model<any>;
+  model: Model<Api>;
   thinkingLevel: string | null;
   messages: AgentMessage[];
   payload?: unknown;
@@ -104,8 +104,8 @@ export function buildNativeCodexRequest(payload: unknown): Record<string, unknow
 export function resolveCodexResponsesUrl(baseUrl: string | undefined): string {
   const normalized = (baseUrl?.trim() || "https://chatgpt.com/backend-api").replace(/\/+$/, "");
   if (normalized.endsWith("/codex/responses")) return normalized;
-  if (normalized.endsWith("/codex")) return normalized + "/responses";
-  return normalized + "/codex/responses";
+  if (normalized.endsWith("/codex")) return `${normalized}/responses`;
+  return `${normalized}/codex/responses`;
 }
 function wireCounter(record: Record<string, unknown>, key: string): number {
   const value = record[key];
@@ -113,7 +113,7 @@ function wireCounter(record: Record<string, unknown>, key: string): number {
     throw new Error("Codex native compaction returned invalid accounting");
   return value;
 }
-function usageFromWire(raw: unknown, model: Model<any>): Usage {
+function usageFromWire(raw: unknown, model: Model<Api>): Usage {
   if (!isRecord(raw)) throw new Error("Codex native compaction returned no usable accounting");
   const details = isRecord(raw.input_tokens_details) ? raw.input_tokens_details : {};
   const outputDetails = isRecord(raw.output_tokens_details) ? raw.output_tokens_details : {};
@@ -155,7 +155,7 @@ class NativeCodexHttpError extends Error {
 }
 
 /** Parse only protocol shape. Keep provider payloads and hidden reasoning out of errors. */
-export function parseNativeCodexEvents(events: readonly unknown[], model: Model<any>): NativeResponse {
+export function parseNativeCodexEvents(events: readonly unknown[], model: Model<Api>): NativeResponse {
   const doneItems: CodexCompactionItem[] = [];
   let terminal: Record<string, unknown> | undefined;
   let terminalType: string | undefined;
@@ -222,9 +222,9 @@ export function parseNativeCodexEvents(events: readonly unknown[], model: Model<
   if (!Array.isArray(output) || outputItems.length !== output.length) mixed = true;
   const first =
     Array.isArray(output) && output.length === 0 && doneItems.length === 1
-      ? structuredClone(doneItems[0]!)
+      ? structuredClone(doneItems[0])
       : outputItems.length === 1
-        ? structuredClone(outputItems[0]!)
+        ? structuredClone(outputItems[0])
         : undefined;
   // output_item.done and the terminal output are two representations of the
   // same item. Repetition across those representations is valid; the final
@@ -271,7 +271,7 @@ function isTerminalEvent(event: unknown): boolean {
 }
 async function consumeNativeCodexEvents(
   response: Response,
-  model: Model<any>,
+  model: Model<Api>,
   signal?: AbortSignal,
 ): Promise<NativeResponse> {
   if (!response.body) throw new Error("Codex native compaction returned no response body");
@@ -350,7 +350,7 @@ function accountIdFromToken(token: string): string {
   try {
     const parts = token.split(".");
     if (parts.length !== 3) throw 0;
-    const claim = JSON.parse(Buffer.from(parts[1]!, "base64url").toString());
+    const claim = JSON.parse(Buffer.from(parts[1], "base64url").toString());
     const id = claim?.["https://api.openai.com/auth"]?.chatgpt_account_id;
     if (typeof id !== "string" || !id) throw 0;
     return id;
@@ -360,7 +360,7 @@ function accountIdFromToken(token: string): string {
 }
 export function buildCodexCompactionHeaders(
   captured: Record<string, string | null>,
-  model: Model<any>,
+  model: Model<Api>,
   auth?: { apiKey?: string; headers?: Record<string, string | null> },
 ): Headers {
   const headers = new Headers(model.headers);
@@ -391,7 +391,7 @@ export function buildCodexCompactionHeaders(
   return headers;
 }
 export async function requestNativeCodexCompaction(args: {
-  model: Model<any>;
+  model: Model<Api>;
   payload: unknown;
   headers: Record<string, string | null>;
   auth?: { apiKey?: string; headers?: Record<string, string | null> };
@@ -399,7 +399,7 @@ export async function requestNativeCodexCompaction(args: {
   sessionId?: string;
   operationId?: ReturnType<typeof crypto.randomUUID>;
   fetch?: typeof globalThis.fetch;
-  onDispatch?: (model: Model<any>) => void;
+  onDispatch?: (model: Model<Api>) => void;
 }): Promise<NativeResponse> {
   args.signal?.throwIfAborted();
   const body = buildNativeCodexRequest(args.payload);
@@ -482,7 +482,7 @@ export function coversDiscardedMessages(c: CapturedRequest, event: SessionBefore
 /** Replay stays within the checkpoint's Codex API/provider boundary. The pinned
  * Model catalog has no comp_hash: like Codex, missing hashes do not establish
  * incompatibility. Model ID alone is not a compaction compatibility check. */
-function canReplayNativeCheckpoint(d: NativeCodexCompactionDetails, model: Model<any> | undefined): boolean {
+function canReplayNativeCheckpoint(d: NativeCodexCompactionDetails, model: Model<Api> | undefined): boolean {
   return model?.api === d.api && model.provider === d.provider;
 }
 function nativeAssistant(message: AgentMessage, d: NativeCodexCompactionDetails, selectedModel: string): AgentMessage {
@@ -549,17 +549,18 @@ function adaptCompactionMessages(
     const entry = compactions[index++];
     const d = entry?.type === "compaction" ? entry.details : undefined;
     if (
-      (message as any).summary !== entry?.summary ||
+      message.summary !== entry?.summary ||
       !isNativeCodexCompactionDetails(d) ||
+      !ctx.model ||
       !canReplayNativeCheckpoint(d, ctx.model)
     )
       return message;
     return d.runtimeState
       ? [
-          nativeAssistant(message, d, ctx.model!.id),
+          nativeAssistant(message, d, ctx.model.id),
           { role: "user", content: d.runtimeState, timestamp: message.timestamp } as AgentMessage,
         ]
-      : nativeAssistant(message, d, ctx.model!.id);
+      : nativeAssistant(message, d, ctx.model.id);
   });
 }
 type NativeFallbackCode =
@@ -599,7 +600,7 @@ function bestEffortDiagnostic(ctx: ExtensionContext, diagnostic: Parameters<type
 
 function bestEffortProviderObservation(
   manager: ExtensionContext["sessionManager"],
-  model: Pick<Model<any>, "provider" | "id">,
+  model: Pick<Model<Api>, "provider" | "id">,
   observedAt: "dispatch" | "response",
   operationId: ReturnType<typeof crypto.randomUUID>,
 ): void {
@@ -762,7 +763,7 @@ async function compactNativeCapture(
       item: native.item,
     };
     const result: CompactionResult<NativeCodexCompactionDetails> = {
-      summary: NATIVE_CODEX_SUMMARY + (runtimeState ? "\n\n" + runtimeState : ""),
+      summary: NATIVE_CODEX_SUMMARY + (runtimeState ? `\n\n${runtimeState}` : ""),
       firstKeptEntryId: event.preparation.firstKeptEntryId,
       tokensBefore: event.preparation.tokensBefore,
       usage: native.usage,
@@ -817,7 +818,7 @@ export function registerNativeCodexCompaction(
     const entries = compactions.filter((entry) => isRecord(entry.details) && entry.details.strategy === "codex-native");
     const invalid = entries.some((e) => !isNativeCodexCompactionDetails(e.details));
     const checkpoints = entries.flatMap((e) => (isNativeCodexCompactionDetails(e.details) ? [e.details] : []));
-    const incompatible = checkpoints.find((d) => !canReplayNativeCheckpoint(d, ctx.model));
+    const incompatible = checkpoints.find((d) => !ctx.model || !canReplayNativeCheckpoint(d, ctx.model));
     if (invalid || incompatible) {
       bestEffortDiagnostic(ctx, {
         component: "compaction",
@@ -827,11 +828,12 @@ export function registerNativeCodexCompaction(
         dispatch: "none",
         cancellation: "safety",
       });
-      blockOrdinaryRequest = invalid
-        ? "Unsupported or damaged opaque Codex checkpoint. Use a compatible bruv version or branch before the checkpoint."
-        : "This session contains an opaque Codex checkpoint that cannot be sent to the selected API/provider. Switch back to its Codex API/provider (" +
-          incompatible!.provider +
-          ") or start a new session.";
+      blockOrdinaryRequest =
+        invalid || !incompatible
+          ? "Unsupported or damaged opaque Codex checkpoint. Use a compatible bruv version or branch before the checkpoint."
+          : "This session contains an opaque Codex checkpoint that cannot be sent to the selected API/provider. Switch back to its Codex API/provider (" +
+            incompatible.provider +
+            ") or start a new session.";
       ctx.ui?.notify?.(blockOrdinaryRequest, "error");
       ctx.abort();
       return { messages: event.messages };

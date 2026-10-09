@@ -45,7 +45,7 @@ test("navigation resets accumulated wheel distance", () => {
 test("row patches preserve complete ANSI output and fixed header rows", () => {
   const first = layout(144, 53, { scroll: 0, focus: -1 });
   const next = layout(144, 53, { scroll: 1, focus: -1 });
-  expect(first.ansi).toBe("\x1b[?25l\x1b[?7l\x1b[H" + first.ansiRows.join("") + "\x1b[0m");
+  expect(first.ansi).toBe(`\x1b[?25l\x1b[?7l\x1b[H${first.ansiRows.join("")}\x1b[0m`);
   expect(next.ansiRows.slice(0, 3)).toEqual(first.ansiRows.slice(0, 3));
   expect(next.ansiRows.some((r, i) => r !== first.ansiRows[i])).toBe(true);
 });

@@ -10,8 +10,8 @@ const result={};
 for(const [name,ref] of Object.entries(refs)) {
  result[name]={source:ref,hashes:{}};
  for(const file of files) {
-  const r=await fetch('https://raw.githubusercontent.com/pingdotgg/t3code/'+ref+'/'+file);
-  if(!r.ok)throw Error(file+': '+r.status);
+  const r=await fetch(`https://raw.githubusercontent.com/pingdotgg/t3code/${ref}/${file}`);
+  if(!r.ok)throw Error(`${file}: ${r.status}`);
   const bytes=Buffer.from(await r.arrayBuffer());
   const out=path.join(cache,name,file);await fs.mkdir(path.dirname(out),{recursive:true});await fs.writeFile(out,bytes);
   result[name].hashes[file]=createHash('sha256').update(bytes).digest('hex');
@@ -27,5 +27,5 @@ const adapter=files[5];let diff;
 try {diff=execFileSync('/usr/bin/diff',['-U0',path.join(cache,'previous',adapter),path.join(cache,'current',adapter)]);}
 catch(e){if(e.status!==1)throw e;diff=e.stdout;}
 await fs.writeFile(path.join(cache,'adapter-source.diff'),diff);
-await fs.writeFile(path.join(cache,'comparison.json'),JSON.stringify(result,null,2)+'\n');
+await fs.writeFile(path.join(cache,'comparison.json'),`${JSON.stringify(result,null,2)}\n`);
 console.log(JSON.stringify(result,null,2));

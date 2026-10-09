@@ -36,8 +36,9 @@ async function sample(label: string) {
 try {
   await sample("baseline");
   for (let batch = 1; batch <= 10; batch++) {
-    for (let i = 0; i < 1000; i++) await (globalThis as any).jobs.list();
-    if (batch % 2 === 0) await sample("acknowledged " + batch * 1000);
+    for (let i = 0; i < 1000; i++)
+      await (globalThis as typeof globalThis & { jobs: { list(): Promise<unknown> } }).jobs.list();
+    if (batch % 2 === 0) await sample(`acknowledged ${batch * 1000}`);
   }
   server.close(true);
   await sample("bridge closed");

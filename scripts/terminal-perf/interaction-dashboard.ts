@@ -8,7 +8,7 @@ import {
 export function escapeInteractionJson(value: unknown): string {
   return JSON.stringify(value).replace(
     /[<>&\u2028\u2029]/g,
-    (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"),
+    (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`,
   );
 }
 export function interactionDashboard(run: InteractionRun, baseline?: InteractionRun): string {

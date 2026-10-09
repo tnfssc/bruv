@@ -27,8 +27,20 @@ function pathKey(path: string, relativeTo?: string): string {
   return resolve(relativeTo ?? process.cwd(), path);
 }
 
-function usageCost(entry: any): number {
-  let usage: any;
+type CostUsage = { cost?: { total?: unknown } };
+
+function usageCost(
+  entry:
+    | {
+        type?: unknown;
+        customType?: unknown;
+        message?: { role?: unknown; usage?: CostUsage };
+        usage?: CostUsage;
+        data?: { usage?: CostUsage };
+      }
+    | undefined,
+): number {
+  let usage: CostUsage | undefined;
   if (entry?.type === "message" && (entry.message?.role === "assistant" || entry.message?.role === "toolResult")) {
     usage = entry.message.usage;
   } else if (entry?.type === "compaction" || entry?.type === "branch_summary") {

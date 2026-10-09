@@ -76,7 +76,7 @@ export class TranscriptLog {
         e.speaker + (e.status === "suppressed" ? " (not played)" : e.status === "interrupted" ? " (interrupted)" : "");
       // Keep live text moving instead of freezing on the start of a long reply.
       // The complete received entry is kept separately in session history.
-      return label + ": " + (text.length > 2400 ? "… [earlier text saved] " + text.slice(-2400) : text);
+      return `${label}: ${text.length > 2400 ? `… [earlier text saved] ${text.slice(-2400)}` : text}`;
     };
     // Reserve viewport slots for drafts before they become recent entries. Otherwise
     // finishing speech evicts an older row and moves the prompt up one line.

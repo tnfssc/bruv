@@ -1,3 +1,6 @@
+import { requireValue } from "../lib/require-value";
+import type { SessionTreeNode } from "@earendil-works/pi-coding-agent";
+import type { FilterMode } from "../../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tree-selector.js";
 import { getKeybindings, setKeybindings } from "@earendil-works/pi-tui";
 import { KeybindingsManager } from "../../node_modules/@earendil-works/pi-coding-agent/dist/core/keybindings.js";
 import type { TreeSelectorComponent } from "../../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tree-selector.js";
@@ -17,9 +20,9 @@ export function selectorBehavior(Selector: typeof TreeSelectorComponent) {
 
 function createBranchingTree() {
   const user = (content: string) => ({ role: "user", content, timestamp: 0 });
-  const assistant = (content: any[]) => ({ role: "assistant", content, stopReason: "stop", timestamp: 0 });
+  const assistant = (content: object[]) => ({ role: "assistant", content, stopReason: "stop", timestamp: 0 });
   const text = (value: string) => ({ type: "text", text: value });
-  const records: any[] = [
+  const records: [string, string | null, string, object][] = [
     ["root", null, "message", { message: user("root needle request") }],
     ["setting", "root", "model_change", { provider: "offline", modelId: "model" }],
     ["main", "setting", "message", { message: assistant([text("primary needle answer")]) }],
@@ -50,21 +53,24 @@ function createBranchingTree() {
     ["second-root", null, "custom", { customType: "metadata", data: {} }],
     ["second-leaf", "second-root", "message", { message: user("independent branch") }],
   ];
-  const nodes = new Map<string, any>();
+  const nodes = new Map<string, SessionTreeNode>();
   for (const [id, parentId, type, extra] of records)
-    nodes.set(id, { entry: { id, parentId, type, timestamp: fixtureTimestamp, ...extra }, children: [] });
-  nodes.get("alternate").label = "named branch";
-  nodes.get("alternate").labelTimestamp = fixtureTimestamp;
-  const roots: any[] = [];
+    nodes.set(id, {
+      entry: { id, parentId, type, timestamp: fixtureTimestamp, ...extra } as SessionTreeNode["entry"],
+      children: [],
+    });
+  requireValue(nodes.get("alternate")).label = "named branch";
+  requireValue(nodes.get("alternate")).labelTimestamp = fixtureTimestamp;
+  const roots: SessionTreeNode[] = [];
   for (const node of nodes.values()) {
-    const parent = nodes.get(node.entry.parentId);
+    const parent = node.entry.parentId ? nodes.get(node.entry.parentId) : undefined;
     if (parent) parent.children.push(node);
     else roots.push(node);
   }
   return roots;
 }
 
-function replaySelectorBehavior(Selector: typeof TreeSelectorComponent, roots: any[]) {
+function replaySelectorBehavior(Selector: typeof TreeSelectorComponent, roots: SessionTreeNode[]) {
   let accepted: string | undefined;
   let cancelled = 0;
   const component = new Selector(
@@ -79,13 +85,42 @@ function replaySelectorBehavior(Selector: typeof TreeSelectorComponent, roots: a
     },
   );
   // The replay deliberately inspects and drives private projection state.
-  const list: any = component.getTreeList();
-  const snapshots: any[] = [];
+  type TreeListState = {
+    filteredNodes: {
+      node: SessionTreeNode;
+      indent: number;
+      showConnector: boolean;
+      isLast: boolean;
+      gutters: boolean[];
+      isVirtualRootChild: boolean;
+    }[];
+    selectedIndex: number;
+    filterMode: FilterMode;
+    searchQuery: string;
+    findNearestVisibleIndex(id: string): number;
+    applyFilter(): void;
+  } & Pick<ReturnType<TreeSelectorComponent["getTreeList"]>, "getSelectedNode" | "handleInput" | "updateNodeLabel">;
+  const list = component.getTreeList() as unknown as TreeListState;
+  const snapshots: Array<{
+    name: string;
+    selected: string | undefined;
+    visible?: Array<{
+      id: string;
+      indent: number;
+      connector: boolean;
+      last: boolean;
+      gutters: boolean[];
+      virtual: boolean;
+    }>;
+    screen80?: string[];
+    screen20?: string[];
+    ids?: string[];
+  }> = [];
   const capture = (name: string) =>
     snapshots.push({
       name,
       selected: list.getSelectedNode()?.entry.id,
-      visible: list.filteredNodes.map((flat: any) => ({
+      visible: list.filteredNodes.map((flat) => ({
         id: flat.node.entry.id,
         indent: flat.indent,
         connector: flat.showConnector,
@@ -103,7 +138,7 @@ function replaySelectorBehavior(Selector: typeof TreeSelectorComponent, roots: a
   capture("fold");
   list.handleInput("\x1b[1;5C");
   capture("unfold");
-  for (const mode of ["user-only", "no-tools", "labeled-only", "all", "default"]) {
+  for (const mode of ["user-only", "no-tools", "labeled-only", "all", "default"] as const) {
     list.filterMode = mode;
     list.applyFilter();
     capture(mode);
@@ -123,7 +158,7 @@ function replaySelectorBehavior(Selector: typeof TreeSelectorComponent, roots: a
   capture("restore-selection");
   list.handleInput("\r");
   list.handleInput("\x1b");
-  const leafOnly: any = new Selector(
+  const leafOnly = new Selector(
     roots,
     "call",
     24,
@@ -132,11 +167,11 @@ function replaySelectorBehavior(Selector: typeof TreeSelectorComponent, roots: a
     undefined, // No label-change callback; selection and filter occupy the next slots.
     "setting",
     "no-tools",
-  ).getTreeList();
+  ).getTreeList() as unknown as TreeListState;
   snapshots.push({
     name: "hidden-ancestor-and-tool-leaf",
     selected: leafOnly.getSelectedNode()?.entry.id,
-    ids: leafOnly.filteredNodes.map((flat: any) => flat.node.entry.id),
+    ids: leafOnly.filteredNodes.map((flat) => flat.node.entry.id),
   });
   return { snapshots, accepted, cancelled };
 }

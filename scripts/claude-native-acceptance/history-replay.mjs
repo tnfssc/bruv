@@ -14,11 +14,11 @@ const upstream = path.resolve(process.env.T3_UPSTREAM);
 const binary = path.join(upstream, "platform/t3");
 const browserPath = process.env.BROWSER_PATH;
 const port = Number(process.env.FIXTURE_PORT || "18783");
-const url = "http://127.0.0.1:" + port;
+const url = `http://127.0.0.1:${port}`;
 const root = config
   ? path.join(path.dirname(config.state), "t3-runtime")
   : path.resolve(".cache/claude-native-ui-replay");
-const proof = path.resolve(process.env.PROOF_OUTPUT || ".cache/claude-native-ui-replay-proof-" + Date.now());
+const proof = path.resolve(process.env.PROOF_OUTPUT || `.cache/claude-native-ui-replay-proof-${Date.now()}`);
 const home = path.join(root, "home");
 const project = path.join(root, "project");
 const base = path.join(root, "t3-base");
@@ -43,11 +43,11 @@ try {
   await prepareRuntime();
   version = execFileSync(binary, ["--version"], { env, encoding: "utf8" }).trim();
   await replayWithServer();
-  console.log("PASS actual native history replay. Proof: " + proof);
+  console.log(`PASS actual native history replay. Proof: ${proof}`);
 } catch (error) {
   await fs.writeFile(
     path.join(proof, "result.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         integratedAcceptance: true,
         passed: false,
@@ -60,7 +60,7 @@ try {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
   throw error;
 } finally {
@@ -190,7 +190,7 @@ async function exerciseHistory(page) {
   const paired = execFileSync(binary, ["pair", "--base-dir", base], { env, encoding: "utf8" });
   const token = paired.match(/token=([A-Za-z0-9_-]+)/)?.[1];
   assert.ok(token, "local pairing token (never exported)");
-  await page.goto(url + "/pair#token=" + token);
+  await page.goto(`${url}/pair#token=${token}`);
   await page.waitForTimeout(1500);
   // Normal native first-run flow, without external sign-in, installation, or license bypass.
   await page.getByText("Connect your computers", { exact: true }).waitFor({ timeout: 20000 });
@@ -199,7 +199,7 @@ async function exerciseHistory(page) {
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Do not import projects", exact: true }).click();
   await page.getByText("Set up T3 Code", { exact: true }).waitFor({ state: "hidden" });
-  await page.goto(url + "/settings/providers");
+  await page.goto(`${url}/settings/providers`);
   await page
     .getByRole("button", {
       name: "Select Bruv local deterministic acceptance (not Claude)",
@@ -218,11 +218,11 @@ async function exerciseHistory(page) {
   const body = () => page.locator("body").innerText();
   const snapshot = async (name) => {
     await fs.writeFile(
-      path.join(proof, name + ".txt"),
+      path.join(proof, `${name}.txt`),
       (await body()).replaceAll(root, "<RUNTIME>").replaceAll(path.dirname(config.state), "<SCOPED>"),
     );
     await page.screenshot({
-      path: path.join(proof, name + ".png"),
+      path: path.join(proof, `${name}.png`),
       mask: [page.locator("#provider-instance-claudeAgent-binaryPath")],
     });
   };

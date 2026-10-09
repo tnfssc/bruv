@@ -16,7 +16,7 @@ export const summarizeRemoteTask = (task: RemoteTask) => ({
   events: undefined,
   cached: true,
   observation: task.lastError
-    ? "Remote status unavailable; cached observation only: " + task.lastError
+    ? `Remote status unavailable; cached observation only: ${task.lastError}`
     : "Last synced state, not live status",
   eventCount: task.events.length,
 });

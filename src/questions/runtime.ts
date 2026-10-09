@@ -89,7 +89,7 @@ class ParentQuestionContinuations {
   }
 
   private replyKey(q: Question) {
-    return q.replyId ?? q.id + ":" + q.version;
+    return q.replyId ?? `${q.id}:${q.version}`;
   }
 
   private project(q: Question): Question {
@@ -216,7 +216,8 @@ class ParentQuestionContinuations {
         return;
       }
       this.delivered.add(key);
-      if (this.delivered.size > 220) this.delivered.delete(this.delivered.values().next().value!);
+      const oldest = this.delivered.values().next().value;
+      if (this.delivered.size > 220 && oldest !== undefined) this.delivered.delete(oldest);
       this.continuationPending = true;
       this.pi.sendMessage(
         {
@@ -406,10 +407,12 @@ export function registerQuestionRuntime(
             if (method === "questions.resume") {
               return continuations.resume(ctx, q);
             }
+            const version = method === "questions.answer" && q.status === "answered" ? q.replyVersion : q.version;
+            if (version === undefined) throw new Error("Answered question is missing its reply version");
             const input = {
               id: q.id,
               owner: q.owner,
-              version: method === "questions.answer" && q.status === "answered" ? q.replyVersion! : q.version,
+              version,
             };
             const result =
               method === "questions.answer"

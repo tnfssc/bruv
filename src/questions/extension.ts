@@ -57,14 +57,14 @@ function renderAnswerDelivery(question: Question, displayId: string): string | u
     case "queued":
       return "Answer saved · waiting for parent";
     default:
-      return "Answer saved · /questions resume " + displayId;
+      return `Answer saved · /questions resume ${displayId}`;
   }
 }
 
 function renderQuestionDetail(question: Question, displayId: string): string {
   return [
     renderQuestion(question, displayId),
-    question.requester && "Requester: " + question.requester,
+    question.requester && `Requester: ${question.requester}`,
     question.remote &&
       "Remote ledger: " +
         question.remote.host +
@@ -74,7 +74,7 @@ function renderQuestionDetail(question: Question, displayId: string): string {
         question.remote.id +
         " v" +
         question.remote.version,
-    question.reason && "Why: " + question.reason,
+    question.reason && `Why: ${question.reason}`,
     question.choices?.length &&
       "Choices: " +
         question.choices.join(" | ") +
@@ -84,12 +84,12 @@ function renderQuestionDetail(question: Question, displayId: string): string {
         [question.blocked.foreground ? "parent" : "", ...(question.blocked.taskIds ?? [])].filter(Boolean).join(", ") +
         " — " +
         question.blocked.checkpoint,
-    question.answer && "Answer: " + question.answer,
+    question.answer && `Answer: ${question.answer}`,
     question.status === "cancelled" &&
       question.blocked &&
       "Cancelled; follow-up needs a new plan, not a guessed answer.",
     renderAnswerDelivery(question, displayId),
-    question.resolutionReason && "Closed: " + question.resolutionReason,
+    question.resolutionReason && `Closed: ${question.resolutionReason}`,
     question.taskIds?.length &&
       "Tasks: " +
         question.taskIds.join(", ") +
@@ -177,7 +177,7 @@ export function registerQuestions(
             ? open.length +
                 " question" +
                 (open.length === 1 ? "" : "s") +
-                (saved ? " · " + saved + " saved" : cancelled ? "" : " pending") +
+                (saved ? ` · ${saved} saved` : cancelled ? "" : " pending") +
                 (waiting ? (cancelled ? " · follow-up blocked" : " · waiting on you") : "")
             : undefined,
         );
@@ -213,7 +213,7 @@ export function registerQuestions(
       }
       const id = await pick(
         ctx,
-        "Questions · " + pending.length + " unanswered",
+        `Questions · ${pending.length} unanswered`,
         pending.map((q) => ({
           value: q.id,
           label: q.text,
@@ -221,7 +221,8 @@ export function registerQuestions(
         })),
       );
       if (!id) return;
-      const question = pending.find((item) => item.id === id)!;
+      const question = pending.find((item) => item.id === id);
+      if (!question) continue;
       const answer = await promptAnswer(ctx, question);
       if (answer === undefined) continue;
       // Submit the displayed snapshot. The runtime checks its owner/version before accepting a reply.
@@ -255,7 +256,7 @@ export function registerQuestions(
           )
           .filter((q) => !q.readOnly && (q.id.startsWith(typed) || q.text.toLowerCase().includes(typed.toLowerCase())))
           .map((q) => ({
-            value: verb + " " + q.id,
+            value: `${verb} ${q.id}`,
             label: q.text.replace(/\s+/g, " "),
             description: q.status,
           }));
@@ -286,7 +287,7 @@ export function registerQuestions(
           const question = (await service.handle("questions.get", {
             id: await resolveId(service, id),
           })) as Question | null;
-          if (!question) throw new Error("Question not found: " + id);
+          if (!question) throw new Error(`Question not found: ${id}`);
           const all = records(await service.handle("questions.list", {}));
           const displayId = shortId(question, all);
           ctx.ui.notify(renderQuestionDetail(question, displayId), "info");
@@ -298,7 +299,7 @@ export function registerQuestions(
               .trim() ?? "";
           if (!id || !answer) throw new Error("Usage: /questions answer <id> <text>");
           await service.handle("questions.answer", { id: await resolveId(service, id), answer });
-          ctx.ui.notify("Answer saved for " + id, "info");
+          ctx.ui.notify(`Answer saved for ${id}`, "info");
         } else if (verb === "resume") {
           if (!id || rest.length) throw new Error("Usage: /questions resume <id>");
           const resumed = (await service.handle("questions.resume", { id: await resolveId(service, id) })) as Question;
@@ -307,13 +308,13 @@ export function registerQuestions(
               ? (resumed.remote.replyState === "delivered"
                   ? "Remote human reply delivered: "
                   : "Remote human reply saved; outcome uncertain: ") + id
-              : "Saved answer queued for a new parent turn: " + id,
+              : `Saved answer queued for a new parent turn: ${id}`,
             "info",
           );
         } else if (verb === "cancel") {
           if (!id || rest.length) throw new Error("Usage: /questions cancel <id>");
           await service.handle("questions.cancel", { id: await resolveId(service, id) });
-          ctx.ui.notify("Question " + id + " cancelled", "info");
+          ctx.ui.notify(`Question ${id} cancelled`, "info");
         } else throw new Error("Usage: /questions [list|detail <id>|answer <id> <text>|cancel <id>|resume <id>]");
         await refresh();
       } catch (error) {

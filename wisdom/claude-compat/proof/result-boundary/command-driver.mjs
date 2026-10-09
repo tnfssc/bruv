@@ -22,7 +22,7 @@ export async function exercise({page,snapshot,config}) {
   await page.getByRole('button',{name:'Stop generation',exact:true}).waitFor({state:'hidden',timeout:30000});
   await page.getByRole('button',{name:'Submit message',exact:true}).waitFor();
   assert.equal(await page.getByText('Working',{exact:true}).isVisible(),false);
-  await snapshot('command-'+n+'-idle');
+  await snapshot(`command-${n}-idle`);
  }
 }
 export async function verify({proof,t3Version,t3BinarySha256}) {

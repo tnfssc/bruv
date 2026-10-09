@@ -17,8 +17,7 @@ import { interactionCatalog } from "./interaction-catalog";
 const root = resolve(import.meta.dir, "../..");
 const git = (...args: string[]) => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
 export function selectInteractionCases(o: InteractionOptions): string[] {
-  for (const id of o.cases)
-    if (!interactionCatalog.includes(id)) throw new Error("Unknown case " + id + "; use --list");
+  for (const id of o.cases) if (!interactionCatalog.includes(id)) throw new Error(`Unknown case ${id}; use --list`);
   const selected = interactionCatalog.filter(
     (id) =>
       o.groups.includes(id.split("/")[0] as InteractionOptions["groups"][number]) &&
@@ -36,13 +35,13 @@ export async function interactionEnvironment(): Promise<Pick<InteractionRun, "en
   for (const f of [
     "scripts/terminal-perf/terminal-interactions.ts",
     ...["catalog", "options", "worker", "normalize", "report", "dashboard"].map(
-      (s) => "scripts/terminal-perf/interaction-" + s + ".ts",
+      (s) => `scripts/terminal-perf/interaction-${s}.ts`,
     ),
   ])
     if (!paths.includes(f)) paths.push(f);
   for (const name of ["pi-tui", "pi-coding-agent", "pi-ai", "pi-server"]) {
-    const dir = "node_modules/@earendil-works/" + name + "/dist";
-    for await (const file of new Bun.Glob("**/*.js").scan({ cwd: resolve(root, dir) })) paths.push(dir + "/" + file);
+    const dir = `node_modules/@earendil-works/${name}/dist`;
+    for await (const file of new Bun.Glob("**/*.js").scan({ cwd: resolve(root, dir) })) paths.push(`${dir}/${file}`);
   }
   for (const f of paths.sort())
     hashes[f] = createHash("sha256")
@@ -68,7 +67,7 @@ export async function interactionEnvironment(): Promise<Pick<InteractionRun, "en
 }
 async function loadReport(path: string): Promise<InteractionRun> {
   const file = Bun.file(path);
-  if (file.size > 100 * 1024 * 1024) throw new Error("Report exceeds 100 MiB: " + path);
+  if (file.size > 100 * 1024 * 1024) throw new Error(`Report exceeds 100 MiB: ${path}`);
   return validateInteractionRun(await file.json());
 }
 // Own one fresh worker through exit and pipe drain; persist diagnostics before accepting its evidence.
@@ -95,8 +94,8 @@ async function runInteractionWorker(id: string, width: number, height: number, p
   } finally {
     clearTimeout(timer);
   }
-  await Bun.write(path + ".log", stdout + stderr);
-  if (exit !== 0) throw new Error(id + " child exited " + exit + ": " + stderr.slice(-4000));
+  await Bun.write(`${path}.log`, stdout + stderr);
+  if (exit !== 0) throw new Error(`${id} child exited ${exit}: ${stderr.slice(-4000)}`);
   return Bun.file(path).json();
 }
 export async function measureInteractions(o: InteractionOptions): Promise<InteractionRun> {
@@ -121,9 +120,9 @@ export async function measureInteractions(o: InteractionOptions): Promise<Intera
   // Deliberately no Promise.all: adapters and performance probes are serial.
   for (const id of ids)
     for (let iteration = 0; iteration < o.repetitions; iteration++) {
-      const key = "raw/" + id.replaceAll("/", "-") + "-" + iteration + ".json";
+      const key = `raw/${id.replaceAll("/", "-")}-${iteration}.json`;
       const path = resolve(out, key);
-      console.error("Measuring " + id + " repetition " + (iteration + 1));
+      console.error(`Measuring ${id} repetition ${iteration + 1}`);
       const raw = await runInteractionWorker(id, o.width, o.height, path);
       run.evidence[key] = raw;
       for (const result of normalizeInteraction(id, raw, iteration, key)) {
@@ -157,7 +156,7 @@ export async function runInteractionCli(args: string[]): Promise<number> {
   await Bun.write(resolve(o.out, "report.txt"), text);
   await Bun.write(resolve(o.out, "index.html"), interactionDashboard(run, baseline));
   console.log(text);
-  console.log("Dashboard: " + resolve(o.out, "index.html"));
+  console.log(`Dashboard: ${resolve(o.out, "index.html")}`);
   return o.strict && interactionBudgetFailures(run).length ? 1 : 0;
 }
 if (import.meta.main) {

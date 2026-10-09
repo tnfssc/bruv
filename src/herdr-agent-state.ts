@@ -69,7 +69,7 @@ function readConfig(connect: Connect = (endpoint) => net.createConnection(endpoi
     return undefined;
   return {
     paneId,
-    endpoint: process.platform === "win32" ? "\\\\.\\pipe\\" + socketPath : socketPath,
+    endpoint: process.platform === "win32" ? `\\\\.\\pipe\\${socketPath}` : socketPath,
     connect,
   };
 }
@@ -246,7 +246,7 @@ class HerdrRuntime {
 
   private materialize(request: PendingRequest): Request {
     return {
-      id: SOURCE + ":" + request.kind + ":" + Date.now() + ":" + Math.random().toString(36).slice(2),
+      id: `${SOURCE}:${request.kind}:${Date.now()}:${Math.random().toString(36).slice(2)}`,
       method: request.method,
       params: { ...request.params, seq: nextSeq() },
     };
@@ -321,7 +321,7 @@ class HerdrRuntime {
       socket.once("error", () => finish(false));
       socket.once("connect", () => {
         try {
-          socket.write(JSON.stringify(request) + "\n");
+          socket.write(`${JSON.stringify(request)}\n`);
         } catch {
           finish(false);
         }

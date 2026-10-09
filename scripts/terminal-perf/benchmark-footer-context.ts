@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 // Isolate full footer renders against real disk-backed history. No provider required.
 // Run: bun scripts/terminal-perf/benchmark-footer-context.ts. Times are local evidence, not CI thresholds.
 import { mkdtempSync, rmSync, statSync } from "node:fs";
@@ -70,7 +71,7 @@ function measureFooterFrames(render: typeof renderCompactFooter, ctx: ExtensionC
       samples.push(performance.now() - start);
     }
     return {
-      medianMs: +samples.sort((a, b) => a - b)[2]!.toFixed(3),
+      medianMs: +requireValue(samples.sort((a, b) => a - b)[2]).toFixed(3),
       historicalMaterializationsPerFrame: materializations / samples.length,
     };
   } finally {
@@ -83,11 +84,11 @@ function benchmarkHistory(turns: number) {
   const manager = SessionManager.create(home, home);
   try {
     for (let turn = 0; turn < turns; turn++) {
-      manager.appendMessage({ role: "user", content: "Request " + turn + " paragraph ".repeat(100), timestamp: 1 });
+      manager.appendMessage({ role: "user", content: `Request ${turn}${" paragraph ".repeat(100)}`, timestamp: 1 });
       manager.appendMessage({
         role: "assistant",
         content: [
-          { type: "text", text: ("## Section " + turn + "\nSome markdown **content** and more words.\n").repeat(100) },
+          { type: "text", text: `## Section ${turn}\nSome markdown **content** and more words.\n`.repeat(100) },
         ],
         api: "openai-completions",
         provider: "fixture",
@@ -117,7 +118,7 @@ function benchmarkHistory(turns: number) {
             footer: name,
             turns,
             entries: turns * 2,
-            fileBytes: statSync(manager.getSessionFile()!).size,
+            fileBytes: statSync(requireValue(manager.getSessionFile())).size,
             ...measurement,
           }),
         );

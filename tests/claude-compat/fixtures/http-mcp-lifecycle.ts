@@ -9,13 +9,16 @@ export async function httpMcpLifecycleFixture({
   timeout = 2000,
   description,
   schemaDescription,
+  threadConfiguration,
 }: {
   timeout?: number;
   description?: string;
   schemaDescription?: string;
+  threadConfiguration?: () => Promise<unknown> | unknown;
 } = {}) {
   const sessions = new Map<string, StreamableHTTPServerTransport>();
   const requests: { method: string; rpc?: string; session?: string }[] = [];
+  const configurationCalls: unknown[] = [];
   let rejectDelete = false;
   let deleteDelay = 0;
 
@@ -38,6 +41,15 @@ export async function httpMcpLifecycleFixture({
         content: [{ type: "text", text }],
       }),
     );
+    if (threadConfiguration)
+      server.registerTool("t3_thread_configuration", { inputSchema: {} }, async (args) => {
+        configurationCalls.push(args);
+        const value = await threadConfiguration();
+        return {
+          content: [{ type: "text", text: JSON.stringify(value) }],
+          structuredContent: value as Record<string, unknown>,
+        };
+      });
     await server.connect(transport);
     return transport;
   }
@@ -69,6 +81,7 @@ export async function httpMcpLifecycleFixture({
   return {
     config: { mcpServers: { "t3-code": { type: "http", url: "http://127.0.0.1:" + port + "/mcp", timeout } } },
     requests,
+    configurationCalls,
     activeSessions: () => sessions.size,
     delayDeletion: (milliseconds: number) => {
       deleteDelay = milliseconds;

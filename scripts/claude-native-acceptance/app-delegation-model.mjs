@@ -5,7 +5,7 @@ import path from "node:path";
 import { modelId, modelsConfig } from "./model.mjs";
 export const workerProvider = "bruv-worker-acceptance",
   workerId = "local-normal-v1",
-  workerSlug = workerProvider + "/" + workerId;
+  workerSlug = `${workerProvider}/${workerId}`;
 export const workerInstance = "bruv-native-normal";
 export function workerModels(port) {
   const config = modelsConfig(port).providers["bruv-acceptance"];
@@ -23,12 +23,12 @@ const text = (m) => (typeof m.content === "string" ? m.content : JSON.stringify(
 const content = (s) => ({ content: s });
 function tool(body, name, input) {
   const found = body.tools?.find((t) => t.function.name.endsWith(name));
-  if (!found) throw Error("Actual injected tool missing: " + name);
+  if (!found) throw Error(`Actual injected tool missing: ${name}`);
   return {
     tool_calls: [
       {
         index: 0,
-        id: "call_" + body.__sequence,
+        id: `call_${body.__sequence}`,
         type: "function",
         function: { name: found.function.name, arguments: JSON.stringify(input) },
       },
@@ -63,7 +63,7 @@ export async function reply(body, { state }) {
   // Normal children must fail both delegation routes and root-task access.
   if (body.model === workerId)
     return checkNormalWorkerScopeAndWait(body, state, tools, user.includes("APP_CHILD_CANCEL") ? "cancel" : "done");
-  if (body.model !== modelId) throw Error("Unexpected app-delegation model: " + body.model);
+  if (body.model !== modelId) throw Error(`Unexpected app-delegation model: ${body.model}`);
 
   // Root tools operate on native app-owned tasks, never Bruv registry jobs.
   if (user.includes("APP_DELEGATE_"))
@@ -79,27 +79,27 @@ async function checkNormalWorkerScopeAndWait(body, state, tools, scenario) {
   if (!tools.length)
     return tool(body, "__delegate_task", { task: "Worker must be denied", clientRequestId: "worker-denied" });
   if (!results.includes("normal workers cannot delegate"))
-    throw Error("Worker delegation was not denied: " + results.slice(0, 250));
+    throw Error(`Worker delegation was not denied: ${results.slice(0, 250)}`);
   if (tools.length === 1)
     return tool(body, "execute", {
       label: "Attempt local worker delegation",
       code: 'try { await subagent({prompt:"Must be denied",type:"normal"}); throw Error("unexpected admission"); } catch(e) { console.log("LOCAL_WORKER_DENIAL_REAL",e.message); }',
     });
   if (!results.includes("Only orchestrator agents can delegate"))
-    throw Error("Normal local worker delegation admitted: " + results.slice(-300));
+    throw Error(`Normal local worker delegation admitted: ${results.slice(-300)}`);
   if (tools.length === 2)
     return tool(body, "execute", {
       label: "Inspect scoped child environment",
       code: 'console.log("CHILD_SCOPE_REAL", JSON.stringify({rootControls:Object.keys(process.env).filter(k=>/^(T3_|BRUV_T3_|BRUV_ROOT_|BRUV_REMOTE_ROOT_)/.test(k)),jobs:(await jobs.list({count:100})).jobs.length}));',
     });
   if (!results.includes('"rootControls":[],"jobs":0'))
-    throw Error("Root controls leaked into execute: " + results.slice(-300));
+    throw Error(`Root controls leaked into execute: ${results.slice(-300)}`);
   if (tools.length === 3) {
     const until = Date.now() + 10000;
     let task;
     while (Date.now() < until) {
       try {
-        task = JSON.parse(await fs.readFile(path.join(state, scenario + ".task.json"), "utf8"));
+        task = JSON.parse(await fs.readFile(path.join(state, `${scenario}.task.json`), "utf8"));
         break;
       } catch {}
       await new Promise((r) => setTimeout(r, 50));
@@ -108,14 +108,14 @@ async function checkNormalWorkerScopeAndWait(body, state, tools, scenario) {
     return tool(body, "__task_status", { taskId: task.taskId });
   }
   if (!results.includes("does not belong to thread"))
-    throw Error("Child credential could read root app task: " + results.slice(-400));
-  await fs.writeFile(path.join(state, scenario + ".scope-denial.json"), results);
-  await fs.writeFile(path.join(state, scenario + ".started"), "real normal child model reached scoped execute");
+    throw Error(`Child credential could read root app task: ${results.slice(-400)}`);
+  await fs.writeFile(path.join(state, `${scenario}.scope-denial.json`), results);
+  await fs.writeFile(path.join(state, `${scenario}.started`), "real normal child model reached scoped execute");
   const until = Date.now() + 45000;
   while (Date.now() < until) {
     try {
-      await fs.access(path.join(state, scenario + ".release"));
-      return content("APP_CHILD_RESULT_REAL_" + scenario);
+      await fs.access(path.join(state, `${scenario}.release`));
+      return content(`APP_CHILD_RESULT_REAL_${scenario}`);
     } catch {}
     await new Promise((r) => setTimeout(r, 100));
   }
@@ -134,14 +134,14 @@ async function launchAppTask(body, state, tools, scenario) {
         "APP_CHILD_" +
         (scenario === "cancel" ? "CANCEL" : "DONE") +
         ": exercise denied delegation and scoped credentials, then wait for release.",
-      title: "Native normal " + scenario,
-      clientRequestId: "actual-native-" + scenario,
+      title: `Native normal ${scenario}`,
+      clientRequestId: `actual-native-${scenario}`,
     });
   }
   const task = objects(tools).find((o) => o.taskId && o.childThreadId);
-  if (!task) throw Error("Native server did not return a taskId/childThreadId: " + results.slice(-600));
-  await fs.writeFile(path.join(state, scenario + ".task.json"), JSON.stringify(task));
-  return content("APP_TASK_PENDING_REAL_" + scenario);
+  if (!task) throw Error(`Native server did not return a taskId/childThreadId: ${results.slice(-600)}`);
+  await fs.writeFile(path.join(state, `${scenario}.task.json`), JSON.stringify(task));
+  return content(`APP_TASK_PENDING_REAL_${scenario}`);
 }
 
 async function cancelAppTask(body, state, tools) {
@@ -154,7 +154,7 @@ async function cancelAppTask(body, state, tools) {
     await new Promise((r) => setTimeout(r, 100));
     return tool(body, "__task_status", { taskId: task.taskId });
   }
-  if (latest.status !== "interrupted") throw Error("Unexpected actual native cancellation terminal: " + latest.status);
+  if (latest.status !== "interrupted") throw Error(`Unexpected actual native cancellation terminal: ${latest.status}`);
   if (!results.includes("ROOT_JOBS_REAL"))
     return tool(body, "execute", {
       label: "Inspect actual root job registry",
@@ -170,7 +170,7 @@ async function acknowledgeAppCompletion(body, state, tools) {
   const task = JSON.parse(await fs.readFile(path.join(state, "done.task.json"), "utf8"));
   if (!tools.length) return tool(body, "__task_status", { taskId: task.taskId });
   if (!results.includes("APP_CHILD_RESULT_REAL_done"))
-    throw Error("Native task_status omitted child result: " + results.slice(-600));
+    throw Error(`Native task_status omitted child result: ${results.slice(-600)}`);
   await fs.writeFile(path.join(state, "done.status.json"), results);
   return content("APP_COMPLETION_ACK_REAL");
 }
@@ -182,7 +182,7 @@ export async function startWorkerModel({ state }) {
   let sequence = 1000;
   const server = http.createServer(async (req, res) => {
     try {
-      if (req.url !== "/v1/responses") throw Error("Unexpected worker API path: " + req.url);
+      if (req.url !== "/v1/responses") throw Error(`Unexpected worker API path: ${req.url}`);
       let input = "";
       for await (const chunk of req) input += chunk;
       const raw = JSON.parse(input),
@@ -225,7 +225,7 @@ export async function startWorkerModel({ state }) {
       const item = fn
         ? {
             type: "function_call",
-            id: "fc_" + seq,
+            id: `fc_${seq}`,
             call_id: fn.id,
             name: fn.function.name,
             arguments: fn.function.arguments,
@@ -233,7 +233,7 @@ export async function startWorkerModel({ state }) {
           }
         : {
             type: "message",
-            id: "msg_" + seq,
+            id: `msg_${seq}`,
             role: "assistant",
             status: "completed",
             content: [{ type: "output_text", text: delta.content, annotations: [] }],
@@ -251,7 +251,7 @@ export async function startWorkerModel({ state }) {
         {
           type: "response.completed",
           response: {
-            id: "resp_" + seq,
+            id: `resp_${seq}`,
             status: "completed",
             output: [item],
             usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
@@ -260,9 +260,7 @@ export async function startWorkerModel({ state }) {
       ];
       res.writeHead(200, { "content-type": "text/event-stream" });
       res.end(
-        events
-          .map((e, i) => "event: " + e.type + "\ndata: " + JSON.stringify({ ...e, sequence_number: i }) + "\n\n")
-          .join(""),
+        events.map((e, i) => `event: ${e.type}\ndata: ${JSON.stringify({ ...e, sequence_number: i })}\n\n`).join(""),
       );
     } catch (e) {
       records.push({ sequence, error: e.message });

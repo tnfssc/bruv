@@ -74,7 +74,7 @@ export class QuestionPicker implements Component, Focusable {
       if (before !== this.input.getValue()) {
         const words = this.input.getValue().toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
         this.filtered = this.items.filter((item) =>
-          words.every((word) => (item.label + " " + (item.description ?? "")).toLocaleLowerCase().includes(word)),
+          words.every((word) => `${item.label} ${item.description ?? ""}`.toLocaleLowerCase().includes(word)),
         );
         this.list = this.createList();
         this.detailOffset = 0;

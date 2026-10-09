@@ -1,5 +1,5 @@
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
-import type { AssistantMessage, Message, Model, Tool } from "@earendil-works/pi-ai";
+import type { Api, AssistantMessage, Message, Model, Tool } from "@earendil-works/pi-ai";
 import { normalizeContext } from "@earendil-works/pi-ai";
 import { adjustMaxTokensForThinking } from "@earendil-works/pi-ai/api/simple-options";
 import {
@@ -22,7 +22,7 @@ export const CACHE_AFFINE_COMPACTION_VERSION = 5;
 type Snapshot = {
   systemPrompt?: string;
   tools?: Tool[];
-  model: Model<any>;
+  model: Model<Api>;
   thinkingLevel: ExtensionContext["thinkingLevel"];
   sessionId: string;
   providerPayload?: unknown;
@@ -74,35 +74,38 @@ async function prepareCurrentConversation(
   // An ordinary request has already run before_agent_start and snapshot records
   // that effective frame. Re-emitting it here can repeat arbitrary extension
   // side effects. Fresh/resumed sessions have no framed snapshot and must run it.
-  const hasEffectiveFrame = snapshot?.systemPrompt !== undefined && snapshot.tools !== undefined;
-  if (!hasEffectiveFrame && typeof session?._extensionRunner?.emitBeforeAgentStart !== "function") return undefined;
+  const snapshotSystemPrompt = snapshot?.systemPrompt;
+  const hasEffectiveFrame = snapshotSystemPrompt !== undefined && snapshot?.tools !== undefined;
+  const runner = session._extensionRunner;
+  if (!hasEffectiveFrame && typeof runner?.emitBeforeAgentStart !== "function") return undefined;
   let start:
     | Awaited<ReturnType<NonNullable<NonNullable<typeof session>["_extensionRunner"]>["emitBeforeAgentStart"]>>
     | undefined;
-  if (!hasEffectiveFrame) {
-    const selectedToolsBefore = session!._baseSystemPromptOptions.selectedTools;
-    start = await session!._extensionRunner!.emitBeforeAgentStart(
+  if (!hasEffectiveFrame && runner) {
+    const selectedToolsBefore = session._baseSystemPromptOptions.selectedTools;
+    start = await runner.emitBeforeAgentStart(
       prompt,
       images.length ? images : undefined,
-      session!._baseSystemPromptOptions,
+      session._baseSystemPromptOptions,
     );
     // before_agent_start may either edit selectedTools explicitly or use
     // setActiveTools() to change the live loadout. As in AgentSession.prompt(),
     // an explicit selection wins; otherwise reconcile the returned stale copy
     // with the live tool names before _preparePromptAndToolLoadout() applies it.
     const handlerEditedTools =
-      start.systemPromptOptions.selectedTools.length !== selectedToolsBefore.length ||
-      start.systemPromptOptions.selectedTools.some((name, index) => name !== selectedToolsBefore[index]);
-    if (!handlerEditedTools) start.systemPromptOptions.selectedTools = session!.getActiveToolNames();
+      !!start &&
+      (start.systemPromptOptions.selectedTools.length !== selectedToolsBefore.length ||
+        start.systemPromptOptions.selectedTools.some((name, index) => name !== selectedToolsBefore[index]));
+    if (start && !handlerEditedTools) start.systemPromptOptions.selectedTools = session.getActiveToolNames();
   }
   // Match AgentSession's framing order. Fresh compaction must prepare the same
   // structured system delta that prompt() would have persisted for a normal turn.
   if (start) {
-    session!._runSystemPromptOptions = start.systemPromptOptions;
-    const update = session!._preparePromptAndToolLoadout(start.systemPromptOptions, raw);
+    session._runSystemPromptOptions = start.systemPromptOptions;
+    const update = session._preparePromptAndToolLoadout(start.systemPromptOptions, raw);
     if (update) raw.unshift(update);
   }
-  const effectiveSystemPrompt = hasEffectiveFrame ? snapshot!.systemPrompt! : session!.systemPrompt;
+  const effectiveSystemPrompt = hasEffectiveFrame ? snapshotSystemPrompt : session.systemPrompt;
   setCurrentInstructionFrame(ctx.sessionManager as object, effectiveSystemPrompt);
   for (const message of start?.messages ?? []) {
     raw.push({
@@ -134,7 +137,8 @@ async function prepareCurrentConversation(
     tools,
     thinkingBudget: anthropicThinkingBudget(ctx.model, ctx.thinkingLevel, agent.thinkingBudgets),
     complete: async (request, maxTokens, onPayload) => {
-      const stream = await agent.streamFunction(ctx.model!, normalizeContext({ messages: request.messages }), {
+      if (!ctx.model) throw new Error("Compaction requires a model");
+      const stream = await agent.streamFunction(ctx.model, normalizeContext({ messages: request.messages }), {
         reasoning: ctx.thinkingLevel === "off" ? undefined : ctx.thinkingLevel,
         sessionId: ctx.sessionManager.getSessionId(),
         signal: event.signal,
@@ -142,7 +146,7 @@ async function prepareCurrentConversation(
         thinkingBudgets: agent.thinkingBudgets,
         maxRetryDelayMs: agent.maxRetryDelayMs,
         maxTokens,
-        onPayload: async (payload: unknown, model: Model<any>) => {
+        onPayload: async (payload: unknown, model: Model<Api>) => {
           const normallyTransformed = (agent.onPayload ? await agent.onPayload(payload, model) : undefined) ?? payload;
           return onPayload(normallyTransformed);
         },
@@ -154,7 +158,7 @@ async function prepareCurrentConversation(
 }
 
 function anthropicThinkingBudget(
-  model: Model<any>,
+  model: Model<Api>,
   level: ExtensionContext["thinkingLevel"],
   custom?: { minimal?: number; low?: number; medium?: number; high?: number },
 ): number {
@@ -213,7 +217,7 @@ function prepareCacheAffineRequest(
   const { preparation } = event;
   const history = current.messages;
   if (!history.some((message) => message.role !== "system")) return { reason: "the prepared conversation is empty" };
-  const custom = customInstructions?.trim() ? "Additional user focus: " + customInstructions.trim() : "";
+  const custom = customInstructions?.trim() ? `Additional user focus: ${customInstructions.trim()}` : "";
   // Use a replacement callback so dollar sequences and template-like text in
   // the user-provided focus remain literal data rather than another pass.
   const prompt = promptTemplate.replace("{{customInstructions}}", () => custom).trimEnd();
@@ -300,8 +304,8 @@ export function isCacheAffineProviderPayload(previous: unknown, candidate: unkno
   const newPolicies = newNormalized.markers.map((marker) => marker.value);
   if (!jsonEqual(oldPolicies, newPolicies)) return false;
   for (let index = 0; index < oldNormalized.markers.length; index++) {
-    const oldMarker = oldNormalized.markers[index]!;
-    const newMarker = newNormalized.markers[index]!;
+    const oldMarker = oldNormalized.markers[index];
+    const newMarker = newNormalized.markers[index];
     const unchanged = oldMarker.messageIndex === newMarker.messageIndex && oldMarker.path === newMarker.path;
     if (!unchanged && newMarker.messageIndex < oldSequence.length) return false;
   }
@@ -558,7 +562,7 @@ export function registerCacheAffineCompaction(
       model: ctx.model,
       thinkingLevel: ctx.thinkingLevel,
       sessionId: ctx.sessionManager.getSessionId(),
-      ...(same ? { providerPayload: snapshot!.providerPayload } : {}),
+      ...(same && snapshot ? { providerPayload: snapshot.providerPayload } : {}),
     };
   });
   // This hook runs last as part of bruv's inline extension and therefore records

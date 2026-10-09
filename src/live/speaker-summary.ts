@@ -55,7 +55,7 @@ export function speakerCheckSummary(result: SpeakerCheckResult): string {
       "/" +
       number(result.tailDbfs, "dBFS") +
       ".",
-    processing + ".",
+    `${processing}.`,
     "Reference is submitted test PCM, not a measured hardware render tap; acoustic level and actual device latency are unknown.",
   ].join(" ");
 }

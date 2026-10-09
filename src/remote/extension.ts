@@ -31,7 +31,7 @@ export function parseRemoteLaunch(input: string): { repoPath: string; prompt: st
     repoPath = "",
     quote = "";
   for (; i < input.length; i++) {
-    const c = input[i]!;
+    const c = input[i];
     if (c === "\\" && quote !== "'") {
       if (++i >= input.length) throw new Error("Incomplete path escape");
       repoPath += input[i];
@@ -236,15 +236,19 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     if (id) return id;
     const tasks = Object.values((await client.status()).tasks);
     const active = tasks.filter((t) => ["accepted", "running"].includes(t.task?.state ?? ""));
-    if (active.length === 1) return active[0]!.taskId;
-    if (!active.length && tasks.length === 1) return tasks[0]!.taskId;
+    if (active.length === 1) return active[0].taskId;
+    if (!active.length && tasks.length === 1) return tasks[0].taskId;
     const preparations = await repositoryPreparations(client);
-    if (!tasks.length && preparations.length === 1) return preparations[0]!.taskId;
+    if (!tasks.length && preparations.length === 1) return preparations[0].taskId;
     throw Error("Choose a task from /remote status; more than one task is available");
   };
-  const pick = (ctx: any, title: string, items: { value: string; label: string; description?: string }[]) =>
-    ctx.ui.custom(
-      (tui: any, theme: any, keys: any, done: (value?: string) => void) =>
+  const pick = (
+    ctx: ExtensionContext,
+    title: string,
+    items: { value: string; label: string; description?: string }[],
+  ) =>
+    ctx.ui.custom<string | undefined>(
+      (tui, theme, keys, done) =>
         new QuestionPicker(
           title,
           items,
@@ -255,7 +259,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           () => tui.terminal.rows,
         ),
     ) as Promise<string | undefined>;
-  const capabilityMenu = async (ctx: any, pinned: import("./client").RemoteTask) => {
+  const capabilityMenu = async (ctx: ExtensionContext, pinned: import("./client").RemoteTask) => {
     const id = pinned.taskId;
     const freshTask = async () => {
       const task = await client.sync(id);
@@ -287,19 +291,19 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       ? (task.task.capabilityNeeds as { id: string; kind: string; input: string }[])
       : [];
     const grants = localCapabilityGrants(client, id);
-    const choice = await pick(ctx, "Local capabilities · " + remoteLabel(task.prompt), [
+    const choice = await pick(ctx, `Local capabilities · ${remoteLabel(task.prompt)}`, [
       ...(canGrant ? needs : []).map((need, i) => ({
-        value: "need:" + i,
-        label: "Request: " + remoteLabel(need.kind),
+        value: `need:${i}`,
+        label: `Request: ${remoteLabel(need.kind)}`,
         description: remoteLabel(need.input || "No input supplied"),
       })),
       ...(canGrant
         ? [{ value: "choose", label: "Choose a capability…", description: "Requires a live pinned owner" }]
         : []),
       ...grants.map((grant, i) => ({
-        value: "revoke:" + i,
-        label: "Revoke: " + remoteLabel(grant.kinds.join(", ")),
-        description: remoteLabel(grant.repoRoot) + " · " + grant.id.slice(0, 18),
+        value: `revoke:${i}`,
+        label: `Revoke: ${remoteLabel(grant.kinds.join(", "))}`,
+        description: `${remoteLabel(grant.repoRoot)} · ${grant.id.slice(0, 18)}`,
       })),
     ]);
     if (!choice) return;
@@ -372,15 +376,13 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       scope +
       "\nAuthority: " +
       kind +
-      (need ? "\nRemote request: " + remoteLabel(need.input || "(empty)") : "\nNo specific remote request selected") +
+      (need ? `\nRemote request: ${remoteLabel(need.input || "(empty)")}` : "\nNo specific remote request selected") +
       "\nRead-only repository access only; no credentials or arbitrary shell. This grants the entire named kind for this task, not just one request.";
     if (!(await ctx.ui.confirm("HUMAN authorization required · grant local capability?", details))) return;
     task = await freshTask();
     if (
       need &&
-      !(task.task?.capabilityNeeds as any[] | undefined)?.some(
-        (n) => n.id === need.id && n.kind === need.kind && n.input === need.input,
-      )
+      !task.task?.capabilityNeeds?.some((n) => n.id === need.id && n.kind === need.kind && n.input === need.input)
     )
       throw Error("Remote request changed; no grant sent");
     const recheck = Bun.spawnSync(["git", "-C", root, "rev-parse", "--show-toplevel"], {
@@ -391,7 +393,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       throw Error("Local repository scope changed; no grant sent");
     publish(await grantCapabilities(client, id, scope, [kind as CapabilityKind]));
   };
-  const inbox = async (ctx: any) => {
+  const inbox = async (ctx: ExtensionContext) => {
     if (!ctx.hasUI) {
       publish(await operations({ op: "status" }), "status");
       return;
@@ -456,8 +458,8 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         if (choice.startsWith("question:")) {
           const [, taskId, questionId] = choice.split(":");
           // Sync before selecting an answer. Never recompose an existing uncertain reply from a new choice.
-          const fresh = await client.sync(taskId!);
-          const q = pendingQuestions({ tasks: { [taskId!]: fresh } }).find((item) => item.q.id === questionId)?.q;
+          const fresh = await client.sync(taskId);
+          const q = pendingQuestions({ tasks: { [taskId]: fresh } }).find((item) => item.q.id === questionId)?.q;
           if (!q) {
             ctx.ui.notify("Question no longer pending; no answer sent", "warning");
             continue;
@@ -471,9 +473,10 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
                 ? await ctx.ui.editor(remoteLabel(q.text ?? q.question ?? "Answer"))
                 : q.choices?.[Number(answerChoice)];
             if (!answer?.trim()) continue;
+            if (!q.owner || q.version === undefined) throw Error("Remote question is missing its owner or version");
             // Validate latest ledger identity/version, not an old inbox snapshot. Client persists reply before transport.
-            const latest = await client.sync(taskId!);
-            const current = pendingQuestions({ tasks: { [taskId!]: latest } }).find((item) => item.q.id === q.id)?.q;
+            const latest = await client.sync(taskId);
+            const current = pendingQuestions({ tasks: { [taskId]: latest } }).find((item) => item.q.id === q.id)?.q;
             if (
               !current ||
               current.version !== q.version ||
@@ -483,7 +486,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             )
               throw Error("Question changed or has a saved reply; no new answer sent");
             publish(
-              summary(await client.answer(taskId!, { id: q.id, owner: q.owner!, version: q.version!, text: answer })),
+              summary(await client.answer(taskId, { id: q.id, owner: q.owner, version: q.version, text: answer })),
             );
             break;
           }
@@ -496,7 +499,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             if (!task) break;
             const action = await pick(
               ctx,
-              "Task · " + remoteLabel(task.prompt),
+              `Task · ${remoteLabel(task.prompt)}`,
               taskActions(
                 task,
                 taskOwned(task, await client.status()),
@@ -651,9 +654,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           case "answer": {
             const state = await client.status();
             const pending = Object.values(state.tasks).flatMap((t) =>
-              ((t.task?.questions ?? []) as Array<any>)
-                .filter((q) => q.status === "pending")
-                .map((q) => ({ task: t, q })),
+              (t.task?.questions ?? []).filter((q) => q.status === "pending").map((q) => ({ task: t, q })),
             );
             let selected = pending.find((p) => p.task.taskId === rest[0] && p.q.id === rest[1]),
               text: string;
@@ -666,17 +667,20 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               else {
                 if (rest[0]?.startsWith("q_")) throw Error("Targeted question is not pending; no answer sent");
                 if (pending.length !== 1) throw Error("Choose a pending question from /remote status");
-                selected = pending[0]!;
+                selected = pending[0];
                 text = input.replace(/^\s*answer(?:\s+|$)/, "");
               }
             }
             if (!text.trim()) throw Error("Answer text is required; no answer sent");
             const prior = selected.task.replies?.[selected.q.id];
+            const owner = prior?.owner ?? selected.q.owner;
+            const version = prior?.version ?? selected.q.version;
+            if (!owner || version === undefined) throw Error("Remote question is missing its owner or version");
             result = summary(
               await client.answer(selected.task.taskId, {
                 id: selected.q.id,
-                owner: prior?.owner ?? selected.q.owner,
-                version: prior?.version ?? selected.q.version,
+                owner,
+                version,
                 text,
                 replyId: prior?.replyId,
               }),
@@ -693,7 +697,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           }
           case "revoke": {
             if (rest.length !== 2) throw Error("Usage: /remote revoke <taskId> <grantId>");
-            result = await revokeCapability(client, rest[0]!, rest[1]!);
+            result = await revokeCapability(client, rest[0], rest[1]);
             break;
           }
           case "cancel":

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { siteMetadata, textContent } from "./build";
-import { layout, hitAt, wrap } from "../layout";
+import { layout, hitAt, wrap, type State } from "../layout";
 import { wordmark } from "../brand";
 import { siteContent, landing } from "../content";
 import { demoIds, demoFrame, demoDuration, demoTranscript } from "../demos";
@@ -87,6 +87,7 @@ describe("single terminal landing", () => {
           expect(frame.rows.length).toBe(first.rows.length);
           for (const row of frame.rows) {
             expect(row.length).toBe(width);
+            // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
             expect(row.every((c) => [...c.text].length === 1 && !/[\x00-\x1f]/.test(c.text))).toBe(true);
             expect(row.every((c) => c.style.includes("38;2;") && c.style.includes("48;2;"))).toBe(true);
           }
@@ -107,7 +108,9 @@ describe("single terminal landing", () => {
         layout(cols, 50, {
           scroll: 0,
           focus: -1,
-          demos: Object.fromEntries(demoIds.map((id) => [id, { elapsed: ms, paused: false }])) as any,
+          demos: Object.fromEntries(demoIds.map((id) => [id, { elapsed: ms, paused: false }])) as NonNullable<
+            State["demos"]
+          >,
         }).captures.map((c) => c.y);
       const first = positions(0);
       for (let ms = 500; ms <= 21000; ms += 500) expect(positions(ms)).toEqual(first);

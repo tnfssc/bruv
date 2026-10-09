@@ -130,14 +130,13 @@ function verifyValidationAndMigration(root, dir) {
   assert.throws(() => SessionManager.open(badPath), /header|valid/i);
   assert.equal(readFileSync(badPath, "utf8"), bad);
   const oldPath = join(dir, "legacy.jsonl");
-  const legacy =
-    [
-      { ...header, id: "legacy", version: 1 },
-      { type: "message", timestamp: "x", message: { role: "user", content: "legacy exact", timestamp: 1 } },
-      { type: "compaction", timestamp: "x", summary: "legacy summary", tokensBefore: 99, firstKeptEntryIndex: 1 },
-    ]
-      .map(JSON.stringify)
-      .join("\n") + "\n";
+  const legacy = `${[
+    { ...header, id: "legacy", version: 1 },
+    { type: "message", timestamp: "x", message: { role: "user", content: "legacy exact", timestamp: 1 } },
+    { type: "compaction", timestamp: "x", summary: "legacy summary", tokensBefore: 99, firstKeptEntryIndex: 1 },
+  ]
+    .map(JSON.stringify)
+    .join("\n")}\n`;
   writeFileSync(oldPath, legacy);
   const old = SessionManager.open(oldPath);
   assert.equal(old.getHeader().version, 3);
@@ -148,7 +147,7 @@ function verifyValidationAndMigration(root, dir) {
 function verifyDiscoveryIsolation(root, dir) {
   const header = { type: "session", version: 3, id: "tree", timestamp: "x", cwd: root };
   const foreignPath = join(dir, "foreign.jsonl");
-  const foreign = JSON.stringify({ ...header, id: "foreign", cwd: join(root, "elsewhere"), version: 1 }) + "\n";
+  const foreign = `${JSON.stringify({ ...header, id: "foreign", cwd: join(root, "elsewhere"), version: 1 })}\n`;
   writeFileSync(foreignPath, foreign);
   utimesSync(foreignPath, new Date("2099-01-01"), new Date("2099-01-01"));
   SessionManager.continueRecent(root, dir);

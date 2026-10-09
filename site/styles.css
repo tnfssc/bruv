@@ -23,7 +23,7 @@ button:focus-visible {
   outline-offset: 4px;
 }
 [hidden] {
-  display: none !important;
+  display: none;
 }
 .terminal-mode,
 .terminal-mode body {
@@ -44,7 +44,7 @@ button:focus-visible {
   touch-action: none;
 }
 #terminal textarea {
-  display: none !important;
+  display: none;
 }
 .plain-switch {
   position: fixed;

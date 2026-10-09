@@ -73,6 +73,6 @@ export class T3LaunchIdentityLedger {
     const ledger = await this.#read();
     // Old pending IDs may use die-v1; deriving bruv-v1 would launch another child.
     const existing = ledger.pending.find((item) => item.fingerprint === fingerprint);
-    return existing?.clientRequestId ?? "bruv-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]);
+    return existing?.clientRequestId ?? `bruv-v1:${T3LaunchIdentityLedger.fingerprint([fingerprint])}`;
   }
 }

@@ -88,7 +88,8 @@ class ProvisionalSpeech {
     this.entries.push(entry);
     this.retainedBytes += fragmentBytes(entry.fragment);
     while (this.retainedBytes > GPT_LIVE_FRAGMENT_BYTES) {
-      const removed = this.entries.shift()!;
+      const removed = this.entries.shift();
+      if (!removed) throw new Error("Live fragment byte count has no retained entry");
       this.retainedBytes -= fragmentBytes(removed.fragment);
       removed.retained = false;
       if (removed.use === "pending") this.pendingEvictions++;

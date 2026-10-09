@@ -3,7 +3,8 @@ import { createHash } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import { UserMessageComponent, initTheme } from "@earendil-works/pi-coding-agent";
 import { Container, Input, ProcessTerminal, ScrollView, TuiAltScreen, VStack } from "@earendil-works/pi-tui";
-const reportPath = process.argv[2]!;
+const reportPath = process.argv[2];
+if (!reportPath) throw new Error("report path required");
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const text = "deterministic output row abcdefghijklmnopqrstuvwxyz 0123456789\n"
   .repeat(Math.ceil(2097152 / 61))
@@ -40,7 +41,7 @@ document.render = function (width: number) {
   documentLines += rows.length;
   return rows;
 };
-(tui as any).doRender = () => {
+(tui as unknown as { doRender(): void }).doRender = () => {
   frames++;
   throw new Error("unexpected stop frame");
 };
@@ -51,15 +52,16 @@ terminal.write = (text: string) => {
   nativeWrite(text);
   writes.push({ text, syncMs: performance.now() - start });
 };
-writeFileSync(reportPath + ".ready", "ready");
+writeFileSync(`${reportPath}.ready`, "ready");
 const start = performance.now();
 tui.stop();
 const stopSyncMs = performance.now() - start;
-const restored = writes.find((w) => w.text.includes("\x1b[?1049l"))!;
-writeFileSync(reportPath + ".restore.bin", restored.text);
+const restored = writes.find((w) => w.text.includes("\x1b[?1049l"));
+if (!restored) throw new Error("stop did not restore the main screen");
+writeFileSync(`${reportPath}.restore.bin`, restored.text);
 writeFileSync(
   reportPath,
-  JSON.stringify(
+  `${JSON.stringify(
     {
       runtime: Bun.version,
       columns: terminal.columns,
@@ -78,5 +80,5 @@ writeFileSync(
     },
     null,
     2,
-  ) + "\n",
+  )}\n`,
 );

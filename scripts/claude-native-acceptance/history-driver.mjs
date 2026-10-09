@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 export { prepare } from "./driver.mjs";
 import { modelSlug } from "./model.mjs";
 export async function captureIdentity({ page, proof }) {
-  await page.locator('[data-model-slug="' + modelSlug + '"]').scrollIntoViewIfNeeded();
+  await page.locator(`[data-model-slug="${modelSlug}"]`).scrollIntoViewIfNeeded();
   await page.screenshot({
     path: path.join(proof, "custom-model-identity.png"),
     mask: [page.locator("#provider-instance-claudeAgent-binaryPath")],
@@ -66,7 +66,7 @@ async function readSessionEvidence(indexFile, nativeFiles, wireUuids, scope) {
   const raw = await fs.readFile(index.file, "utf8");
   const canonical = lines(raw);
   const nativeSessionId = path.basename(indexFile, ".json");
-  const nativeFile = nativeFiles.find((file) => path.basename(file) === nativeSessionId + ".jsonl");
+  const nativeFile = nativeFiles.find((file) => path.basename(file) === `${nativeSessionId}.jsonl`);
   const native = nativeFile ? lines(await fs.readFile(nativeFile, "utf8")) : [];
   return {
     nativeSessionId,
@@ -155,8 +155,8 @@ function projectHistoryWire(wire) {
 
 async function writeEvidence(proof, label, value, scope) {
   await fs.writeFile(
-    path.join(proof, label + ".json"),
-    JSON.stringify(value, null, 2).replaceAll(scope, "<SCOPED>") + "\n",
+    path.join(proof, `${label}.json`),
+    `${JSON.stringify(value, null, 2).replaceAll(scope, "<SCOPED>")}\n`,
   );
 }
 export async function exercise({ page, url, snapshot, body, config }) {
@@ -288,9 +288,9 @@ export async function verify({ config, proof, t3Version, t3BinarySha256 }) {
     "HISTORY_ROLLBACK_CONTEXT_OK",
     "HISTORY_REOPEN_CONTEXT_OK",
   ])
-    assert.ok(markers.includes(marker), "active native branch retains " + marker);
+    assert.ok(markers.includes(marker), `active native branch retains ${marker}`);
   for (const marker of ["HISTORY_ROOT_FUTURE", "HISTORY_CHILD_FUTURE"])
-    assert.ok(!markers.includes(marker), "active native branch excludes " + marker);
+    assert.ok(!markers.includes(marker), `active native branch excludes ${marker}`);
   for (const index of disk.indexes) {
     const calls = index.canonicalEntries.flatMap((e) => e.toolCalls ?? []);
     assert.equal(calls.length, index === original ? 1 : 2, "only root exchange and fresh child inspection");
@@ -313,7 +313,7 @@ export async function verify({ config, proof, t3Version, t3BinarySha256 }) {
     }
   await fs.writeFile(
     path.join(proof, "result.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         integratedAcceptance: true,
         historyAcceptance: true,
@@ -326,6 +326,6 @@ export async function verify({ config, proof, t3Version, t3BinarySha256 }) {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
 }

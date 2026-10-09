@@ -13,7 +13,7 @@ export function installQuietToolUi(): () => void {
     const children: Component[] = [];
     let removed = false;
     for (let index = 0; index < container.children.length; index++) {
-      const child = container.children[index]!;
+      const child = container.children[index];
       // In this SDK only hidden thinking is a Text-backed MouseRegion. Visible
       // thinking and ordinary prose are Markdown, and stay entirely native.
       if (child instanceof MouseRegion && (child as unknown as { child: Component }).child instanceof Text) {

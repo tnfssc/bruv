@@ -3,15 +3,13 @@ export function providerFailure(error: unknown, model: string, fallback: string)
   const code = error && typeof error === "object" ? (error as { code?: unknown }).code : undefined;
   switch (code) {
     case "insufficient_quota":
-      return (
-        "OpenAI reports insufficient quota for " + model + ". Check API billing and limits; no model was substituted."
-      );
+      return `OpenAI reports insufficient quota for ${model}. Check API billing and limits; no model was substituted.`;
     case "rate_limit_exceeded":
-      return "OpenAI reports a rate limit for " + model + ". Retry later; no model was substituted.";
+      return `OpenAI reports a rate limit for ${model}. Retry later; no model was substituted.`;
     case "model_not_found":
-      return "OpenAI says " + model + " is unavailable or this API key cannot access it; no model was substituted.";
+      return `OpenAI says ${model} is unavailable or this API key cannot access it; no model was substituted.`;
     case "invalid_api_key":
-      return "OpenAI rejected the API key for " + model + ". Use /login to configure an OpenAI API key.";
+      return `OpenAI rejected the API key for ${model}. Use /login to configure an OpenAI API key.`;
     default:
       return fallback;
   }
@@ -117,9 +115,9 @@ export function voiceProviderFailure(error: unknown, model: string, fallback: st
   const e = error as { code?: unknown; type?: unknown; param?: unknown };
   const field = safeProviderField(e.param);
   const details = [
-    typeof e.code === "string" && SAFE_PROVIDER_CODES.has(e.code) ? "code " + e.code : undefined,
-    typeof e.type === "string" && SAFE_PROVIDER_TYPES.has(e.type) ? "type " + e.type : undefined,
-    field ? "field " + field : undefined,
+    typeof e.code === "string" && SAFE_PROVIDER_CODES.has(e.code) ? `code ${e.code}` : undefined,
+    typeof e.type === "string" && SAFE_PROVIDER_TYPES.has(e.type) ? `type ${e.type}` : undefined,
+    field ? `field ${field}` : undefined,
   ].filter(Boolean);
-  return details.length ? friendly + " (" + details.join(", ") + ")" : friendly;
+  return details.length ? `${friendly} (${details.join(", ")})` : friendly;
 }

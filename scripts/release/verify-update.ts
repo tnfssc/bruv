@@ -10,12 +10,12 @@ import { updateAssetFor } from "../../src/update";
 import { describeUpdateProbe } from "./verify-update-probe";
 
 const [input, version, updaterMode] = process.argv.slice(2);
-if (updaterMode && updaterMode !== "--legacy-updater") throw new Error("Unknown updater mode: " + updaterMode);
+if (updaterMode && updaterMode !== "--legacy-updater") throw new Error(`Unknown updater mode: ${updaterMode}`);
 const legacy = updaterMode === "--legacy-updater";
 if (!input || !version || !/^\d+\.\d+\.\d+$/.test(version))
   throw new Error("Usage: bun scripts/release/verify-update.ts <staged-raw-asset> <version> [--legacy-updater]");
 const asset = updateAssetFor(process.platform, process.arch);
-if (!asset || basename(input) !== asset) throw new Error("Use the raw asset for this host: " + asset);
+if (!asset || basename(input) !== asset) throw new Error(`Use the raw asset for this host: ${asset}`);
 const connectorAsset = asset.replace(/^bruv-/, "bruv-claude-compat-");
 const hash = (value: Uint8Array | string) => createHash("sha256").update(value).digest("hex");
 const releaseDirectory = resolve(dirname(input));
@@ -40,7 +40,7 @@ try {
       path: join(install, "bruv-claude-compat"),
       original: "previous connector",
       versionArg: "--bruv-version",
-      versionOutput: "bruv-claude-compat " + version,
+      versionOutput: `bruv-claude-compat ${version}`,
     },
   ] as const;
   const [installedBruv, installedConnector] = installedPair;
@@ -57,7 +57,7 @@ try {
 import { updateBruv, RELEASES_URL } from ${JSON.stringify(updaterSource)};
 import { rename } from "node:fs/promises";
 
-const root = ${JSON.stringify("https://github.com/tnfssc/bruv/releases/download/v" + version + "/")};
+const root = ${JSON.stringify(`https://github.com/tnfssc/bruv/releases/download/v${version}/`)};
 const names = ${JSON.stringify(candidates.map((candidate) => candidate.name))};
 const directory = ${JSON.stringify(directory)};
 const installedBruv = ${JSON.stringify(installedBruv.path)};
@@ -78,7 +78,7 @@ try {
     fetch: async input => {
       const url = String(input);
       if (url === RELEASES_URL) return Response.json({
-        tag_name: ${JSON.stringify("v" + version)},
+        tag_name: ${JSON.stringify(`v${version}`)},
         prerelease: false,
         draft: false,
         assets: names.flatMap(name => [name, name + ".sha256"]).map(name => ({
@@ -107,7 +107,7 @@ try {
   );
   const executable = join(directory, "updater-runner");
   const build = await Bun.build({ entrypoints: [runner], compile: { outfile: executable } });
-  if (!build.success) throw new Error("Could not compile current updater: " + build.logs.join("\n"));
+  if (!build.success) throw new Error(`Could not compile current updater: ${build.logs.join("\n")}`);
   const runnerHash = hash(await readFile(executable));
   const runnerHome = join(directory, "runner-home");
   await mkdir(runnerHome);
@@ -119,11 +119,11 @@ try {
     XDG_DATA_HOME: join(runnerHome, "data"),
   };
   for (const candidate of candidates) {
-    const failed = spawnSync(executable, ["--corrupt=" + candidate.name], { encoding: "utf8", env: runnerEnv });
-    if (failed.status === 0 || !failed.stderr?.includes("Checksum verification failed for " + candidate.name))
+    const failed = spawnSync(executable, [`--corrupt=${candidate.name}`], { encoding: "utf8", env: runnerEnv });
+    if (failed.status === 0 || !failed.stderr?.includes(`Checksum verification failed for ${candidate.name}`))
       throw new Error(
         "Compiled paired updater failed checksum gate: " +
-          describeUpdateProbe(executable, ["--corrupt=" + candidate.name], failed),
+          describeUpdateProbe(executable, [`--corrupt=${candidate.name}`], failed),
       );
     await assertPairPreserved(installedPair, "Checksum failure changed installed pair");
   }
@@ -134,30 +134,30 @@ try {
     !rollback.stderr?.includes("Previous installation restored")
   )
     throw new Error(
-      "Compiled updater failed rollback gate: " + describeUpdateProbe(executable, ["--fail-normal-rename"], rollback),
+      `Compiled updater failed rollback gate: ${describeUpdateProbe(executable, ["--fail-normal-rename"], rollback)}`,
     );
   await assertPairPreserved(installedPair, "Rollback changed installed pair");
   const updated = spawnSync(executable, [], { encoding: "utf8", env: runnerEnv });
   if (updated.status !== 0)
-    throw new Error("Compiled paired updater failed replacement: " + describeUpdateProbe(executable, [], updated));
+    throw new Error(`Compiled paired updater failed replacement: ${describeUpdateProbe(executable, [], updated)}`);
   const result = JSON.parse(updated.stdout);
   if (result.status !== "updated" || result.version !== version)
-    throw new Error("Unexpected paired update result: " + describeUpdateProbe(executable, [], updated));
+    throw new Error(`Unexpected paired update result: ${describeUpdateProbe(executable, [], updated)}`);
   for (const file of installedPair) {
     if (hash(await readFile(file.path)) !== file.expected) throw new Error("Replacement SHA256 mismatch");
-    const home = join(directory, "home-" + file.name);
+    const home = join(directory, `home-${file.name}`);
     await mkdir(home);
     const actual = spawnSync(file.path, [file.versionArg], {
       encoding: "utf8",
       env: { HOME: home, PATH: "/usr/bin:/bin" },
     });
     if (actual.status !== 0 || actual.stdout.trim() !== file.versionOutput)
-      throw new Error("Replacement version mismatch: " + describeUpdateProbe(file.path, [file.versionArg], actual));
+      throw new Error(`Replacement version mismatch: ${describeUpdateProbe(file.path, [file.versionArg], actual)}`);
   }
   // Once installed outside the old updater's stage, expose the label-only CLI identity.
   const displayIdentity = spawnSync(installedConnector.path, ["--version"], {
     encoding: "utf8",
-    env: { HOME: join(directory, "home-" + installedConnector.name), PATH: "/usr/bin:/bin" },
+    env: { HOME: join(directory, `home-${installedConnector.name}`), PATH: "/usr/bin:/bin" },
   });
   if (
     displayIdentity.status !== 0 ||
@@ -188,8 +188,8 @@ try {
 async function readCandidate(directory: string, name: string) {
   const bytes = await readFile(join(directory, name));
   const expected = hash(bytes);
-  const checksum = (await readFile(join(directory, name + ".sha256"), "utf8")).trim();
-  if (checksum !== expected + "  " + name) throw new Error("Staged release checksum mismatch: " + name);
+  const checksum = (await readFile(join(directory, `${name}.sha256`), "utf8")).trim();
+  if (checksum !== `${expected}  ${name}`) throw new Error(`Staged release checksum mismatch: ${name}`);
   return { name, bytes, expected };
 }
 

@@ -4,11 +4,31 @@ import { OPENAI_LIVE_MODEL } from "./providers";
 import { InputResampler } from "./openai-resample";
 
 /** Primary GPT-Live WS; intentionally separate from Realtime's completed-turn contract. */
+export interface LiveSocketEvent {
+  data?: unknown;
+}
+interface LiveWireEvent {
+  type?: unknown;
+  session?: {
+    id?: unknown;
+    model?: unknown;
+    delegation?: { type?: unknown };
+    audio?: { format?: { type?: unknown; rate?: unknown } };
+  };
+  usage?: unknown;
+  error?: unknown;
+  delta?: unknown;
+  start_ms?: unknown;
+  end_ms?: unknown;
+  offset_ms?: unknown;
+  delegation?: { id?: unknown; target?: unknown };
+  client_event_id?: unknown;
+}
 export interface LiveSocket {
   readonly bufferedAmount?: number;
   send(data: string): void;
   close(): void;
-  addEventListener(type: "open" | "message" | "error" | "close", handler: (event: any) => void): void;
+  addEventListener(type: "open" | "message" | "error" | "close", handler: (event: LiveSocketEvent) => void): void;
 }
 export type LiveSocketFactory = (url: string, headers: Record<string, string>) => LiveSocket;
 export type LiveTranscript = { delta: string; startMs: number; endMs: number };
@@ -142,7 +162,7 @@ export class GPTLiveSession {
       this.timer = setTimeout(() => this.fail("Live session start timed out"), this.timeouts.connectMs);
       this.timer.unref?.();
       try {
-        const socket = this.factory(URL, { Authorization: "Bearer " + key });
+        const socket = this.factory(URL, { Authorization: `Bearer ${key}` });
         if (this.phase !== "connecting") {
           socket.close();
           return;
@@ -187,7 +207,7 @@ export class GPTLiveSession {
       this.fail("Invalid Live event");
       return;
     }
-    let event: any;
+    let event: LiveWireEvent;
     try {
       event = JSON.parse(data);
     } catch {
@@ -215,7 +235,8 @@ export class GPTLiveSession {
       this.clearTimer();
       this.finishConnect?.();
       this.finishConnect = undefined;
-      this.emit(() => this.callbacks.onReady?.(event.session.id));
+      const sessionId = event.session.id;
+      this.emit(() => this.callbacks.onReady?.(sessionId));
       return;
     }
     if (event.type === "session.usage.updated") {
@@ -270,7 +291,8 @@ export class GPTLiveSession {
           return;
         }
         this.delegations.add(id);
-        this.emit(() => this.callbacks.onDelegation?.({ id, target, offsetMs: event.offset_ms }));
+        const offsetMs = event.offset_ms;
+        this.emit(() => this.callbacks.onDelegation?.({ id, target, offsetMs }));
         break;
       }
       case "session.output_audio.delta": {
@@ -322,8 +344,9 @@ export class GPTLiveSession {
     if (!sent) this.pendingContext.delete(eventId);
     return sent;
   }
-  private acknowledgeContext(event: any) {
+  private acknowledgeContext(event: LiveWireEvent) {
     const id = event.client_event_id;
+    if (typeof id !== "string") return;
     const kind = this.pendingContext.get(id);
     if (!kind || event.type !== `session.${kind}.appended`) return;
     if (!validTime(event.start_ms) || !validTime(event.end_ms) || event.end_ms < event.start_ms) {
@@ -331,9 +354,8 @@ export class GPTLiveSession {
       return;
     }
     this.pendingContext.delete(id);
-    this.emit(() =>
-      this.callbacks.onContextAppended?.({ eventId: id, type: kind, startMs: event.start_ms, endMs: event.end_ms }),
-    );
+    const { start_ms: startMs, end_ms: endMs } = event;
+    this.emit(() => this.callbacks.onContextAppended?.({ eventId: id, type: kind, startMs, endMs }));
   }
   /** Wait for session.closed; transport failure/timeout leaves final usage unknown. */
   async close(): Promise<void> {

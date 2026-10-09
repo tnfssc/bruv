@@ -41,6 +41,7 @@ export interface TaskBindingOptions {
   /** Public message translation belongs to the existing wire owner. */
   translateChildEntry?(source: ChildEntrySource): ChildBody[] | Promise<ChildBody[]>;
   /** Write real SDK child history BEFORE exposing a frame; false suppresses an already-durable replay. */
+  // biome-ignore lint/suspicious/noConfusingVoidType: A writer may return nothing; only false suppresses a durable replay.
   writeChildFrame?(source: ChildEntrySource, frame: ChildFrame): void | boolean | Promise<void | boolean>;
   diagnostic?(message: string): void;
 }
@@ -157,7 +158,7 @@ export function bindNativeTasks(
       })
       .catch((error) => {
         failure = error;
-        options.diagnostic?.("Native task binding delivery failed: " + String(error));
+        options.diagnostic?.(`Native task binding delivery failed: ${String(error)}`);
       });
   };
   const save = (cursor: Cursor) => {
@@ -172,7 +173,7 @@ export function bindNativeTasks(
   const link = (task: TaskSummary): TaskLink | undefined => {
     const launch = task.launchIdentity;
     if (!launch || launch.sourceSessionId !== owner.sourceSessionId) {
-      gap(task.id, "Job " + task.id + " has no owner-bound causal launch identity; not projected.");
+      gap(task.id, `Job ${task.id} has no owner-bound causal launch identity; not projected.`);
       return;
     }
     const base = {
@@ -190,7 +191,7 @@ export function bindNativeTasks(
       !launch.prompt ||
       !launch.profile
     ) {
-      gap(task.id, "Worker " + task.id + " lacks actual child/parent journal or launch prompt/profile; not projected.");
+      gap(task.id, `Worker ${task.id} lacks actual child/parent journal or launch prompt/profile; not projected.`);
       return;
     }
     return {
@@ -221,9 +222,10 @@ export function bindNativeTasks(
             for (const [index, body] of bodies.entries()) {
               const frame = projectChildFrame(cursor.link, {
                 sourceSessionId: cursor.link.child.sourceSessionId,
-                eventId: entry.id + ":" + index,
+                eventId: `${entry.id}:${index}`,
                 body,
-              })!;
+              });
+              if (!frame) throw new Error("Native child frame has no causal binding");
               const written = await options.writeChildFrame?.(source, frame);
               if (written !== false) frames.push(frame);
             }
@@ -248,7 +250,7 @@ export function bindNativeTasks(
       delete cursor.legacyCursorId;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-      gap("child:" + task.id, "Child journal unavailable for " + task.id + "; no child messages inferred from stdout.");
+      gap(`child:${task.id}`, `Child journal unavailable for ${task.id}; no child messages inferred from stdout.`);
     }
     return frames;
   };
@@ -278,20 +280,20 @@ export function bindNativeTasks(
   };
   const registerTaskCursor = (task: TaskSummary): Cursor | undefined => {
     const actualLink = link(task);
-    if (!actualLink) return;
+    if (!actualLink || !task.launchIdentity) return;
     let cursor = cursors.get(task.id);
     if (!cursor) {
       if (task.status === "running" && task.pid === undefined) {
-        gap("spawn:" + task.id, "No confirmed process spawn for " + task.id + "; no native launch announced.");
+        gap(`spawn:${task.id}`, `No confirmed process spawn for ${task.id}; no native launch announced.`);
         return;
       }
       if (task.status !== "running") {
-        gap("historical:" + task.id, "Unregistered historical terminal job " + task.id + "; no launch reconstructed.");
+        gap(`historical:${task.id}`, `Unregistered historical terminal job ${task.id}; no launch reconstructed.`);
         return;
       }
       cursor = {
         link: actualLink,
-        launch: { ...task.launchIdentity! },
+        launch: { ...task.launchIdentity },
         revision: 0,
         agentCall: false,
         agentResult: false,
@@ -383,7 +385,7 @@ export function bindNativeTasks(
       cursor.agentCall,
       cursor.agentResult,
     ]);
-    const eventId = task.id + ":" + ++cursor.revision + ":" + event.type;
+    const eventId = `${task.id}:${++cursor.revision}:${event.type}`;
     await announceAgentCall(task, cursor);
     const childFrames = await replayChildJournal(task, cursor);
     const result = task.completedAt ? await owner.manager.wait(task.id) : undefined;

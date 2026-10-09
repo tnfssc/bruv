@@ -1,3 +1,6 @@
+import type { ProbeMethods as Methods, ProbeInteractiveMode } from "./sdk-probe-types";
+import type { AgentSessionEvent } from "@earendil-works/pi-coding-agent";
+import { requireValue } from "../lib/require-value";
 /** Real Pi/Bruv editor submission with a recording SDK provider seam. No network. */
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
@@ -32,7 +35,7 @@ export type SendOptions = {
   /** Controlled mock provider wait, reported separately from synchronous work. */
   providerDelayMs?: number;
   /** Called before init/first frame. Return cleanup for any attached profiler. */
-  onRendererReady?: (renderer: TuiAltScreen) => void | (() => void);
+  onRendererReady?: (renderer: TuiAltScreen) => undefined | (() => void);
 };
 export type SendSpan = {
   name: string;
@@ -118,7 +121,7 @@ class RecordingTerminal implements Terminal {
     this.onWrite?.(text);
   }
   moveBy(n: number) {
-    if (n) this.write("\x1b[" + Math.abs(n) + (n > 0 ? "B" : "A"));
+    if (n) this.write(`\x1b[${Math.abs(n)}${n > 0 ? "B" : "A"}`);
   }
   hideCursor() {
     this.write("\x1b[?25l");
@@ -137,7 +140,7 @@ class RecordingTerminal implements Terminal {
   }
   setProgramStatus() {}
   setTitle(text: string) {
-    this.write("\x1b]0;" + text + "\x07");
+    this.write(`\x1b]0;${text}\x07`);
   }
   setProgress(_active: boolean) {}
 }
@@ -229,17 +232,22 @@ class SendObservation {
       });
   }
 
-  event(event: any) {
-    this.mark("event:" + event.type);
+  event(event: AgentSessionEvent) {
+    this.mark(`event:${event.type}`);
     if ((event.type === "message_start" && event.message.role === "user") || event.type === "queue_update") {
       this.ack = true;
-      this.ackText =
-        event.type === "queue_update"
-          ? this.message.trim()
-          : event.message.content
-              .filter((c: any) => c.type === "text")
-              .map((c: any) => c.text)
-              .join("\n");
+      if (event.type === "queue_update") this.ackText = this.message.trim();
+      else {
+        if (!("content" in event.message)) throw new Error("User message has no content");
+        const content = event.message.content;
+        this.ackText =
+          typeof content === "string"
+            ? content
+            : content
+                .filter((part) => part.type === "text")
+                .map((part) => part.text)
+                .join("\n");
+      }
       this.mark("ui-acknowledgment");
     }
   }
@@ -294,12 +302,12 @@ class SendObservation {
       // Union overlapping/nested measured intervals: don't double-count wrapper spans.
       const intervals = this.spans
         .map((span) => [Math.max(wait.startMs, span.startMs), Math.min(wait.endMs, span.endMs)])
-        .filter(([start, end]) => end! > start!)
-        .sort((a, b) => a[0]! - b[0]!);
+        .filter(([start, end]) => requireValue(end) > requireValue(start))
+        .sort((a, b) => requireValue(a[0]) - requireValue(b[0]));
       let end = wait.startMs;
       for (const [start, stop] of intervals) {
-        wait.observedSyncOverlapMs += Math.max(0, stop! - Math.max(start!, end));
-        end = Math.max(end, stop!);
+        wait.observedSyncOverlapMs += Math.max(0, requireValue(stop) - Math.max(requireValue(start), end));
+        end = Math.max(end, requireValue(stop));
       }
     }
     const output = writes.join("");
@@ -329,7 +337,6 @@ class SendObservation {
 }
 
 // Pinned Pi private methods are intentionally visible in raw evidence. No production patches.
-type Methods = Record<string, any>;
 let active: SendWorkload | undefined;
 export function createSendWorkload(options: SendOptions = {}): SendWorkload {
   const path = options.path ?? "normal";
@@ -342,7 +349,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
   let dir: string | undefined;
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   let manager: SessionManager | undefined;
-  let mode: Methods | undefined;
+  let mode: ProbeInteractiveMode | undefined;
   let terminal: RecordingTerminal;
   let started = false;
   let actionUsed = false;
@@ -354,16 +361,17 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
   let historyHash = "";
   const cleanups: Array<() => void> = [];
   function wrap(
-    target: Methods,
+    targetObject: object,
     method: string,
     name: string,
     kind: SendSpan["kind"] = "sync",
-    after?: (args: any[], result: any) => void,
+    after?: (args: unknown[], result: unknown) => void,
   ) {
+    const target = targetObject as Methods;
     const original = target[method];
     if (typeof original !== "function") return;
     const descriptor = Object.getOwnPropertyDescriptor(target, method);
-    target[method] = function (...args: any[]) {
+    target[method] = function (...args: unknown[]) {
       return observation.measure(name, kind, () => {
         const result = original.apply(this, args);
         after?.(args, result);
@@ -376,7 +384,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
     });
   }
   const fixture: SendWorkload = {
-    name: "send/" + path + "/" + historyTurns + "/" + Buffer.byteLength(message),
+    name: `send/${path}/${historyTurns}/${Buffer.byteLength(message)}`,
     async setup() {
       if (started || active) throw new Error("Send fixtures must run sequentially");
       active = fixture;
@@ -426,10 +434,10 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
         for (let i = 0; i < historyTurns; i++) {
           const user = {
             role: "user" as const,
-            content: [{ type: "text" as const, text: "history " + i + ": deterministic request" }],
+            content: [{ type: "text" as const, text: `history ${i}: deterministic request` }],
             timestamp: 1700000000000 + i,
           };
-          const assistant = response("history " + i + ": deterministic answer");
+          const assistant = response(`history ${i}: deterministic answer`);
           manager.appendMessage(user);
           manager.appendMessage(assistant);
           history.push(user, assistant);
@@ -489,7 +497,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
           throw new Error("Session replacement not in send fixture");
         });
         terminal = new RecordingTerminal(options.columns ?? 100, options.rows ?? 32);
-        mode = new InteractiveMode(host, { terminal, tuiMode: "fullscreen" }) as unknown as Methods;
+        mode = new InteractiveMode(host, { terminal, tuiMode: "fullscreen" }) as unknown as ProbeInteractiveMode;
         const renderer = mode.renderer as TuiAltScreen;
         const cleanup = options.onRendererReady?.(renderer);
         if (cleanup) cleanups.push(cleanup);
@@ -497,7 +505,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
         wrap(renderer, "requestRender", "tui.requestRender", "sync", () => observation.mark("render-request"));
         wrap(renderer, "doRender", "tui.doRender", "sync");
         const originalRender = (renderer as unknown as Methods).doRender;
-        (renderer as unknown as Methods).doRender = function (...args: any[]) {
+        (renderer as unknown as Methods).doRender = function (...args: unknown[]) {
           return observation.duringFrame(renderer, () => originalRender.apply(this, args));
         };
         cleanups.push(() => {
@@ -508,7 +516,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
         wrap(mode.editor, "handleInput", "editor.handleInput");
         wrap(mode.editor, "addToHistory", "editor.addToHistory");
         for (const method of ["getExpandedText", "expandPasteMarkers", "handlePaste", "submitValue"])
-          wrap(mode.editor, method, "editor." + method);
+          wrap(mode.editor, method, `editor.${method}`);
         wrap(mode.editor, "onSubmit", "interactive.onSubmit", "async-prefix", (_args, result) => {
           callbackPromise = Promise.resolve(result);
         });
@@ -516,7 +524,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
           callbackPromise = Promise.resolve(result);
         });
         wrap(mode, "handleEvent", "interactive.handleEvent", "async-prefix", (args) => {
-          observation.event(args[0]);
+          observation.event(args[0] as AgentSessionEvent);
         });
         const promptOriginal = session.prompt;
         session.prompt = function (text, options) {
@@ -540,9 +548,9 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
           "_expandSkillCommand",
           "_checkCompaction",
         ])
-          wrap(session as unknown as Methods, method, "session." + method, "async-prefix");
+          wrap(session as unknown as Methods, method, `session.${method}`, "async-prefix");
         for (const method of ["_preparePromptAndToolLoadout", "_findLastAssistantMessage", "getContextUsage"])
-          wrap(session as unknown as Methods, method, "session." + method);
+          wrap(session as unknown as Methods, method, `session.${method}`);
         for (const method of [
           "appendMessage",
           "appendSessionInfo",
@@ -553,7 +561,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
           "getBranch",
           "getEntries",
         ])
-          wrap(manager as unknown as Methods, method, "journal." + method);
+          wrap(manager as unknown as Methods, method, `journal.${method}`);
         const agent = session.agent as unknown as Methods;
         wrap(agent, "prompt", "agent.prompt", "async-prefix");
         wrap(agent, "convertToLlm", "agent.convertToLlm");
@@ -573,7 +581,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
     async action() {
       if (!mode || !session || !manager || actionUsed) throw new Error("Setup required; one action per fixture");
       actionUsed = true;
-      const beforeBytes = await stat(manager.getSessionFile()!)
+      const beforeBytes = await stat(requireValue(manager.getSessionFile()))
         .then((s) => s.size)
         .catch(() => 0);
       terminal.writes = [];
@@ -583,9 +591,9 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
       if (path === "normal") {
         // Pi run() is an infinite loop. This one-turn driver uses its identical await
         // getUserInput() -> await session.prompt(input) body, without startup network jobs.
-        sendPromise = mode.getUserInput().then((text: string) => session!.prompt(text));
+        sendPromise = mode.getUserInput().then((text: string) => requireValue(session).prompt(text));
       }
-      observation.measure("action.paste-dispatch", "sync", () => terminal.input("\x1b[200~" + message + "\x1b[201~"));
+      observation.measure("action.paste-dispatch", "sync", () => terminal.input(`\x1b[200~${message}\x1b[201~`));
       observation.mark("paste-dispatch-exit");
       observation.measure("action.enter-dispatch", "sync", () =>
         terminal.input(path === "follow-up" ? "\x1b\r" : "\r"),
@@ -604,7 +612,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
       for (let i = 0; i < 100 && !observation.hasAcknowledgmentFrame; i++) await new Promise((r) => setTimeout(r, 2));
       const actionEndMs = now();
       const measured = observation.finish(terminal.writes);
-      const afterBytes = await stat(manager.getSessionFile()!)
+      const afterBytes = await stat(requireValue(manager.getSessionFile()))
         .then((s) => s.size)
         .catch(() => 0);
       return {
@@ -654,7 +662,7 @@ if (import.meta.main) {
   const [path = "normal", turns = "0", bytes = "0", journal = "bruv-disk"] = process.argv.slice(2);
   const message =
     Number(bytes) > 0
-      ? "send-probe\n" + "deterministic pasted line\n".repeat(Math.ceil(Number(bytes) / 26))
+      ? `send-probe\n${"deterministic pasted line\n".repeat(Math.ceil(Number(bytes) / 26))}`
       : undefined;
   const workload = createSendWorkload({
     path: path as SendPath,

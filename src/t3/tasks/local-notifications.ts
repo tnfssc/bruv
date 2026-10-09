@@ -50,11 +50,11 @@ export class T3LocalNotificationOutbox {
   readonly path: string;
 
   constructor(sessionFile: string) {
-    this.path = sessionFile + ".t3-local-notifications-v1.json";
+    this.path = `${sessionFile}.t3-local-notifications-v1.json`;
     // A crash before rename can leave only this bounded staging file. The main
     // mailbox remains authoritative until rename has durably completed.
     try {
-      unlinkSync(this.path + ".tmp");
+      unlinkSync(`${this.path}.tmp`);
     } catch {}
     this.#read(); // Fail closed before this mailbox can be used for new jobs.
   }
@@ -97,7 +97,7 @@ export class T3LocalNotificationOutbox {
       version: 1,
       notificationId:
         input.kind === "completion"
-          ? "completion:" + createHash("sha256").update(input.taskId).digest("hex")
+          ? `completion:${createHash("sha256").update(input.taskId).digest("hex")}`
           : randomUUID(),
       taskId: input.taskId.slice(0, 200),
       kind: input.kind,
@@ -118,7 +118,7 @@ export class T3LocalNotificationOutbox {
   #commit(records: T3LocalNotification[]): void {
     const data = JSON.stringify(records);
     if (Buffer.byteLength(data) > MAX_FILE_BYTES) throw new Error("T3 local notification outbox is full");
-    const temporary = this.path + ".tmp";
+    const temporary = `${this.path}.tmp`;
     let fd: number | undefined;
     try {
       writeFileSync(temporary, data, { encoding: "utf8", mode: 0o600, flag: "wx" });

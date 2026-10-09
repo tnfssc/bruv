@@ -376,7 +376,7 @@ export default function asynchronousTasksExtension(
         options.onTaskOwner?.({
           manager,
           context: ctx,
-          sourceSessionId: owner?.getSessionFile?.() ?? sessionId!,
+          sourceSessionId: owner?.getSessionFile?.() ?? ctx.sessionManager.getSessionId(),
           appendEntry: (type, data) => {
             if (owner === owningContext?.sessionManager && owner?.getSessionId?.() === sessionId)
               pi.appendEntry(type, data);
@@ -538,7 +538,7 @@ export default function asynchronousTasksExtension(
       if (method === "remote") {
         const operation = params as RemoteOperation;
         if (operation.op === "cancel" && sessionHost)
-          await sessionHost.confirmDelegatedAgentStop("remote task " + operation.taskId);
+          await sessionHost.confirmDelegatedAgentStop(`remote task ${operation.taskId}`);
         const sessionFile = ctx.sessionManager?.getSessionFile?.();
         try {
           return await remoteOperations(operation, ctx.cwd, signal, sessionFile);
@@ -578,12 +578,12 @@ export default function asynchronousTasksExtension(
         },
         signal,
         (observed) =>
-          sessionHost?.observe({ type: "stopping", text: "Foreground stop observation: " + JSON.stringify(observed) }),
+          sessionHost?.observe({ type: "stopping", text: `Foreground stop observation: ${JSON.stringify(observed)}` }),
         voiceOwner ? () => currentMainToolOwner(ctx.sessionManager) === voiceOwner : undefined,
       );
       sessionHost?.observe({
         type: "stopping",
-        text: "Current-session stop-work result (pending jobs may still be running): " + JSON.stringify(result),
+        text: `Current-session stop-work result (pending jobs may still be running): ${JSON.stringify(result)}`,
       });
       return {
         ...(result as object),
@@ -1043,7 +1043,7 @@ function createJobNotifications(
         throw new Error("T3 local jobs require an available durable notification outbox");
     },
     assertLaunchCapacity: (runningTasks: number) => {
-      if (t3NativeSession) t3LocalDelivery!.outbox.assertLaunchCapacity(runningTasks);
+      if (t3NativeSession && t3LocalDelivery) t3LocalDelivery.outbox.assertLaunchCapacity(runningTasks);
     },
     flushRpcTurn: () => {
       // Native completion was persisted at its edge, not into Pi's volatile steer queue.

@@ -31,7 +31,7 @@ export interface TaskLifecycleRecorderOptions {
 }
 
 export function taskLifecycleFile(sessionFile: string): string {
-  return sessionFile + ".jobs.jsonl";
+  return `${sessionFile}.jobs.jsonl`;
 }
 
 class LockContentionError extends Error {}
@@ -112,7 +112,7 @@ export function createTaskLifecycleRecorder(
       // Resolve before O_CREAT: an unsupported runtime must not leave even an
       // empty index suggesting that lifecycle records were safely persisted.
       lock = options.flock ?? resolveFlock();
-      const line = Buffer.from(JSON.stringify(record) + "\n");
+      const line = Buffer.from(`${JSON.stringify(record)}\n`);
       if (line.length > 16_384) throw new Error("Lifecycle record exceeds bound");
       fd = openSync(path, constants.O_RDWR | constants.O_CREAT | constants.O_NOFOLLOW, 0o600);
 

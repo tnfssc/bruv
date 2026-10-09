@@ -110,7 +110,7 @@ async function waitFile(file) {
     } catch {}
     await new Promise((r) => setTimeout(r, 100));
   }
-  throw Error("Actual child did not reach " + path.basename(file));
+  throw Error(`Actual child did not reach ${path.basename(file)}`);
 }
 export async function exercise({ page, snapshot, body, config }) {
   // Shared replay already selected the native project and prepared this draft.
@@ -164,7 +164,7 @@ export async function exercise({ page, snapshot, body, config }) {
 // Task-reference files locate native rows; only the native projections establish state.
 async function readNativeTasks(state) {
   const tasks = await Promise.all(
-    ["done", "cancel"].map(async (n) => JSON.parse(await fs.readFile(path.join(state, n + ".task.json"), "utf8"))),
+    ["done", "cancel"].map(async (n) => JSON.parse(await fs.readFile(path.join(state, `${n}.task.json`), "utf8"))),
   );
   assert.ok(tasks.every((t) => t.taskId && t.childThreadId));
   assert.notEqual(tasks[0].taskId, tasks[1].taskId);

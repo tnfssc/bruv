@@ -40,6 +40,6 @@ export function actionError(
   return (
     lines.find((line) => /^(?:\w*Error|error):/.test(line)) ??
     lines[0] ??
-    (typeof details?.exitCode === "number" ? "exit " + details.exitCode : "failed")
+    (typeof details?.exitCode === "number" ? `exit ${details.exitCode}` : "failed")
   );
 }

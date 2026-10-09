@@ -1,3 +1,5 @@
+import type { FixtureRpcEvent, FixtureTarget } from "../fixtures/rpc-types";
+import { requireValue } from "../lib/require-value";
 /** Isolated compiled CLI -> Docker SSH -> existing jobs task-complete integration proof. */
 import { spawn, spawnSync } from "node:child_process";
 import { strict as assert } from "node:assert";
@@ -6,15 +8,15 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 
 const home = homedir(),
-  agentDir = process.env.BRUV_CODING_AGENT_DIR!;
+  agentDir = requireValue(process.env.BRUV_CODING_AGENT_DIR);
 // Parent CLIs are fresh roots in the isolated fixture HOME, not this test worker's role.
 // Source artifacts, sessions, configuration and caches must stay outside the Git source.
-assert(process.env.FIXTURE_CONTAINER && process.env.FIXTURE_PROVIDER_URL && agentDir.startsWith(home + "/"));
+assert(process.env.FIXTURE_CONTAINER && process.env.FIXTURE_PROVIDER_URL && agentDir.startsWith(`${home}/`));
 const repo = join(home, "repo");
 const cliEnv: Record<string, string> = {
   HOME: home,
-  PATH: process.env.PATH!,
-  TMPDIR: process.env.TMPDIR!,
+  PATH: requireValue(process.env.PATH),
+  TMPDIR: requireValue(process.env.TMPDIR),
   BRUV_CODING_AGENT_DIR: agentDir,
   SHELL: "/bin/sh",
   LANG: "C.UTF-8",
@@ -28,7 +30,7 @@ const cliEnv: Record<string, string> = {
 mkdirSync(repo, { recursive: true });
 const git = (...args: string[]) => {
   const r = spawnSync("git", ["-C", repo, ...args], { env: cliEnv, encoding: "utf8", timeout: 10000 });
-  assert.equal(r.status, 0, "fixture Git: " + r.stderr);
+  assert.equal(r.status, 0, `fixture Git: ${r.stderr}`);
   return r.stdout;
 };
 git("init", "-q");
@@ -50,7 +52,7 @@ writeFileSync(
   JSON.stringify({
     providers: {
       fixture: {
-        baseUrl: process.env.FIXTURE_PROVIDER_URL!,
+        baseUrl: requireValue(process.env.FIXTURE_PROVIDER_URL),
         api: "openai-completions",
         apiKey: "fixture-only",
         models: [{ id: "fixture-parent", name: "parent fixture", contextWindow: 32000, maxTokens: 1024 }],
@@ -64,12 +66,12 @@ const state = () =>
   };
 function launch(side: string, session: string) {
   const child = spawn(
-    process.env.BRUV_BIN!,
+    requireValue(process.env.BRUV_BIN),
     ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-parent", "--session", session],
     { cwd: repo, env: cliEnv, stdio: ["pipe", "pipe", "pipe"] },
   );
   clients.push(child);
-  const events: any[] = [];
+  const events: FixtureRpcEvent[] = [];
   let buffer = "",
     err = "";
   child.stdout.on("data", (data: Buffer) => {
@@ -81,11 +83,11 @@ function launch(side: string, session: string) {
     }
   });
   child.stderr.on("data", (data: Buffer) => (err += String(data)));
-  const send = (message: string) => child.stdin.write(JSON.stringify({ type: "prompt", message }) + "\n");
+  const send = (message: string) => child.stdin.write(`${JSON.stringify({ type: "prompt", message })}\n`);
   const wait = async (test: () => boolean, label: string, ms = 60000) => {
     const start = Date.now();
     while (!test()) {
-      if (child.exitCode !== null) throw Error(side + " exited: " + err);
+      if (child.exitCode !== null) throw Error(`${side} exited: ${err}`);
       if (Date.now() - start > ms)
         throw Error(
           side +
@@ -104,7 +106,7 @@ function launch(side: string, session: string) {
   return { child, events, send, wait };
 }
 const ssh = (command: string) =>
-  spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", command], {
+  spawnSync("ssh", ["-F", requireValue(process.env.FIXTURE_SSH_CONFIG), "fixture-owner", command], {
     encoding: "utf8",
     timeout: 6000,
   });
@@ -120,7 +122,7 @@ function taskId(jobId: string): string {
 function assertPrintJsonBoundary() {
   // Exercise the compiled CLI's non-interactive JSON boundary as well as its RPC lifecycle.
   const printed = spawnSync(
-    process.env.BRUV_BIN!,
+    requireValue(process.env.BRUV_BIN),
     [
       "--print",
       "--mode",
@@ -139,19 +141,21 @@ function assertPrintJsonBoundary() {
       timeout: 30000,
     },
   );
-  assert.equal(printed.status, 0, "print/json CLI failed: " + printed.stderr + printed.stdout);
-  assert(printed.stdout.includes("REMOTE_JOBS_PRINT_JSON_OK"), "print/json response missing: " + printed.stdout);
+  assert.equal(printed.status, 0, `print/json CLI failed: ${printed.stderr}${printed.stdout}`);
+  assert(printed.stdout.includes("REMOTE_JOBS_PRINT_JSON_OK"), `print/json response missing: ${printed.stdout}`);
 }
 
 async function placeRemoteJob(client: RpcClient, side: "A" | "B"): Promise<string> {
-  client.send("REMOTE_JOBS_PROOF_" + side + " launch using execute");
-  const resultPath = join(home, "jobs-" + side + ".json");
+  client.send(`REMOTE_JOBS_PROOF_${side} launch using execute`);
+  const resultPath = join(home, `jobs-${side}.json`);
   await client.wait(
     () => existsSync(resultPath),
     side === "A" ? "first async placement launch" : "second async placement launch",
   );
   const result = JSON.parse(readFileSync(resultPath, "utf8"));
-  assert(result.discovery.targets.some((t: any) => t.name === "fixture-owner" && t.authorized && t.kind === "ssh"));
+  assert(
+    result.discovery.targets.some((t: FixtureTarget) => t.name === "fixture-owner" && t.authorized && t.kind === "ssh"),
+  );
   assert.equal(result.launch.background, true);
   return result.launch.id;
 }
@@ -164,7 +168,7 @@ async function waitForParentYield(client: RpcClient, side: "A" | "B") {
   await client.wait(
     () =>
       client.events.some(
-        (e) => e.type === "message_end" && JSON.stringify(e).includes("REMOTE_JOBS_PARENT_YIELDED_" + side),
+        (e) => e.type === "message_end" && JSON.stringify(e).includes(`REMOTE_JOBS_PARENT_YIELDED_${side}`),
       ),
     "parent yielded",
   );
@@ -205,25 +209,23 @@ async function assertRemoteCompletions(a: RpcClient, b: RpcClient, jobA: string,
 }
 
 async function assertJobAccessAndOwnerExecution(client: RpcClient, side: "A" | "B", own: string, foreign: string) {
-  client.send("REMOTE_JOBS_CHECK " + own + " " + foreign);
-  await client.wait(() => existsSync(join(home, "check-" + side + ".json")), "session isolation / unknown job checks");
-  const check = JSON.parse(readFileSync(join(home, "check-" + side + ".json"), "utf8"));
+  client.send(`REMOTE_JOBS_CHECK ${own} ${foreign}`);
+  await client.wait(() => existsSync(join(home, `check-${side}.json`)), "session isolation / unknown job checks");
+  const check = JSON.parse(readFileSync(join(home, `check-${side}.json`), "utf8"));
   assert.equal(check.inspected.id, own);
   assert.equal(check.rejected.length, 4);
   await client.wait(
     () =>
-      client.events.some((e) => e.type === "message_end" && JSON.stringify(e).includes("REMOTE_JOBS_CHECKED_" + side)),
+      client.events.some((e) => e.type === "message_end" && JSON.stringify(e).includes(`REMOTE_JOBS_CHECKED_${side}`)),
     "probe yielded",
   );
-  const sourceProof = ssh(
-    "test -f /tmp/fixture-jobs-proof-" + side + " && test -f /tmp/fixture-owner-finished-" + side,
-  );
+  const sourceProof = ssh(`test -f /tmp/fixture-jobs-proof-${side} && test -f /tmp/fixture-owner-finished-${side}`);
   assert.equal(
     sourceProof.status,
     0,
-    "current-source shell and owner continuation did not finish: " + sourceProof.stderr,
+    `current-source shell and owner continuation did not finish: ${sourceProof.stderr}`,
   );
-  const policy = ssh("cat /tmp/fixture-jobs-policy-" + side);
+  const policy = ssh(`cat /tmp/fixture-jobs-policy-${side}`);
   assert.equal(policy.status, 0, policy.stderr);
   assert(policy.stdout.includes("Only orchestrator agents can delegate"));
 }
@@ -231,8 +233,8 @@ async function assertJobAccessAndOwnerExecution(client: RpcClient, side: "A" | "
 async function assertNoCompletionRedelivery(a: RpcClient, b: RpcClient, idA: string, idB: string) {
   const countA = completionMessages(a).length,
     countB = completionMessages(b).length;
-  a.send("/remote sync " + idA);
-  b.send("/remote sync " + idB);
+  a.send(`/remote sync ${idA}`);
+  b.send(`/remote sync ${idB}`);
   await Bun.sleep(1500);
   assert.equal(completionMessages(a).length, countA, "repeat sync redelivered A");
   assert.equal(completionMessages(b).length, countB, "repeat sync redelivered B");

@@ -1,3 +1,4 @@
+import { requireValue } from "../../scripts/lib/require-value";
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import type { Browser, BrowserContextOptions, Page } from "playwright-core";
 import { launchBrowser } from "./browser";
@@ -21,29 +22,29 @@ async function withDemoPage(
 ) {
   const context = await browser.newContext(options);
   try {
-    await context.route(origin + "/**", async (route) => {
+    await context.route(`${origin}/**`, async (route) => {
       const path = new URL(route.request().url()).pathname;
-      const file = Bun.file(new URL("../dist" + path, import.meta.url));
+      const file = Bun.file(new URL(`../dist${path}`, import.meta.url));
       if (await file.exists())
         await route.fulfill({ body: Buffer.from(await file.arrayBuffer()), contentType: file.type });
       else await route.fulfill({ status: 404 });
     });
     const page = await context.newPage();
     if (manualClock) await page.clock.install();
-    await page.goto(origin + "/text.html");
+    await page.goto(`${origin}/text.html`);
     if (options.javaScriptEnabled !== false) await page.locator(".demo-enhanced").first().waitFor();
     await check(page);
   } finally {
     await context.close();
   }
 }
-const screenText = (page: Page, id = "delegate") => page.locator('[data-demo="' + id + '"] .demo-screen').textContent();
+const screenText = (page: Page, id = "delegate") => page.locator(`[data-demo="${id}"] .demo-screen`).textContent();
 
 describe("semantic HTML feature demos", () => {
   test("crawlable transcripts and RGB cell runs survive HTML escaping", () => {
     const html = textContent();
     for (const id of demoIds)
-      expect(html).toContain('<pre class="demo-transcript">' + escapeText(demoTranscript(id)) + "</pre>");
+      expect(html).toContain(`<pre class="demo-transcript">${escapeText(demoTranscript(id))}</pre>`);
     expect(html.match(/class="demo-toggle"/g)).toHaveLength(3);
     expect(html).not.toContain("not recorded model runs");
     expect(html).not.toContain("<canvas");
@@ -62,7 +63,7 @@ describe("semantic HTML feature demos", () => {
   test("no JavaScript shows every complete transcript without controls", async () => {
     await withDemoPage({ javaScriptEnabled: false }, async (page) => {
       for (const id of demoIds) {
-        const figure = page.locator('[data-demo="' + id + '"]');
+        const figure = page.locator(`[data-demo="${id}"]`);
         expect(await figure.locator(".demo-transcript").textContent()).toBe(demoTranscript(id));
         expect(await figure.locator(".demo-transcript").isVisible()).toBe(true);
         expect(await figure.locator(".demo-screen").isVisible()).toBe(false);
@@ -80,11 +81,11 @@ describe("semantic HTML feature demos", () => {
       const first = page.locator('[data-demo="delegate"]');
       await first.scrollIntoViewIfNeeded();
       await page.waitForTimeout(150);
-      const height = (await first.boundingBox())!.height;
+      const height = requireValue(await first.boundingBox()).height;
       const start = await screenText(page);
       await page.waitForTimeout(400);
       expect(await screenText(page)).not.toBe(start);
-      expect((await first.boundingBox())!.height).toBe(height);
+      expect(requireValue(await first.boundingBox()).height).toBe(height);
       const button = first.locator("button");
       await button.focus();
       expect(await button.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
@@ -153,11 +154,16 @@ describe("semantic HTML feature demos", () => {
         const button = first.locator("button");
         expect(await button.getAttribute("aria-label")).toStartWith("Animate");
         expect(await button.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
-        expect((await button.boundingBox())!.width).toBeGreaterThanOrEqual(44);
+        expect(requireValue(await button.boundingBox()).width).toBeGreaterThanOrEqual(44);
         const geometry = await first.evaluate((el) => {
-          const screen = el.querySelector<HTMLElement>(".demo-screen")!;
-          const row = el.querySelector<HTMLElement>(".demo-row")!;
-          const button = el.querySelector("button")!;
+          function requireValue<T>(value: T | null | undefined): T {
+            if (value === null || value === undefined) throw new Error("Expected a value");
+            return value;
+          }
+
+          const screen = requireValue(el.querySelector<HTMLElement>(".demo-screen"));
+          const row = requireValue(el.querySelector<HTMLElement>(".demo-row"));
+          const button = requireValue(el.querySelector("button"));
           const style = getComputedStyle(screen);
           return {
             available: screen.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),

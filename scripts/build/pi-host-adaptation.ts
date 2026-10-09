@@ -39,6 +39,7 @@ export const piHostPatches: readonly Patch[] = [
     originalSha256: "231eca0304b149165a35b12730052586603f23208667e3a57355638017450175",
     adaptedSha256: "b0e06afb2d4cb5cd417196b42455ebe1c236f3a7413f79bf760963e85ff871df",
     replacements: [
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the SDK source.
       ["  ${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n", ""],
       [
         "                                 Keeps MCP tools unless an entry starts with mcp__\n                                 Only +name/-name entries add to or remove from the defaults\n",
@@ -53,6 +54,7 @@ export const piHostPatches: readonly Patch[] = [
         "  --skill <path>                 Load a skill file or directory (can be used multiple times)\n",
       ],
       [
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the SDK source.
         "  # Add codemode to the default tools\n  ${APP_NAME} --tools +codemode\n\n  # Codemode with only the tools of one MCP server\n  ${APP_NAME} --tools read,bash,codemode,'mcp__radius__*'\n\n  # Disable one tool while keeping the rest available\n",
         "  # Disable one tool while keeping the rest available\n",
       ],

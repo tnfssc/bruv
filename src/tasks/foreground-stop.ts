@@ -21,7 +21,12 @@ export function requestForegroundStop(
       outcome: "error",
       detail: "Foreground cancellation needs an execute bridge that acknowledges the response",
     };
-  const delivery = getJobResponseDeliverySignal(signal)!;
+  const delivery = getJobResponseDeliverySignal(signal);
+  if (!delivery)
+    return {
+      outcome: "error",
+      detail: "Foreground cancellation needs an execute bridge that acknowledges the response",
+    };
   const session = ctx.sessionManager.getSessionId();
   const leaf = ctx.sessionManager.getLeafId();
   const cleanup = () => {

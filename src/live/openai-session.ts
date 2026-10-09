@@ -33,12 +33,44 @@ const validBase64 = (s: string, max: number): boolean =>
   /^[A-Za-z0-9+/]+={0,2}$/.test(s) &&
   Buffer.from(s, "base64").length <= max;
 const size = (x: unknown): number => Buffer.byteLength(JSON.stringify(x));
+export interface RealtimeSocketEvent {
+  data?: unknown;
+  status?: unknown;
+  providerCode?: unknown;
+  model?: unknown;
+}
+type RealtimeToolEvent = {
+  type: "response.function_call_arguments.done";
+  call_id: string;
+  name: string;
+  response_id: string;
+  arguments: string;
+};
+type RealtimeEvent =
+  | {
+      type:
+        | "input_audio_buffer.committed"
+        | "input_audio_buffer.speech_started"
+        | "conversation.item.input_audio_transcription.failed";
+      item_id?: string;
+    }
+  | { type: "conversation.item.input_audio_transcription.completed"; item_id?: string; transcript: string }
+  | { type: "response.created"; response: { id: string } }
+  | { type: "response.output_item.added"; response_id: string; item?: { id: string; type?: string } }
+  | { type: "response.output_audio.delta"; item_id: string; response_id?: string; delta: string; content_index: number }
+  | { type: "response.output_audio_transcript.delta"; response_id?: string; delta: string }
+  | { type: "response.output_audio_transcript.done"; response_id?: string; transcript: string }
+  | RealtimeToolEvent
+  | {
+      type: "response.done";
+      response: { id: string; usage?: unknown; status?: string; status_details?: { error?: unknown } };
+    };
 export interface RealtimeSocket {
   readyState: number;
   readonly bufferedAmount?: number;
   send(data: string): void;
   close(): void;
-  addEventListener(type: "open" | "message" | "error" | "close", handler: (event: any) => void): void;
+  addEventListener(type: "open" | "message" | "error" | "close", handler: (event: RealtimeSocketEvent) => void): void;
 }
 export type RealtimeSocketFactory = (url: string, headers: Record<string, string>) => RealtimeSocket;
 export const defaultSocket: RealtimeSocketFactory = (url, headers) => upgradeSocket(url, headers);
@@ -232,8 +264,8 @@ export class OpenAIRealtimeSession implements VoiceProvider {
       timer.unref?.();
       let setupStage = "socket-construction";
       try {
-        const socket = this.factory("wss://api.openai.com/v1/realtime?model=" + encodeURIComponent(this.model), {
-          Authorization: "Bearer " + apiKey,
+        const socket = this.factory(`wss://api.openai.com/v1/realtime?model=${encodeURIComponent(this.model)}`, {
+          Authorization: `Bearer ${apiKey}`,
         });
         if (serial !== this.serial) {
           socket.close();
@@ -330,7 +362,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
           }
         });
       } catch {
-        this.fail("connect_failed", "OpenAI transport setup failed [" + setupStage + "]; details withheld.");
+        this.fail("connect_failed", `OpenAI transport setup failed [${setupStage}]; details withheld.`);
         finish();
       }
     });
@@ -461,8 +493,9 @@ export class OpenAIRealtimeSession implements VoiceProvider {
     this.mainResponsePending = true;
     this.flushMainResponse();
   }
-  private toolDone(message: any): void {
-    if (!this.orchestration || typeof message.call_id !== "string" || !message.call_id || message.call_id.length > 256)
+  private toolDone(message: RealtimeToolEvent): void {
+    const orchestration = this.orchestration;
+    if (!orchestration || typeof message.call_id !== "string" || !message.call_id || message.call_id.length > 256)
       return;
     const id = message.call_id,
       name = message.name,
@@ -517,7 +550,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
         if (this.stateValue !== "ready" || response.cancelled)
           throw new Error("Tool request invalidated before dispatch");
         entry.dispatched = true;
-        return this.orchestration!.execute({ id, name, args });
+        return orchestration.execute({ id, name, args });
       })
       .then(
         (result) => voiceToolResult(result, this.orchestration?.artifactDirectory).then(reply),
@@ -544,7 +577,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
     if (this.outputAudio.hasQueuedAudio) this.interrupt(!manual);
   }
 
-  private receive(m: any): void {
+  private receive(m: RealtimeEvent): void {
     switch (m.type) {
       case "input_audio_buffer.committed":
         if (typeof m.item_id === "string" && m.item_id.length <= 256) this.committedItem = m.item_id;
@@ -578,7 +611,10 @@ export class OpenAIRealtimeSession implements VoiceProvider {
         );
         if (m.item_id !== this.committedItem && !authorized) return;
         this.transcripts.set(m.item_id, m.transcript);
-        if (this.transcripts.size > 32) this.transcripts.delete(this.transcripts.keys().next().value!);
+        if (this.transcripts.size > 32) {
+          const oldest = this.transcripts.keys().next();
+          if (!oldest.done) this.transcripts.delete(oldest.value);
+        }
         break;
       }
       case "conversation.item.input_audio_transcription.failed":
@@ -630,7 +666,9 @@ export class OpenAIRealtimeSession implements VoiceProvider {
         }
         break;
       case "response.output_audio.delta": {
+        const activeResponse = this.activeResponse;
         if (
+          !activeResponse ||
           this.suppressAudio ||
           typeof m.item_id !== "string" ||
           !this.outputAudio.belongsToResponse(m.item_id, this.activeResponse) ||
@@ -649,7 +687,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
         if (
           !this.outputAudio.append(
             m.item_id,
-            this.activeResponse!,
+            activeResponse,
             bytes,
             m.content_index,
             () => this.callbacks.getPlayedAudioMs?.() ?? 0,
@@ -664,16 +702,13 @@ export class OpenAIRealtimeSession implements VoiceProvider {
       case "response.output_audio_transcript.delta":
       case "response.output_audio_transcript.done": {
         if (m.response_id && !this.responses.has(m.response_id)) return;
+        const final = m.type === "response.output_audio_transcript.done";
+        const text = m.type === "response.output_audio_transcript.done" ? m.transcript : m.delta;
         if (
-          typeof (m.type.endsWith(".done") ? m.transcript : m.delta) !== "string" ||
-          (m.type.endsWith(".done") ? 0 : m.delta.length) + this.outputChars > MAX_TRANSCRIPT
+          typeof text !== "string" ||
+          text.length > MAX_TRANSCRIPT ||
+          (!final && text.length + this.outputChars > MAX_TRANSCRIPT)
         ) {
-          this.fail("transcript_limit", "Voice transcription limit exceeded");
-          return;
-        }
-        const final = m.type.endsWith(".done");
-        const text = final ? m.transcript : m.delta;
-        if (text.length > MAX_TRANSCRIPT) {
           this.fail("transcript_limit", "Voice transcription limit exceeded");
           return;
         }
@@ -684,7 +719,9 @@ export class OpenAIRealtimeSession implements VoiceProvider {
               text,
               finished: final,
               ...(final ? { replace: true, rawFinished: true, finalitySource: "provider" as const } : {}),
-              ...(this.suppressAudio || this.responses.get(m.response_id)?.cancelled ? { interrupted: true } : {}),
+              ...(this.suppressAudio || this.responses.get(m.response_id ?? "")?.cancelled
+                ? { interrupted: true }
+                : {}),
             },
             this.epoch,
           ),

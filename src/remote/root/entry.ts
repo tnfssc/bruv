@@ -18,6 +18,6 @@ export async function runRootControl(): Promise<void> {
     response = { code: "root_request_failed", error: String(error) };
   }
   await new Promise<void>((resolve, reject) =>
-    process.stdout.write(JSON.stringify(response) + "\n", (error) => (error ? reject(error) : resolve())),
+    process.stdout.write(`${JSON.stringify(response)}\n`, (error) => (error ? reject(error) : resolve())),
   );
 }

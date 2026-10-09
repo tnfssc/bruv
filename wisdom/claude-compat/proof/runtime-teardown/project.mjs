@@ -6,7 +6,7 @@ if(!input||!output)throw Error('Usage: project.mjs PRIVATE_REPLAY NEW_OUTPUT');
 await fs.mkdir(output,{recursive:true});
 const rows=(await fs.readFile(path.join(input,'private-wire.ndjson'),'utf8')).trim().split('\n').map(JSON.parse);
 const names=new Map();let n=0;
-for(const row of rows)if(row.kind==='spawn')names.set(row.pid,'process-'+(++n));
+for(const row of rows)if(row.kind==='spawn')names.set(row.pid,`process-${++n}`);
 const main=rows.find(row=>row.kind==='spawn'&&row.value.args.includes('--mcp-config'))?.pid;
 const projected=[];
 for(const row of rows){
@@ -28,5 +28,5 @@ for(const row of rows){
  if(Array.isArray(content)){const tools=content.filter(b=>['tool_use','tool_result'].includes(b.type)).map(b=>({type:b.type,...(b.name?{name:b.name,id:b.id}: {tool_use_id:b.tool_use_id,is_error:b.is_error})}));if(tools.length)entry.tools=tools;}
  projected.push(entry);
 }
-await fs.writeFile(path.join(output,'wire.json'),JSON.stringify(projected,null,2)+'\n');
+await fs.writeFile(path.join(output,'wire.json'),`${JSON.stringify(projected,null,2)}\n`);
 await fs.copyFile(path.join(input,'result.json'),path.join(output,'result.json'));

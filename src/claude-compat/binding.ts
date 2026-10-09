@@ -26,7 +26,7 @@ export function toolRules(value?: string): string[] {
     .filter(Boolean)
     .map((rule) => {
       if (rule === "Bash(*)") return "bash";
-      if (/[()]/.test(rule)) throw new Error("Unsupported tool rule: " + rule);
+      if (/[()]/.test(rule)) throw new Error(`Unsupported tool rule: ${rule}`);
       return nativeNames[rule] ?? rule;
     });
 }
@@ -46,7 +46,7 @@ export function launchPolicy(args: ConnectorArguments) {
     "fastMode",
   ];
   for (const key of Object.keys(settings))
-    if (!supported.includes(key)) throw new Error("Unsupported --settings effect: " + key);
+    if (!supported.includes(key)) throw new Error(`Unsupported --settings effect: ${key}`);
   if (settings.disableAllHooks !== undefined && settings.disableAllHooks !== true)
     throw new Error("Native hooks are unsupported; disableAllHooks must be true");
   if (settings.alwaysThinkingEnabled !== undefined && typeof settings.alwaysThinkingEnabled !== "boolean")
@@ -59,7 +59,7 @@ export function launchPolicy(args: ConnectorArguments) {
   if (permissions && (typeof permissions !== "object" || Array.isArray(permissions)))
     throw new Error("Invalid settings permissions");
   for (const key of Object.keys(permissions ?? {}))
-    if (!["allow", "deny", "defaultMode"].includes(key)) throw new Error("Unsupported settings permission: " + key);
+    if (!["allow", "deny", "defaultMode"].includes(key)) throw new Error(`Unsupported settings permission: ${key}`);
   const rules = (key: string) => {
     const value = permissions?.[key];
     if (value === undefined) return [];
@@ -68,7 +68,7 @@ export function launchPolicy(args: ConnectorArguments) {
   };
   const mode = args.permissionMode ?? permissions?.defaultMode ?? "default";
   if (!["default", "acceptEdits", "dontAsk", "plan", "bypassPermissions"].includes(String(mode)))
-    throw new Error("Unsupported permission mode: " + mode);
+    throw new Error(`Unsupported permission mode: ${mode}`);
   if (mode === "bypassPermissions" && !args.allowBypass)
     throw new Error("bypassPermissions requires explicit --allow-dangerously-skip-permissions");
   if (args.permissionPromptTool !== undefined && args.permissionPromptTool !== "stdio")
@@ -88,7 +88,7 @@ export function launchPolicy(args: ConnectorArguments) {
   };
   if (env && (typeof env !== "object" || Array.isArray(env))) throw new Error("Invalid settings env");
   for (const [key, value] of Object.entries(env ?? {}))
-    if (disabledEnv[key] !== value) throw new Error("Unsupported settings env effect: " + key);
+    if (disabledEnv[key] !== value) throw new Error(`Unsupported settings env effect: ${key}`);
   // No claude.ai/IDE discovery exists in this engine. Injected MCP is the only server source.
   let thinking = args.thinking ?? (settings.alwaysThinkingEnabled === false ? "off" : undefined);
   const adaptiveThinking = thinking === "adaptive" || thinking === "enabled";
@@ -141,7 +141,7 @@ export async function nativeStorage(
     return { sessionId, manager: SessionManager.inMemory(options.cwd), history: undefined };
   }
   const directory = join(options.agentDir, "native-sessions");
-  const index = join(directory, sessionId + ".json");
+  const index = join(directory, `${sessionId}.json`);
   await mkdir(directory, { recursive: true, mode: 0o700 });
   let binding: { file: string; cwd: string; configDir: string } | undefined;
   try {
@@ -169,8 +169,9 @@ export async function nativeStorage(
   } else {
     const fresh = SessionManager.create(options.cwd, directory);
     // Persist the canonical header even if the thread closes before its first response.
-    const file = fresh.getSessionFile()!;
-    await writeFile(file, JSON.stringify(fresh.getHeader()) + "\n", { flag: "wx", mode: 0o600 });
+    const file = fresh.getSessionFile();
+    if (!file) throw new Error("Native session has no history file");
+    await writeFile(file, `${JSON.stringify(fresh.getHeader())}\n`, { flag: "wx", mode: 0o600 });
     manager = SessionManager.open(file);
     history = await NativeHistory.open({ ...location, sourceSessionId: manager.getSessionId() });
   }
@@ -182,7 +183,10 @@ export async function nativeStorage(
     if (!checkpoint) throw new Error("Unknown native checkpoint");
     // Validate complete context before changing Pi's leaf. Never reexecute an imported tool.
     nativeHistoryToPi(entries.slice(0, entries.indexOf(checkpoint) + 1), sessionId);
-    const mapping = nativeImportEntryMaps(manager).flatMap((e) => (e as any).data.entries);
+    const mapping = nativeImportEntryMaps(manager).flatMap((e) => {
+      if (!e.data) throw new Error("Native import entry map has no data");
+      return e.data.entries;
+    });
     const id =
       checkpoint.bruv?.sourceSessionId === manager.getSessionId()
         ? checkpoint.bruv.sourceMessageId

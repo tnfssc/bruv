@@ -146,8 +146,9 @@ export function createImageHelper(channelEnabled: boolean) {
           data: bytes.toString("base64"),
           ...(resize ? { resize } : {}),
         };
+        const output = stream;
         await new Promise<void>((resolve, reject) => {
-          stream!.write(`${JSON.stringify(record)}\n`, (error) => (error ? reject(error) : resolve()));
+          output.write(`${JSON.stringify(record)}\n`, (error) => (error ? reject(error) : resolve()));
         });
         count++;
         total += bytes.length;
@@ -158,7 +159,8 @@ export function createImageHelper(channelEnabled: boolean) {
     },
     async finish(): Promise<void> {
       await queue;
-      if (stream) await new Promise<void>((resolve) => stream!.end(resolve));
+      const output = stream;
+      if (output) await new Promise<void>((resolve) => output.end(resolve));
     },
   };
 }

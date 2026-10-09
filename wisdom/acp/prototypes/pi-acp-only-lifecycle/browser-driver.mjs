@@ -5,9 +5,9 @@ const { chromium } = await import(
 );
 import fs from "node:fs";
 const root = new URL(".", import.meta.url).pathname;
-const events = root + "browser-events.ndjson";
+const events = `${root}browser-events.ndjson`;
 const record = (type, data) =>
-  fs.appendFileSync(events, JSON.stringify({ time: new Date().toISOString(), type, ...data }) + "\n");
+  fs.appendFileSync(events, `${JSON.stringify({ time: new Date().toISOString(), type, ...data })}\n`);
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROMIUM_BIN ?? "/home/tnfssc/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome",
@@ -29,15 +29,13 @@ page.on("websocket", (ws) => {
     if (markers.length) record("ws-marker", { markers });
   });
 });
-const log = fs.readFileSync(root + "server-private.log", "utf8");
-const match = log.match(
-  new RegExp("http://127[.]0[.]0[.]1:" + String(process.env.PROOF_PORT ?? 18783) + "/pair[^\\s]*"),
-);
+const log = fs.readFileSync(`${root}server-private.log`, "utf8");
+const match = log.match(new RegExp(`http://127[.]0[.]0[.]1:${String(process.env.PROOF_PORT ?? 18783)}/pair[^\\s]*`));
 if (!match) throw Error("Pair URL not found");
 await page.goto(match[0]);
 await page.waitForTimeout(4000);
 // Pairing/setup state is private; exclude it from selected evidence.
-fs.writeFileSync(root + "browser-ready", "ready");
+fs.writeFileSync(`${root}browser-ready`, "ready");
 const steps = [
   "await page.getByRole('button',{name:'Open provider settings',exact:true}).click();await page.getByRole('button',{name:'Add provider',exact:true}).click();await page.waitForTimeout(4500);",
   "await page.getByRole('button',{name:'Enter manually',exact:true}).click();await page.getByLabel('Registry agent ID',{exact:true}).fill('pi-acp');await page.getByLabel('Executable override',{exact:true}).fill(root+'../source/dist/index.js');await page.getByRole('button',{name:'Next',exact:true}).click();await page.waitForTimeout(1000);await page.getByLabel('Label',{exact:true}).fill('Bruv pi-acp fork — ADAPTER-ONLY PROTOTYPE');await page.getByLabel('Instance ID',{exact:true}).fill('bruv-adapter-only-prototype');await page.getByRole('button',{name:'Continue to sign-in',exact:true}).click();await page.waitForTimeout(5000);",
@@ -60,7 +58,7 @@ for (let i = 0; i < steps.length; i++) {
   const code = steps[i]
     .replaceAll("18783", String(process.env.PROOF_PORT ?? 18783))
     .replace("root+'../source/dist/index.js'", JSON.stringify(process.env.PROOF_ADAPTER));
-  await new Function("page", "root", "return(async()=>{" + code + "})()")(page, root);
+  await new Function("page", "root", `return(async()=>{${code}})()`)(page, root);
   if (i === 8 && !(await page.locator("body").innerText()).includes("Working"))
     throw Error("Expected Working during background job");
   if (i === 10 || i === 11) {
@@ -73,10 +71,10 @@ for (let i = 0; i < steps.length; i++) {
   }
   if (i >= 8) {
     fs.writeFileSync(
-      root + String(i + 1).padStart(2, "0") + "-result.json",
+      `${root + String(i + 1).padStart(2, "0")}-result.json`,
       JSON.stringify({ url: page.url(), body: await page.locator("body").innerText() }, null, 2),
     );
-    await page.screenshot({ path: root + String(i + 1).padStart(2, "0") + "-screenshot.png" });
+    await page.screenshot({ path: `${root + String(i + 1).padStart(2, "0")}-screenshot.png` });
   }
 }
 await browser.close();

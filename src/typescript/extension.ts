@@ -214,12 +214,12 @@ class ExecuteDelivery {
     const isError = result.exitCode !== 0 || result.timedOut || result.cancelled || Boolean(result.imageError);
     let text = formatResult(result);
     const background = backgroundHandoff(this.backgroundIds);
-    if (background) text += "\n\n" + background;
+    if (background) text += `\n\n${background}`;
     if (this.handoffMessage !== undefined && !isError) {
       text =
         "Execution handed off.\n\n" +
         this.handoffMessage +
-        (result.stdout || result.stderr || result.images.length ? "\n\n" + text : "");
+        (result.stdout || result.stderr || result.images.length ? `\n\n${text}` : "");
     }
     if (result.images.length && !acceptsImages) text += "\n\nThis model can't take images. Images not sent.";
     // A handoff request cannot turn a failed execution into successful termination.

@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 import { randomUUID } from "node:crypto";
 import { statSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -44,7 +45,7 @@ const configDir = join(home, "native-history");
 const nativeSessionId = randomUUID();
 await mkdir(directory, { recursive: true, mode: 0o700 });
 await writeFile(
-  join(directory, nativeSessionId + ".json"),
+  join(directory, `${nativeSessionId}.json`),
   JSON.stringify({
     file: snapshot,
     cwd: dirname(snapshot),
@@ -114,7 +115,7 @@ const models = await ModelRuntime.create({
   refreshOnCreate: false,
   allowModelNetwork: false,
 });
-const model = getModel("anthropic", "claude-sonnet-4-5")!;
+const model = requireValue(getModel("anthropic", "claude-sonnet-4-5"));
 models.getAvailable = async () => [model];
 models.hasConfiguredAuth = () => true;
 models.stream = models.streamSimple = (() => {
@@ -131,7 +132,7 @@ const runtime = await createClaudeCompatRuntime({
   nativeSessionId: storage.sessionId,
   history: storage.history,
   historyParentUuid: storage.parentUuid,
-  model: model.provider + "/" + model.id,
+  model: `${model.provider}/${model.id}`,
   modelRuntime: models,
   settingsManager: SettingsManager.inMemory(
     { compaction: { enabled: false }, cacheWarming: "off" },

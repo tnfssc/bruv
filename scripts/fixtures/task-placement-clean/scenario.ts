@@ -93,9 +93,7 @@ export function stream(body: RequestBody): string {
     model: body.model,
     choices: [{ index: 0, delta, finish_reason }],
   });
-  return (
-    [emit(delta, null), emit({}, "tool_calls" in delta ? "tool_calls" : "stop")]
-      .map((e) => "data: " + JSON.stringify(e) + "\n\n")
-      .join("") + "data: [DONE]\n\n"
-  );
+  return `${[emit(delta, null), emit({}, "tool_calls" in delta ? "tool_calls" : "stop")]
+    .map((e) => `data: ${JSON.stringify(e)}\n\n`)
+    .join("")}data: [DONE]\n\n`;
 }

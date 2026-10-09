@@ -56,7 +56,7 @@ export async function readSessionRole(path: string): Promise<SessionRole> {
 function roleLabel(role: SessionRole): string | undefined {
   if (role.kind === "root") return "● root";
   if (role.kind === "orchestrator") return "◆ orchestrator";
-  if (role.kind === "worker") return "◇ worker · " + role.type;
+  if (role.kind === "worker") return `◇ worker · ${role.type}`;
 }
 const metadataCache = new Map<string, SessionRole>();
 async function cachedRole(path: string): Promise<SessionRole> {
@@ -69,7 +69,11 @@ async function cachedRole(path: string): Promise<SessionRole> {
   const role = await readSessionRole(path);
   if (role.kind !== "unknown") {
     metadataCache.set(path, role);
-    while (metadataCache.size > METADATA_CACHE_LIMIT) metadataCache.delete(metadataCache.keys().next().value!);
+    while (metadataCache.size > METADATA_CACHE_LIMIT) {
+      const oldest = metadataCache.keys().next().value;
+      if (oldest === undefined) break;
+      metadataCache.delete(oldest);
+    }
   }
   return role;
 }
@@ -81,7 +85,7 @@ async function mapBounded<T, R>(values: T[], limit: number, fn: (value: T) => Pr
       while (true) {
         const index = next++;
         if (index >= values.length) return;
-        result[index] = await fn(values[index]!);
+        result[index] = await fn(values[index]);
       }
     }),
   );
@@ -98,11 +102,11 @@ async function decorate(sessions: SessionInfo[]): Promise<SessionInfo[]> {
     if (!active.some((root) => isWithin(session.path, root))) return session;
     const label = roleLabel(await cachedRole(session.path));
     if (!label) return session; // unreadable is unknown, never falsely called root
-    if (session.name?.startsWith(label + " · ") || (!session.name && session.firstMessage?.startsWith(label + " · ")))
+    if (session.name?.startsWith(`${label} · `) || (!session.name && session.firstMessage?.startsWith(`${label} · `)))
       return session;
     return session.name
-      ? { ...session, name: label + " · " + session.name }
-      : { ...session, firstMessage: label + " · " + session.firstMessage };
+      ? { ...session, name: `${label} · ${session.name}` }
+      : { ...session, firstMessage: `${label} · ${session.firstMessage}` };
   });
 }
 
@@ -114,10 +118,10 @@ function installPickerAdapter(root: string): () => void {
   if (roots.size === 0) {
     const capturedList = SessionManager.list;
     const capturedListAll = SessionManager.listAll;
-    const listAdapter = (async (...args: any[]) =>
-      decorate(await (capturedList as any).apply(SessionManager, args))) as typeof SessionManager.list;
-    const listAllAdapter = (async (...args: any[]) =>
-      decorate(await (capturedListAll as any).apply(SessionManager, args))) as typeof SessionManager.listAll;
+    const listAdapter = (async (...args: Parameters<typeof capturedList>) =>
+      decorate(await capturedList.apply(SessionManager, args))) as typeof SessionManager.list;
+    const listAllAdapter = (async (...args: Parameters<typeof capturedListAll>) =>
+      decorate(await capturedListAll.apply(SessionManager, args))) as typeof SessionManager.listAll;
     SessionManager.list = listAdapter;
     SessionManager.listAll = listAllAdapter;
     restorePickerMethods = () => {
@@ -161,19 +165,19 @@ export function registerResumeSafeguards(pi: ExtensionAPI): void {
         ? "unverified session"
         : role.kind === "orchestrator"
           ? "orchestrator child"
-          : "worker child (" + role.type + ")";
+          : `worker child (${role.type})`;
     const detail = [
       role.kind === "unknown"
         ? "Session identity metadata is unreadable or invalid; root privileges cannot be established."
         : "This session has delegated-agent restrictions.",
-      role.taskId ? "Task: " + role.taskId : undefined,
+      role.taskId ? `Task: ${role.taskId}` : undefined,
       role.kind === "unknown"
         ? "Resume only if you intend to preserve the process environment restrictions."
         : "Resume it deliberately rather than its root session.",
     ]
       .filter(Boolean)
       .join("\n");
-    if (!(await ctx.ui.confirm("Enter " + identity + " session?", detail))) return { cancel: true };
+    if (!(await ctx.ui.confirm(`Enter ${identity} session?`, detail))) return { cancel: true };
   });
   pi.on("session_shutdown", () => {
     uninstall?.();

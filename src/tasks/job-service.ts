@@ -48,6 +48,7 @@ const Workspace = z.discriminatedUnion("kind", [
       z.string().check(
         z.minLength(1),
         z.maxLength(2048),
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject control bytes in Git refs passed to commands.
         z.refine((value) => !value.startsWith("-") && !/[\x00-\x20\x7f]/.test(value), "Invalid base ref"),
       ),
     ),
@@ -55,6 +56,7 @@ const Workspace = z.discriminatedUnion("kind", [
       z.string().check(
         z.minLength(1),
         z.maxLength(256),
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject control bytes in Git refs passed to commands.
         z.refine((value) => !value.startsWith("-") && !/[\x00-\x1f\x7f]/.test(value), "Invalid branch"),
       ),
     ),
@@ -457,7 +459,7 @@ export class JobService {
             } catch (error) {
               if (!launched.length) throw error;
               const ids = launched.map((item) => String(item.id)).join(", ");
-              throw new Error("Native batch launch failed; retained launched task IDs: " + ids, { cause: error });
+              throw new Error(`Native batch launch failed; retained launched task IDs: ${ids}`, { cause: error });
             }
             return launched;
           });
@@ -505,7 +507,7 @@ export class JobService {
               // Repository IDs have a filesystem-safe alphabet; reserve() remains
               // authoritative and deterministic even after response acknowledgement.
               const taskId =
-                params.source?.retryTaskId ?? "task_" + T3LaunchIdentityLedger.fingerprint([clientRequestId]);
+                params.source?.retryTaskId ?? `task_${T3LaunchIdentityLedger.fingerprint([clientRequestId])}`;
               signal.throwIfAborted();
               const result = await this.remoteJobs.launch(
                 {
@@ -534,7 +536,7 @@ export class JobService {
           } catch (error) {
             if (!launched.length) throw error;
             const ids = launched.map((item) => item.id).join(", ");
-            throw new Error("SSH batch launch failed; retained launched task IDs: " + ids, { cause: error });
+            throw new Error(`SSH batch launch failed; retained launched task IDs: ${ids}`, { cause: error });
           }
           this.#refresh();
           return params.prompts ? launched : launched[0];
@@ -578,7 +580,7 @@ export class JobService {
               "--",
               prompt,
             ],
-            displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
+            displayCommand: `bruv agent [${type}]: ${params.title ?? prompt}`,
             title: launchTaskTitle(params.title, prompt) || "Agent task",
             cwd,
             env: {
@@ -730,10 +732,10 @@ export class JobService {
                   .map((task) => this.#nativeProjection(task, true, this.#nativeTitle(ctx, task.taskId))),
               );
             if (remaining === 0 || page.nextCursor !== undefined) {
-              if (remaining > 0) {
+              if (remaining > 0 && page.nextCursor !== undefined) {
                 if (page.tasks.length === 0 || page.nextCursor === state.nativeCursor)
                   throw new Error("Native task list did not advance");
-                state.nativeCursor = page.nextCursor!;
+                state.nativeCursor = page.nextCursor;
               }
               return {
                 jobs,
@@ -762,9 +764,9 @@ export class JobService {
       case "jobs.inspect": {
         const params = z.parse(Inspect, input);
         if (isSshJobId(params.id)) {
-          if (!this.remoteJobs || !ctx.sessionManager?.getSessionFile())
-            throw new Error("SSH jobs unavailable in this session");
-          return this.remoteJobs.inspect(ctx.sessionManager.getSessionFile()!, params.id, params.offset, params.limit);
+          const sessionFile = ctx.sessionManager?.getSessionFile();
+          if (!this.remoteJobs || !sessionFile) throw new Error("SSH jobs unavailable in this session");
+          return this.remoteJobs.inspect(sessionFile, params.id, params.offset, params.limit);
         }
         if (this.#isLocalTask(params.id)) return preview(this.manager.inspect(params.id, params.offset, params.limit));
         const bridge = t3BridgeEnvironment(this.environment);
@@ -923,9 +925,9 @@ export class JobService {
       case "jobs.stop": {
         const params = z.parse(Id, input);
         if (isSshJobId(params.id)) {
-          if (!this.remoteJobs || !ctx.sessionManager?.getSessionFile())
-            throw new Error("SSH jobs unavailable in this session");
-          return this.remoteJobs.stop(ctx.sessionManager.getSessionFile()!, params.id);
+          const sessionFile = ctx.sessionManager?.getSessionFile();
+          if (!this.remoteJobs || !sessionFile) throw new Error("SSH jobs unavailable in this session");
+          return this.remoteJobs.stop(sessionFile, params.id);
         }
         if (!this.#isLocalTask(params.id)) {
           const bridge = t3BridgeEnvironment(this.environment);
@@ -981,11 +983,11 @@ export class JobService {
     const type = params.type ?? "normal";
     const launchStarted = Date.now();
     const reserved = prompts.map((prompt) => {
-      const id = "task_" + randomUUID().slice(0, 8);
+      const id = `task_${randomUUID().slice(0, 8)}`;
       return this.manager.prepareAgent({
         id,
         launchIdentity: this.#launchIdentity(ctx, signal, prompt, type),
-        displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
+        displayCommand: `bruv agent [${type}]: ${params.title ?? prompt}`,
         title: launchTaskTitle(params.title, prompt) || "Agent task",
         cwd: ctx.cwd,
         workspace: { kind: "worktree", path: ctx.cwd, baseRef: workspace.baseRef ?? "HEAD" },
@@ -1019,7 +1021,7 @@ export class JobService {
         prepSignal.throwIfAborted();
         const workspaceSummary = await createWorktree(worktreeSource, {
           taskId: task.id,
-          title: params.title ?? (prompts.length > 1 ? "agent-" + (index + 1) : undefined),
+          title: params.title ?? (prompts.length > 1 ? `agent-${index + 1}` : undefined),
           branch: workspace.branch,
           signal: prepSignal,
           onPlanned: (planned) => this.manager.updatePreparedWorkspace(task.id, planned),
@@ -1101,7 +1103,7 @@ export class JobService {
       kind: "command",
       command: setupCommand.command,
       args: setupCommand.args,
-      displayCommand: "worktree setup: " + setup.command,
+      displayCommand: `worktree setup: ${setup.command}`,
       cwd: workspaceSummary.path,
       env: {
         ...scrubT3BridgeEnvironment(process.env),
@@ -1135,7 +1137,7 @@ export class JobService {
           if (prepSignal.aborted) onAbort();
         }),
       ]);
-      if (outcome.status !== "completed") throw new Error("Worktree setup failed: " + outcome.output);
+      if (outcome.status !== "completed") throw new Error(`Worktree setup failed: ${outcome.output}`);
       workspaceSummary.setupStatus = "completed";
       this.manager.updatePreparedWorkspace(taskId, workspaceSummary);
     } finally {
