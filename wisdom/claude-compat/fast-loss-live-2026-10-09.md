@@ -6,7 +6,7 @@ On 2026-10-09 the user rejected T3 patching. Do not build, install, or deploy th
 
 Rechecked official releases at 20:24 UTC: newest nightly v0.0.46-nightly.20261009.2886 and newest preview v0.0.46-preview.20261009.2891 both still omit the instance catalog at all four compiler calls. Their compiler still defaults to the bundled Claude catalog. Latest stable is v0.0.45 (2026-10-02). No available official update was found to fix this loss. No update or restart was performed. Saved question q_99ac63f5-2a1f-425a-92fe-767b2beed4ea is resolved with the user’s official-only answer.
 
-Next: use an official release once its source fixes this path. No scheduled watcher was requested or started. Values unchanged: the existing rule to preserve the user’s choices covers this boundary.
+Official-host path: use an official release once its source fixes this path. No scheduled watcher was requested or started. The user then approved looking for a Bruv-only workaround; see below. Values unchanged: the existing rule to preserve the user’s choices covers this boundary.
 
 Work in progress on t3/fix-subagent-model-speed. User sees Astra High Fast spawn Sol High, not Fast. Do not dismiss the missing Fast label as cosmetic.
 
@@ -55,3 +55,11 @@ Host fix committed locally as 8ea0e3a29a54888113a4e2d30bd3e4e8719a5046 in /home/
 The first signed commit failed because the machine's /tmp tmpfs is full (16 GiB). Home has about 301 GiB free. Retried with TMPDIR pointing at the host worktree's .tmp/git; signed commit succeeded. Do not remove other people's /tmp files. Use owned on-disk TMPDIR for remaining build and test work.
 
 Next after the user's choice: build a distinct version from this pinned source and commit, package the full runtime, smoke-test it with isolated userdata and no automatic continuation. The build script is apps/server/scripts/cli.ts build-exe; it requires Node 25.7+ and targets Node 26.8.2. The current shell has Node 24.21.0. Use an owned build runtime if needed. scripts/build-cli-archive.ts needs the executable, client assets, resource monitor, and native external dependencies. Use the supported updater with T3CODE_RELEASE_BASE_URL for an exact patched version. Do not hot-overwrite the active 2702 runtime.
+
+## Bruv-only workaround (in progress)
+
+User permits Bruv changes, still forbids T3 patching. Prefer an explicit human Fast command over a hidden settings sync. T3’s composer remains broken, so do not pretend its toggle controls this workaround.
+
+Implementation task_1174b544 owns /home/tnfssc/.bruv/worktrees/t3-1d0882e1-5442693331ce-task_1174b544, branch bruv/add-bruv-fast-controls-for-t3-threads-1174b544. It exposes Fast in the native /bruv command catalog and adds narrowly scoped `on --accept-cost` consent to the existing native Fast handler. Target commands: `/bruv fast on --accept-cost`, `/bruv fast off`, `/bruv fast status`. Existing Fast persistence, model/auth checks and child inheritance remain the owners. No paid probes or installed changes by the worker.
+
+Research task_8a59287b checks whether authenticated host configuration offers a simpler automatic bridge, including per-turn freshness. The parent will assess its result, review the command patch, test integration, and decide deployment next. Both task results are pending.
