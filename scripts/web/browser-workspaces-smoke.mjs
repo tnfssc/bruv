@@ -13,7 +13,20 @@ const secondCwd = join(root, "two");
 const agent = join(root, "agent");
 await Promise.all([firstCwd, secondCwd, agent, join(project, "artifacts")].map((p) => mkdir(p, { recursive: true })));
 const proc = Bun.spawn(
-  [join(project, "dist/bruv"), "web", "--port", "0", "--", "--offline", "--provider", "openai", "--model", "gpt-4o"],
+  [
+    join(project, "dist/bruv"),
+    "web",
+    "--port",
+    "0",
+    "--",
+    "--offline",
+    "--provider",
+    "openai",
+    "--model",
+    "gpt-4o",
+    "--extension",
+    join(project, "tests/web/fixtures/audio-cli.ts"),
+  ],
   {
     cwd: firstCwd,
     env: {
@@ -202,6 +215,7 @@ try {
     await select(workspace, tab);
     const marker = "PROOF_" + tab.id;
     await paste("!printf '" + marker + " '; pwd");
+    await page.keyboard.press("Escape");
     await page.keyboard.press("Enter");
     await until(
       async () => (await terminalText(tab.id)).includes(marker + " " + workspace.cwd),
@@ -223,6 +237,7 @@ try {
   const jobOwner = tabs[0];
   await select(jobOwner.workspace, jobOwner.tab);
   await paste("!sleep 5; printf 'JOB_%s_%s\\n' survived switching");
+  await page.keyboard.press("Escape");
   await page.keyboard.press("Enter");
   await select(tabs[3].workspace, tabs[3].tab);
   await page.reload();
@@ -236,6 +251,7 @@ try {
     pids,
     "Shell job kept tab PIDs",
   );
+  assert.equal(await page.evaluate(() => window.mediaTracks.length), 0, "Load, tab switch, and rejoin never capture");
   console.log("RUNNING_CLI_SHELL_JOB_SURVIVED_SWITCH_AND_RELOAD");
 
   const owner = tabs[0],
@@ -246,13 +262,18 @@ try {
   await page.evaluate(() => {
     window.delayNextMedia = true;
   });
-  await page.locator("#audio-toggle").click();
+  await paste("/fixture-live start");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
   await page.waitForFunction(() => typeof window.releaseMedia === "function");
   await select(other.workspace, other.tab);
-  await page.locator("#audio-toggle").click();
-  assert(
-    await page.locator("#audio-toggle").isDisabled(),
-    "Pending owner must finish release before another can start",
+  await paste("/fixture-live start");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
+  assert.equal(await page.locator("#audio-toggle").count(), 0, "No permanent microphone control");
+  await page.evaluate(
+    (id) => window.terminalSockets.get(id).send(JSON.stringify({ type: "input", data: "/fixture-live stop\r" })),
+    owner.tab.id,
   );
   await page.evaluate(() => {
     window.releaseMedia();
@@ -263,8 +284,10 @@ try {
   console.log("PENDING_MICROPHONE_RELEASED_WITHOUT_TRANSFER");
 
   await select(owner.workspace, owner.tab);
-  await page.locator("#audio-toggle").click();
-  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
+  await paste("/fixture-live start");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   const label = await page.locator("#audio-status").innerText();
   assert(label.includes(owner.workspace.name) && label.includes(owner.tab.name), "Voice owner is labeled");
 
@@ -283,11 +306,11 @@ try {
       "Sec-WebSocket-Protocol": "bruv-audio, bruv-owner." + otherCapability,
     },
   });
-  assert.equal(competingVoice.status, 409, "Built server rejects an unrelated audio owner, independent of UI");
+  assert.equal(competingVoice.status, 403, "Built server rejects audio without a CLI request, independent of UI");
 
   await select(other.workspace, other.tab);
   assert.equal(await page.locator("#audio-status").innerText(), label, "Switching did not move voice");
-  await page.locator("#audio-toggle").focus();
+
   await page.screenshot({ path: join(project, "artifacts/web-workspaces-voice-owner.png") });
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   assert(
@@ -298,36 +321,37 @@ try {
     await page.evaluate(() => new URL(window.audioSockets.at(-1).url).searchParams.get("session")),
     owner.tab.id,
   );
-  await page.locator("#audio-toggle").click();
+  await select(owner.workspace, owner.tab);
+  await paste("/fixture-live stop");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
   await allDevicesReleased();
   await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent === "Voice off");
   assert.equal(await page.locator("#audio-status").innerText(), "Voice off", "Explicit release before new owner");
-  await page.locator("#audio-toggle").click();
-  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
+  await select(other.workspace, other.tab);
+  await paste("/fixture-live start");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   assert.equal(
     await page.evaluate(() => new URL(window.audioSockets.at(-1).url).searchParams.get("session")),
     other.tab.id,
   );
-  await paste("/live mic-check");
-  await page.keyboard.press("Enter");
-  await until(
-    async () => (await terminalText(other.tab.id)).includes("Audio crosses the session relay"),
-    "No Live browser consent",
-  );
   const otherLabel = await page.locator("#audio-status").innerText();
   await select(owner.workspace, owner.tab);
-  assert.equal(
-    await page.locator("#audio-status").innerText(),
-    otherLabel,
-    "Consent stays on owner across workspace switch",
-  );
+  assert.equal(await page.locator("#audio-status").innerText(), otherLabel, "Switch leaves voice on command owner");
   await page.evaluate(
-    (id) => window.terminalSockets.get(id).send(JSON.stringify({ type: "input", data: "\r" })),
+    (id) => window.terminalSockets.get(id).send(JSON.stringify({ type: "input", data: "/fixture-live stop\r" })),
     other.tab.id,
   );
+  await allDevicesReleased();
+  await select(other.workspace, other.tab);
+  await paste("/live mic-check");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
   await until(
     async () => (await terminalText(other.tab.id)).includes("Audio route ready. Sound quality not measured."),
-    "Hidden owner's real /live mic-check failed",
+    "Real /live mic-check failed without second confirmation",
   );
   await allDevicesReleased();
   console.log("VOICE_EXPLICIT_OWNER_AND_MIC_CHECK");
@@ -390,8 +414,13 @@ try {
   assert.equal(await page.locator('[id="tab-' + tabs[1].tab.id + '"]').getAttribute("aria-selected"), "true");
 
   await select(other.workspace, other.tab);
-  await page.locator("#audio-toggle").click();
-  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
+  // This tab still has its replayed draft. Clear it before an explicit voice command.
+  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.keyboard.press("Control+c");
+  await paste("/fixture-live start");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   const oldCapability = await page.evaluate(
     (id) =>
       window.terminalMessages
@@ -449,8 +478,10 @@ try {
   }, "Closed CLI cleanup did not finish");
   assert.throws(() => process.kill(tabs[1].tab.pid, 0), "Closed CLI gone");
   await select(other.workspace, other.tab);
-  await page.locator("#audio-toggle").click();
-  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
+  await paste("/fixture-live start");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   await dialogClick("#remove-workspace", false);
   assert.equal((await state()).workspaces.length, 2, "Cancel workspace remove");
   await dialogClick("#remove-workspace", true);

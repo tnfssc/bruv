@@ -78,22 +78,14 @@ try {
   await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
   await page.waitForTimeout(1500);
   console.log("SCREEN", await page.locator(".xterm-rows").innerText());
-  if (await page.evaluate(() => window.mediaTracks.length)) throw new Error("Microphone opened before click");
-  await page.getByRole("button", { name: "Enable microphone" }).click();
-  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
-  console.log("MIC_ENABLED");
-  await page.locator(".xterm-helper-textarea").evaluate((element) => {
-    const clipboardData = new DataTransfer();
-    clipboardData.setData("text/plain", "/live mic-check");
-    element.dispatchEvent(new ClipboardEvent("paste", { clipboardData, bubbles: true }));
-  });
-  await page.waitForTimeout(150);
+  if (await page.evaluate(() => window.mediaTracks.length)) throw new Error("Microphone opened on page load");
+  if (await page.locator("#audio-toggle").count()) throw new Error("Permanent mic control returned");
+  await page.locator(".xterm-helper-textarea").focus();
+  await page.keyboard.type("/live mic-check", { delay: 10 });
+  await page.keyboard.press("Escape");
   await page.keyboard.press("Enter");
   console.log("TERMINAL", await page.locator(".xterm-rows").innerText());
-  await page.waitForFunction(() =>
-    document.querySelector(".xterm-rows")?.textContent?.includes("Audio crosses the session relay"),
-  );
-  await page.keyboard.press("Enter");
+
   await page.waitForFunction(() =>
     document.querySelector(".xterm-rows")?.textContent?.includes("Audio route ready. Sound quality not measured."),
   );
@@ -122,6 +114,7 @@ try {
   await page.waitForTimeout(500);
   if (!(await page.locator(".xterm-rows").innerText()).includes("browser PTY input"))
     throw new Error("Lost screen after refresh");
+  if (await page.evaluate(() => window.mediaTracks.length)) throw new Error("Refresh restarted capture");
   await page.setViewportSize({ width: 390, height: 680 });
   await page.waitForTimeout(500);
   await page.screenshot({ path: project + "/artifacts/web-terminal-narrow.png" });

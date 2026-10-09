@@ -13,7 +13,20 @@ const one = join(fixture, "one"),
   agent = join(fixture, "agent");
 await Promise.all([one, two, agent, join(project, "artifacts")].map((p) => mkdir(p, { recursive: true })));
 const proc = Bun.spawn(
-  [join(project, "dist/bruv"), "web", "--port", "0", "--", "--offline", "--provider", "openai", "--model", "gpt-4o"],
+  [
+    join(project, "dist/bruv"),
+    "web",
+    "--port",
+    "0",
+    "--",
+    "--offline",
+    "--provider",
+    "openai",
+    "--model",
+    "gpt-4o",
+    "--extension",
+    join(project, "tests/web/fixtures/audio-cli.ts"),
+  ],
   {
     cwd: one,
     env: {
@@ -149,6 +162,7 @@ try {
   }
   async function submit(page, value) {
     await paste(page, value);
+    await page.keyboard.press("Escape");
     await page.keyboard.press("Enter");
   }
   async function dialog(page, selector, answer) {
@@ -252,9 +266,11 @@ try {
   );
   assert(sizes[0]);
   assert.deepEqual(sizes[0], sizes[1], "Different shared terminal geometry");
-  await a.getByRole("button", { name: "Enable microphone", exact: true }).click();
-  await a.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
+  await submit(a, "/fixture-live start");
+  await a.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   await b.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("another browser"));
+  assert.equal(await b.evaluate(() => window.mediaTracks.length), 0, "Observer never opens capture");
+  assert.equal(await a.locator("#audio-toggle").count(), 0, "No permanent microphone control");
   const voice = (await state()).voice;
   assert.equal(voice.tabId, tab.id);
   await b.evaluate((id) => window.terminals.get(id).close(4000, "observer leaves"), tab.id);
@@ -263,21 +279,22 @@ try {
   await b.reload();
   await b.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
   assert.deepEqual((await state()).voice, voice, "Observer reload stopped voice");
+  assert.equal(await b.evaluate(() => window.mediaTracks.length), 0, "Observer rejoin must not capture");
+  await submit(b, "/fixture-live start");
+  await Bun.sleep(250);
+  assert.deepEqual((await state()).voice, voice, "Another browser command cannot steal active owner");
+  assert.equal(await b.evaluate(() => window.mediaTracks.length), 0);
   assert(await a.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")));
   await a.screenshot({ path: join(project, "artifacts/web-multiplayer-owner.png") });
   await b.screenshot({ path: join(project, "artifacts/web-multiplayer-observer.png") });
-  await a.getByRole("button", { name: "Disable microphone", exact: true }).click();
+  await a.setViewportSize({ width: 390, height: 680 });
+  await Bun.sleep(200);
+  await a.screenshot({ path: join(project, "artifacts/web-multiplayer-owner-phone.png") });
+  await a.setViewportSize({ width: 1100, height: 800 });
+  await submit(a, "/fixture-live stop");
   await until(async () => (await state()).voice === null, "Explicit release not shared");
-  await b.getByRole("button", { name: "Enable microphone", exact: true }).click();
-  await b.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
-  await a.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("another browser"));
   await submit(b, "/live mic-check");
-  await b.waitForFunction(() =>
-    document
-      .querySelector(".terminal-pane:not([hidden]) .xterm-rows")
-      ?.textContent?.includes("Audio crosses the session relay"),
-  );
-  await b.keyboard.press("Enter");
+
   await until(
     async () =>
       (await text(a)).includes("Audio route ready. Sound quality not measured.") &&
@@ -292,8 +309,8 @@ try {
   );
   await until(async () => (await state()).voice === null, "Mic-check owner not cleared");
   // Losing the owner releases voice, but a spectator can still use the very same CLI.
-  await a.getByRole("button", { name: "Enable microphone", exact: true }).click();
-  await a.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
+  await submit(a, "/fixture-live start");
+  await a.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   await a.evaluate((id) => window.terminals.get(id).close(4000, "owner leaves"), tab.id);
   await until(async () => (await state()).voice === null, "Owner disconnect retained microphone");
   await submit(b, "!printf 'AFTER_%s\\n' owner-loss");
