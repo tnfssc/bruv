@@ -249,7 +249,8 @@ export class GptLiveDelegationBridge {
       const result = await this.host.submitContextual(id, snapshot);
       admitted = !!(result && "queued" in result && result.queued === true);
       if (this.closed || this.epoch !== epoch || this.revision !== revision) return { kind: "stale", id };
-      if (admitted) return { kind: "queued", id, revision, commentary: "Your request is queued for the current agent." };
+      if (admitted)
+        return { kind: "queued", id, revision, commentary: "Your request is queued for the current agent." };
       if (result && "clarification" in result && result.clarification === true)
         return { kind: "clarification", id, revision, commentary: "Could you clarify your request?" };
       return { kind: "unavailable", id };

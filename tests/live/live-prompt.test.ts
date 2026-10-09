@@ -13,6 +13,6 @@ test("setup diagnostics use the ordinary root base and registered execute schema
   });
   expect(await setup.execute({ name: "execute", args: { code: "throw Error('must not run')" } })).toEqual({
     status: "denied",
-    reason: "Setup-only diagnostic; no agent work",
+    reason: "Setup check only; no agent work.",
   });
 });

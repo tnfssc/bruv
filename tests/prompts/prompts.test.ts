@@ -20,7 +20,7 @@ test("working values frame the agent separately from tool reference", () => {
     "Values over rules.",
     "Quick work?",
     "Follow clues.",
-    "Simple work",
+    "Find simple way that works.",
     "Shared work",
     "Solve real problems.",
     "All writing:",
@@ -48,7 +48,7 @@ test("shared engineering guidance favors product work over speculative defenses"
   const guidance = collaborationGuidance();
   expect(guidance).toContain("Product progress beats defenses for risks we have not seen.");
   expect(guidance).toContain("Fix observed problems. Accept known gaps.");
-  expect(guidance).toContain("Extra guards, fallbacks, state and tests cost care.");
+  expect(guidance).toContain("Speculative guards, fallbacks, state and test matrices cost care.");
   expect(guidance).toContain("Keep essential security and data-loss protections.");
 });
 
@@ -86,11 +86,9 @@ test("background notice identifies jobs and deferred results without turn-manage
 });
 
 test("roles keep child identity and useful guidance without delegation-policy commentary", () => {
-  expect(subagentGuidance("fast")).toContain("Find answer and its source. Say what still guess.");
+  expect(subagentGuidance("fast")).toContain("Find answer. Show its source. Say what still guess.");
   expect(subagentGuidance("normal")).toContain("Find what needs change. Make it and check it solves the problem.");
-  expect(subagentGuidance("orchestrator")).toContain(
-    "Shared work is simpler in one place. Extra worktrees cost care,",
-  );
+  expect(subagentGuidance("orchestrator")).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
   expect(subagentGuidance("orchestrator")).not.toContain("Fast/normal workers are available");
   expect(subagentGuidance("normal")).not.toContain("Delegation is disabled");
   const normal = subagentGuidance("normal");

@@ -265,7 +265,10 @@ export class InjectedMcpSession {
     const approved = { ...request, input: structuredClone(decision.updatedInput ?? submitted) };
     if (tool.owner === "app_owned") {
       if (!this.options.policy.beforeAppOwnedCall)
-        throw new McpOperationError("permission-denied", "App-owned MCP needs trusted policy for the active run and provider");
+        throw new McpOperationError(
+          "permission-denied",
+          "App-owned MCP needs trusted policy for the active run and provider",
+        );
       await this.options.policy.beforeAppOwnedCall(approved);
       signal.throwIfAborted();
     }

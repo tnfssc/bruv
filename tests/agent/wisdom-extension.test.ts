@@ -63,12 +63,8 @@ describe("project wisdom extension", () => {
     expect(systemPrompt).toContain("Edits not committed or commits not shared? Say what is left.");
     expect(systemPrompt).toContain("Done means code and wisdom are where user asked. Check files and commits.");
     expect(systemPrompt).toContain("Task done or PR merged? No more edits there.");
-    expect(systemPrompt).toContain(
-      "Release facts belong with release or task, not old repo notes.",
-    );
-    expect(systemPrompt).toContain(
-      "Later repo change needs a new task and PR. No quiet edits on the old branch.",
-    );
+    expect(systemPrompt).toContain("Release facts belong with release or task, not old repo notes.");
+    expect(systemPrompt).toContain("Later repo change needs a new task and PR. No quiet edits on the old branch.");
     expect(systemPrompt).not.toContain("After release or broad review, look across the work too.");
     // Do not add a writer or a Git check after the turn has ended.
     expect([...f.handlers.keys()]).toEqual(["before_agent_start"]);

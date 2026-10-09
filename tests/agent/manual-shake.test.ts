@@ -438,7 +438,7 @@ describe("manual command safeguards", () => {
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, { ...record, assistantEntryIds: ["duplicate", "duplicate"] });
     const h = harness(manager);
     expect(() => h.handlers.get("context")?.[0]?.({ messages: manager.buildSessionContext().messages }, h.ctx)).toThrow(
-      "Refusing to expose unprojected context",
+      "Unprojected context stays hidden.",
     );
   });
 

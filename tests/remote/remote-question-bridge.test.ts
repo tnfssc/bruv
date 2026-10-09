@@ -268,7 +268,7 @@ test("agent ask/get/resolve/cancel/block cannot acquire remote human answer auth
           { ...h.mutation(q), reason: "guess", checkpoint: "guess", foreground: true },
           h.ctx,
         ),
-      ).rejects.toThrow("ledger-owned");
+      ).rejects.toThrow("The remote ledger owns this human question");
     }
     expect(() => h.service.handle("questions.answer", { ...h.mutation(q), text: "Yes" }, h.ctx)).toThrow(
       "UI reply only",

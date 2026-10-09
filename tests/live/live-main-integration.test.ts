@@ -901,9 +901,7 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
   // Evict while the first bridge admission promise has not settled yet.
   provider.onInputTranscript({ delta: "MISSING_REQUEST ".repeat(5000), startMs: 21000, endMs: 22000 });
   provider.onDelegation({ id: "unresolved-pending", target: "client", offsetMs: 25000 });
-  await until(() =>
-    feedback.includes("Still checking if your earlier request was accepted. Try again in a moment."),
-  );
+  await until(() => feedback.includes("Still checking if your earlier request was accepted. Try again in a moment."));
   await until(() => observed.length === 1);
   await until(() => f.contexts.join(" ").includes("The repo status is clean."));
   // Real bounded overflow: separate targeted feedback, no partial model/UI user turn.

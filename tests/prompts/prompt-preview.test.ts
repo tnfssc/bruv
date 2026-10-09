@@ -72,9 +72,7 @@ test("root modes and explicitly selected project guidance pass through real asse
     expect(preview.systemPrompt).toContain("Next agent not hear whole talk.");
     expect(preview.systemPrompt).not.toContain("main agent in fast instruction mode");
     expect(preview.systemPrompt).not.toContain("You build and fix code.");
-    expect(preview.systemPrompt).not.toContain(
-      "Shared work is simpler in one place. Extra worktrees cost care,",
-    );
+    expect(preview.systemPrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -99,9 +97,7 @@ test("selected project base and append are included without loading settings or 
     expect(preview.systemPrompt).toContain("CUSTOM_PREVIEW_APPEND");
     expect(preview.systemPrompt).toContain("Next agent not hear whole talk.");
     expect(preview.systemPrompt).not.toContain("Quick work? Finish it.");
-    expect(preview.systemPrompt).not.toContain(
-      "Shared work is simpler in one place. Extra worktrees cost care,",
-    );
+    expect(preview.systemPrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
     expect(JSON.stringify(preview.messages)).toContain("CUSTOM_GOAL");
     expect(preview.preview.excluded).toContain("global and project settings/packages");
     expect(await readdir(dir)).toEqual(before);
@@ -165,9 +161,7 @@ test("explicit preview roles do not inherit or overwrite the caller child identi
       const child = await createPromptPreview({ role });
       expect(child.systemPrompt).toContain(`You are a ${role} sub-agent.`);
       expect(child.systemPrompt).not.toContain("You lead work.");
-      expect(child.systemPrompt).not.toContain(
-        "Shared work is simpler in one place. Extra worktrees cost care,",
-      );
+      expect(child.systemPrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
       expect(child.systemPrompt).not.toContain("You are a orchestrator sub-agent.");
       expect(process.env.BRUV_SUBAGENT_DEPTH).toBe("4");
       expect(process.env.BRUV_SUBAGENT_TYPE).toBe("orchestrator");
