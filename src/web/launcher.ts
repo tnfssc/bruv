@@ -11,7 +11,10 @@ export const WEB_HELP =
   "Usage: bruv web [--port PORT] [--host 127.0.0.1|::1|localhost] [-- CLI_ARGS...]\n\nRuns the real Bruv TUI in a local browser terminal. Open the printed token URL.\nFolders and CLIs are on this server. Add reuses a folder already open here.\nBrowsers share tabs and terminal input; disconnect keeps the CLIs alive. Ctrl-C here stops them.\nLoopback only; remote access needs a localhost SSH tunnel with the same host and port as the URL.\nTreat the URL as a shell credential.\nType /live and allow browser microphone permission. Only the owner browser captures and plays audio.\nVoice stays on its original tab. /live stop releases voice, not coding jobs; start again explicitly.\nUse bruv web --setup for the separate external T3 provider setup guide.";
 
 export function webCommand(args: string[]): string[] {
-  return isCompiledInvocation() ? [process.execPath, ...args] : [process.execPath, process.argv[1]!, ...args];
+  if (isCompiledInvocation()) return [process.execPath, ...args];
+  const entry = process.argv[1];
+  if (entry === undefined) throw new Error("Expected the CLI entry path");
+  return [process.execPath, entry, ...args];
 }
 
 export async function runWeb(args: string[]): Promise<number> {
@@ -19,7 +22,7 @@ export async function runWeb(args: string[]): Promise<number> {
     console.log(externalT3Guide());
     return 0;
   }
-  if (args.length === 1 && ["--help", "-h"].includes(args[0]!)) {
+  if (args.length === 1 && (args[0] === "--help" || args[0] === "-h")) {
     console.log(WEB_HELP);
     return 0;
   }

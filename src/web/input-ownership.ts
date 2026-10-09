@@ -16,6 +16,7 @@ export class InputOwnership {
     let output = "";
     const emit = (packet: string, writers: Set<string>) => {
       const report =
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: Recognize terminal reports without assigning command ownership.
         /^(?:\x1b\[[IO]|\x1b\[(?:[?>][0-9;]*c|[0-9;]+[tR]|\?[0-9;]+u)|\x1b\](?:10|11|4;[0-9]+);rgb:[a-fA-F0-9/]+(?:\x07|\x1b\\))$/.test(
           packet,
         );

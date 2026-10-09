@@ -7,6 +7,39 @@ import { pathToFileURL } from "node:url";
 import { createAudioRelay, type AudioRelayData } from "../../src/web/audio-relay";
 import { CAPTURE_WORKLET } from "../../src/web/browser-audio";
 import { BrowserLiveAudio } from "../../src/live/browser-audio";
+import { requireValue } from "../lib/require-value";
+
+// Playwright comes from PLAYWRIGHT_CORE, not this repo's dependencies.
+interface ProbePage {
+  on(event: "pageerror", listener: (error: Error) => void): void;
+  goto(url: string): Promise<unknown>;
+  reload(): Promise<unknown>;
+  bringToFront(): Promise<void>;
+  setDefaultTimeout(ms: number): void;
+  addInitScript(script: () => void): Promise<void>;
+  evaluate<T, A>(script: string | ((arg: A) => T), arg?: A): Promise<Awaited<T>>;
+  waitForFunction<A>(script: string | ((arg: A) => unknown), arg?: A): Promise<unknown>;
+  getByRole(role: string, options: { name: string }): { focus(): Promise<void> };
+  locator(selector: string): {
+    focus(): Promise<void>;
+    count(): Promise<number>;
+    innerText(): Promise<string>;
+    waitFor(options: { state: "visible" | "hidden" }): Promise<void>;
+    isVisible(): Promise<boolean>;
+    click(): Promise<void>;
+  };
+  keyboard: { type(text: string): Promise<void>; press(key: string): Promise<void> };
+  screenshot(options: { path: string }): Promise<unknown>;
+}
+
+type ProbeWindow = typeof window & {
+  requestVoice(request: string): Promise<void>;
+  tracks: MediaStreamTrack[];
+  contexts: AudioContext[];
+  denyNext: boolean;
+  captureFrames: number;
+  terminals: Map<string | null | undefined, WebSocket & { probeReady?: boolean }>;
+};
 
 const executablePath = process.env.CHROMIUM_BIN;
 const modulePath = process.env.PLAYWRIGHT_CORE;
@@ -37,7 +70,7 @@ const relay = createAudioRelay({
   authorizeBrowser: (req, id) =>
     id === "probe" && req.headers.get("cookie") === "probe=authorized" ? "probe-owner" : false,
   requestBrowser: (_id, _owner, request) => {
-    void page.evaluate((request: string) => (window as any).requestVoice(request), request);
+    void page.evaluate((request: string) => (window as ProbeWindow).requestVoice(request), request);
     return true;
   },
 });
@@ -66,7 +99,7 @@ const browser = await chromium.launch({
   headless: process.env.HEADLESS !== "0",
   args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
 });
-const page = await browser.newPage();
+const page: ProbePage = await browser.newPage();
 const errors: string[] = [];
 page.on("pageerror", (error: Error) => errors.push(String(error)));
 let audio: BrowserLiveAudio | undefined;
@@ -162,15 +195,15 @@ const liveBrowser = await chromium.launch({
   headless: process.env.HEADLESS !== "0",
   args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
 });
-const livePages: any[] = [];
+const livePages: ProbePage[] = [];
 try {
   for (let i = 0; i < 2; i++) {
     const context = await liveBrowser.newContext();
-    const p = await context.newPage();
+    const p: ProbePage = await context.newPage();
     livePages.push(p);
     p.setDefaultTimeout(10000);
     await p.addInitScript(() => {
-      const w = window as any;
+      const w = window as ProbeWindow;
       w.tracks = [];
       w.contexts = [];
       w.denyNext = false;
@@ -195,13 +228,14 @@ try {
       w.terminals = new Map();
       const WS = window.WebSocket;
       window.WebSocket = class extends WS {
+        declare probeReady?: boolean;
         constructor(...args: [string | URL, (string | string[])?]) {
           super(...args);
           const parsed = new URL(this.url);
           if (parsed.pathname === "/api/terminal") {
             w.terminals.set(parsed.searchParams.get("tab"), this);
             this.addEventListener("message", ({ data }) => {
-              if (JSON.parse(data).type === "ready") (this as any).probeReady = true;
+              if (JSON.parse(data).type === "ready") this.probeReady = true;
             });
           }
           const send = this.send.bind(this);
@@ -220,7 +254,7 @@ try {
     await p.goto(app.origin + "/#token=" + app.token);
     await p.waitForFunction(() => {
       const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
-      const socket = (window as any).terminals.get(id);
+      const socket = (window as ProbeWindow).terminals.get(id);
       return (
         socket?.readyState === WebSocket.OPEN &&
         socket.probeReady &&
@@ -230,28 +264,33 @@ try {
     await p.waitForFunction(() =>
       document.querySelector("#terminal")?.textContent?.includes("OFFLINE_LIVE_FIXTURE_READY"),
     );
-    assert.equal(await p.evaluate(() => (window as any).tracks.length), 0, "Page load cannot capture");
+    assert.equal(await p.evaluate(() => (window as ProbeWindow).tracks.length), 0, "Page load cannot capture");
     assert.equal(await p.locator("#audio-toggle").count(), 0, "No permanent mic button");
   }
-  const [owner, observer] = livePages;
-  const submit = async (p: any, command: string) => {
+  const owner = requireValue(livePages[0]);
+  const observer = requireValue(livePages[1]);
+  const submit = async (p: ProbePage, command: string) => {
     await p.bringToFront();
     await p.locator(".xterm-helper-textarea:visible").focus();
     await p.keyboard.type(command);
     await p.keyboard.press("Enter");
   };
-  const released = async (p: any) =>
+  const released = async (p: ProbePage) =>
     p.waitForFunction(
       () =>
-        (window as any).tracks.every((t: MediaStreamTrack) => t.readyState === "ended") &&
-        (window as any).contexts.every((c: AudioContext) => c.state === "closed"),
+        (window as ProbeWindow).tracks.every((t: MediaStreamTrack) => t.readyState === "ended") &&
+        (window as ProbeWindow).contexts.every((c: AudioContext) => c.state === "closed"),
     );
   await submit(owner, "/live");
-  await owner.waitForFunction(() => (window as any).captureFrames >= 5);
+  await owner.waitForFunction(() => (window as ProbeWindow).captureFrames >= 5);
   await owner.waitForFunction(() =>
     document.querySelector("#terminal")?.textContent?.includes("FAKE_PROVIDER_CAPTURED"),
   );
-  assert.equal(await observer.evaluate(() => (window as any).tracks.length), 0, "Only issuing browser captures");
+  assert.equal(
+    await observer.evaluate(() => (window as ProbeWindow).tracks.length),
+    0,
+    "Only issuing browser captures",
+  );
   const voice = (
     await (await fetch(app.origin + "/api/workspaces", { headers: { Authorization: "Bearer " + app.token } })).json()
   ).voice;
@@ -263,26 +302,26 @@ try {
     voice,
     "Active owner is not stolen",
   );
-  assert.equal(await observer.evaluate(() => (window as any).tracks.length), 0);
+  assert.equal(await observer.evaluate(() => (window as ProbeWindow).tracks.length), 0);
   await observer.reload();
   await observer.waitForFunction(() => {
     const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
-    const socket = (window as any).terminals.get(id);
+    const socket = (window as ProbeWindow).terminals.get(id);
     return (
       socket?.readyState === WebSocket.OPEN &&
       socket.probeReady &&
       (document.querySelector("#terminal-status") as HTMLElement)?.hidden
     );
   });
-  assert.equal(await observer.evaluate(() => (window as any).tracks.length), 0, "Rejoin cannot capture");
+  assert.equal(await observer.evaluate(() => (window as ProbeWindow).tracks.length), 0, "Rejoin cannot capture");
   await submit(owner, "/live stop");
   await released(owner);
-  const stoppedFrames = await owner.evaluate(() => (window as any).captureFrames);
+  const stoppedFrames = await owner.evaluate(() => (window as ProbeWindow).captureFrames);
   await submit(owner, "/live");
   await owner.waitForFunction(
     (frames: number) =>
-      (window as any).tracks.some((t: MediaStreamTrack) => t.readyState === "live") &&
-      (window as any).captureFrames >= frames + 5,
+      (window as ProbeWindow).tracks.some((t: MediaStreamTrack) => t.readyState === "live") &&
+      (window as ProbeWindow).captureFrames >= frames + 5,
     stoppedFrames,
   );
   await submit(owner, "/live stop");
@@ -300,7 +339,7 @@ try {
     }),
   );
   await owner.evaluate(() => {
-    (window as any).denyNext = true;
+    (window as ProbeWindow).denyNext = true;
   });
   await submit(owner, "/live");
   await owner.locator("#voice-status").waitFor({ state: "visible" });
@@ -309,30 +348,35 @@ try {
   await owner.locator("#dismiss-voice").click();
   await owner.locator("#voice-status").waitFor({ state: "hidden" });
   await released(owner);
-  const deniedFrames = await owner.evaluate(() => (window as any).captureFrames);
+  const deniedFrames = await owner.evaluate(() => (window as ProbeWindow).captureFrames);
   await submit(owner, "/live");
   await owner.waitForFunction(
     (frames: number) =>
-      (window as any).tracks.some((t: MediaStreamTrack) => t.readyState === "live") &&
-      (window as any).captureFrames >= frames + 5,
+      (window as ProbeWindow).tracks.some((t: MediaStreamTrack) => t.readyState === "live") &&
+      (window as ProbeWindow).captureFrames >= frames + 5,
     deniedFrames,
   );
   await submit(owner, "/live stop");
   await released(owner);
   await submit(observer, "/live");
-  await observer.waitForFunction(() => (window as any).captureFrames >= 5);
+  await observer.waitForFunction(() => (window as ProbeWindow).captureFrames >= 5);
   await submit(observer, "/live stop");
   await released(observer);
   const rootPid = (
     await (await fetch(app.origin + "/api/workspaces", { headers: { Authorization: "Bearer " + app.token } })).json()
   ).workspaces[0].tabs[0].pid;
   await submit(owner, "/live");
-  await owner.waitForFunction(() => (window as any).tracks.some((t: MediaStreamTrack) => t.readyState === "live"));
+  await owner.waitForFunction(() =>
+    (window as ProbeWindow).tracks.some((t: MediaStreamTrack) => t.readyState === "live"),
+  );
   await submit(owner, "/fake-provider-error");
   await released(owner);
-  const framesBeforeRestart = await owner.evaluate(() => (window as any).captureFrames);
+  const framesBeforeRestart = await owner.evaluate(() => (window as ProbeWindow).captureFrames);
   await submit(owner, "/live");
-  await owner.waitForFunction((frames: number) => (window as any).captureFrames >= frames + 5, framesBeforeRestart);
+  await owner.waitForFunction(
+    (frames: number) => (window as ProbeWindow).captureFrames >= frames + 5,
+    framesBeforeRestart,
+  );
   await submit(owner, "/live stop");
   await released(owner);
   assert.equal(

@@ -85,13 +85,18 @@ export function createAudioRelay(options: AudioRelayOptions) {
       if (!s) throw new Error("Unknown audio session");
       const ticket = randomBytes(16).toString("hex");
       s.tickets.set(ticket, ownerId);
-      while (s.tickets.size > 64) s.tickets.delete(s.tickets.keys().next().value!);
+      while (s.tickets.size > 64) {
+        const oldest = s.tickets.keys().next().value;
+        if (oldest === undefined) throw new Error("Expected an input ticket");
+        s.tickets.delete(oldest);
+      }
       return ticket;
     },
     failRequest(sessionId: string, ownerId: string, request: string, message: string) {
       const s = sessions.get(sessionId);
       if (s && browserOwner?.session === s && browserOwner.ownerId === ownerId && browserOwner.request === request) {
         if (s.cli)
+          // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip control bytes from browser error text.
           send(s.cli, { type: "request-error", message: message.replace(/[\x00-\x1f\x7f]/g, "").slice(0, 500) });
         closeSession(s);
       }

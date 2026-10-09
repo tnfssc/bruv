@@ -117,7 +117,11 @@ export class TerminalSession {
             const chunk = { seq: ++this.sequence, data: Buffer.from(data).toString("base64"), bytes: data.byteLength };
             this.chunks.push(chunk);
             this.bytes += chunk.bytes;
-            while (this.bytes > REPLAY_BYTES && this.chunks.length) this.bytes -= this.chunks.shift()!.bytes;
+            while (this.bytes > REPLAY_BYTES && this.chunks.length) {
+              const oldest = this.chunks.shift();
+              if (!oldest) throw new Error("Expected a replay chunk");
+              this.bytes -= oldest.bytes;
+            }
             this.send({ type: "output", seq: chunk.seq, data: chunk.data });
           },
         },
@@ -181,7 +185,8 @@ export class TerminalSession {
   }
 
   stop(): Promise<void> {
-    return (this.stopped ??= this.cleanup());
+    this.stopped ??= this.cleanup();
+    return this.stopped;
   }
 
   private async cleanup() {
