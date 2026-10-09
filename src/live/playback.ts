@@ -177,7 +177,7 @@ export class PlaybackScheduler {
     if (data.length > this.limit - this.queue.bytes) {
       this.overflowed = true;
       this.options.onError(
-        new Error("Local playback queue exceeds pending budget (" + this.limit + " bytes); audio incomplete"),
+        new Error(`Local playback queue exceeds pending budget (${this.limit} bytes); audio incomplete`),
       );
       return false;
     }

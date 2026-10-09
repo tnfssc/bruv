@@ -20,7 +20,7 @@ function startRpcRuntime(binary, root, agent) {
   const events = [];
   let stderr = "";
   let buffer = "";
-  const send = (message) => child.stdin.write(JSON.stringify(message) + "\n");
+  const send = (message) => child.stdin.write(`${JSON.stringify(message)}\n`);
   child.stdout.on("data", (b) => {
     buffer += b;
     for (let p = buffer.indexOf("\n"); p >= 0; p = buffer.indexOf("\n")) {
@@ -40,10 +40,10 @@ function startRpcRuntime(binary, root, agent) {
     const until = Date.now() + ms;
     while (Date.now() < until) {
       if (predicate()) return;
-      if (child.exitCode !== null && child.exitCode !== undefined) throw Error("Bruv exited: " + stderr.slice(-2000));
+      if (child.exitCode !== null && child.exitCode !== undefined) throw Error(`Bruv exited: ${stderr.slice(-2000)}`);
       await new Promise((r) => setTimeout(r, 50));
     }
-    throw Error("Timed out: " + label + "; " + stderr.slice(-2000) + "; events=" + JSON.stringify(events).slice(-3000));
+    throw Error(`Timed out: ${label}; ${stderr.slice(-2000)}; events=${JSON.stringify(events).slice(-3000)}`);
   };
   const stop = async () => {
     if (child.exitCode === null) {
@@ -65,14 +65,14 @@ function startRpcRuntime(binary, root, agent) {
 async function stopManagedWorker(state, worker) {
   try {
     const pid = Number(await fs.readFile(path.join(state, "early.started"), "utf8"));
-    const cmd = await fs.readFile("/proc/" + pid + "/cmdline", "utf8");
+    const cmd = await fs.readFile(`/proc/${pid}/cmdline`, "utf8");
     if (cmd.includes(worker) && cmd.includes(state)) process.kill(pid, "SIGTERM");
   } catch {}
 }
 
 const worker = fileURLToPath(new URL("./worker.mjs", import.meta.url));
 const binary = process.env.BRUV_RUNTIME_BINARY ?? fileURLToPath(new URL("../../dist/bruv", import.meta.url));
-const proof = path.resolve(process.env.PROOF_OUTPUT ?? ".cache/claude-runtime-smoke-" + Date.now());
+const proof = path.resolve(process.env.PROOF_OUTPUT ?? `.cache/claude-runtime-smoke-${Date.now()}`);
 await fs.mkdir(proof, { recursive: true });
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "bruv-acceptance-runtime-"));
 const agent = path.join(root, "agent"),
@@ -118,7 +118,7 @@ try {
   const records = model?.records ?? [];
   await fs.writeFile(
     path.join(proof, "result.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         runtimeFixtureSmoke: true,
         notConnectorAcceptance: true,
@@ -134,8 +134,8 @@ try {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
   await fs.rm(root, { recursive: true, force: true });
 }
-console.log("Real Bruv runtime fixture smoke: " + proof);
+console.log(`Real Bruv runtime fixture smoke: ${proof}`);

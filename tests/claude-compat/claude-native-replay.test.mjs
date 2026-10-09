@@ -225,7 +225,7 @@ async function replayFixture(mode, check) {
     if (mode === "preexisting") {
       await fs.mkdir(runtime);
       await fs.writeFile(path.join(runtime, "unrelated-state"), "must remain");
-      await fs.writeFile(path.join(proof, "events.ndjson"), JSON.stringify("existing-state") + "\n");
+      await fs.writeFile(path.join(proof, "events.ndjson"), `${JSON.stringify("existing-state")}\n`);
     }
     const configPath = path.join(fixture, "config.json");
     await fs.writeFile(configPath, JSON.stringify(config));
@@ -282,7 +282,7 @@ async function assertReleased({ runtime, pid, events }) {
 }
 
 for (const mode of ["integrated", "subagent"]) {
-  test(mode + " replay finalizes through the driver before owned teardown", async () => {
+  test(`${mode} replay finalizes through the driver before owned teardown`, async () => {
     await replayFixture(mode, async (result) => {
       assert.equal(result.code, 0, result.stderr);
       assert.ok(result.events.indexOf("verify") < result.events.indexOf("driver-flush"));
@@ -304,7 +304,7 @@ for (const [mode, message] of [
   ["exercise-failure", "exercise failed"],
   ["binary-change", "AssertionError"],
 ]) {
-  test(mode + " preserves failure evidence and final capture", async () => {
+  test(`${mode} preserves failure evidence and final capture`, async () => {
     await replayFixture(mode, async (result) => {
       assert.notEqual(result.code, 0);
       assert.match(result.stderr, new RegExp(message));
@@ -319,10 +319,10 @@ for (const [mode, message] of [
 }
 
 for (const mode of ["flush-failure", "close-failure", "setup-failure"]) {
-  test(mode + " does not strand owned private state or the server", async () => {
+  test(`${mode} does not strand owned private state or the server`, async () => {
     await replayFixture(mode, async (result) => {
       assert.notEqual(result.code, 0);
-      assert.match(result.stderr, new RegExp(mode.split("-")[0] + " failed"));
+      assert.match(result.stderr, new RegExp(`${mode.split("-")[0]} failed`));
       if (mode !== "setup-failure") assert.ok(result.events.includes("driver-flush"));
       else assert.deepEqual(result.events, ["prepare"]);
       await assertReleased(result);

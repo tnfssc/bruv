@@ -38,15 +38,15 @@ export function audioDiagnostic(code: string, setup?: AudioSetupError): string {
         ". Check the default input/output route; try another device."
       );
     case "output_connect":
-      return "Audio setup failed at output_connect [output_connect]" + detail + ".";
+      return `Audio setup failed at output_connect [output_connect]${detail}.`;
     case "source_attach":
-      return "Audio setup failed at source_attach [source_attach]" + detail + ".";
+      return `Audio setup failed at source_attach [source_attach]${detail}.`;
     case "source_connect":
-      return "Audio setup failed at source_connect [source_connect]" + detail + ".";
+      return `Audio setup failed at source_connect [source_connect]${detail}.`;
     case "tap_install":
-      return "Audio setup failed at tap_install [tap_install]" + detail + ".";
+      return `Audio setup failed at tap_install [tap_install]${detail}.`;
     case "engine_start":
-      return "Audio setup failed at engine_start [engine_start]" + detail + ".";
+      return `Audio setup failed at engine_start [engine_start]${detail}.`;
     case "audio_start":
       return "Default audio route could not start [audio_start]. Check microphone permission and default input/output devices, then retry.";
     case "route_lost":

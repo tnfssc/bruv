@@ -1,3 +1,4 @@
+import { requireValue } from "../scripts/lib/require-value";
 import { type DemoId, demoDuration, demoFrame } from "./demos";
 import { cellRowHtml, cellRowsHtml } from "./html-cells";
 import { advance, type Playback } from "./playback";
@@ -18,8 +19,8 @@ class HtmlDemo {
   ) {
     this.id = element.dataset.demo as DemoId;
     this.duration = demoDuration(this.id);
-    this.screen = element.querySelector<HTMLPreElement>(".demo-screen")!;
-    this.button = element.querySelector<HTMLButtonElement>(".demo-toggle")!;
+    this.screen = requireValue(element.querySelector<HTMLPreElement>(".demo-screen"));
+    this.button = requireValue(element.querySelector<HTMLButtonElement>(".demo-toggle"));
     this.playback = {
       elapsed: reducedMotion ? this.duration : 0,
       paused: reducedMotion,
@@ -90,7 +91,7 @@ class HtmlDemo {
         ? "Animate"
         : "Resume"
       : "Pause";
-    const text = verb + " " + this.element.dataset.label + " demo";
+    const text = `${verb} ${this.element.dataset.label} demo`;
     this.button.setAttribute("aria-label", text);
     this.button.title = text;
     this.button.textContent = this.playback.paused ? "▶" : "Ⅱ";
@@ -145,7 +146,7 @@ export function mountHtmlDemos(root: Document = document) {
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        const panel = panels.find((p) => p.screen === entry.target)!;
+        const panel = requireValue(panels.find((p) => p.screen === entry.target));
         // At least eight rows, including on the taller narrow-width panels.
         panel.visible = entry.isIntersecting && entry.intersectionRatio >= 0.35;
       }
@@ -154,7 +155,7 @@ export function mountHtmlDemos(root: Document = document) {
     { threshold: [0, 0.35] },
   );
   const resize = new ResizeObserver((entries) => {
-    for (const entry of entries) panels.find((p) => p.screen === entry.target)!.measure();
+    for (const entry of entries) requireValue(panels.find((p) => p.screen === entry.target)).measure();
   });
   const listeners: (() => void)[] = [];
   for (const panel of panels) {

@@ -5,7 +5,7 @@ export type RequestBody = {
 };
 export const ALIAS = "typed-root-owner";
 export const ANSWER = "ROOT_HUMAN_APPROVED";
-export const questionText = (side: string) => "ROOT_HUMAN_QUESTION_" + side.toUpperCase();
+export const questionText = (side: string) => `ROOT_HUMAN_QUESTION_${side.toUpperCase()}`;
 export const called = (body: RequestBody, id: string) =>
   (body.messages ?? []).some((m) => m.role === "tool" && m.tool_call_id === id);
 const userHas = (body: RequestBody, marker: string) =>
@@ -21,11 +21,11 @@ export function response(body: RequestBody): object {
   const side: Side = userHas(body, "ROOT_START_DRIFT") || userHas(body, "ROOT_NORMAL_DRIFT") ? "drift" : "clean";
   const upper = side.toUpperCase();
   if (body.model === "typed-root-normal") {
-    if (!called(body, "root-normal-" + side)) return execute("root-normal-" + side, normalStart(side));
-    return say("ROOT_NORMAL_DONE_" + upper);
+    if (!called(body, `root-normal-${side}`)) return execute(`root-normal-${side}`, normalStart(side));
+    return say(`ROOT_NORMAL_DONE_${upper}`);
   }
   if (body.model !== "typed-root")
-    throw Error("unexpected model: " + body.model + "; server root settings/profile must be used");
+    throw Error(`unexpected model: ${body.model}; server root settings/profile must be used`);
 
   if (userHas(body, "ROOT_RUNNING_JOB")) {
     if (!called(body, "root-running-job")) return execute("root-running-job", runningJob);
@@ -36,23 +36,23 @@ export function response(body: RequestBody): object {
     return say("ROOT_REPLY_LOSS_DONE");
   }
 
-  if (!userHas(body, "ROOT_START_" + upper)) return say("ROOT_READY_FOR_NORMAL_PROMPT");
-  if (!called(body, "root-start-" + side)) return execute("root-start-" + side, rootStart(side));
-  if (!called(body, "root-question-" + side)) {
-    if (!userHas(body, "ROOT_NORMAL_DONE_" + upper)) return say("ROOT_WAITING_NORMAL_CHILD_" + upper);
-    return execute("root-question-" + side, askAfterChild(side));
+  if (!userHas(body, `ROOT_START_${upper}`)) return say("ROOT_READY_FOR_NORMAL_PROMPT");
+  if (!called(body, `root-start-${side}`)) return execute(`root-start-${side}`, rootStart(side));
+  if (!called(body, `root-question-${side}`)) {
+    if (!userHas(body, `ROOT_NORMAL_DONE_${upper}`)) return say(`ROOT_WAITING_NORMAL_CHILD_${upper}`);
+    return execute(`root-question-${side}`, askAfterChild(side));
   }
-  if (!called(body, "root-answer-" + side) && userHas(body, ANSWER))
-    return execute("root-answer-" + side, useHumanAnswer(side));
+  if (!called(body, `root-answer-${side}`) && userHas(body, ANSWER))
+    return execute(`root-answer-${side}`, useHumanAnswer(side));
   if (
-    called(body, "root-answer-" + side) &&
-    userHas(body, "ROOT_SECOND_" + upper) &&
-    !called(body, "root-second-" + side)
+    called(body, `root-answer-${side}`) &&
+    userHas(body, `ROOT_SECOND_${upper}`) &&
+    !called(body, `root-second-${side}`)
   )
-    return execute("root-second-" + side, secondTurn(side));
-  if (called(body, "root-second-" + side)) return say("ROOT_SECOND_DONE_" + upper);
-  if (called(body, "root-answer-" + side)) return say("ROOT_ANSWER_DONE_" + upper);
-  return say("ROOT_WAITING_REAL_HUMAN_" + upper);
+    return execute(`root-second-${side}`, secondTurn(side));
+  if (called(body, `root-second-${side}`)) return say(`ROOT_SECOND_DONE_${upper}`);
+  if (called(body, `root-answer-${side}`)) return say(`ROOT_ANSWER_DONE_${upper}`);
+  return say(`ROOT_WAITING_REAL_HUMAN_${upper}`);
 }
 export function stream(body: RequestBody): string {
   const delta = response(body);
@@ -63,11 +63,9 @@ export function stream(body: RequestBody): string {
     model: body.model,
     choices: [{ index: 0, delta, finish_reason }],
   });
-  return (
-    [emit(delta, null), emit({}, "tool_calls" in delta ? "tool_calls" : "stop")]
-      .map((e) => "data: " + JSON.stringify(e) + "\n\n")
-      .join("") + "data: [DONE]\n\n"
-  );
+  return `${[emit(delta, null), emit({}, "tool_calls" in delta ? "tool_calls" : "stop")]
+    .map((e) => `data: ${JSON.stringify(e)}\n\n`)
+    .join("")}data: [DONE]\n\n`;
 }
 
 // The provider selects a stage; these programs run through the server tools.
@@ -85,7 +83,7 @@ const inspectHelper = `async function inspectAll(id) {
 }`;
 
 function record(side: Side, phase: string): string {
-  const log = JSON.stringify("/tmp/root-proof-" + side + ".jsonl");
+  const log = JSON.stringify(`/tmp/root-proof-${side}.jsonl`);
   return `await Bun.write(${log},
   (await Bun.file(${log}).exists() ? await Bun.file(${log}).text() : "") +
   JSON.stringify({
@@ -129,6 +127,7 @@ if (!refused) throw Error("normal worker delegated");`;
 
 function rootStart(side: Side): string {
   const command =
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Match literal interpolation syntax in the source fixture.
     'set -eu; test "${BRUV_SUBAGENT_TYPE:-root}" = root; test "${BRUV_SUBAGENT_DEPTH:-0}" = 0; test -f /opt/fixture/typed-root-host; ' +
     snapshotChecks(side) +
     "pwd > /tmp/root-" +

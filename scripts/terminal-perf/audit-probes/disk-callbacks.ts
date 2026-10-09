@@ -1,3 +1,4 @@
+import { requireValue } from "../../lib/require-value";
 /** Synchronous post-await footer callbacks; no timing gate. */
 import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -11,9 +12,16 @@ const sha = (data: string | Uint8Array) => createHash("sha256").update(data).dig
 
 // The refresh includes disk waits; only consume entry-to-return is synchronous callback work.
 async function measureCostRefresh(tracker: SessionCostTracker) {
-  const callbackSamples: any[] = [];
-  const nativeConsume = (tracker as any).consume;
-  (tracker as any).consume = function (session: any, chunk: Buffer) {
+  const callbackSamples: {
+    syncMs: number;
+    chunkBytes: number;
+    pendingBytesBefore: number;
+    pendingBytesAfter: number;
+  }[] = [];
+  // The profiler wraps this private SDK seam without changing its arguments.
+  const measured = tracker as unknown as { consume(session: { pendingLength: number }, chunk: Buffer): void };
+  const nativeConsume = measured.consume;
+  measured.consume = function (session: { pendingLength: number }, chunk: Buffer) {
     const pendingBytesBefore = session.pendingLength;
     const start = performance.now();
     nativeConsume.call(this, session, chunk);
@@ -28,7 +36,7 @@ async function measureCostRefresh(tracker: SessionCostTracker) {
   const start = performance.now();
   const result = await tracker.refresh();
   const refreshElapsedMs = performance.now() - start;
-  if (result !== 0 || callbackSamples.length === 0 || callbackSamples.at(-1).pendingBytesAfter !== 0)
+  if (result !== 0 || callbackSamples.length === 0 || requireValue(callbackSamples.at(-1)).pendingBytesAfter !== 0)
     throw new Error("cost scan skipped/incomplete");
   return {
     refreshElapsedMs,
@@ -41,7 +49,7 @@ async function measureCostRefresh(tracker: SessionCostTracker) {
 }
 
 async function auditSessionCosts(root: string) {
-  const samples: any[] = [];
+  const samples = [];
   const managers: SessionManager[] = [];
   try {
     installDiskBackedSessionManager();
@@ -50,7 +58,7 @@ async function auditSessionCosts(root: string) {
       const parent = SessionManager.create(root, dir);
       managers.push(parent);
       parent.appendMessage({ role: "user", content: "audit parent", timestamp: 1 });
-      const child = SessionManager.create(root, dir, { parentSession: parent.getSessionFile()! });
+      const child = SessionManager.create(root, dir, { parentSession: requireValue(parent.getSessionFile()) });
       managers.push(child);
       child.appendCustomEntry("bruv-agent", { parentSessionFile: parent.getSessionFile() });
       child.appendMessage({ role: "user", content: "audit child", timestamp: 1 });
@@ -64,7 +72,7 @@ async function auditSessionCosts(root: string) {
         timestamp: 2,
       });
       for (let iteration = 0; iteration < 3; iteration++) {
-        const tracker = new SessionCostTracker(parent.getSessionFile()!, dir);
+        const tracker = new SessionCostTracker(requireValue(parent.getSessionFile()), dir);
         const measurement = await measureCostRefresh(tracker);
         samples.push({
           name: "footer.SessionCostTracker.refresh",
@@ -83,7 +91,7 @@ async function auditSessionCosts(root: string) {
 }
 
 function auditLifecycleRecords(root: string) {
-  const samples: any[] = [];
+  const samples = [];
   let failures = 0;
   const recorder = createTaskLifecycleRecorder(join(root, "lifecycle-session.jsonl"), () => {
     failures++;
@@ -132,7 +140,7 @@ try {
   const output = process.argv[2] ?? "artifacts/terminal-perf/audit-disk-callbacks.json";
   await Bun.write(
     output,
-    JSON.stringify(
+    `${JSON.stringify(
       {
         version: 1,
         lifecycleWork,
@@ -145,18 +153,19 @@ try {
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
   console.log(output);
   for (const s of samples)
     console.log(
       s.name,
-      s.payloadBytes ?? "",
-      s.syncMs?.toFixed(3) ??
-        "elapsed=" +
-          s.refreshElapsedMs.toFixed(3) +
-          " callback max=" +
-          Math.max(...s.callbackSamples.map((x: any) => x.syncMs)).toFixed(3),
+      "payloadBytes" in s ? s.payloadBytes : "",
+      "syncMs" in s
+        ? s.syncMs.toFixed(3)
+        : "elapsed=" +
+            s.refreshElapsedMs.toFixed(3) +
+            " callback max=" +
+            Math.max(...s.callbackSamples.map((x) => x.syncMs)).toFixed(3),
     );
 } finally {
   rmSync(root, { recursive: true, force: true });

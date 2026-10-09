@@ -33,6 +33,7 @@ export function validateWorkspace(workspace: RemoteWorkspace): void {
     for (const value of [workspace.baseRef, workspace.branch])
       if (
         value !== undefined &&
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject whitespace and control bytes in Git refs.
         (typeof value !== "string" || !value.trim() || value.startsWith("-") || /[\x00-\x20]/.test(value))
       )
         throw Error("Invalid remote workspace ref");

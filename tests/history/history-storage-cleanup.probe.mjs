@@ -107,7 +107,7 @@ function checkRecentLoadFailure() {
   const candidate = join(dir, "candidate.jsonl");
   writeFileSync(
     candidate,
-    JSON.stringify({ type: "session", version: 3, id: "recent", timestamp: "x", cwd: root }) + "\n",
+    `${JSON.stringify({ type: "session", version: 3, id: "recent", timestamp: "x", cwd: root })}\n`,
   );
   const open = DiskEntryStore.open;
   DiskEntryStore.open = () => {

@@ -11,18 +11,18 @@ async function verifyLauncherPackaging(source: string, target: (typeof releaseTa
   const bytes = await readFile(source);
   const shebang = target === "android-arm64" ? "#!/system/bin/sh\n" : "#!/bin/sh\n";
   if (!bytes.toString().startsWith(shebang) || bytes.length > 4096)
-    throw new Error(name + " must be a tiny POSIX launcher with " + shebang.trim());
-  if (!((await stat(source)).mode & 0o111)) throw new Error(name + " must be executable");
+    throw new Error(`${name} must be a tiny POSIX launcher with ${shebang.trim()}`);
+  if (!((await stat(source)).mode & 0o111)) throw new Error(`${name} must be executable`);
   const hash = createHash("sha256").update(bytes).digest("hex");
-  if ((await readFile(source + ".sha256", "utf8")) !== hash + "  " + name + "\n")
-    throw new Error(name + " checksum does not match the launcher");
+  if ((await readFile(`${source}.sha256`, "utf8")) !== `${hash}  ${name}\n`)
+    throw new Error(`${name} checksum does not match the launcher`);
 }
 
 async function verifySiblingDispatch(source: string, suffix: string) {
   const temporary = await mkdtemp(join(tmpdir(), "bruv release launcher "));
   try {
-    const launcher = join(temporary, "bruv-claude-compat" + suffix);
-    const binary = join(temporary, "bruv" + suffix);
+    const launcher = join(temporary, `bruv-claude-compat${suffix}`);
+    const binary = join(temporary, `bruv${suffix}`);
     await copyFile(source, launcher);
     await writeFile(
       binary,
@@ -35,7 +35,7 @@ async function verifySiblingDispatch(source: string, suffix: string) {
       encoding: "utf8",
     });
     // The sibling must retain the launcher's PID (exec), arguments and exit status.
-    if (probe.error || probe.status !== 37 || probe.stdout !== probe.pid + "\nspace argument\n\n*\n")
+    if (probe.error || probe.status !== 37 || probe.stdout !== `${probe.pid}\nspace argument\n\n*\n`)
       throw new Error(
         basename(source) +
           " must exec its matching sibling and forward arguments and exit status (" +
@@ -52,10 +52,10 @@ async function verifySiblingDispatch(source: string, suffix: string) {
  * with the host POSIX shell here; native Android execution is not claimed. */
 export async function verifyReleaseLaunchers(directory: string) {
   for (const target of releaseTargets) {
-    const source = join(directory, "bruv-claude-compat-" + target);
+    const source = join(directory, `bruv-claude-compat-${target}`);
     await verifyLauncherPackaging(source, target);
     // Each layout gets only its matching sibling, with no files from the other layout.
-    await verifySiblingDispatch(source, "-" + target);
+    await verifySiblingDispatch(source, `-${target}`);
     await verifySiblingDispatch(source, "");
   }
 }

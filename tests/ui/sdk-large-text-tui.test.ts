@@ -38,7 +38,7 @@ async function launchOfflineCli(
   const launch = [
     "env",
     "-i",
-    ...Object.entries(env).map(([key, value]) => key + "=" + value),
+    ...Object.entries(env).map(([key, value]) => `${key}=${value}`),
     resolve(import.meta.dir, "../../dist/bruv"),
     "--offline",
     "--no-approve",
@@ -58,7 +58,7 @@ async function launchOfflineCli(
 
 test("compiled CLI keeps a complete megabyte message visible, rich, scrollable and editable", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-large-text-"));
-  const socket = "bruv-large-text-" + process.pid + "-" + Date.now();
+  const socket = `bruv-large-text-${process.pid}-${Date.now()}`;
   // Every process and SDK/config path belongs to this retained fixture.
   const env: Record<string, string> = {
     PATH: process.env.PATH!,
@@ -78,13 +78,12 @@ test("compiled CLI keeps a complete megabyte message visible, rich, scrollable a
   const tmux = (...args: string[]) =>
     run(["tmux", "-L", socket, "-f", join(home, "tmux.conf"), ...args], { cwd: home, env });
   const artifacts = resolve(import.meta.dir, "../../artifacts/tui", socket);
-  const message =
-    "# LARGE_TEXT_START\n\n" + "deterministic pasted line\n".repeat(42000) + "\n**LARGE_TEXT_END** and **RICH_BOLD**\n";
+  const message = `# LARGE_TEXT_START\n\n${"deterministic pasted line\n".repeat(42000)}\n**LARGE_TEXT_END** and **RICH_BOLD**\n`;
   const hash = (text: string) => createHash("sha256").update(text).digest("hex");
   const capture = async () => (await capturePane(tmux, "large-text")).stdout;
   const frame = async (name: string, expected: string | string[]) => {
     const text = await frameContaining(capture, expected, 200);
-    await writeFile(join(artifacts, name + ".txt"), text);
+    await writeFile(join(artifacts, `${name}.txt`), text);
     return text;
   };
   try {
@@ -111,6 +110,7 @@ test("compiled CLI keeps a complete megabyte message visible, rich, scrollable a
     await frame("narrow", ["LARGE_TEXT_END", "RICH_BOLD"]);
     const ansi = (await tmux("capture-pane", "-e", "-p", "-t", "large-text")).stdout;
     await writeFile(join(artifacts, "narrow-ansi.txt"), ansi);
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
     expect(ansi).toMatch(/\x1b\[(?:[0-9]+;)*1(?:;[0-9]+)*m/);
     await tmux("send-keys", "-t", "large-text", "-l", "still-editable-draft");
     await frame("typed", ["still-editable-draft", "LARGE_TEXT_READY"]);

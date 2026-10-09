@@ -26,7 +26,7 @@ async function poll(read, test, label) {
     if (test(value)) return value;
     await new Promise((r) => setTimeout(r, 100));
   }
-  throw Error("Timed out: " + label);
+  throw Error(`Timed out: ${label}`);
 }
 const projected = (q) => ({
   idHash: hash(q.id),
@@ -41,7 +41,7 @@ const projected = (q) => ({
 export async function exercise({ page, snapshot: nativeSnapshot, config }) {
   const snapshot = async (name) => {
     await nativeSnapshot(name);
-    const file = path.join(config.proof, name + ".txt");
+    const file = path.join(config.proof, `${name}.txt`);
     await fs.writeFile(file, (await fs.readFile(file, "utf8")).replaceAll(path.dirname(config.state), "<FIXTURE>"));
   };
   const evidence = {
@@ -52,7 +52,7 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
       "official thread.stop bound to Ctrl+Escape in scoped keybindings.json; approval composer hides Stop button",
   };
   const save = async () =>
-    fs.writeFile(path.join(config.proof, "human-observations.json"), JSON.stringify(evidence, null, 2) + "\n");
+    fs.writeFile(path.join(config.proof, "human-observations.json"), `${JSON.stringify(evidence, null, 2)}\n`);
   const record = async (name) => {
     const qs = await ledger(config);
     evidence.ledger.push({ step: name, questions: qs.map(projected) });
@@ -82,7 +82,7 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
           )
         );
       },
-      label + " correlated command terminal",
+      `${label} correlated command terminal`,
     );
     try {
       await page.getByRole("button", { name: "Submit message", exact: true }).waitFor({ timeout: 30000 });
@@ -117,14 +117,14 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
 
   async function exercisePermissions() {
     for (const scenario of ["allow", "deny", "stop"]) {
-      await submit("HUMAN_PERMISSION_" + scenario + ": request actual execute side effect.");
+      await submit(`HUMAN_PERMISSION_${scenario}: request actual execute side effect.`);
       await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
       assert.equal(
-        await exists(path.join(config.state, "permission-" + scenario + ".effect")),
+        await exists(path.join(config.state, `permission-${scenario}.effect`)),
         false,
         "effect must not happen before consent",
       );
-      await snapshot("permission-" + scenario + "-pending");
+      await snapshot(`permission-${scenario}-pending`);
       if (scenario === "stop") {
         await page.keyboard.press("Control+Escape");
         await visible("Run interrupted by user");
@@ -154,20 +154,20 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
         await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ state: "hidden" });
       } else {
         await page.getByRole("button", { name: scenario === "allow" ? "Approve" : "Decline", exact: true }).click();
-        await visible("HUMAN_PERMISSION_" + scenario + "_RESULT_REAL");
+        await visible(`HUMAN_PERMISSION_${scenario}_RESULT_REAL`);
       }
-      assert.equal(await exists(path.join(config.state, "permission-" + scenario + ".effect")), scenario === "allow");
+      assert.equal(await exists(path.join(config.state, `permission-${scenario}.effect`)), scenario === "allow");
       evidence.effects.push({
         scenario,
         beforeConsent: false,
-        afterConsent: await exists(path.join(config.state, "permission-" + scenario + ".effect")),
+        afterConsent: await exists(path.join(config.state, `permission-${scenario}.effect`)),
         content:
           scenario === "allow"
             ? await fs.readFile(path.join(config.state, "permission-allow.effect"), "utf8")
             : undefined,
       });
-      evidence.checks.push("execute " + scenario + " real side effect=" + (scenario === "allow"));
-      await record("permission-" + scenario + "-result");
+      evidence.checks.push(`execute ${scenario} real side effect=${scenario === "allow"}`);
+      await record(`permission-${scenario}-result`);
     }
   }
 
@@ -191,7 +191,7 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
     assert.equal(q.status, "pending");
     assert.equal(q.version, version);
     assert.equal(q.answer, undefined);
-    await submit("/bruv questions open " + identity);
+    await submit(`/bruv questions open ${identity}`);
     await page.getByRole("button", { name: "Keep pending (do not answer)", exact: false }).waitFor();
     await record("question-explicit-reopen");
     await page.keyboard.press("Control+Escape");
@@ -200,7 +200,7 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
     assert.equal(q.status, "pending");
     assert.equal(q.version, version);
     await reopenHumanThread();
-    await submit("/bruv questions open " + identity);
+    await submit(`/bruv questions open ${identity}`);
     await page.getByRole("button", { name: "Use local fixture", exact: false }).waitFor({ timeout: 30000 });
     q = (await record("question-resume-same-identity")).find((q) => q.id === identity);
     assert.equal(q.status, "pending");
@@ -221,7 +221,7 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
     assert.equal(q.status, "answered");
     assert.equal(q.delivery, "resume-needed");
     assert.equal(q.answer, "Use local fixture");
-    await submit("/bruv questions resume " + identity);
+    await submit(`/bruv questions resume ${identity}`);
     // Resolving the ledger is another actual execute: explicitly approve it, never an answer callback.
     await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
     await page.getByRole("button", { name: "Approve", exact: true }).click();
@@ -232,7 +232,7 @@ export async function exercise({ page, snapshot: nativeSnapshot, config }) {
     assert.equal(q.answer, "Use local fixture");
     assert.equal(q.delivery, "delivered");
     await reopenHumanThread();
-    await submit("/bruv questions open " + identity);
+    await submit(`/bruv questions open ${identity}`);
     await visible("[resolved]");
     await idle("question-open-resolved-idle");
     await reopenHumanThread();
@@ -315,13 +315,13 @@ export async function verify({ wire: records, config, proof, t3Version, t3Binary
   const observations = JSON.parse(await fs.readFile(path.join(proof, "human-observations.json"), "utf8"));
   await fs.writeFile(
     path.join(proof, "wire-projection.ndjson"),
-    projectWire(records)
+    `${projectWire(records)
       .map((x) => JSON.stringify(x))
-      .join("\n") + "\n",
+      .join("\n")}\n`,
   );
   await fs.writeFile(
     path.join(proof, "result.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       {
         integratedAcceptance: true,
         focusedHumanControls: true,
@@ -343,7 +343,7 @@ export async function verify({ wire: records, config, proof, t3Version, t3Binary
       },
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
 }
 
@@ -361,15 +361,13 @@ export async function capture({ records, config, proof }) {
         providerTurns: "orchestration_v2_projection_provider_turns",
       })) {
         state[kind] = db
-          .prepare("SELECT payload_json FROM " + table)
+          .prepare(`SELECT payload_json FROM ${table}`)
           .all()
           .map((row) => {
             const value = JSON.parse(row.payload_json);
             const promptHex =
               typeof value.runAttemptId === "string"
-                ? createHash("sha256")
-                    .update("t3-claude-prompt:" + value.runAttemptId)
-                    .digest("hex")
+                ? createHash("sha256").update(`t3-claude-prompt:${value.runAttemptId}`).digest("hex")
                 : undefined;
             const promptUuid = promptHex
               ? `${promptHex.slice(0, 8)}-${promptHex.slice(8, 12)}-4${promptHex.slice(13, 16)}-${((parseInt(promptHex[16], 16) & 3) | 8).toString(16)}${promptHex.slice(17, 20)}-${promptHex.slice(20, 32)}`
@@ -381,7 +379,7 @@ export async function capture({ records, config, proof }) {
             };
           });
       }
-      await fs.writeFile(path.join(proof, "native-command-run-state.json"), JSON.stringify(state, null, 2) + "\n");
+      await fs.writeFile(path.join(proof, "native-command-run-state.json"), `${JSON.stringify(state, null, 2)}\n`);
     } finally {
       db.close();
     }
@@ -391,7 +389,7 @@ export async function capture({ records, config, proof }) {
     } catch {
       await fs.writeFile(
         path.join(proof, "native-command-run-state.json"),
-        JSON.stringify({ captureError: error.message }) + "\n",
+        `${JSON.stringify({ captureError: error.message })}\n`,
       );
     }
   }
@@ -409,7 +407,7 @@ export async function capture({ records, config, proof }) {
   );
   await fs.writeFile(
     path.join(proof, "native-command-terminals.json"),
-    JSON.stringify(
+    `${JSON.stringify(
       commands.map((x) => ({
         sourceHash: typeof x.value.uuid === "string" ? hash(x.value.uuid) : null,
         lifecycle: records
@@ -428,7 +426,7 @@ export async function capture({ records, config, proof }) {
       })),
       null,
       2,
-    ) + "\n",
+    )}\n`,
   );
   const correlation = requests.map((m) => ({
     requestHash: hash(m.request_id),
@@ -442,9 +440,9 @@ export async function capture({ records, config, proof }) {
       .filter((r) => r.response.request_id === m.request_id)
       .map((r) => ({ subtype: r.response.subtype, behavior: r.response.response?.behavior })),
   }));
-  await fs.writeFile(path.join(proof, "human-protocol-correlation.json"), JSON.stringify(correlation, null, 2) + "\n");
+  await fs.writeFile(path.join(proof, "human-protocol-correlation.json"), `${JSON.stringify(correlation, null, 2)}\n`);
   await fs.writeFile(
     path.join(proof, "final-saved-ledger.json"),
-    JSON.stringify((await ledger(config)).map(projected), null, 2) + "\n",
+    `${JSON.stringify((await ledger(config)).map(projected), null, 2)}\n`,
   );
 }

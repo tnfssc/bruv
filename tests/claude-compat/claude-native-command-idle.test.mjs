@@ -10,7 +10,7 @@ function fixture({ stuck = null, converge = () => {} } = {}) {
     async waitFor(options) {
       waits.push({ name, ...options });
       converge(name, visible);
-      if (name === stuck) throw Error(name + " did not converge before timeout");
+      if (name === stuck) throw Error(`${name} did not converge before timeout`);
       if (name === "Working") visible.Working = false;
       assert.equal(visible[name], options.state === "visible");
     },
@@ -78,7 +78,7 @@ test("all indicators share the existing 30-second deadline, without resetting it
 });
 
 for (const stuck of ["Working", "Stop generation", "Submit message"]) {
-  test("persistent " + stuck + " mismatch is still rejected", async () => {
+  test(`persistent ${stuck} mismatch is still rejected`, async () => {
     const f = fixture({ stuck });
     await assert.rejects(() => waitForCommandIdle(f.page), /did not converge before timeout/);
   });

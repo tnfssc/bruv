@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Explicit paid, single-session setup probe. Never import from ordinary tests. */
 import { lstat, readFile } from "node:fs/promises";
 import { homedir } from "node:os";
@@ -30,7 +31,7 @@ async function readProbeKey(path: string): Promise<string> {
   const entries = contents.split(/\r?\n/).filter((line) => line.trim() && !line.trim().startsWith("#"));
   const matches = entries.filter((line) => /^OPENAI_API_KEY=/.test(line));
   if (matches.length !== 1) throw new Error("one OPENAI_API_KEY assignment required");
-  let key = matches[0]!.slice("OPENAI_API_KEY=".length).trim();
+  let key = requireValue(matches[0]).slice("OPENAI_API_KEY=".length).trim();
   if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) key = key.slice(1, -1);
   if (!/^sk-[A-Za-z0-9_-]{10,}$/.test(key)) throw new Error("invalid key format");
   return key;
@@ -51,12 +52,12 @@ async function runSetupProbe(key: string): Promise<void> {
         onError: ({ message }) => {
           const status = /HTTP (\d{3})/.exec(message)?.[1];
           if (status) {
-            handshake = "HTTP " + status + " rejected";
+            handshake = `HTTP ${status} rejected`;
             outcome = "setup not reached";
           } else {
             // The production transport open event independently records the handshake.
             const details = /\((code [a-z_]+|type [a-z_]+|field [a-zA-Z0-9_.[\]]+)(?:, [^)]+)*\)/.exec(message)?.[0];
-            outcome = "setup rejected" + (details ?? " (no safe provider identifiers)");
+            outcome = `setup rejected${details ?? " (no safe provider identifiers)"}`;
           }
         },
       },
@@ -76,7 +77,7 @@ async function runSetupProbe(key: string): Promise<void> {
         deadline = setTimeout(() => reject(new Error("deadline")), 28000);
       }),
     ]);
-    console.log("handshake: " + handshake + "; setup: " + outcome);
+    console.log(`handshake: ${handshake}; setup: ${outcome}`);
   } finally {
     if (deadline) clearTimeout(deadline);
     session?.close();

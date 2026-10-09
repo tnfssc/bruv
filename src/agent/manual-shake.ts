@@ -48,7 +48,7 @@ const projectionFailures = new WeakMap<object, { sessionId: string; error: Error
 // Successful compaction-time shakes observed by the AgentSession lifecycle adapter.
 const compactionShakeApplications = new WeakMap<object, number>();
 type ShakeGuardController = { context?: ExtensionContext };
-type ShakeRuntimeSeam = { prepareRequest: (model: unknown, options?: Record<string, any>) => Promise<unknown> };
+type ShakeRuntimeSeam = { prepareRequest: (model: unknown, options?: Record<string, unknown>) => Promise<unknown> };
 type ShakeRuntimePatch = {
   original: ShakeRuntimeSeam["prepareRequest"];
   wrapper: ShakeRuntimeSeam["prepareRequest"];
@@ -418,7 +418,7 @@ function projection(
   );
   const matches = exactOccurrenceMatches(incoming, source);
   for (const [sourceIndex, incomingIndex] of matches) {
-    if (isNativeShim(incoming[incomingIndex]!)) matches.delete(sourceIndex);
+    if (isNativeShim(incoming[incomingIndex])) matches.delete(sourceIndex);
   }
   const selectedAssistants = new Set(record.assistantEntryIds);
   const selectedResults = new Set(record.toolResultEntryIds);
@@ -428,9 +428,9 @@ function projection(
   let removedToolResults = 0;
   const byIncoming = incoming.map((message) => [message]);
   for (const [sourceIndex, incomingIndex] of matches) {
-    const { entryId } = source[sourceIndex]!;
+    const { entryId } = source[sourceIndex];
     if (!eligibleEntries.has(entryId)) continue;
-    const message = incoming[incomingIndex]!;
+    const message = incoming[incomingIndex];
     if (selectedResults.has(entryId)) {
       removedToolResults++;
       byIncoming[incomingIndex] = [];

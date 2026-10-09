@@ -31,7 +31,7 @@ async function runOwnedScenario(scenario, records) {
     await fs.mkdir(replayDir, { recursive: true });
     for (const file of ["run-subagent.mjs", "tap.mjs"]) {
       await fs.copyFile(
-        new URL("../../scripts/claude-native-acceptance/" + file, import.meta.url),
+        new URL(`../../scripts/claude-native-acceptance/${file}`, import.meta.url),
         path.join(here, file),
       );
     }

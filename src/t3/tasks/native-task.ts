@@ -49,6 +49,7 @@ export const T3WorkspaceRequestSchema = z.discriminatedUnion("kind", [
       z.string().check(
         z.minLength(1),
         z.maxLength(256),
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject control bytes in Git refs passed to commands.
         z.refine((value) => !value.startsWith("-") && !/[\x00-\x20\x7f]/.test(value), "Invalid base ref"),
       ),
     ),
@@ -56,6 +57,7 @@ export const T3WorkspaceRequestSchema = z.discriminatedUnion("kind", [
       z.string().check(
         z.minLength(1),
         z.maxLength(256),
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject control bytes in Git refs passed to commands.
         z.refine((value) => !value.startsWith("-") && !/[\x00-\x1f\x7f]/.test(value), "Invalid branch"),
       ),
     ),

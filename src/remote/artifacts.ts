@@ -38,7 +38,7 @@ function pathFor(dir: string, name: string) {
     path = join(path, part);
     safeDir(path);
   }
-  return join(path, parts[parts.length - 1]!);
+  return join(path, parts[parts.length - 1]);
 }
 function readArtifact(dir: string, name: string): Buffer {
   const path = pathFor(dir, name);
@@ -72,8 +72,8 @@ export function listRemoteArtifacts(taskDir: string): RemoteArtifact[] {
       if (!/^execute-[a-zA-Z0-9_-]{1,128}$/.test(entry)) continue;
       safeDir(join(root, entry));
       for (const stream of ["stdout", "stderr"]) {
-        const name = "session.jsonl.artifacts/" + entry + "/" + stream + ".log";
-        if (readdirSync(join(root, entry)).includes(stream + ".log")) names.push(name);
+        const name = `session.jsonl.artifacts/${entry}/${stream}.log`;
+        if (readdirSync(join(root, entry)).includes(`${stream}.log`)) names.push(name);
       }
     }
   }
@@ -110,7 +110,7 @@ function directory(path: string) {
   else mkdirSync(path, { mode: 0o700 });
 }
 function save(path: string, data: Buffer) {
-  const tmp = path + "." + randomUUID(),
+  const tmp = `${path}.${randomUUID()}`,
     fd = openSync(tmp, "wx", 0o600);
   try {
     let offset = 0;

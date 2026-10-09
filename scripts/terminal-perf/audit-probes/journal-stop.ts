@@ -1,3 +1,4 @@
+import { requireValue } from "../../lib/require-value";
 /** Provider-free audit: synchronous public journal calls and alternate-screen stop.
  * No timing gate; run with: bun scripts/terminal-perf/audit-probes/journal-stop.ts [output.json]
  */
@@ -12,10 +13,16 @@ import { DiskEntryStore } from "../../../src/history/disk-entry-store";
 import { FakeTerminal } from "../workloads";
 
 const sha = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
-const samples: any[] = [];
+const samples: Array<{
+  name: string;
+  syncMs: number;
+  materializeCalls: number;
+  parsedBytes: number;
+  [key: string]: unknown;
+}> = [];
 let reads = 0,
   parsedBytes = 0;
-function segment(name: string, run: () => any, fingerprint: object, summarize: (value: any) => object) {
+function segment<T>(name: string, run: () => T, fingerprint: object, summarize: (value: T) => object) {
   reads = parsedBytes = 0;
   const start = performance.now();
   const value = run(); // Never await inside this timed boundary.
@@ -25,8 +32,9 @@ function segment(name: string, run: () => any, fingerprint: object, summarize: (
 }
 const body = (bytes: number) =>
   "deterministic output row abcdefghijklmnopqrstuvwxyz 0123456789\n".repeat(Math.ceil(bytes / 61)).slice(0, bytes);
-const canonicalMessages = (messages: any[]) => messages.map((m) => ({ role: m.role, content: m.content }));
-const messagesSummary = (messages: any[]) => ({
+const canonicalMessages = (messages: { role: string; content?: unknown }[]) =>
+  messages.map((m) => ({ role: m.role, content: m.content }));
+const messagesSummary = (messages: { role: string; content?: unknown }[]) => ({
   messages: messages.length,
   contentHash: sha(JSON.stringify(canonicalMessages(messages))),
 });
@@ -35,8 +43,8 @@ function auditJournal() {
   const managers: SessionManager[] = [];
   const nativeMaterialize = DiskEntryStore.prototype.materialize;
   try {
-    DiskEntryStore.prototype.materialize = function (meta: any) {
-      const metadata = typeof meta === "string" ? this.byId.get(meta)! : meta;
+    DiskEntryStore.prototype.materialize = function (meta: Parameters<DiskEntryStore["materialize"]>[0]) {
+      const metadata = typeof meta === "string" ? requireValue(this.byId.get(meta)) : meta;
       reads++;
       parsedBytes += metadata.length;
       return nativeMaterialize.call(this, meta);
@@ -73,7 +81,7 @@ function auditJournal() {
           "journal.getBranch",
           () => manager.getBranch(),
           fp,
-          (entries) => messagesSummary(entries.filter((e: any) => e.type === "message").map((e: any) => e.message)),
+          (entries) => messagesSummary(entries.filter((e) => e.type === "message").map((e) => e.message)),
         );
         segment(
           "journal.buildSessionProjection",
@@ -84,7 +92,7 @@ function auditJournal() {
       }
       const reopened = segment(
         "journal.open",
-        () => SessionManager.open(manager.getSessionFile()!),
+        () => SessionManager.open(requireValue(manager.getSessionFile())),
         fingerprint,
         (value) => ({ entries: value.getEntryCount() }),
       );
@@ -93,7 +101,7 @@ function auditJournal() {
         "journal.reopened.getBranch",
         () => reopened.getBranch(),
         fingerprint,
-        (entries) => messagesSummary(entries.filter((e: any) => e.type === "message").map((e: any) => e.message)),
+        (entries) => messagesSummary(entries.filter((e) => e.type === "message").map((e) => e.message)),
       );
     }
   } finally {
@@ -140,9 +148,9 @@ function auditTerminalStop() {
         documentLines += result.length;
         return result;
       };
-      const nativeFrame = (tui as any).doRender;
+      const nativeFrame = (tui as unknown as { doRender(): void }).doRender;
       let frames = 0;
-      (tui as any).doRender = function () {
+      (tui as unknown as { doRender(): void }).doRender = function () {
         frames++;
         insideDoRender = true;
         try {
@@ -161,7 +169,7 @@ function auditTerminalStop() {
         { payloadBytes, iteration, inputHash: sha(text), fixture: "two-native-user-messages-100x32-v1" },
         () => {
           const { output, writes } = terminal.takeOutput();
-          if (!output.includes(text.split("\n")[0]!)) throw new Error("stop did not restore fixture text");
+          if (!output.includes(requireValue(text.split("\n")[0]))) throw new Error("stop did not restore fixture text");
           if (insideDoRender || frames !== 0 || documentRenders !== 1) throw new Error("stop boundary changed");
           return {
             frames,
@@ -199,7 +207,7 @@ const report = {
   samples,
 };
 const output = process.argv[2] ?? "artifacts/terminal-perf/audit-journal-stop.json";
-await Bun.write(output, JSON.stringify(report, null, 2) + "\n");
+await Bun.write(output, `${JSON.stringify(report, null, 2)}\n`);
 console.log(output);
 for (const name of new Set(samples.map((s) => s.name)))
   for (const payloadBytes of new Set(samples.filter((s) => s.name === name).map((s) => s.payloadBytes))) {

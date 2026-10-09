@@ -55,7 +55,7 @@ try {
       await page.locator("#screen").evaluate((el, html) => {
         el.innerHTML = html;
       }, html);
-      await page.screenshot({ path: resolve(dir, String(i).padStart(4, "0") + ".png") });
+      await page.screenshot({ path: resolve(dir, `${String(i).padStart(4, "0")}.png`) });
     }
     const proc = Bun.spawn(
       [
@@ -72,12 +72,12 @@ try {
         "[0:v]split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle",
         "-loop",
         "0",
-        resolve(output, id + ".gif"),
+        resolve(output, `${id}.gif`),
       ],
       { stdout: "inherit", stderr: "inherit" },
     );
-    if ((await proc.exited) !== 0) throw new Error("ffmpeg failed for " + id);
-    console.log(id + ": " + (await Bun.file(resolve(output, id + ".gif")).stat()).size + " bytes");
+    if ((await proc.exited) !== 0) throw new Error(`ffmpeg failed for ${id}`);
+    console.log(`${id}: ${(await Bun.file(resolve(output, `${id}.gif`)).stat()).size} bytes`);
   }
 } finally {
   await browser.close();

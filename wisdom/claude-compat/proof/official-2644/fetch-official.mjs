@@ -14,18 +14,18 @@ const cache=path.resolve(destination);
 await fs.mkdir(cache); // An existing cache is an error, not permission to overwrite.
 const hash=data=>createHash('sha256').update(data).digest('hex');
 async function get(url) {
- const r=await fetch(url);if(!r.ok)throw Error(url+': '+r.status);
+ const r=await fetch(url);if(!r.ok)throw Error(`${url}: ${r.status}`);
  return Buffer.from(await r.arrayBuffer());
 }
-const releaseBytes=await get('https://api.github.com/repos/pingdotgg/t3code/releases/tags/'+tag);
+const releaseBytes=await get(`https://api.github.com/repos/pingdotgg/t3code/releases/tags/${tag}`);
 const release=JSON.parse(releaseBytes);
 if(release.target_commitish!=='737993303d36e10674c54b95e5bd3826682c99c7'||release.published_at!=='2026-10-04T03:41:53Z')throw Error('Release source/published metadata changed');
 const name='t3-0.0.46-nightly.20261004.2644-linux-x64.tar.gz';
 const artifact=release.assets.find(a=>a.name===name);
 const sums=release.assets.find(a=>a.name==='SHA256SUMS');
-if(!artifact||!sums||artifact.digest!=='sha256:'+expectedArchive)throw Error('Release digest changed');
+if(!artifact||!sums||artifact.digest!==`sha256:${expectedArchive}`)throw Error('Release digest changed');
 const checksumBytes=await get(sums.browser_download_url);
-if(!checksumBytes.toString().split('\n').includes(expectedArchive+'  '+name))throw Error('Release checksum mismatch');
+if(!checksumBytes.toString().split('\n').includes(`${expectedArchive}  ${name}`))throw Error('Release checksum mismatch');
 const archive=await get(artifact.browser_download_url);
 if(hash(archive)!==expectedArchive)throw Error('Downloaded archive checksum mismatch');
 await fs.writeFile(path.join(cache,'release.json'),releaseBytes);

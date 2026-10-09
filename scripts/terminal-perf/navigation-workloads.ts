@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Independent provider-free navigation probes. No renderNow(): inputs use Pi's scheduler. */
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -232,9 +233,7 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
         content: [
           {
             type: "text",
-            text: Array.from({ length: options.toolOutputLines ?? 30 }, (_, i) => "tool output " + i + " needle").join(
-              "\n",
-            ),
+            text: Array.from({ length: options.toolOutputLines ?? 30 }, (_, i) => `tool output ${i} needle`).join("\n"),
           },
         ],
         isError: false,
@@ -254,7 +253,7 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
       frameFailed = reject;
       timeout = setTimeout(() => {
         frameDone = undefined;
-        reject(new Error("No scheduled frame for " + mode));
+        reject(new Error(`No scheduled frame for ${mode}`));
       }, 2000);
     });
     try {
@@ -319,7 +318,7 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
     };
   };
   const fixture: NavigationWorkload = {
-    name: "navigation/" + mode + "/" + size,
+    name: `navigation/${mode}/${size}`,
     mode,
     size,
     async setup() {
@@ -449,9 +448,9 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
             send("\x1b[13;2u");
             break;
           case "editor-paste": {
-            const unit = "paste needle " + iteration + "\n";
+            const unit = `paste needle ${iteration}\n`;
             const characters = options.pasteCharacters ?? 1024;
-            send("\x1b[200~" + unit.repeat(Math.ceil(characters / unit.length)).slice(0, characters) + "\x1b[201~");
+            send(`\x1b[200~${unit.repeat(Math.ceil(characters / unit.length)).slice(0, characters)}\x1b[201~`);
             break;
           }
           case "resize":
@@ -473,21 +472,21 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
                   { length: Math.max(2, size) },
                   (_, i) =>
                     ({
-                      id: "fixture-task-" + i,
+                      id: `fixture-task-${i}`,
                       kind: "command",
                       status: "running",
-                      command: "offline task " + i,
+                      command: `offline task ${i}`,
                       startedAt: "2100-01-01T00:00:00.000Z",
                       baseOffset: 0,
                       outputEnd: 24,
                       timedOut: false,
                       cwd: "/offline-navigation",
-                      monitorIdentity: "fixture-" + i,
+                      monitorIdentity: `fixture-${i}`,
                     }) satisfies MonitorTask,
                 );
                 const source: TaskMonitorSource = {
                   list: () => tasks,
-                  inspect: (id) => ({ output: "bounded fixture output " + id }),
+                  inspect: (id) => ({ output: `bounded fixture output ${id}` }),
                   subscribe: () => () => {},
                   kill: () => {
                     throw new Error("Read-only fixture");
@@ -518,15 +517,15 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
             break;
           case "footer":
             sync("footer.statusMutation", () => {
-              statuses.set("bruv-tasks", iteration + " tasks running");
-              statuses.set("bruv-questions", iteration + " questions pending");
+              statuses.set("bruv-tasks", `${iteration} tasks running`);
+              statuses.set("bruv-questions", `${iteration} questions pending`);
               tui.requestRender();
             });
             break;
           case "live-wave":
             sync("LiveWaveform.capture+tick+footer", () => {
               wave.capture(pcm);
-              statuses.set("bruv-live", "live " + wave.tick(false, timestamp + iteration * 80));
+              statuses.set("bruv-live", `live ${wave.tick(false, timestamp + iteration * 80)}`);
               tui.requestRender();
             });
             break;
@@ -606,13 +605,13 @@ if (import.meta.main) {
   const args = process.argv.slice(2);
   const value = (flag: string) => args[args.indexOf(flag) + 1];
   const options = {
-    sizes: args.includes("--sizes") ? value("--sizes")!.split(",").map(Number) : [4],
-    modes: args.includes("--modes") ? (value("--modes")!.split(",") as NavigationMode[]) : undefined,
+    sizes: args.includes("--sizes") ? requireValue(value("--sizes")).split(",").map(Number) : [4],
+    modes: args.includes("--modes") ? (requireValue(value("--modes")).split(",") as NavigationMode[]) : undefined,
     samples: args.includes("--samples") ? Number(value("--samples")) : 3,
     pasteCharacters: args.includes("--paste-characters") ? Number(value("--paste-characters")) : 1024,
     toolOutputLines: args.includes("--tool-output-lines") ? Number(value("--tool-output-lines")) : 30,
   };
-  for (const mode of options.modes ?? []) if (!navigationModes.includes(mode)) throw new Error("Unknown mode " + mode);
+  for (const mode of options.modes ?? []) if (!navigationModes.includes(mode)) throw new Error(`Unknown mode ${mode}`);
   const evidence =
     args.includes("--sdk") || args.includes("--interactive-sdk")
       ? await runOfflineNavigationSdkProbe(options.sizes[0], { interactive: args.includes("--interactive-sdk") })
@@ -637,7 +636,7 @@ if (import.meta.main) {
       "components/scroll-view.js",
       "components/editor.js",
       "keybindings.js",
-    ].map((path) => "node_modules/@earendil-works/pi-tui/dist/" + path),
+    ].map((path) => `node_modules/@earendil-works/pi-tui/dist/${path}`),
     "node_modules/@earendil-works/pi-coding-agent/package.json",
     ...[
       "modes/interactive/interactive-mode.js",
@@ -650,7 +649,7 @@ if (import.meta.main) {
       "modes/interactive/components/tool-execution.js",
       "modes/interactive/theme/dark.json",
       "modes/interactive/theme/light.json",
-    ].map((path) => "node_modules/@earendil-works/pi-coding-agent/dist/" + path),
+    ].map((path) => `node_modules/@earendil-works/pi-coding-agent/dist/${path}`),
   ];
   const fingerprints = Object.fromEntries(
     sourceFiles.map((path) => {
@@ -671,7 +670,7 @@ if (import.meta.main) {
     fingerprints,
     ...evidence,
   };
-  const text = JSON.stringify(report, null, 2) + "\n";
-  if (args.includes("--out")) writeFileSync(value("--out")!, text);
+  const text = `${JSON.stringify(report, null, 2)}\n`;
+  if (args.includes("--out")) writeFileSync(requireValue(value("--out")), text);
   else console.log(text);
 }

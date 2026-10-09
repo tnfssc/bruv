@@ -18,7 +18,7 @@ export function validateRemoteRequestFields(request: RemoteRequest): void {
     "capability-reply": ["reply"],
   };
   if (!request || typeof request !== "object" || !Object.hasOwn(fields, request.op)) throw Error("Invalid request");
-  const allowed = ["op", ...(request.op === "hello" ? [] : ["ownerId", "epoch", "taskId"]), ...fields[request.op]!];
+  const allowed = ["op", ...(request.op === "hello" ? [] : ["ownerId", "epoch", "taskId"]), ...fields[request.op]];
   if (Object.keys(request).some((key) => !allowed.includes(key))) throw Error("Unsupported remote request field");
 }
 
@@ -42,7 +42,7 @@ export async function runRemoteControl(): Promise<void> {
   }
   // CLI exits explicitly after this promise: wait for the complete pipe write, not just enqueueing it.
   await new Promise<void>((resolve, reject) =>
-    process.stdout.write(JSON.stringify(response) + "\n", (error) => (error ? reject(error) : resolve())),
+    process.stdout.write(`${JSON.stringify(response)}\n`, (error) => (error ? reject(error) : resolve())),
   );
 }
 export async function runRemoteOwner(taskId: string): Promise<void> {

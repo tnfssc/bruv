@@ -15,15 +15,16 @@ export async function prepareAgentSession(
   const session = SessionManager.create(cwd, sessionDir || undefined, { parentSession: info.parentSessionFile });
   let persisted: typeof session | undefined;
   try {
-    const sessionFile = session.getSessionFile()!;
+    const sessionFile = session.getSessionFile();
+    if (!sessionFile) throw new Error("Agent session requires a persisted session file");
     // Pi normally delays persistence until the first assistant message. Persist the
     // header now so even a launch/provider stall has a durable diagnostic identity.
-    await writeFile(sessionFile, JSON.stringify(session.getHeader()) + "\n", { flag: "wx", mode: 0o600 });
+    await writeFile(sessionFile, `${JSON.stringify(session.getHeader())}\n`, { flag: "wx", mode: 0o600 });
     persisted = SessionManager.open(sessionFile);
-    const id = taskId ?? "task_" + randomUUID().slice(0, 8);
+    const id = taskId ?? `task_${randomUUID().slice(0, 8)}`;
     persisted.appendCustomEntry("bruv-agent", { ...info, taskId: id });
     persisted.appendSessionInfo(
-      (info.type === "orchestrator" ? "[orchestrator agent] " : "[subagent · " + info.type + "] ") + (title ?? id),
+      (info.type === "orchestrator" ? "[orchestrator agent] " : `[subagent · ${info.type}] `) + (title ?? id),
     );
     return { id, agent: { ...info, sessionFile } };
   } finally {

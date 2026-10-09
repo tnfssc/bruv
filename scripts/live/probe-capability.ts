@@ -93,7 +93,7 @@ const plan = requested.map((spec) => {
 });
 const config = await loadLiveConfig();
 if (config.provider !== "openai")
-  throw Error("This probe supports only configured OpenAI Live; found " + config.provider + "/" + config.model);
+  throw Error(`This probe supports only configured OpenAI Live; found ${config.provider}/${config.model}`);
 const service = await createDefaultLiveCredentialService(undefined, config.provider);
 // Do not log credential metadata.
 const key = await service.loadKey(); // Never log or serialize credentials.

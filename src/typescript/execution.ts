@@ -167,6 +167,9 @@ export async function executeIsolated(
     detached: process.platform !== "win32",
     stdio: ["pipe", "pipe", "pipe", "pipe", ...(options.jobHandler ? ["ipc" as const] : [])],
   });
+
+  const { stdin, stdout, stderr } = child;
+  if (!stdin || !stdout || !stderr) throw new Error("TypeScript runner requires piped streams");
   const output = new ExecuteOutputCapture({
     sessionFile: options.sessionFile,
     outputByteLimit: options.outputByteLimit,
@@ -213,15 +216,12 @@ export async function executeIsolated(
     imageError = "Could not read image output channel";
     signalProcessGroup(child, "SIGKILL");
   });
-  const outputPumps = Promise.allSettled([
-    output.consume("stdout", child.stdout!),
-    output.consume("stderr", child.stderr!),
-  ]);
-  child.stdin!.on("error", () => {
+  const outputPumps = Promise.allSettled([output.consume("stdout", stdout), output.consume("stderr", stderr)]);
+  stdin.on("error", () => {
     // Early exits (including EPIPE while sending source) are reported by status.
   });
   cancellation.watch(timeoutMs);
-  child.stdin!.end(code);
+  stdin.end(code);
 
   let completed: { exitCode: number | null; exitSignal: NodeJS.Signals | null } | undefined;
   let captured: CapturedOutput | undefined;
@@ -236,9 +236,9 @@ export async function executeIsolated(
     // ownership for any foreground task results.
     jobBridge?.close(completed?.exitCode === 0 && !cancellation.termination);
     cancellation.close();
-    child.stdin!.destroy();
-    child.stdout!.destroy();
-    child.stderr!.destroy();
+    stdin.destroy();
+    stdout.destroy();
+    stderr.destroy();
     imagePipe?.destroy();
     jobPipe?.destroy();
     await outputPumps;
@@ -315,13 +315,13 @@ export function formatResult(result: ExecutionResult): string {
   ];
   const directoryError = result.outputArtifactErrors?.directory;
   const streamLabel = (name: "stdout" | "stderr") => {
-    const lost = result[(name + "Lost") as "stdoutLost" | "stderrLost"];
-    const path = result[(name + "Path") as "stdoutPath" | "stderrPath"];
+    const lost = result[`${name}Lost` as "stdoutLost" | "stderrLost"];
+    const path = result[`${name}Path` as "stdoutPath" | "stderrPath"];
     const error = directoryError ?? result.outputArtifactErrors?.[name];
     const byteTruncated =
       result.outputTruncated === true &&
-      (result[(name + "CapturedBytes") as "stdoutCapturedBytes" | "stderrCapturedBytes"] ?? 0) <
-        (result[(name + "Bytes") as "stdoutBytes" | "stderrBytes"] ?? 0);
+      (result[`${name}CapturedBytes` as "stdoutCapturedBytes" | "stderrCapturedBytes"] ?? 0) <
+        (result[`${name}Bytes` as "stdoutBytes" | "stderrBytes"] ?? 0);
     if (path && (error || byteTruncated))
       return `${name} (${lost ? "truncated preview; " : ""}output file incomplete: ${path})`;
     if (path) return `${name} (${lost ? "truncated preview; complete output" : "complete output also saved"}: ${path})`;

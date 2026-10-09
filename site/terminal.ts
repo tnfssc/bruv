@@ -1,3 +1,4 @@
+import { requireValue } from "../scripts/lib/require-value";
 import { Ghostty, Terminal } from "ghostty-web";
 import { layout, hitAt, type State } from "./layout";
 import { INSTALL_SOURCE_URL, INSTALL_COMMAND, copyCommand, enhanceInstall } from "./install-command";
@@ -5,8 +6,8 @@ import { CellScroll, wheelPixels } from "./scroll";
 import { demoIds, demoDuration, type DemoId } from "./demos";
 import { advance, inView } from "./playback";
 enhanceInstall();
-const host = document.querySelector<HTMLElement>("#terminal")!;
-const fallback = document.querySelector<HTMLElement>("#text-content")!;
+const host = requireValue(document.querySelector<HTMLElement>("#terminal"));
+const fallback = requireValue(document.querySelector<HTMLElement>("#text-content"));
 const motion = matchMedia("(prefers-reduced-motion: reduce)");
 const state: State = {
   scroll: 0,
@@ -35,7 +36,7 @@ async function start() {
   terminal.write("\x1b[?1049h"); // A TUI viewport, not terminal scrollback.
   terminal.attachCustomWheelEventHandler(() => true);
   terminal.attachCustomKeyEventHandler(() => false);
-  const canvas = terminal.renderer!.getCanvas();
+  const canvas = requireValue(terminal.renderer).getCanvas();
   canvas.classList.add("ghostty-cells");
   canvas.setAttribute("aria-hidden", "true");
   host.tabIndex = 0;
@@ -58,7 +59,7 @@ async function start() {
   announcement.setAttribute("aria-live", "polite");
   host.after(announcement);
   const visibleDemo = (capture: ReturnType<typeof layout>["captures"][number]) =>
-    state.demos![capture.id].started
+    requireValue(state.demos)[capture.id].started
       ? capture.y < frame.clip.bottom && capture.y + capture.rows.length > frame.clip.top
       : inView(capture.y, capture.rows.length, frame.clip.top, frame.clip.bottom);
   function render() {
@@ -70,14 +71,14 @@ async function start() {
     const now = performance.now();
     if (frame && !document.hidden) {
       for (const capture of frame.captures)
-        advance(state.demos![capture.id], now - clock, demoDuration(capture.id), visibleDemo(capture));
+        advance(requireValue(state.demos)[capture.id], now - clock, demoDuration(capture.id), visibleDemo(capture));
     }
     clock = now;
     const resized = needsResize;
     if (resized) {
       needsResize = false;
       terminal.options.fontSize = innerWidth < 600 ? 14 : 16;
-      const r = terminal.renderer!;
+      const r = requireValue(terminal.renderer);
       terminal.resize(
         Math.max(24, Math.floor(host.clientWidth / r.charWidth)),
         Math.max(12, Math.floor(host.clientHeight / r.charHeight)),
@@ -88,7 +89,7 @@ async function start() {
     frame = layout(terminal.cols, terminal.rows, state);
     state.scroll = frame.scroll;
     presentFrame(frame, resized);
-    if (!document.hidden && frame.captures.some((c) => visibleDemo(c) && !state.demos![c.id].paused))
+    if (!document.hidden && frame.captures.some((c) => visibleDemo(c) && !requireValue(state.demos)[c.id].paused))
       animationTimer = setTimeout(render, 80);
   }
   // Presentation owns the row cache and focus announcement; layout/timing stay in paint.
@@ -98,13 +99,13 @@ async function start() {
     if (resized) previousRows = [];
     const changedRows = nextFrame.ansiRows.filter((row, i) => row !== previousRows[i]);
     if (changedRows.length) {
-      terminal.write("\x1b[?25l\x1b[?7l" + changedRows.join("") + "\x1b[0m");
+      terminal.write(`\x1b[?25l\x1b[?7l${changedRows.join("")}\x1b[0m`);
       // Ghostty 0.4 writes WASM synchronously, but its normal canvas paint is a
       // separate RAF. Paint its public renderer here so the complete grid reaches
       // the same browser frame. Its own loop then sees clean rows.
       // A full canvas pass avoids Ghostty dirty-row box-glyph join gaps. ANSI
       // parsing stays row-diffed; there is still only one paint per changed frame.
-      terminal.renderer!.render(terminal.wasmTerm!, true);
+      requireValue(terminal.renderer).render(requireValue(terminal.wasmTerm), true);
     }
     previousRows = nextFrame.ansiRows;
     host.dataset.scroll = String(nextFrame.scroll);
@@ -113,12 +114,12 @@ async function start() {
     host.dataset.cols = String(terminal.cols);
     host.dataset.rows = String(terminal.rows);
     host.dataset.focus = nextFrame.hits[state.focus]?.label || "";
-    host.dataset.cellWidth = String(terminal.renderer!.charWidth);
-    host.dataset.cellHeight = String(terminal.renderer!.charHeight);
+    host.dataset.cellWidth = String(requireValue(terminal.renderer).charWidth);
+    host.dataset.cellHeight = String(requireValue(terminal.renderer).charHeight);
     host.dataset.demos = JSON.stringify(state.demos);
     if (host.dataset.focus !== lastFocus) {
       lastFocus = host.dataset.focus || "";
-      announcement.textContent = lastFocus ? lastFocus + ". Press Enter to activate." : "";
+      announcement.textContent = lastFocus ? `${lastFocus}. Press Enter to activate.` : "";
     }
   }
   document.addEventListener("visibilitychange", () => {
@@ -129,9 +130,9 @@ async function start() {
   motion.addEventListener("change", () => {
     if (motion.matches)
       for (const id of demoIds) {
-        state.demos![id].paused = true;
-        state.demos![id].elapsed = demoDuration(id);
-        state.demos![id].started = false;
+        requireValue(state.demos)[id].paused = true;
+        requireValue(state.demos)[id].elapsed = demoDuration(id);
+        requireValue(state.demos)[id].started = false;
       }
     render();
   });
@@ -147,7 +148,7 @@ async function start() {
       state.focus = -1;
       render();
     } else if (action === "copy-install") {
-      copyCommand(state.installCommand!)
+      copyCommand(requireValue(state.installCommand))
         .then(() => {
           state.copyLabel = "Copied";
           announcement.textContent = "Install command copied.";
@@ -167,14 +168,14 @@ async function start() {
         });
     } else if (action.startsWith("demo:")) {
       const [, id] = action.split(":") as [string, DemoId];
-      const playback = state.demos![id];
+      const playback = requireValue(state.demos)[id];
       if (playback.paused && !playback.started) {
         playback.elapsed = 0;
         playback.paused = false;
       } else playback.paused = !playback.paused;
       playback.started = true;
       clock = performance.now();
-      announcement.textContent = id + " demo " + (playback.paused ? "paused" : "playing") + ".";
+      announcement.textContent = `${id} demo ${playback.paused ? "paused" : "playing"}.`;
       render();
     } else if (action === "text") location.assign("./text.html");
     else location.assign(action);
@@ -184,15 +185,15 @@ async function start() {
       const rect = canvas.getBoundingClientRect();
       // CSS pixels and measured renderer cells, not device-pixel canvas dimensions.
       return {
-        x: Math.floor((e.clientX - rect.left) / terminal.renderer!.charWidth),
-        y: Math.floor((e.clientY - rect.top) / terminal.renderer!.charHeight),
+        x: Math.floor((e.clientX - rect.left) / requireValue(terminal.renderer).charWidth),
+        y: Math.floor((e.clientY - rect.top) / requireValue(terminal.renderer).charHeight),
       };
     }
     let touchY: number | null = null,
       touchDistance = 0,
       moved = false;
     function scrollPixels(pixels: number) {
-      const next = scrollInput.move(state.scroll, pixels, terminal.renderer!.charHeight, frame.maxScroll);
+      const next = scrollInput.move(state.scroll, pixels, requireValue(terminal.renderer).charHeight, frame.maxScroll);
       if (next !== state.scroll) {
         state.scroll = next;
         render();
@@ -285,7 +286,7 @@ async function start() {
         }
         e.preventDefault();
         e.stopImmediatePropagation();
-        scrollPixels(wheelPixels(e.deltaY, e.deltaMode, terminal.renderer!.charHeight, frame.visible));
+        scrollPixels(wheelPixels(e.deltaY, e.deltaMode, requireValue(terminal.renderer).charHeight, frame.visible));
       },
       { passive: false, capture: true },
     );
@@ -303,7 +304,7 @@ async function start() {
         if (next < 0 || next >= frame.hits.length) {
           state.focus = -1;
           render();
-          document.querySelector<HTMLAnchorElement>(".plain-switch")!.focus();
+          requireValue(document.querySelector<HTMLAnchorElement>(".plain-switch")).focus();
         } else {
           state.focus = next;
           render();

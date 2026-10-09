@@ -43,15 +43,15 @@ export async function loadProfiles(path = profilesPath()): Promise<Profiles> {
     return parseProfiles(JSON.parse(await readFile(path, "utf8")));
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return parseProfiles({});
-    throw new Error("Invalid subagent settings at " + path + ": " + String(error));
+    throw new Error(`Invalid subagent settings at ${path}: ${String(error)}`);
   }
 }
 export async function saveProfiles(profiles: Profiles, path = profilesPath()): Promise<void> {
   const validated = parseProfiles(profiles);
   await mkdir(dirname(path), { recursive: true });
-  const temporary = path + "." + randomUUID() + ".tmp";
+  const temporary = `${path}.${randomUUID()}.tmp`;
   try {
-    await writeFile(temporary, JSON.stringify(validated, null, 2) + "\n", { flag: "wx", mode: 0o600 });
+    await writeFile(temporary, `${JSON.stringify(validated, null, 2)}\n`, { flag: "wx", mode: 0o600 });
     await rename(temporary, path);
   } finally {
     await unlink(temporary).catch(() => {});

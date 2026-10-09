@@ -22,7 +22,7 @@ class McpHttpError extends Error {
     readonly status: number,
     readonly sessionId: string | undefined,
   ) {
-    super("T3 MCP HTTP " + status);
+    super(`T3 MCP HTTP ${status}`);
   }
 }
 
@@ -50,19 +50,19 @@ export function t3BridgeEnvironment(env: NodeJS.ProcessEnv = process.env): T3Bri
   const url = env[T3_MCP_URL_ENV];
   const token = env[T3_MCP_BEARER_ENV];
   if (url === undefined && token === undefined) return { kind: "local" };
-  if (!url || !token) throw new Error("T3 delegation requires both " + T3_MCP_URL_ENV + " and " + T3_MCP_BEARER_ENV);
+  if (!url || !token) throw new Error(`T3 delegation requires both ${T3_MCP_URL_ENV} and ${T3_MCP_BEARER_ENV}`);
   let parsed: URL;
   try {
     parsed = new URL(url);
   } catch {
-    throw new Error("Invalid " + T3_MCP_URL_ENV);
+    throw new Error(`Invalid ${T3_MCP_URL_ENV}`);
   }
   if (parsed.protocol !== "http:" && parsed.protocol !== "https:")
-    throw new Error("Invalid " + T3_MCP_URL_ENV + " protocol");
-  if (parsed.username || parsed.password) throw new Error(T3_MCP_URL_ENV + " must not contain credentials");
+    throw new Error(`Invalid ${T3_MCP_URL_ENV} protocol`);
+  if (parsed.username || parsed.password) throw new Error(`${T3_MCP_URL_ENV} must not contain credentials`);
   // The endpoint is configuration, not a credential transport. Reject rather than
   // log, redirect, or accidentally forward secrets embedded in a query/fragment.
-  if (parsed.search || parsed.hash) throw new Error(T3_MCP_URL_ENV + " must not contain a query or fragment");
+  if (parsed.search || parsed.hash) throw new Error(`${T3_MCP_URL_ENV} must not contain a query or fragment`);
   return { kind: "remote", url: parsed.href, token };
 }
 
@@ -269,7 +269,7 @@ export class T3McpClient {
           redirect: "error",
           signal,
           headers: {
-            authorization: "Bearer " + this.token,
+            authorization: `Bearer ${this.token}`,
             accept: "application/json, text/event-stream",
             "content-type": "application/json",
             "mcp-protocol-version": T3_MCP_PROTOCOL_VERSION,
@@ -296,6 +296,7 @@ export class T3McpClient {
         }
         const receivedSession = response.headers.get("mcp-session-id");
         if (receivedSession) {
+          // biome-ignore lint/suspicious/noControlCharactersInRegex: Reject control bytes in the HTTP session header.
           if (receivedSession.length > 1024 || /[\u0000-\u001f\u007f]/.test(receivedSession)) {
             await response.body?.cancel().catch(() => undefined);
             throw new Error("T3 MCP returned an invalid session ID");
@@ -401,7 +402,7 @@ export class T3McpClient {
         throw new Error("T3 MCP tool returned an invalid result");
       if (toolResult.content !== undefined && !Array.isArray(toolResult.content))
         throw new Error("T3 MCP tool returned an invalid result");
-      if (toolResult.isError) throw new Error("T3 " + name + " failed");
+      if (toolResult.isError) throw new Error(`T3 ${name} failed`);
       return toolResult;
     });
   }
@@ -436,7 +437,7 @@ export class T3McpClient {
               redirect: "error",
               signal,
               headers: {
-                authorization: "Bearer " + this.token,
+                authorization: `Bearer ${this.token}`,
                 "mcp-session-id": sessionId,
                 "mcp-protocol-version": T3_MCP_PROTOCOL_VERSION,
               },
@@ -449,7 +450,7 @@ export class T3McpClient {
         }
         if (!response) throw new Error("T3 MCP close failed");
         await response.body?.cancel().catch(() => undefined);
-        if (!response.ok && response.status !== 404) throw new Error("T3 MCP close HTTP " + response.status);
+        if (!response.ok && response.status !== 404) throw new Error(`T3 MCP close HTTP ${response.status}`);
       });
     })();
     return this.#closePromise;

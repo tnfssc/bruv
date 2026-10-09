@@ -25,7 +25,7 @@ function captureResumeHandlers() {
   let beforeSwitch!: (
     event: Pick<SessionBeforeSwitchEvent, "reason" | "targetSessionFile">,
     context: ConfirmationContext,
-  ) => Promise<SessionBeforeSwitchResult | void>;
+  ) => Promise<SessionBeforeSwitchResult | undefined>;
   let shutdown!: () => void;
   registerResumeSafeguards({
     on(event: string, handler: unknown) {
@@ -63,7 +63,7 @@ test("durable agent metadata drives picker labels and deliberate child confirmat
         mode: "tui",
         ui: {
           confirm: async (title: string, message: string) => {
-            prompt = title + "\n" + message;
+            prompt = `${title}\n${message}`;
             return false;
           },
         },
@@ -156,7 +156,7 @@ test("picker adapter decorates only the active bruv directory and non-TUI resume
 });
 
 test("unreadable session metadata remains unknown rather than labeled root", async () => {
-  expect((await readSessionRole(join(tmpdir(), "missing-bruv-session-" + Date.now()))).kind).toBe("unknown");
+  expect((await readSessionRole(join(tmpdir(), `missing-bruv-session-${Date.now()}`))).kind).toBe("unknown");
 });
 
 test("picker adapters remain callable through foreign wrappers after shutdown and reinstall", async () => {
@@ -216,14 +216,14 @@ test("malformed roles stay unknown and task IDs are safe and bounded", async () 
       safe = join(dir, "safe.jsonl");
     await writeFile(
       unknown,
-      JSON.stringify({ type: "custom", customType: "bruv-agent", data: { type: "admin", taskId: "task_bad" } }) + "\n",
+      `${JSON.stringify({ type: "custom", customType: "bruv-agent", data: { type: "admin", taskId: "task_bad" } })}\n`,
     );
     await writeFile(
       missing,
-      JSON.stringify({ type: "custom", customType: "bruv-agent", data: { taskId: "task_bad" } }) + "\n",
+      `${JSON.stringify({ type: "custom", customType: "bruv-agent", data: { taskId: "task_bad" } })}\n`,
     );
     await writeFile(broken, '{"type":"custom","customType":"bruv-agent","data":');
-    const unsafeId = "task_ok\n\x1b]52;c;owned\x07" + "x".repeat(100);
+    const unsafeId = `task_ok\n\x1b]52;c;owned\x07${"x".repeat(100)}`;
     await writeFile(
       safe,
       JSON.stringify({ type: "custom", customType: "bruv-agent", data: { type: "orchestrator", taskId: unsafeId } }) +
@@ -241,7 +241,7 @@ test("malformed roles stay unknown and task IDs are safe and bounded", async () 
           mode: "tui",
           ui: {
             confirm: async (title: string, detail: string) => {
-              unknownPrompt = title + "\n" + detail;
+              unknownPrompt = `${title}\n${detail}`;
               return false;
             },
           },
@@ -253,6 +253,7 @@ test("malformed roles stay unknown and task IDs are safe and bounded", async () 
     const role = await readSessionRole(safe);
     expect(role.kind).toBe("orchestrator");
     expect(role.taskId?.length).toBeLessThanOrEqual(80);
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Match terminal control bytes.
     expect(role.taskId).not.toMatch(/[\s\x00-\x1f\x7f-\x9f]/);
     expect(role.taskId).not.toContain("owned");
     const handlers = captureResumeHandlers();
@@ -263,7 +264,7 @@ test("malformed roles stay unknown and task IDs are safe and bounded", async () 
         mode: "tui",
         ui: {
           confirm: async (title: string, detail: string) => {
-            prompt = title + "\n" + detail;
+            prompt = `${title}\n${detail}`;
             return false;
           },
         },

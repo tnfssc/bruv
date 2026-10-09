@@ -8,7 +8,7 @@ export const stopTitle = "Actual local Stop-owned normal worker";
 export const title = "Actual local normal acceptance worker";
 const text = (m) => (typeof m?.content === "string" ? m.content : JSON.stringify(m?.content ?? ""));
 export function reply(body, { state }) {
-  if (body.model !== modelId) throw Error("Wrong model identity: " + body.model);
+  if (body.model !== modelId) throw Error(`Wrong model identity: ${body.model}`);
   const messages = body.messages ?? [],
     last = messages.findLastIndex((m) => m.role === "user");
   const user = text(messages[last]),
@@ -23,7 +23,7 @@ export function reply(body, { state }) {
     tool_calls: [
       {
         index: 0,
-        id: "actual_subagent_" + body.__sequence,
+        id: `actual_subagent_${body.__sequence}`,
         type: "function",
         function: { name: "execute", arguments: JSON.stringify({ label: "Actual local subagent acceptance", code }) },
       },
@@ -33,7 +33,7 @@ export function reply(body, { state }) {
   if (user.includes("asynchronous task completed.")) {
     if (user.includes("CHILD_ANSWER_REAL")) return answer("ROOT_COMPLETION_ONCE_REAL");
     if (/killed|cancelled/.test(user)) return answer("ROOT_KILLED_COMPLETION_REAL");
-    throw Error("Unexpected real completion: " + user.slice(0, 200));
+    throw Error(`Unexpected real completion: ${user.slice(0, 200)}`);
   }
   if (/CHILD_(?:LOCAL|CANCEL|STOP)_REAL/.test(user)) {
     const scenario = user.includes("CHILD_CANCEL_REAL")
@@ -42,14 +42,14 @@ export function reply(body, { state }) {
         ? "stop"
         : "child";
     if (results.includes("CHILD_TOOL_RESULT_REAL")) return answer("CHILD_ANSWER_REAL");
-    if (results) throw Error("Child tool failed: " + results.slice(0, 300));
+    if (results) throw Error(`Child tool failed: ${results.slice(0, 300)}`);
     return execute(`
       const fs = await import("node:fs/promises");
-      await fs.writeFile(${JSON.stringify(path.join(state, scenario + ".ready"))}, String(process.pid));
+      await fs.writeFile(${JSON.stringify(path.join(state, `${scenario}.ready`))}, String(process.pid));
       const until = Date.now() + 30000;
       while (true) {
         try {
-          await fs.access(${JSON.stringify(path.join(state, scenario + ".release"))});
+          await fs.access(${JSON.stringify(path.join(state, `${scenario}.release`))});
           break;
         } catch {}
         if (Date.now() > until) throw Error("Child release timeout");
@@ -80,11 +80,11 @@ export function reply(body, { state }) {
       });
       if (!r.background) throw Error("Not backgrounded");
       const task = await jobs.inspect(r.id);
-      await fs.writeFile(${JSON.stringify(path.join(state, scenario + ".worker.pid"))}, String(task.pid));
+      await fs.writeFile(${JSON.stringify(path.join(state, `${scenario}.worker.pid`))}, String(task.pid));
       const until = Date.now() + 30000;
       while (true) {
         try {
-          await fs.access(${JSON.stringify(path.join(state, scenario + ".ready"))});
+          await fs.access(${JSON.stringify(path.join(state, `${scenario}.ready`))});
           break;
         } catch {}
         if (Date.now() > until) throw Error("Worker did not execute");
@@ -114,7 +114,7 @@ export function reply(body, { state }) {
   if (user.includes("ACCEPT_LOCAL_SUBAGENT")) {
     if (results) {
       if (!results.includes('"background":true') || !results.includes("task_"))
-        throw Error("Not an actual background launch: " + results);
+        throw Error(`Not an actual background launch: ${results}`);
       return answer("ROOT_BACKGROUND_RETURN_REAL");
     }
     return execute(`
@@ -130,7 +130,7 @@ export function reply(body, { state }) {
   if (user.includes("ACCEPT_LOCAL_AFTER_CHILD")) return answer("ROOT_AFTER_CHILD_REAL");
   if (user.includes("ACCEPT_LOCAL_FOLLOWUP")) return answer("ROOT_FOLLOWUP_REAL");
   if (!body.tools?.length) return answer("Local normal worker acceptance");
-  throw Error("Unknown local-subagent request: " + user.slice(0, 200));
+  throw Error(`Unknown local-subagent request: ${user.slice(0, 200)}`);
 }
 export async function startModel(options) {
   const records = [];
@@ -149,7 +149,7 @@ export async function startModel(options) {
       const delta = reply(body, options);
       records.push({ sequence, model: body.model, messages: body.messages, delta });
       const chunk = (d, finish) => ({
-        id: "actual-local-" + sequence,
+        id: `actual-local-${sequence}`,
         object: "chat.completion.chunk",
         created: 1,
         model: modelId,
@@ -158,9 +158,9 @@ export async function startModel(options) {
       });
       res.writeHead(200, { "content-type": "text/event-stream" });
       res.end(
-        [chunk(delta, null), chunk({}, delta.tool_calls ? "tool_calls" : "stop")]
-          .map((v) => "data: " + JSON.stringify(v) + "\n\n")
-          .join("") + "data: [DONE]\n\n",
+        `${[chunk(delta, null), chunk({}, delta.tool_calls ? "tool_calls" : "stop")]
+          .map((v) => `data: ${JSON.stringify(v)}\n\n`)
+          .join("")}data: [DONE]\n\n`,
       );
     } catch (e) {
       records.push({ sequence, error: e.message });

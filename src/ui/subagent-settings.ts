@@ -55,21 +55,21 @@ export class SubagentSettingsPanel implements Component, Focusable {
     private parentThinking?: string,
   ) {
     this.draft = structuredClone(profiles);
-    this.models = [...new Map(models.map((model) => [model.provider + "/" + model.id, model])).values()].sort((a, b) =>
-      (a.provider + "/" + a.id).localeCompare(b.provider + "/" + b.id),
+    this.models = [...new Map(models.map((model) => [`${model.provider}/${model.id}`, model])).values()].sort((a, b) =>
+      `${a.provider}/${a.id}`.localeCompare(`${b.provider}/${b.id}`),
     );
     this.showProfiles(0);
   }
   private profileItems(): SelectItem[] {
     return SUBAGENT_TYPES.flatMap((type) => [
       {
-        value: type + ":model",
-        label: type + " model",
+        value: `${type}:model`,
+        label: `${type} model`,
         description: this.draft[type].model ?? "Inherit from parent",
       },
       {
-        value: type + ":thinking",
-        label: type + " thinking",
+        value: `${type}:thinking`,
+        label: `${type} thinking`,
         description: this.draft[type].thinking ?? "Inherit from parent",
       },
     ]).concat([
@@ -90,9 +90,9 @@ export class SubagentSettingsPanel implements Component, Focusable {
   private modelItems(type: SubagentType): SelectItem[] {
     const current = this.draft[type].model;
     const models: SelectItem[] = this.models.map((model) => ({
-      value: model.provider + "/" + model.id,
+      value: `${model.provider}/${model.id}`,
       label: model.id,
-      description: model.provider + (model.name && model.name !== model.id ? " · " + model.name : ""),
+      description: model.provider + (model.name && model.name !== model.id ? ` · ${model.name}` : ""),
     }));
     if (current && !models.some((model) => model.value === current))
       models.unshift({
@@ -106,7 +106,7 @@ export class SubagentSettingsPanel implements Component, Focusable {
     ];
     // Provider-first search avoids matching a model suffix against a later provider name.
     const query = this.input.getValue();
-    const items = fuzzyFilter(all, query, (item) => item.value + " " + item.description + " " + item.label);
+    const items = fuzzyFilter(all, query, (item) => `${item.value} ${item.description} ${item.label}`);
     const exact = query.trim().toLowerCase().replace(/\s+/g, "/");
     items.sort(
       (a, b) =>
@@ -197,7 +197,7 @@ export class SubagentSettingsPanel implements Component, Focusable {
   }
   render(width: number): string[] {
     if (width < 1) return [];
-    const title = this.screen.kind === "profiles" ? "Sub-agent profiles" : this.screen.type + " · " + this.screen.kind;
+    const title = this.screen.kind === "profiles" ? "Sub-agent profiles" : `${this.screen.type} · ${this.screen.kind}`;
     const selected = this.items[this.selected];
     const help =
       this.screen.kind === "profiles"

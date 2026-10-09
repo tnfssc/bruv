@@ -48,17 +48,18 @@ class GoalReminders {
 
   issue(goal: GoalState): string {
     const id = String(++this.#sequence);
-    if (this.#pending.size >= 16) this.#pending.delete(this.#pending.values().next().value!);
+    const oldest = this.#pending.values().next().value;
+    if (this.#pending.size >= 16 && oldest !== undefined) this.#pending.delete(oldest);
     this.#pending.add(id);
-    return continuation(goal) + `\n\n<!-- bruv-goal-reminder:${this.#epoch}:${this.#generation}:${id} -->`;
+    return `${continuation(goal)}\n\n<!-- bruv-goal-reminder:${this.#epoch}:${this.#generation}:${id} -->`;
   }
 
   consume(text: string, goal: GoalState | undefined, hasBlockingQuestions: () => boolean) {
     const match = /<!-- bruv-goal-reminder:([^:>]+):(\d+):(\d+) -->/.exec(text);
     if (!match) return;
-    const id = match[3]!;
+    const id = match[3];
     const accepted = match[1] === this.#epoch && Number(match[2]) === this.#generation && this.#pending.has(id);
-    if (!accepted) return { action: "handled" as const };
+    if (!accepted || !goal) return { action: "handled" as const };
     // A foreground question can appear after the reminder was issued.
     if (hasBlockingQuestions()) {
       this.#pending.delete(id);
@@ -66,7 +67,7 @@ class GoalReminders {
     }
     // A copied trailer must neither transform unrelated content nor consume
     // the legitimate pending reminder.
-    const plain = continuation(goal!);
+    const plain = continuation(goal);
     if (text !== `${plain}\n\n${match[0]}`) return { action: "handled" as const };
     this.#pending.delete(id);
     return { action: "transform" as const, text: plain };
@@ -158,10 +159,12 @@ export function registerGoalMode(
         controller.reset();
       }
     }
-    return store!;
+    if (!store) throw new Error("Goal state is not initialized");
+    return store;
   };
   const requireStore = () => {
     if (context) return ensureStore(context);
+    if (!store) throw new Error("Goal state is not initialized");
     if (!store) throw new Error("Goal state is not initialized");
     return store;
   };
@@ -175,7 +178,7 @@ export function registerGoalMode(
   const pause = (reason: string) => {
     const current = store?.get();
     if (current?.status === "active" || current?.status === "waiting") {
-      store!.update({ status: "paused", reason });
+      requireStore().update({ status: "paused", reason });
       resetContinuation();
     }
   };
@@ -188,15 +191,17 @@ export function registerGoalMode(
     const goal = store?.get();
     if (goal?.status !== "waiting" || !jobsDirty) return;
     jobsDirty = false;
-    const statuses = goal.pendingJobIds!.map((id) => jobs.status(id));
+    const pendingJobIds = goal.pendingJobIds;
+    if (!pendingJobIds) throw new Error("Waiting goal is missing its job IDs");
+    const statuses = pendingJobIds.map((id) => jobs.status(id));
     if (statuses.some((status) => status === "unavailable")) {
-      const references = goal.pendingJobIds!.filter((id) => /^task_[A-Za-z0-9]{1,64}$/.test(id));
+      const references = pendingJobIds.filter((id) => /^task_[A-Za-z0-9]{1,64}$/.test(id));
       pause(
         "Paused because waiting work is unavailable in this process" +
-          (references.length ? ". Job references: " + references.join(", ") : ""),
+          (references.length ? `. Job references: ${references.join(", ")}` : ""),
       );
     } else if (statuses.some((status) => status === "finished")) {
-      store!.update({ status: "active" });
+      requireStore().update({ status: "active" });
       reminders.invalidate();
     }
   };
@@ -207,7 +212,7 @@ export function registerGoalMode(
       context = ctx;
       const activeStore = ensureStore(ctx);
       const parts = args.trim() ? args.trim().split(/\s+/) : ["status"];
-      const command = parts[0]!;
+      const command = parts[0];
       const value = parts.slice(1).join(" ");
       try {
         if (command === "set") activeStore.set(parseSet(value));
@@ -284,7 +289,7 @@ export function registerGoalMode(
     if (current?.status !== "active") return;
     const pendingJobIds = [...jobs.runningIds()];
     if (pendingJobIds.length === 0) return;
-    store!.update({ status: "waiting", pendingJobIds }, new Set(pendingJobIds));
+    requireStore().update({ status: "waiting", pendingJobIds }, new Set(pendingJobIds));
     reminders.invalidate();
   });
 
@@ -295,7 +300,7 @@ export function registerGoalMode(
       return;
     }
     if (controller.endRun(store?.get()) === "pause") {
-      store!.update({
+      requireStore().update({
         status: "paused",
         reason: "Paused after repeated automatic turns made no meaningful progress",
       });
@@ -325,7 +330,7 @@ export function registerGoalMode(
     }
 
     if (!hasBlockingQuestions() && controller.settle(goal) === "continue") {
-      sendContinuation(store!.get()!);
+      sendContinuation(goal);
     }
   });
 

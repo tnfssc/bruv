@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /** Paid text-input probe. --source reads an explicitly selected private JSONL; generated code is never run.
  * BRUV_CAPABILITY_PROBE=1 bun scripts/live/probe-controlled.ts --synthetic --disclose-private en:fresh:baseline
  * Historical snapshots require --source FILE --study-2026-09-25 --disclose-private. Keep output private.
@@ -24,17 +25,17 @@ function parseCondition(spec: string) {
     lang in original !== (context === "snapshot") ||
     (input.synthetic && context === "snapshot")
   )
-    throw Error("Invalid condition: " + spec);
+    throw Error(`Invalid condition: ${spec}`);
   return { spec, lang, context, variant, request };
 }
 const conditions = input.trials.map(parseCondition);
-const allowed = input.synthetic ? [] : readStudy(input.source!);
+const allowed = input.synthetic ? [] : readStudy(requireValue(input.source));
 if (!input.synthetic) for (const idx of Object.values(original)) studyTarget(allowed, idx);
 const frame = allowed.find((x) => x.message?.role === "system")?.message?.sections;
 if (!input.synthetic && (!frame?.preamble || !frame?.cwd)) throw Error("Missing original root");
 const root = input.synthetic
   ? (await createPromptPreview({ rootMode: "orchestrator", message: "Synthetic Live capability probe" })).systemPrompt
-  : frame.preamble + "\n\n" + frame.cwd;
+  : `${requireValue(frame).preamble}\n\n${requireValue(frame).cwd}`;
 const preview = await createPromptPreview({
   rootMode: "orchestrator",
   message: "Synthetic probe for tool schema only",
@@ -61,7 +62,7 @@ const plain: Record<string, string> = {
   translit:
     "Naa Desktop recording /tmp/live-probe-recording.wav lo background noise undi. Daani tagginchi /tmp/live-probe-clean.wav lo save cheyi. Idi naa file.",
 };
-function content(x: any) {
+function content(x: import("./probe-input").StudyContent | undefined) {
   return typeof x === "string" ? x : Array.isArray(x) ? x.map((y) => y.text ?? "").join("") : "";
 }
 function snapshot(index: number) {
@@ -96,12 +97,12 @@ const trials = conditions.map(({ spec, lang, context, variant, request }) => {
     (variant === "baseline" ? "" : guidance + (variant === "example" ? example : variant === "globals" ? globals : ""));
   const targetText =
     lang in original
-      ? content(allowed[original[lang]].message.content)
+      ? content(studyTarget(allowed, original[lang]).message.content)
       : request === "plain"
         ? plain[lang]
         : target[lang];
   const snapshotText = context === "snapshot" ? snapshot(original[lang]) : null;
-  if (context === "snapshot" && !targetText) throw Error("Empty target transcript: " + lang);
+  if (context === "snapshot" && !targetText) throw Error(`Empty target transcript: ${lang}`);
 
   const messages = context === "prior" ? [...prior] : [];
   if (snapshotText !== null) messages.push({ role: "user", text: snapshotText });

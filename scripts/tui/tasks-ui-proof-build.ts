@@ -41,5 +41,5 @@ const record = {
   bunVersion: Bun.version,
   builtAt: new Date().toISOString(),
 };
-await Bun.write(outfile + ".build.json", JSON.stringify(record, null, 2) + "\n");
+await Bun.write(`${outfile}.build.json`, `${JSON.stringify(record, null, 2)}\n`);
 console.log(JSON.stringify(record, null, 2));

@@ -8,7 +8,7 @@ import { attachTerminalProfiler, type TerminalProfiler } from "./profiler";
 /** One child process per case/repetition. Permanent journal installers never share a parent. */
 import { interactionCatalog } from "./interaction-catalog";
 export async function measureInteractionCase(id: string, width: number, height: number) {
-  if (!interactionCatalog.includes(id)) throw new Error("Unknown case " + id);
+  if (!interactionCatalog.includes(id)) throw new Error(`Unknown case ${id}`);
   if (id.startsWith("send/")) {
     const name = id.slice(5);
     let action: TerminalActionProfiler | undefined, frames: TerminalProfiler | undefined;
@@ -49,7 +49,7 @@ export async function measureInteractionCase(id: string, width: number, height: 
       ? { shape: "normal", outcome: eventCase as "error" | "warning" }
       : { shape: eventCase as ToolEventOptions["shape"] };
     if (!["normal", "ascii", "ansi", "unicode", "newline", "structured", "error", "warning"].includes(eventCase))
-      throw new Error("Unknown tool-event case: " + id);
+      throw new Error(`Unknown tool-event case: ${id}`);
     const fixture = createToolEventWorkload(options);
     try {
       await fixture.setup();
@@ -59,8 +59,8 @@ export async function measureInteractionCase(id: string, width: number, height: 
     }
   }
   if (id.startsWith("tools/")) {
-    const shape = toolShapes.find((s) => id === "tools/" + s);
-    if (!shape) throw new Error("Catalog/fixture tool shape mismatch: " + id);
+    const shape = toolShapes.find((s) => id === `tools/${s}`);
+    if (!shape) throw new Error(`Catalog/fixture tool shape mismatch: ${id}`);
     const fixture = createToolWorkload({ shape, historySize: 8, columns: width, rows: height });
     try {
       return { id, options: fixture.options, samples: [fixture.setup(), ...toolStages.map((s) => fixture.action(s))] };
@@ -70,8 +70,8 @@ export async function measureInteractionCase(id: string, width: number, height: 
   }
   if (id === "navigation/lifecycle")
     return { id, evidence: await runOfflineNavigationSdkProbe(4, { interactive: true }) };
-  const mode = navigationModes.find((m) => id === "navigation/" + m);
-  if (!mode) throw new Error("Catalog/fixture navigation mode mismatch: " + id);
+  const mode = navigationModes.find((m) => id === `navigation/${m}`);
+  if (!mode) throw new Error(`Catalog/fixture navigation mode mismatch: ${id}`);
   const fixture = createNavigationWorkloads({
     modes: [mode],
     sizes: [4],

@@ -15,17 +15,18 @@ const COMMAND_CHARS = 300;
 const RENDER_INTERVAL_MS = 100;
 
 function displayId(id: string): string {
-  return id.startsWith("ssh:") && id.length > 28 ? "ssh:…" + id.slice(-12) : id;
+  return id.startsWith("ssh:") && id.length > 28 ? `ssh:…${id.slice(-12)}` : id;
 }
 
 function age(ms: number): string {
   const seconds = Math.max(0, Math.floor(ms / 1000));
-  if (seconds < 60) return seconds + "s";
+  if (seconds < 60) return `${seconds}s`;
   const minutes = Math.floor(seconds / 60);
-  return minutes < 60 ? minutes + "m " + (seconds % 60) + "s" : Math.floor(minutes / 60) + "h " + (minutes % 60) + "m";
+  return minutes < 60 ? `${minutes}m ${seconds % 60}s` : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
 }
 function cleanTerminalText(value: string, preserveNewlines = false): string {
   const stripped = stripTerminalSequences(value);
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Remove terminal control bytes while optionally keeping newlines.
   const controls = preserveNewlines ? /[\x00-\x09\x0b-\x1f\x7f-\x9f]/g : /[\x00-\x1f\x7f-\x9f]/g;
   return stripped.replace(controls, "�");
 }
@@ -123,7 +124,7 @@ export class TaskMonitorPanel implements Component, Focusable {
     if (!this.confirming) return undefined;
     return this.theme.fg(
       "error",
-      "Stop " + displayId(this.confirming.id) + " (" + this.confirming.identity + ")? Enter/y confirm · Esc/n cancel",
+      `Stop ${displayId(this.confirming.id)} (${this.confirming.identity})? Enter/y confirm · Esc/n cancel`,
     );
   }
   private move(delta: number) {
@@ -135,7 +136,7 @@ export class TaskMonitorPanel implements Component, Focusable {
       return;
     }
     this.selected = (this.selected + delta + tasks.length) % tasks.length;
-    this.selectedId = tasks[this.selected]!.id;
+    this.selectedId = tasks[this.selected].id;
     this.confirming = undefined;
   }
   handleInput(data: string) {
@@ -241,18 +242,18 @@ export class TaskMonitorPanel implements Component, Focusable {
     const metadataRows = 9 + (task.agent?.lastActivityAt ? 1 : 0);
     const outputRows = Math.max(1, Math.min(OUTPUT_LINES, height - metadataRows));
 
-    const identity = this.theme.bold(this.theme.fg("accent", "Inspect " + displayId(task.id)));
+    const identity = this.theme.bold(this.theme.fg("accent", `Inspect ${displayId(task.id)}`));
     lines.push(
       identity,
       this.theme.fg(
         "dim",
         cleanCommand(
           [
-            task.agent ? "agent " + task.agent.type : task.kind,
+            task.agent ? `agent ${task.agent.type}` : task.kind,
             task.ssh
-              ? "owner " + task.ssh.ownerId + " · epoch " + task.ssh.epoch
+              ? `owner ${task.ssh.ownerId} · epoch ${task.ssh.epoch}`
               : task.pid
-                ? "pid " + task.pid
+                ? `pid ${task.pid}`
                 : "pid unavailable",
             task.cwd,
           ].join(" · "),
@@ -261,8 +262,8 @@ export class TaskMonitorPanel implements Component, Focusable {
       this.theme.fg(
         "muted",
         task.ssh
-          ? "SSH cached output · first " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines"
-          : "Bounded output · last " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines",
+          ? `SSH cached output · first ${INSPECT_BYTES} bytes / ${outputRows} visible lines`
+          : `Bounded output · last ${INSPECT_BYTES} bytes / ${outputRows} visible lines`,
       ),
     );
     lines.push(...this.renderObservation(task, INSPECT_BYTES, outputRows));
@@ -282,14 +283,14 @@ export class TaskMonitorPanel implements Component, Focusable {
       const listed = tasks[i],
         selected = i === this.selected;
       if (!listed) continue;
-      const role = listed.ssh ? "ssh " + listed.status + " stale" : listed.agent ? listed.agent.type : listed.kind;
+      const role = listed.ssh ? `ssh ${listed.status} stale` : listed.agent ? listed.agent.type : listed.kind;
       const label =
         (selected ? "› " : "  ") +
         this.theme.fg(selected ? "accent" : "muted", displayId(listed.id)) +
         " " +
         this.theme.fg(
           listed.agent?.type === "orchestrator" ? "warning" : listed.agent ? "accent" : "dim",
-          "[" + role + "]",
+          `[${role}]`,
         ) +
         " " +
         cleanCommand(listed.command) +
@@ -304,8 +305,8 @@ export class TaskMonitorPanel implements Component, Focusable {
       this.theme.fg(
         "muted",
         task.ssh
-          ? "SSH cached output · first " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines"
-          : "Live preview · last " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines",
+          ? `SSH cached output · first ${OUTPUT_BYTES} bytes / ${OUTPUT_LINES} lines`
+          : `Live preview · last ${OUTPUT_BYTES} bytes / ${OUTPUT_LINES} lines`,
       ),
     );
     lines.push(...this.renderObservation(task, OUTPUT_BYTES, previewRows));
@@ -318,7 +319,7 @@ export class TaskMonitorPanel implements Component, Focusable {
     if (task.outputEnd === 0) lines.push(this.theme.fg("dim", "No output available yet."));
     else if (!outputLines.some((line) => line.trim()))
       lines.push(this.theme.fg("dim", "Output received, but it is whitespace only."));
-    else lines.push(...outputLines.map((line) => "  " + line));
+    else lines.push(...outputLines.map((line) => `  ${line}`));
     if (task.agent?.lastActivityAt) {
       const quiet = Date.now() - Date.parse(task.agent.lastActivityAt);
       lines.push(
@@ -328,7 +329,7 @@ export class TaskMonitorPanel implements Component, Focusable {
             age(quiet) +
             " · " +
             (task.agent.phase ?? "running") +
-            (task.agent.events !== undefined ? " · " + task.agent.events + " events" : ""),
+            (task.agent.events !== undefined ? ` · ${task.agent.events} events` : ""),
         ),
       );
     }
@@ -341,8 +342,8 @@ export class TaskMonitorPanel implements Component, Focusable {
               task.status +
               " · stale observation " +
               (task.ssh.observedAt ?? "unavailable") +
-              (task.ssh.remoteState ? " · remote " + task.ssh.remoteState : "") +
-              (task.ssh.cancelRequested ? " · cancellation " + (task.ssh.cancelDelivery ?? "pending") : ""),
+              (task.ssh.remoteState ? ` · remote ${task.ssh.remoteState}` : "") +
+              (task.ssh.cancelRequested ? ` · cancellation ${task.ssh.cancelDelivery ?? "pending"}` : ""),
           ),
         ),
       );

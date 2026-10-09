@@ -104,7 +104,7 @@ export function createClaudeCompatHumanControls(options: HumanControlOptions) {
       if (question.readOnly) throw new Error("Question belongs to another branch; history only");
       if (question.status !== "pending") return question;
       if (!enabled) return question; // Ledger/CLI commands still work without a native dialog.
-      const toolUseId = "bruv-question:" + question.id + ":" + question.version;
+      const toolUseId = `bruv-question:${question.id}:${question.version}`;
       // Official T3 live SDK questions have no dismiss control. Offer a truthful
       // human defer action; this native selection is never saved as an answer.
       let deferLabel = "Keep pending (do not answer)";

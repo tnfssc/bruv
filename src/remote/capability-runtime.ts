@@ -44,7 +44,7 @@ const read = async <T>(path: string): Promise<T | undefined> => {
 async function durable(path: string, value: unknown): Promise<void> {
   const dir = dirname(path);
   await mkdir(dir, { recursive: true, mode: 0o700 });
-  const temp = path + "." + randomUUID();
+  const temp = `${path}.${randomUUID()}`;
   const fd = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL, 0o600);
   try {
     await fd.writeFile(JSON.stringify(value));
@@ -126,23 +126,23 @@ export class OwnerCapabilityMailbox {
   }
   private grantPath(grantId: string) {
     if (!id(grantId)) throw new Error("Invalid grant id");
-    return join(this.dir(), "grants", grantId + ".json");
+    return join(this.dir(), "grants", `${grantId}.json`);
   }
   private requestPath(requestId: string) {
     if (!id(requestId)) throw new Error("Invalid request id");
-    return join(this.dir(), "requests", requestId + ".json");
+    return join(this.dir(), "requests", `${requestId}.json`);
   }
   private replyPath(requestId: string) {
-    return join(this.dir(), "replies", requestId + ".json");
+    return join(this.dir(), "replies", `${requestId}.json`);
   }
   private cancelledPath(requestId: string) {
-    return join(this.dir(), "cancelled", requestId + ".json");
+    return join(this.dir(), "cancelled", `${requestId}.json`);
   }
   private terminalPath() {
     return join(this.dir(), "terminal.json");
   }
   private revokedPath(grantId: string) {
-    return join(this.dir(), "revoked", grantId + ".json");
+    return join(this.dir(), "revoked", `${grantId}.json`);
   }
   async acceptGrant(grant: GrantMetadata): Promise<void> {
     if (grant.taskId !== this.taskId || !id(grant.id)) throw new Error("Grant task mismatch");
@@ -152,7 +152,7 @@ export class OwnerCapabilityMailbox {
       if (error.code === "ENOENT") return [] as string[];
       throw error;
     });
-    if (grants.length >= 64 && !grants.includes(grant.id + ".json")) throw Error("Capability grant limit reached");
+    if (grants.length >= 64 && !grants.includes(`${grant.id}.json`)) throw Error("Capability grant limit reached");
     const value = { id: grant.id, taskId: this.taskId, kinds: [...grant.kinds] };
     await persistIntent(this.grantPath(grant.id), value);
   }
@@ -274,7 +274,8 @@ export class OwnerCapabilityMailbox {
         if (reply.taskId !== request.taskId || reply.grantId !== request.grantId)
           throw new Error("Reply fence mismatch");
         if (reply.error !== undefined) throw new Error(reply.error);
-        return reply.value!;
+        if (reply.value === undefined) throw new Error("Capability reply has no value");
+        return reply.value;
       }
       if (Date.now() >= deadline) {
         await this.cancelRequest(request.id);
@@ -383,12 +384,12 @@ export class ClientCapabilityStore {
     const root = await realpath(localRoot);
     if (!(await stat(root)).isDirectory()) throw new Error("Invalid local repo root");
     const record: Grant = { id: grantId, taskId, repoRoot: root, kinds: [...kinds] };
-    await persistIntent(join(this.dir, grantId + ".json"), record);
+    await persistIntent(join(this.dir, `${grantId}.json`), record);
     return { id: grantId, taskId, kinds: [...kinds] };
   }
   async revoke(grantId: string): Promise<void> {
     if (!id(grantId)) throw new Error("Invalid grant id");
-    await persistMarker(join(this.dir, grantId + ".revoked"), true);
+    await persistMarker(join(this.dir, `${grantId}.revoked`), true);
   }
   async serve(request: Request, signal?: AbortSignal): Promise<Reply> {
     if (
@@ -400,13 +401,13 @@ export class ClientCapabilityStore {
       size(request.input) > 4096
     )
       throw new Error("Invalid capability request");
-    const grant = await read<Grant>(join(this.dir, request.grantId + ".json"));
+    const grant = await read<Grant>(join(this.dir, `${request.grantId}.json`));
     if (
       !grant ||
       grant.id !== request.grantId ||
       grant.taskId !== request.taskId ||
       !grant.kinds.includes(request.kind) ||
-      (await read(join(this.dir, request.grantId + ".revoked")))
+      (await read(join(this.dir, `${request.grantId}.revoked`)))
     )
       throw new Error("No explicit local task grant");
     try {
@@ -415,10 +416,7 @@ export class ClientCapabilityStore {
       if (request.kind === "repo.read") value = await readGrantedRepoFile(grant.repoRoot, safePath(request.input));
       else if (request.kind.startsWith("skill:")) {
         if (request.input !== "") throw new Error("Skill input must be empty");
-        value = await readGrantedRepoFile(
-          grant.repoRoot,
-          safePath(".agents/skills/" + request.kind.slice(6) + "/SKILL.md"),
-        );
+        value = await readGrantedRepoFile(grant.repoRoot, safePath(`.agents/skills/${request.kind.slice(6)}/SKILL.md`));
       } else if (request.kind === "tool:git-status") {
         if (request.input !== "") throw new Error("Status input must be empty");
         value = await git(
@@ -435,7 +433,7 @@ export class ClientCapabilityStore {
         value = await git(grant.repoRoot, ["diff", "--no-ext-diff", "--no-textconv", "--", path], signal);
       }
       if (signal?.aborted) throw new Error("Cancelled");
-      if (await read(join(this.dir, request.grantId + ".revoked"))) throw new Error("Grant revoked");
+      if (await read(join(this.dir, `${request.grantId}.revoked`))) throw new Error("Grant revoked");
       if (size(value) > CAPABILITY_MAX_BYTES) throw new Error("Capability output exceeds limit");
       return { requestId: request.id, grantId: request.grantId, taskId: request.taskId, value };
     } catch (e) {

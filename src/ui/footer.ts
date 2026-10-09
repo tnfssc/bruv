@@ -105,7 +105,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
   if (metadata) {
     entryCount = metadata.length;
     while (entryCount > 0) {
-      const entry = metadata[entryCount - 1]!;
+      const entry = metadata[entryCount - 1];
       if (
         (entry.type === "message" && ["assistant", "toolResult"].includes(entry.messageRole ?? "")) ||
         entry.type === "compaction" ||
@@ -187,13 +187,13 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
     }
   }
   const value = { input, output, read, write, cost, cacheHit, hasFastCost, unknownVoiceCost };
-  if (cacheable) {
+  if (cacheable && sessionId !== undefined && leafId !== undefined) {
     // This is deliberately a single current-position entry, not a map by leaf. A
     // branch can revisit an old leaf after more entries were appended, so reusing an
     // older value for that leaf would miss the newer append-only history.
     footerHistoryCache.set(manager as object, {
-      sessionId: sessionId!,
-      leafId: leafId!,
+      sessionId: sessionId,
+      leafId: leafId,
       // Never keep an obsolete native in-memory entries array alive after reset.
       entries: new WeakRef(fileEntries),
       entryCount,
@@ -320,7 +320,7 @@ export function renderCompactFooter(
         ? questionCount[1] +
           " /questions" +
           questionState[short ? 1 : 0] +
-          (savedQuestions ? (short ? " " : " · ") + savedQuestions + " saved" : "")
+          (savedQuestions ? `${(short ? " " : " · ") + savedQuestions} saved` : "")
         : short
           ? "/questions unavailable"
           : questionStatus
@@ -347,8 +347,8 @@ export function renderCompactFooter(
   const history = readFooterHistory(ctx);
   // Pi supplies a token-price catalog estimate, not account usage.
   // Neither response tiers nor SDK pricing prove delivery or ChatGPT credits.
-  const knownCost = "$" + (history.cost + descendantCost).toFixed(3) + (hasFastEstimate(history, statuses) ? "~" : "");
-  const cost = history.unknownVoiceCost ? knownCost + "+?" : statuses.get("bruv-live") ? knownCost + "~" : knownCost;
+  const knownCost = `$${(history.cost + descendantCost).toFixed(3)}${hasFastEstimate(history, statuses) ? "~" : ""}`;
+  const cost = history.unknownVoiceCost ? `${knownCost}+?` : statuses.get("bruv-live") ? `${knownCost}~` : knownCost;
   const percent = ctx.getContextUsage()?.percent;
   const percentText = percent == null ? "?" : `${percent.toFixed(1).replace(/\.0$/, "")}%`;
   const context = (label: string) =>
@@ -375,7 +375,7 @@ export function renderCompactFooter(
       return [columns(theme.fg("dim", left), theme.fg("dim", right), width)];
     }
   }
-  const [parts, right, separator] = candidates[candidates.length - 1]!;
+  const [parts, right, separator] = candidates[candidates.length - 1];
   return [columns(theme.fg("dim", parts.filter(Boolean).join(separator)), theme.fg("dim", right), width)];
 }
 

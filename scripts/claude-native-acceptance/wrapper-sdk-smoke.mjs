@@ -69,9 +69,9 @@ const server = Bun.serve({
       choices: [{ index: 0, delta: d, finish_reason }],
     });
     return new Response(
-      [event(delta, null), event({}, delta.tool_calls ? "tool_calls" : "stop")]
-        .map((e) => "data: " + JSON.stringify(e) + "\n\n")
-        .join("") + "data: [DONE]\n\n",
+      `${[event(delta, null), event({}, delta.tool_calls ? "tool_calls" : "stop")]
+        .map((e) => `data: ${JSON.stringify(e)}\n\n`)
+        .join("")}data: [DONE]\n\n`,
       { headers: { "content-type": "text/event-stream" } },
     );
   },
@@ -82,7 +82,7 @@ const timeout = async (promise, label, ms = 15000) => {
     return await Promise.race([
       promise,
       new Promise((_, reject) => {
-        timer = setTimeout(() => reject(Error("Timed out: " + label)), ms);
+        timer = setTimeout(() => reject(Error(`Timed out: ${label}`)), ms);
       }),
     ]);
   } finally {
@@ -101,7 +101,7 @@ await writeFile(
   JSON.stringify({
     providers: {
       fixture: {
-        baseUrl: "http://127.0.0.1:" + server.port + "/v1",
+        baseUrl: `http://127.0.0.1:${server.port}/v1`,
         api: "openai-completions",
         apiKey: "local-fake-only",
         models: [{ id: "fixture-model", name: "Fixture", contextWindow: 32000, maxTokens: 1024 }],
@@ -152,7 +152,7 @@ function launch(prompt, spawnClaudeCodeProcess) {
       persistSession: false,
       stderr: (b) => (stderr += b),
       env: {
-        PATH: dirname(process.execPath) + ":/usr/bin:/bin",
+        PATH: `${dirname(process.execPath)}:/usr/bin:/bin`,
         HOME: home,
         SHELL: "/bin/bash",
         CLAUDE_CONFIG_DIR: join(root, "sdk-home"),

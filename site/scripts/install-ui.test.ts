@@ -1,3 +1,5 @@
+import type {} from "./browser-hooks";
+import { requireValue } from "../../scripts/lib/require-value";
 import { test, expect } from "bun:test";
 import { build } from "./build";
 import { launchBrowser } from "./browser";
@@ -23,7 +25,7 @@ async function observeTerminal(page: Page) {
 
   const terminalText = () =>
     page.evaluate(() => {
-      const t = (window as any).__terminal;
+      const t = window.__terminal;
       return Array.from({ length: t.rows }, (_, i) => t.buffer.active.getLine(i)?.translateToString()).join("\n");
     });
 
@@ -36,7 +38,7 @@ async function observeTerminal(page: Page) {
       installUrl: d.installUrl,
     });
     expect(f.hits.find((h) => h.action === INSTALL_SOURCE_URL)?.label).toContain("Script");
-    const hit = f.hits.find((h) => h.action === "copy-install")!;
+    const hit = requireValue(f.hits.find((h) => h.action === "copy-install"));
     expect(hit).toBeDefined();
     return {
       x: (hit.x + 2) * Number(d.cellWidth),
@@ -52,7 +54,7 @@ async function observeTerminal(page: Page) {
 test("README and both views use the one GitHub installer; BASE_URL is SEO only", async () => {
   const readme = await Bun.file(resolve(import.meta.dir, "../../README.md")).text();
   expect(readme.match(/```sh\n(curl[^\n]+)\n```/)?.[1]).toBe(INSTALL_COMMAND);
-  expect(INSTALL_COMMAND).toBe("curl -fsSL '" + INSTALL_URL + "' | sh");
+  expect(INSTALL_COMMAND).toBe(`curl -fsSL '${INSTALL_URL}' | sh`);
   // The concise README keeps the command; both site views also link its source.
   const script = Bun.file(resolve(import.meta.dir, "../../scripts/install.sh"));
   expect(await script.exists()).toBe(true);
@@ -63,7 +65,7 @@ test("README and both views use the one GitHub installer; BASE_URL is SEO only",
     for (const page of ["index.html", "text.html"]) {
       const html = await Bun.file(resolve(import.meta.dir, "../dist", page)).text();
       expect(html).toContain(INSTALL_COMMAND);
-      expect(html).toContain('href="' + INSTALL_SOURCE_URL + '"');
+      expect(html).toContain(`href="${INSTALL_SOURCE_URL}"`);
       expect(html).not.toContain("bruv-install-url");
       expect(html).not.toContain("sh install.sh");
       if (base) expect(html).toContain('rel="canonical"');

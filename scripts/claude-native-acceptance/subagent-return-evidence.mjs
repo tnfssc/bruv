@@ -165,14 +165,12 @@ async function readPersistenceEvidence(runtimeFiles) {
         }
         if (!/^orchestration_v2_projection_(threads|runs|nodes|provider_turns|subagents)$/.test(name)) continue;
         const cols = db
-          .prepare('PRAGMA table_info("' + name + '")')
+          .prepare(`PRAGMA table_info("${name}")`)
           .all()
           .map((c) => c.name);
         const selected = cols.filter((c) => /(^id$|_id$|status|phase|role|started_at|completed_at|updated_at)/.test(c));
         if (!selected.length) continue;
-        const rows = db
-          .prepare("SELECT " + selected.map((c) => '"' + c + '"').join(",") + ' FROM "' + name + '" LIMIT 100')
-          .all();
+        const rows = db.prepare(`SELECT ${selected.map((c) => `"${c}"`).join(",")} FROM "${name}" LIMIT 100`).all();
         persistence.push({ table: name, columns: cols, rows });
       }
     } finally {
@@ -189,7 +187,7 @@ export async function collectReturnEvidence(config, page, filename = "same-root-
   const ids = new Map();
   const id = (v) => {
     if (!v) return null;
-    if (!ids.has(v)) ids.set(v, "id-" + (ids.size + 1));
+    if (!ids.has(v)) ids.set(v, `id-${ids.size + 1}`);
     return ids.get(v);
   };
   const { lifecycle, correlation } = await readWireEvidence(config.wire, id);
@@ -209,5 +207,5 @@ export async function collectReturnEvidence(config, page, filename = "same-root-
     submitVisible: await page?.getByRole("button", { name: "Submit message", exact: true }).isVisible(),
     stopVisible: await page?.getByRole("button", { name: "Stop generation", exact: true }).isVisible(),
   };
-  await fs.writeFile(path.join(config.proof, filename), JSON.stringify(report, null, 2) + "\n");
+  await fs.writeFile(path.join(config.proof, filename), `${JSON.stringify(report, null, 2)}\n`);
 }

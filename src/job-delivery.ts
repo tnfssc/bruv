@@ -53,11 +53,11 @@ export function withJobCancellation(signal: AbortSignal, cancellation: AbortSign
   if (signal === cancellation) return signal;
   const controller = new AbortController();
   const abort = () => controller.abort();
-  const deliverySignal = getJobResponseDeliverySignal(signal)!;
+  const deliverySignal = getJobResponseDeliverySignal(signal);
   const cleanup = (): void => {
     signal.removeEventListener("abort", abort);
     cancellation.removeEventListener("abort", abort);
-    deliverySignal.removeEventListener(JOB_RESPONSE_ACK_EVENT, cleanup);
+    deliverySignal?.removeEventListener(JOB_RESPONSE_ACK_EVENT, cleanup);
   };
   signal.addEventListener("abort", abort, { once: true });
   cancellation.addEventListener("abort", abort, { once: true });
@@ -68,7 +68,7 @@ export function withJobCancellation(signal: AbortSignal, cancellation: AbortSign
   // A clean acknowledgement is also the end of this wrapper's lifetime. The
   // TaskManager listens to deliverySignal directly; it must not mistake local
   // wait cancellation (for example, handoff) for a bridge disconnect.
-  if (supportsJobResponseAcknowledgement(deliverySignal)) {
+  if (deliverySignal && supportsJobResponseAcknowledgement(deliverySignal)) {
     deliverySignal.addEventListener(JOB_RESPONSE_ACK_EVENT, cleanup, { once: true });
   }
   if (signal.aborted || cancellation.aborted) abort();

@@ -87,7 +87,7 @@ const voice = new GPTLiveSession(
     },
     onError: (e) => errors.push(e),
   },
-  (_url, headers) => new WebSocket("ws://127.0.0.1:" + server.port, { headers } as unknown as string[]),
+  (_url, headers) => new WebSocket(`ws://127.0.0.1:${server.port}`, { headers } as unknown as string[]),
 );
 try {
   playback.start();

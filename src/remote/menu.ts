@@ -13,6 +13,7 @@ export type RemoteQuestion = {
 type Item = { value: string; label: string; description?: string };
 export const remoteLabel = (text: string) =>
   text
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Remove terminal control bytes and bidi markers from menu labels.
     .replace(/[\x00-\x1f\x7f-\x9f\u202a-\u202e\u2066-\u2069]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -35,8 +36,8 @@ export function inboxItems(state: RemoteState): Item[] {
     ...pendingQuestions(state).map(({ task, q }) => {
       const answerAvailable = taskOwned(task, state) && !task.lastError;
       return {
-        value: (answerAvailable ? "question:" : "offline:question:") + task.taskId + ":" + q.id,
-        label: "Question: " + title(q.text ?? q.question ?? "Untitled question"),
+        value: `${(answerAvailable ? "question:" : "offline:question:") + task.taskId}:${q.id}`,
+        label: `Question: ${title(q.text ?? q.question ?? "Untitled question")}`,
         description:
           (answerAvailable ? "" : "Answer unavailable · sync pinned owner first · ") +
           title(task.prompt) +
@@ -48,7 +49,7 @@ export function inboxItems(state: RemoteState): Item[] {
       Object.entries(task.replyDelivery ?? {})
         .filter(([, delivery]) => delivery.status === "uncertain")
         .map(([id]) => ({
-          value: "task:" + task.taskId,
+          value: `task:${task.taskId}`,
           label:
             "Reply uncertain: " +
             title(
@@ -56,12 +57,12 @@ export function inboxItems(state: RemoteState): Item[] {
                 ((task.task?.questions ?? []) as RemoteQuestion[]).find((q) => q.id === id)?.question ??
                 id,
             ),
-          description: title(task.prompt) + " · saved reply retained; open task to reconcile",
+          description: `${title(task.prompt)} · saved reply retained; open task to reconcile`,
         })),
     ),
     ...Object.values(state.tasks).map((task) => ({
-      value: "task:" + task.taskId,
-      label: "Task: " + title(task.prompt || task.repoPath) + " [" + (task.task?.state ?? task.outcome) + "]",
+      value: `task:${task.taskId}`,
+      label: `Task: ${title(task.prompt || task.repoPath)} [${task.task?.state ?? task.outcome}]`,
       description: remoteLabel(
         (task.task?.state ?? task.outcome) +
           " · " +
@@ -69,7 +70,7 @@ export function inboxItems(state: RemoteState): Item[] {
           " · cached · " +
           task.taskId.slice(0, 12) +
           (task.cancelDelivery
-            ? " · cancellation " + task.cancelDelivery.status + " (terminal state is separate)"
+            ? ` · cancellation ${task.cancelDelivery.status} (terminal state is separate)`
             : task.cancelRequested
               ? " · cancellation requested locally"
               : "") +
@@ -77,7 +78,7 @@ export function inboxItems(state: RemoteState): Item[] {
           (Array.isArray(task.task?.capabilityNeeds) && task.task.capabilityNeeds.length
             ? " · capability request pending"
             : "") +
-          (task.lastError ? " · " + task.lastError : ""),
+          (task.lastError ? ` · ${task.lastError}` : ""),
       ),
     })),
     { value: "connect", label: "Connect…", description: "user@host or configured SSH alias" },
@@ -144,7 +145,7 @@ export function taskActions(task: RemoteTask, ownerConnected: boolean, hasLocalG
   for (const [id, delivery] of Object.entries(task.replyDelivery ?? {})) {
     if (delivery.status === "uncertain")
       items.push({
-        value: "reply:" + id,
+        value: `reply:${id}`,
         label: "Reconcile saved reply",
         description: "Same saved text and reply identity; never a new answer",
       });
@@ -186,17 +187,17 @@ export function remoteCompletions(prefix: string, state: RemoteState): Item[] | 
   const [, verb, typed] = match;
   if (verb === "answer") {
     const scoped = /^(\S+)\s+(\S*)$/.exec(typed);
-    if (scoped && state.tasks[scoped[1]!])
+    if (scoped && state.tasks[scoped[1]])
       return pendingQuestions(state)
         .filter(
           ({ task, q }) =>
             task.taskId === scoped[1] &&
-            (q.id.startsWith(scoped[2]!) ||
-              (q.text ?? q.question ?? "").toLowerCase().includes(scoped[2]!.toLowerCase())),
+            (q.id.startsWith(scoped[2]) ||
+              (q.text ?? q.question ?? "").toLowerCase().includes(scoped[2].toLowerCase())),
         )
         .map(({ task, q }) => ({
-          value: "answer " + task.taskId + " " + q.id + " ",
-          label: "Question: " + title(q.text ?? q.question ?? q.id),
+          value: `answer ${task.taskId} ${q.id} `,
+          label: `Question: ${title(q.text ?? q.question ?? q.id)}`,
           description: title(task.prompt),
         }));
   }
@@ -210,21 +211,21 @@ export function remoteCompletions(prefix: string, state: RemoteState): Item[] | 
           (q.text ?? q.question ?? "").toLowerCase().includes(typed.toLowerCase()),
       )
       .map(({ q, task }) => ({
-        value: "answer " + task.taskId + " " + q.id + " ",
-        label: "Question: " + title(q.text ?? q.question ?? q.id),
+        value: `answer ${task.taskId} ${q.id} `,
+        label: `Question: ${title(q.text ?? q.question ?? q.id)}`,
         description: title(task.prompt),
       }));
   if (verb === "grant" && ["repo.read", "tool:git-status", "tool:git-diff"].some((v) => v.startsWith(typed)))
     return ["repo.read", "tool:git-status", "tool:git-diff"]
       .filter((v) => v.startsWith(typed))
-      .map((v) => ({ value: "grant " + v, label: v }));
-  if (["sync", "cancel", "retry", "transcript", "grant", "revoke"].includes(verb!) && state.tasks[typed]) return null;
-  if (["sync", "cancel", "retry", "transcript", "grant", "revoke"].includes(verb!))
+      .map((v) => ({ value: `grant ${v}`, label: v }));
+  if (["sync", "cancel", "retry", "transcript", "grant", "revoke"].includes(verb) && state.tasks[typed]) return null;
+  if (["sync", "cancel", "retry", "transcript", "grant", "revoke"].includes(verb))
     return Object.values(state.tasks)
       .filter((task) => task.taskId.startsWith(typed) || task.prompt.toLowerCase().includes(typed.toLowerCase()))
       .map((task) => ({
-        value: verb + " " + task.taskId,
-        label: "Task: " + title(task.prompt),
+        value: `${verb} ${task.taskId}`,
+        label: `Task: ${title(task.prompt)}`,
         description: task.task?.state ?? task.outcome,
       }));
   return null;

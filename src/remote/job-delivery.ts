@@ -16,8 +16,8 @@ export class RemoteJobDeliveryOutbox {
   readonly #db: Database;
   constructor(sessionFile: string) {
     mkdirSync(dirname(sessionFile), { recursive: true, mode: 0o700 });
-    closeSync(openSync(sessionFile + ".remote-jobs.sqlite", "a", 0o600));
-    this.#db = new Database(sessionFile + ".remote-jobs.sqlite", { create: true });
+    closeSync(openSync(`${sessionFile}.remote-jobs.sqlite`, "a", 0o600));
+    this.#db = new Database(`${sessionFile}.remote-jobs.sqlite`, { create: true });
     this.#db.exec("PRAGMA busy_timeout=1000");
     this.#db.exec(`CREATE TABLE IF NOT EXISTS remote_job_delivery (
       id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, epoch TEXT NOT NULL, task_id TEXT NOT NULL,
@@ -28,9 +28,14 @@ export class RemoteJobDeliveryOutbox {
   }
   enqueue(event: RemoteJobObservation): void {
     const terminal = event.state === "done" || event.state === "cancelled";
-    if (!terminal && !event.actionable) return;
+    const actionable = event.actionable;
+    if (!terminal && !actionable) return;
     const kind = terminal ? "completion" : "attention";
-    const key = terminal ? "terminal" : createHash("sha256").update(event.actionable!).digest("hex");
+    const key = terminal
+      ? "terminal"
+      : createHash("sha256")
+          .update(actionable ?? "")
+          .digest("hex");
     const id = JSON.stringify([event.ownerId, event.epoch, event.taskId, key]);
     this.#db.transaction(() => {
       if (terminal)

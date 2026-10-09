@@ -32,14 +32,14 @@ export function parseInteractionOptions(args: string[]): InteractionOptions {
   const numeric = (text: string, flag: string, min: number, max: number, integer = true) => {
     const n = Number(text);
     if (!text.trim() || !Number.isFinite(n) || n < min || n > max || (integer && !Number.isInteger(n)))
-      throw new Error("Invalid " + flag);
+      throw new Error(`Invalid ${flag}`);
     return n;
   };
   for (let i = 0; i < args.length; i++) {
     const flag = args[i];
     const value = () => {
       const text = args[++i];
-      if (!text || text.startsWith("--")) throw new Error("Missing value for " + flag);
+      if (!text || text.startsWith("--")) throw new Error(`Missing value for ${flag}`);
       return text;
     };
     switch (flag) {
@@ -87,7 +87,7 @@ export function parseInteractionOptions(args: string[]): InteractionOptions {
         o.report = value();
         break;
       default:
-        throw new Error("Unknown option " + flag);
+        throw new Error(`Unknown option ${flag}`);
     }
   }
   return o;

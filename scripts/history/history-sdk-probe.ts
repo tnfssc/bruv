@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 /**
  * Run with bun scripts/history/history-sdk-probe.ts. Isolated SDK compaction/reset/resume soak.
  * The extension supplies the summary: no provider, user sessions or installed binary.
@@ -19,7 +20,7 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { disposeDiskBackedSessionManager, installDiskBackedSessionManager } from "../../src/history/session-manager";
 
-const model = getModel("anthropic", "claude-sonnet-4-5")!;
+const model = requireValue(getModel("anthropic", "claude-sonnet-4-5"));
 const usage = {
   input: 10,
   output: 1,
@@ -118,10 +119,10 @@ async function runCompactionSoak(dir: string, manager: SessionManager) {
         usage,
         timestamp: Date.now(),
       });
-      tail = manager.appendMessage({ role: "user", content: "retained tail " + batch, timestamp: Date.now() });
+      tail = manager.appendMessage({ role: "user", content: `retained tail ${batch}`, timestamp: Date.now() });
       await session.compact();
       if (manager.buildSessionContext().messages.length !== 2) throw new Error("Compacted context changed");
-      if (batch % 4 === 0) await sample("after real compaction " + batch, manager, compactions);
+      if (batch % 4 === 0) await sample(`after real compaction ${batch}`, manager, compactions);
     }
     if (compactions !== 16) throw new Error("SDK did not complete every compaction");
     return { firstOriginalId, originals, compactions, baselineHeapMiB };
@@ -135,7 +136,7 @@ async function runProbe(dir: string) {
   try {
     const { firstOriginalId, originals, compactions, baselineHeapMiB } = await runCompactionSoak(dir, manager);
     // The SDK session is disposed; only the manager participates in reset and replay.
-    const path = manager.getSessionFile()!;
+    const path = requireValue(manager.getSessionFile());
     manager.newSession();
     await sample("reset", manager, compactions);
     manager.setSessionFile(path);

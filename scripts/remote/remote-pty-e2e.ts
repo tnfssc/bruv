@@ -1,3 +1,5 @@
+import type { FixtureRpcEvent, FixtureTarget } from "../fixtures/rpc-types";
+import { requireValue } from "../lib/require-value";
 import { loopbackParent, fixtureRpc } from "../fixtures/loopback-parent-fixture";
 import { ownedFixtureEnv } from "../../tests/helpers/helpers";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
@@ -6,17 +8,17 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { strict as assert } from "node:assert";
-const bruv = process.env.BRUV_BIN!;
-const container = process.env.FIXTURE_CONTAINER!;
+const bruv = requireValue(process.env.BRUV_BIN);
+const container = requireValue(process.env.FIXTURE_CONTAINER);
 const home = homedir();
 const statePath = join(home, ".bruv/remote/state.json");
-const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
+const agentDir = requireValue(process.env.BRUV_CODING_AGENT_DIR);
 // remote-e2e.sh owns this root and its SSH/Docker fixture settings.
-const rpcEnv = ownedFixtureEnv(process.env.FIXTURE_DROP_DIR!);
-rpcEnv.PATH = join(process.env.FIXTURE_DROP_DIR!, "bin") + ":" + rpcEnv.PATH;
+const rpcEnv = ownedFixtureEnv(requireValue(process.env.FIXTURE_DROP_DIR));
+rpcEnv.PATH = `${join(requireValue(process.env.FIXTURE_DROP_DIR), "bin")}:${rpcEnv.PATH}`;
 rpcEnv.BRUV_CODING_AGENT_DIR = agentDir;
 rpcEnv.PI_CODING_AGENT_DIR = agentDir;
-rpcEnv.DOCKER_HOST = process.env.DOCKER_HOST!;
+rpcEnv.DOCKER_HOST = requireValue(process.env.DOCKER_HOST);
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
@@ -75,7 +77,7 @@ const launchRpc = (cwd = launchRepo, diagnostic = false) =>
     noSession: diagnostic,
     timeoutDetail: (events) =>
       "; pane=" +
-      spawnSync("tmux", ["-L", "bruv-remote-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
+      spawnSync("tmux", ["-L", `bruv-remote-pty-${process.pid}`, "capture-pane", "-p", "-t", "remote"], {
         encoding: "utf8",
       }).stdout +
       "; events=" +
@@ -83,7 +85,7 @@ const launchRpc = (cwd = launchRepo, diagnostic = false) =>
   });
 // Real tmux PTY against the same disposable native owner; no local question ledger is created.
 const tmux = (...args: string[]) => {
-  const result = spawnSync("tmux", ["-L", "bruv-remote-pty-" + process.pid, ...args], {
+  const result = spawnSync("tmux", ["-L", `bruv-remote-pty-${process.pid}`, ...args], {
     encoding: "utf8",
     timeout: 10000,
   });
@@ -95,9 +97,9 @@ const ownerQuestion = (taskId: string): { status: string; answer?: string } => {
     "ssh",
     [
       "-F",
-      process.env.FIXTURE_SSH_CONFIG!,
+      requireValue(process.env.FIXTURE_SSH_CONFIG),
       "fixture-owner",
-      "cat /root/.bruv/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json",
+      `cat /root/.bruv/remote-owner/tasks/${taskId}/session.jsonl.questions.json`,
     ],
     { encoding: "utf8", timeout: 6000 },
   );
@@ -109,7 +111,7 @@ const evidence = (name: string) => {
   const dir = process.env.BRUV_REMOTE_PTY_ARTIFACTS;
   if (dir) {
     mkdirSync(dir, { recursive: true });
-    writeFileSync(join(dir, name + ".txt"), pane());
+    writeFileSync(join(dir, `${name}.txt`), pane());
   }
 };
 const key = (...keys: string[]) => tmux("send-keys", "-t", "remote", ...keys);
@@ -120,7 +122,7 @@ const historyPane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "remote");
 const noChatJson = (frame: string) =>
   assert(
     !/"(?:taskId|eventCount|lastAssistant|transcriptComplete|replyDelivery)"\s*:/.test(frame),
-    "structured remote poll leaked into human chat\n" + frame,
+    `structured remote poll leaked into human chat\n${frame}`,
   );
 const command = async (text: string, expected: string) => {
   const before = historyPane().split("[bruv-remote]").length;
@@ -133,10 +135,14 @@ const command = async (text: string, expected: string) => {
   const deadline = Date.now() + 20000;
   while (Date.now() < deadline) {
     const messages = historyPane().split("[bruv-remote]");
-    if (messages.length > before && messages.at(-1)!.replace(/\s+/g, "").includes(expected.replace(/\s+/g, ""))) return;
+    if (
+      messages.length > before &&
+      requireValue(messages.at(-1)).replace(/\s+/g, "").includes(expected.replace(/\s+/g, ""))
+    )
+      return;
     await Bun.sleep(100);
   }
-  throw new Error("No rendered command result: " + text + "\n" + pane());
+  throw new Error(`No rendered command result: ${text}\n${pane()}`);
 };
 const type = (text: string) => tmux("send-keys", "-t", "remote", "-l", text);
 const until = async (needle: string, timeout = 12000) => {
@@ -146,22 +152,25 @@ const until = async (needle: string, timeout = 12000) => {
     if (frame.includes(needle)) return frame;
     await Bun.sleep(80);
   }
-  throw Error("PTY missing " + needle + "\n" + pane());
+  throw Error(`PTY missing ${needle}\n${pane()}`);
 };
-const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+const quote = (value: string) => `'${value.replaceAll("'", "'\\''")}'`;
 const provider = loopbackParent(agentDir);
 try {
   prepareLaunchRepository();
-  assert.equal(spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "true"]).status, 0);
+  assert.equal(
+    spawnSync("ssh", ["-F", requireValue(process.env.FIXTURE_SSH_CONFIG), "fixture-owner", "true"]).status,
+    0,
+  );
   const rpc = launchRpc(launchRepo, true);
   rpc.send("/remote connect fixture-owner /usr/local/bin/bruv");
   await rpc.wait(() => existsSync(statePath) && !!state().connection, "remote connection");
   const launch = async (suffix: string, question = true) => {
     const before = new Set(Object.keys(state().tasks));
     // Human diagnostic tasks intentionally have no jobs owner: legacy menu transport/permission assertions below.
-    rpc.send("/remote launch /fixture/repo " + (question ? "REMOTE_FIXTURE_MENU_" : "REMOTE_FIXTURE_") + suffix);
+    rpc.send(`/remote launch /fixture/repo ${question ? "REMOTE_FIXTURE_MENU_" : "REMOTE_FIXTURE_"}${suffix}`);
     await rpc.wait(() => Object.keys(state().tasks).some((id) => !before.has(id)), "native task launch", 30000);
-    const id = Object.keys(state().tasks).find((id) => !before.has(id))!;
+    const id = requireValue(Object.keys(state().tasks).find((id) => !before.has(id)));
     if (question) await rpc.wait(() => !!state().tasks[id]?.task?.questions?.length, "native question", 30000);
     else await rpc.wait(() => state().tasks[id]?.task?.state === "running", "native running task", 30000);
     return id;
@@ -171,8 +180,8 @@ try {
   // Spawn the compiled CLI, not a mocked picker or RPC UI. tmux owns the PTY.
   const cmd = [
     "env",
-    "HOME=" + home,
-    "BRUV_CODING_AGENT_DIR=" + agentDir,
+    `HOME=${home}`,
+    `BRUV_CODING_AGENT_DIR=${agentDir}`,
     bruv,
     "--offline",
     "--no-approve",
@@ -189,7 +198,7 @@ try {
   await until("→ Question:");
   evidence("question-completion");
   key("Tab");
-  await until("/remote answer " + first);
+  await until(`/remote answer ${first}`);
   key("C-u");
   type("/remote");
   key("Enter");
@@ -199,7 +208,7 @@ try {
   type("FREE_TEXT");
   key("Down");
   await until("Task: REMOTE_FIXTURE_MENU_FREE_TEXT");
-  assert(pane().includes("Task: REMOTE_FIXTURE_MENU_FREE_TEXT"), "search did not expose matching task\n" + pane());
+  assert(pane().includes("Task: REMOTE_FIXTURE_MENU_FREE_TEXT"), `search did not expose matching task\n${pane()}`);
   assert(!pane().includes("Task: REMOTE_FIXTURE_MENU_CHOICE"), "search left the unrelated task visible");
   evidence("filtered-inbox");
   // Escape is navigation only: neither owner question may be answered by closing the menu.
@@ -224,7 +233,7 @@ try {
     "PTY choice submitted",
     20000,
   );
-  const answeredId = [first, second].find((id) => ownerQuestion(id).status !== "pending")!;
+  const answeredId = requireValue([first, second].find((id) => ownerQuestion(id).status !== "pending"));
   assert(answeredId, "choice did not submit");
   const unansweredId = answeredId === first ? second : first;
   assert.equal(
@@ -256,9 +265,9 @@ try {
   await until("Remote · inbox");
   key("Enter");
   await until("→ REMOTE_FIXTURE_MENU_FIRST");
-  const staleQ = state().tasks[staleId]!.task!.questions![0]!;
+  const staleQ = requireValue(requireValue(requireValue(requireValue(state().tasks[staleId]).task).questions)[0]);
   const stablePickerFrame = pane();
-  rpc.send("/remote answer " + staleId + " " + staleQ.id + " REMOTE_FIXTURE_MENU_CONTINUED external answer");
+  rpc.send(`/remote answer ${staleId} ${staleQ.id} REMOTE_FIXTURE_MENU_CONTINUED external answer`);
   await rpc.wait(() => ownerQuestion(staleId).status !== "pending", "external answer creates stale picker", 20000);
   await Bun.sleep(5500); // Cross the production refresh timer while the other client changes this question.
   assert(pane().includes("menu snapshot updated"), "open stale picker lacks freshness indication");
@@ -290,7 +299,7 @@ try {
   await until("→ Task:");
   evidence("task-completion");
   key("Tab");
-  await until("/remote sync " + first);
+  await until(`/remote sync ${first}`);
   key("C-u");
   // This native owner job remains active for 120s. Observe multiple real 5s refreshes in
   // the compiled CLI, not just a renderer unit test or a synthetic publish call.
@@ -298,7 +307,7 @@ try {
   await Bun.sleep(6000);
   const pollFrame = pane();
   const pollHistory = historyPane();
-  assert(pollFrame.includes("remote: 1 active"), "named compact active remote status not visible\n" + pollFrame);
+  assert(pollFrame.includes("remote: 1 active"), `named compact active remote status not visible\n${pollFrame}`);
   noChatJson(pollHistory);
   await Bun.sleep(11000); // At least two more production timer ticks with no owner transition.
   assert.equal(pane(), pollFrame, "unchanged active polls churned the human terminal");
@@ -341,7 +350,7 @@ try {
   await until(cancelled);
   noChatJson(historyPane());
   evidence("human-status");
-  await command("/remote sync " + first, "Last synchronized state");
+  await command(`/remote sync ${first}`, "Last synchronized state");
   await until(first);
   noChatJson(historyPane());
   evidence("human-sync");
@@ -349,8 +358,8 @@ try {
   // incorrectly treating the bottom viewport as the entire transcript.
   tmux("resize-window", "-t", "remote", "-x", "120", "-y", "160");
   await Bun.sleep(150);
-  const finalOffset = state().tasks[unansweredId]!.events.reduce((found, row, index) => {
-    const event = row.event as any;
+  const finalOffset = requireValue(state().tasks[unansweredId]).events.reduce((found, row, index) => {
+    const event = row.event as FixtureRpcEvent;
     return event?.type === "message_end" &&
       event.message?.role === "assistant" &&
       JSON.stringify(event.message).includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED")
@@ -358,13 +367,13 @@ try {
       : found;
   }, -1);
   assert(finalOffset >= 0, "fixture final assistant absent from source transcript");
-  await command("/remote transcript " + unansweredId + " " + finalOffset, "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED");
-  const answerOffset = state().tasks[unansweredId]!.events.reduce(
+  await command(`/remote transcript ${unansweredId} ${finalOffset}`, "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED");
+  const answerOffset = requireValue(state().tasks[unansweredId]).events.reduce(
     (found, row, index) => (JSON.stringify(row.event).includes("REMOTE_FIXTURE_MENU_CONTINUED") ? index : found),
     -1,
   );
   assert(answerOffset >= 0, "fixture answer absent from source transcript");
-  await command("/remote transcript " + unansweredId + " " + answerOffset, "REMOTE_FIXTURE_MENU_CONTINUED");
+  await command(`/remote transcript ${unansweredId} ${answerOffset}`, "REMOTE_FIXTURE_MENU_CONTINUED");
   // Explicit transcript content can itself contain structured tool/event text. The
   // no-envelope assertions above apply to routine notices and status/sync, not to
   // arbitrary content the human explicitly requested in the transcript.
@@ -372,7 +381,7 @@ try {
   tmux("resize-window", "-t", "remote", "-x", "120", "-y", "35");
   await Bun.sleep(150);
   // Long owner prompt must remain searchable on a narrow real terminal, without losing its tail.
-  const longName = "LONG_NAME_" + "segment_".repeat(18) + "VISIBLE_TAIL";
+  const longName = `LONG_NAME_${"segment_".repeat(18)}VISIBLE_TAIL`;
   await launch(longName);
   tmux("resize-window", "-t", "remote", "-x", "50", "-y", "20");
   type("/remote");
@@ -421,7 +430,7 @@ try {
   const launched = JSON.parse(readFileSync(proof, "utf8"));
   assert(
     launched.discovery.targets.some(
-      (target: any) => target.name === "fixture-owner" && target.authorized && target.kind === "ssh",
+      (target: FixtureTarget) => target.name === "fixture-owner" && target.authorized && target.kind === "ssh",
     ),
   );
   const ownedId = Buffer.from(launched.launch.id.slice(4), "base64url").toString();
@@ -431,7 +440,7 @@ try {
     30000,
   );
   assert(
-    JSON.stringify(state().tasks[ownedId]!.events).includes("REMOTE_REPO_TOOL_DONE"),
+    JSON.stringify(requireValue(state().tasks[ownedId]).events).includes("REMOTE_REPO_TOOL_DONE"),
     "normal child did not execute on owner",
   );
   console.log(
@@ -442,12 +451,12 @@ try {
   const offline = await launch("OFFLINE");
   const stopped = spawnSync("docker", ["stop", "-t", "1", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
-  await command("/remote sync " + offline, "cached");
-  rpc.send("/remote sync " + offline);
+  await command(`/remote sync ${offline}`, "cached");
+  rpc.send(`/remote sync ${offline}`);
   await rpc.wait(() => !!state().tasks[offline]?.lastError, "offline state", 20000);
   await rpc.wait(() => /offline|unreachable|unavailable/i.test(pane()), "offline human notice", 20000);
   assert(/offline|unreachable|unavailable/i.test(historyPane()), "offline command implied fresh owner state");
-  noChatJson(historyPane().split("[bruv-remote]").at(-1)!);
+  noChatJson(requireValue(historyPane().split("[bruv-remote]").at(-1)));
   type("/remote");
   key("Enter");
   await until("Remote · inbox");

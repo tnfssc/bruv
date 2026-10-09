@@ -9,7 +9,7 @@ import { startHistoryModel, verifyHistoryModelRecords } from "../../scripts/clau
 import { modelId } from "../../scripts/claude-native-acceptance/model.mjs";
 
 async function post(server, messages, options = {}) {
-  const response = await fetch("http://127.0.0.1:" + server.port + "/v1/chat/completions", {
+  const response = await fetch(`http://127.0.0.1:${server.port}/v1/chat/completions`, {
     method: "POST",
     body: JSON.stringify({ model: modelId, tools: [{ type: "function" }], messages, ...options }),
   });
@@ -107,7 +107,7 @@ function verifierUnitJourney() {
   // Each HTTP request owns its transcript, even when it imports the same exchange.
   const rootExchange = () => [
     { role: "assistant", tool_calls: [{ id: "unit-tool-root" }] },
-    { role: "tool", tool_call_id: "unit-tool-root", content: "HISTORY_ROOT_AUTHORITY " + JSON.stringify(authority) },
+    { role: "tool", tool_call_id: "unit-tool-root", content: `HISTORY_ROOT_AUTHORITY ${JSON.stringify(authority)}` },
   ];
   const rootCheckpoint = {
     messages: rootExchange(),
@@ -124,7 +124,7 @@ function verifierUnitJourney() {
       {
         role: "tool",
         tool_call_id: "unit-tool-child",
-        content: "HISTORY_AUTHORITY_INSPECTION " + JSON.stringify({ jobs: { jobs: [], total: 0 }, questions: [] }),
+        content: `HISTORY_AUTHORITY_INSPECTION ${JSON.stringify({ jobs: { jobs: [], total: 0 }, questions: [] })}`,
       },
     ],
     delta: { content: "HISTORY_CHILD_CONTEXT_OK orchid-73" },

@@ -4,12 +4,12 @@ const number = (v: unknown): number | undefined =>
   typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : undefined;
 const tokenCount = (v: unknown): number | undefined =>
   typeof v === "number" && Number.isSafeInteger(v) && v >= 0 ? v : undefined;
-const record = (v: unknown): Record<string, any> | undefined =>
-  v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, any>) : undefined;
+const record = (v: unknown): Record<string, unknown> | undefined =>
+  v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, unknown>) : undefined;
 
 // Cache detail has two spellings in the SDK. Only absent or explicitly zero
 // cache usage is priceable: we have no verified cached rate for this model.
-function hasUnpriceableGeminiCache(usage: Record<string, any>): boolean {
+function hasUnpriceableGeminiCache(usage: Record<string, unknown>): boolean {
   const count = usage.cachedContentTokenCount;
   if (count !== undefined && tokenCount(count) !== 0) return true;
   for (const details of [usage.cachedTokensDetails, usage.cacheTokensDetails]) {
@@ -24,22 +24,24 @@ function modalityCost(parts: unknown, rates: Record<string, number>): number | u
   if (!Array.isArray(parts)) return;
   let sum = 0;
   for (const part of parts) {
-    const modality = part?.modality?.toUpperCase?.();
-    const count = tokenCount(part?.tokenCount);
-    if (count === undefined || rates[modality] === undefined) return;
-    sum += (count * rates[modality]) / 1e6;
+    const detail = record(part);
+    const modality = typeof detail?.modality === "string" ? detail.modality.toUpperCase() : undefined;
+    const count = tokenCount(detail?.tokenCount);
+    const rate = modality === undefined ? undefined : rates[modality];
+    if (count === undefined || rate === undefined) return;
+    sum += (count * rate) / 1e6;
   }
   return sum;
 }
 
-function geminiCost(usage: Record<string, any>): number | undefined {
+function geminiCost(usage: Record<string, unknown>): number | undefined {
   if (hasUnpriceableGeminiCache(usage)) return;
   for (const key of ["promptTokenCount", "candidatesTokenCount", "thoughtsTokenCount", "totalTokenCount"]) {
     if (usage[key] !== undefined && tokenCount(usage[key]) === undefined) return;
   }
   // Totals alone do not reveal modality. Thinking also lacks a known modality;
   // neither missing detail nor thinking tokens may be silently priced at zero.
-  if (usage.thoughtsTokenCount > 0) return;
+  if ((tokenCount(usage.thoughtsTokenCount) ?? 0) > 0) return;
   const input = modalityCost(usage.promptTokensDetails, { TEXT: 0.75, AUDIO: 3, IMAGE: 1, VIDEO: 1 });
   const output = modalityCost(usage.candidatesTokensDetails, { TEXT: 4.5, AUDIO: 12 });
   if (input === undefined || output === undefined) return;
@@ -47,11 +49,13 @@ function geminiCost(usage: Record<string, any>): number | undefined {
 }
 
 type RealtimeRates = { audioInput: number; audioOutput: number; textInput: number; textOutput: number };
-function realtimeCost(usage: Record<string, any>, rates: RealtimeRates): number | undefined {
+function realtimeCost(usage: Record<string, unknown>, rates: RealtimeRates): number | undefined {
   const input = number(usage.input_tokens);
   const output = number(usage.output_tokens);
-  const audioInput = number(usage.input_token_details?.audio_tokens);
-  const audioOutput = number(usage.output_token_details?.audio_tokens);
+  const inputDetails = record(usage.input_token_details);
+  const outputDetails = record(usage.output_token_details);
+  const audioInput = number(inputDetails?.audio_tokens);
+  const audioOutput = number(outputDetails?.audio_tokens);
   if (
     input === undefined ||
     output === undefined ||
@@ -62,7 +66,7 @@ function realtimeCost(usage: Record<string, any>, rates: RealtimeRates): number 
   )
     return;
   // Cached input needs separate modality details/rate; don't silently price it at full rate.
-  if (number(usage.input_token_details?.cached_tokens) && usage.input_token_details.cached_tokens > 0) return;
+  if ((number(inputDetails?.cached_tokens) ?? 0) > 0) return;
   return (
     (audioInput * rates.audioInput +
       audioOutput * rates.audioOutput +

@@ -20,7 +20,7 @@
     "tui": "bun ./scripts/tui/tui-harness.ts",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "lint": "biome lint .",
+    "lint": "biome lint . --error-on-warnings",
     "generate:notices": "bun ./scripts/dependencies/generate-third-party-notices.ts",
     "prompt:preview": "bun ./scripts/prompt-preview.ts",
     "smoke:live-onboarding": "bun ./scripts/live/onboarding-smoke.ts",

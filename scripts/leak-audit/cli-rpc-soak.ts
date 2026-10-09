@@ -14,16 +14,15 @@ function completion(text: string) {
     model: "soak-model",
     choices: [{ index: 0, delta, finish_reason }],
   });
-  const body =
-    [chunk({ role: "assistant", content: text }, null), chunk({}, "stop")]
-      .map((x) => "data: " + JSON.stringify(x) + "\n\n")
-      .join("") + "data: [DONE]\n\n";
+  const body = `${[chunk({ role: "assistant", content: text }, null), chunk({}, "stop")]
+    .map((x) => `data: ${JSON.stringify(x)}\n\n`)
+    .join("")}data: [DONE]\n\n`;
   return new Response(body, { headers: { "content-type": "text/event-stream" } });
 }
 
 async function procSample(pid: number, label: string) {
   const status = await readFile(`/proc/${pid}/status`, "utf8");
-  const get = (key: string) => Number(status.match(new RegExp("^" + key + ":\\s+(\\d+)", "m"))?.[1] ?? 0);
+  const get = (key: string) => Number(status.match(new RegExp(`^${key}:\\s+(\\d+)`, "m"))?.[1] ?? 0);
   const children = new Set<number>();
   async function walk(parent: number) {
     let dirs: string[] = [];
@@ -136,12 +135,12 @@ class SoakRpcSession {
   }
 
   send(type: string, extra: object = {}, timeout = 15_000) {
-    const id = "c" + ++this.serial;
-    this.child.stdin.write(JSON.stringify({ id, type, ...extra }) + "\n");
+    const id = `c${++this.serial}`;
+    this.child.stdin.write(`${JSON.stringify({ id, type, ...extra })}\n`);
     return new Promise<RpcEvent>((resolve, reject) => {
       const timer = setTimeout(() => {
         this.responses.delete(id);
-        reject(new Error("timeout " + type));
+        reject(new Error(`timeout ${type}`));
       }, timeout);
       this.responses.set(id, { resolve, timer });
     });
@@ -215,7 +214,9 @@ async function soak() {
       let latestUser = "";
       try {
         const parsed = JSON.parse(body);
-        latestUser = [...(parsed.messages ?? [])].reverse().find((m: any) => m.role === "user")?.content ?? "";
+        latestUser =
+          [...(parsed.messages ?? [])].reverse().find((m: { role: string; content?: string }) => m.role === "user")
+            ?.content ?? "";
         if (typeof latestUser !== "string") latestUser = JSON.stringify(latestUser);
       } catch {
         /* malformed requests should still receive a harmless completion */
@@ -230,12 +231,12 @@ async function soak() {
   try {
     await writeFile(
       join(agentDir, "settings.json"),
-      JSON.stringify({ compaction: { enabled: true, reserveTokens: 256, keepRecentTokens: 128 } }, null, 2) + "\n",
+      `${JSON.stringify({ compaction: { enabled: true, reserveTokens: 256, keepRecentTokens: 128 } }, null, 2)}\n`,
       { mode: 0o600 },
     );
     await writeFile(
       join(agentDir, "models.json"),
-      JSON.stringify(
+      `${JSON.stringify(
         {
           providers: {
             soak: {
@@ -248,7 +249,7 @@ async function soak() {
         },
         null,
         2,
-      ) + "\n",
+      )}\n`,
       { mode: 0o600 },
     );
 
@@ -262,7 +263,7 @@ async function soak() {
         await rpc.send("new_session");
       } else if (i % 12 === 0) {
         await rpc.abortTurn(`SOAK_ABORT_ME ${i}`);
-      } else await rpc.turn(`soak turn ${i} ` + "padding ".repeat(80));
+      } else await rpc.turn(`soak turn ${i} ${"padding ".repeat(80)}`);
       if (!newOnly && i % 15 === 0) await rpc.send("compact", { customInstructions: "Return a tiny summary." }, 20_000);
       if (i % 20 === 0) {
         if (!newOnly) await rpc.send("new_session");
@@ -279,7 +280,7 @@ async function soak() {
       ...result,
       samples,
     };
-    await writeFile(join(root, "report.json"), JSON.stringify(report, null, 2) + "\n", { mode: 0o600 });
+    await writeFile(join(root, "report.json"), `${JSON.stringify(report, null, 2)}\n`, { mode: 0o600 });
     console.log(JSON.stringify(report, null, 2));
     const unexpectedFailures = report.failedResponses.filter(
       (e) => e.command !== "compact" || !/Nothing to compact|Compaction cancelled/.test(e.error ?? ""),
@@ -287,7 +288,7 @@ async function soak() {
     if (report.exitCode !== 0 || unexpectedFailures.length) process.exitCode = 1;
   } catch (error) {
     console.error(error);
-    console.error("artifacts: " + root);
+    console.error(`artifacts: ${root}`);
     process.exitCode = 1;
   } finally {
     try {

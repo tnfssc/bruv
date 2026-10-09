@@ -96,23 +96,21 @@ export class SessionHost implements SessionOperations {
       hash,
       operation,
       state: "pending",
-      result: undefined!,
-    };
-    entry.result = Promise.resolve()
-      .then(() => {
+      result: Promise.resolve().then(() => {
         this.assertActive();
         return run();
-      })
-      .then(
-        (value) => {
-          entry.state = "dispatched";
-          return value;
-        },
-        (error) => {
-          entry.state = "failed";
-          throw error;
-        },
-      );
+      }),
+    };
+    entry.result = entry.result.then(
+      (value) => {
+        entry.state = "dispatched";
+        return value;
+      },
+      (error) => {
+        entry.state = "failed";
+        throw error;
+      },
+    );
     this.requests.set(id, entry);
     return entry.result;
   }

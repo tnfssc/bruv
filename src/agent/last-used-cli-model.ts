@@ -48,7 +48,7 @@ export function registerLastUsedCliModel(
     await settings.flush();
     const errors = settings.drainErrors();
     if (errors.length > 0) {
-      ctx.ui.notify(`Could not save default model: ${errors[0]!.error.message}`, "warning");
+      ctx.ui.notify(`Could not save default model: ${errors[0].error.message}`, "warning");
     }
   });
 
@@ -65,7 +65,7 @@ export function registerLastUsedCliModel(
     await settings.flush();
     const errors = settings.drainErrors();
     if (errors.length > 0) {
-      ctx.ui.notify(`Could not save default thinking level: ${errors[0]!.error.message}`, "warning");
+      ctx.ui.notify(`Could not save default thinking level: ${errors[0].error.message}`, "warning");
     }
   });
 }

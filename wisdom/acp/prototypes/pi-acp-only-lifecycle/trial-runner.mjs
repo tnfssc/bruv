@@ -6,18 +6,18 @@ const base = resolve(import.meta.dirname),
   repo = process.env.BRUV_PARENT_REPO ?? "/home/tnfssc/Code/bruv";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = (kind, data) =>
-  appendFileSync(join(base, "model-summary.ndjson"), JSON.stringify({ time: Date.now(), kind, data }) + "\n");
+  appendFileSync(join(base, "model-summary.ndjson"), `${JSON.stringify({ time: Date.now(), kind, data })}\n`);
 let rid = 0;
 const prose = (text) => ({
   type: "message",
-  id: "msg_" + ++rid,
+  id: `msg_${++rid}`,
   role: "assistant",
   content: [{ type: "output_text", text, annotations: [] }],
   phase: "final_answer",
 });
 const tool = (id, code) => ({
   type: "function_call",
-  id: "fc_" + id,
+  id: `fc_${id}`,
   call_id: id,
   name: "execute",
   arguments: JSON.stringify({ label: "Filtered-launch local research", code }),
@@ -110,7 +110,7 @@ function* events(items) {
   yield {
     type: "response.completed",
     response: {
-      id: "resp_" + ++rid,
+      id: `resp_${++rid}`,
       status: "completed",
       output: items,
       usage: { input_tokens: 80, output_tokens: 40, total_tokens: 120 },
@@ -139,7 +139,7 @@ const fixtureServer = createServer(async (req, res) => {
   if (res.destroyed) return;
   log("response", { items: f.items.map((x) => ({ type: x.type, name: x.name, text: x.content?.[0]?.text })) });
   res.writeHead(200, { "Content-Type": "text/event-stream", Connection: "close" });
-  for (const ev of events(f.items)) res.write("event: " + ev.type + "\ndata: " + JSON.stringify(ev) + "\n\n");
+  for (const ev of events(f.items)) res.write(`event: ${ev.type}\ndata: ${JSON.stringify(ev)}\n\n`);
   res.end();
 });
 await new Promise((r) => fixtureServer.listen(0, "127.0.0.1", r));
@@ -150,7 +150,7 @@ writeFileSync(
   JSON.stringify({
     providers: {
       "wrapper-fixture": {
-        baseUrl: "http://127.0.0.1:" + fixtureServer.address().port + "/v1",
+        baseUrl: `http://127.0.0.1:${fixtureServer.address().port}/v1`,
         api: "openai-responses",
         apiKey: "synthetic-local-only",
         models: [{ id: "bridge", name: "Bridge research fixture", contextWindow: 32000, maxTokens: 2048 }],
@@ -168,7 +168,7 @@ writeFileSync(
   }),
 );
 const env = {
-  PATH: dirname(process.execPath) + ":/usr/bin:/bin",
+  PATH: `${dirname(process.execPath)}:/usr/bin:/bin`,
   HOME: home,
   XDG_CONFIG_HOME: join(home, ".config"),
   XDG_CACHE_HOME: join(home, ".cache"),

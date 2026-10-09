@@ -9,7 +9,7 @@ export function connectionFailure(event: unknown): string {
   );
   const model = OPENAI_REALTIME_MODELS.find((m) => m === e.model);
   const detail = model ? providerFailure({ code: e.providerCode }, model, "") : "";
-  const withDetail = (message: string) => (detail ? message + " " + detail : message);
+  const withDetail = (message: string) => (detail ? `${message} ${detail}` : message);
   switch (status) {
     case 401:
       return withDetail("OpenAI WebSocket authentication rejected (HTTP 401). Check the configured API key.");
@@ -19,14 +19,14 @@ export function connectionFailure(event: unknown): string {
       return withDetail("OpenAI WebSocket endpoint or model unavailable (HTTP 404).");
     case 429:
       return detail
-        ? "OpenAI WebSocket rejected (HTTP 429). " + detail
+        ? `OpenAI WebSocket rejected (HTTP 429). ${detail}`
         : "OpenAI WebSocket rate limited (HTTP 429). Retry later.";
     default:
       if (typeof status === "number")
         return withDetail(
           status >= 500
-            ? "OpenAI WebSocket server error (HTTP " + status + "). Retry later."
-            : "OpenAI WebSocket upgrade rejected (HTTP " + status + ").",
+            ? `OpenAI WebSocket server error (HTTP ${status}). Retry later.`
+            : `OpenAI WebSocket upgrade rejected (HTTP ${status}).`,
         );
   }
   // Bun 1.4.2 emits Expected 101 status code on a rejected handshake, but does not expose

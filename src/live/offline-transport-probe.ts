@@ -8,7 +8,7 @@ import { defaultSocket, type RealtimeSocket } from "./openai-session";
 import { OPENAI_REALTIME_MODELS } from "./providers";
 
 const KEY = "fake-offline-only";
-const AUTH = "Bearer " + KEY;
+const AUTH = `Bearer ${KEY}`;
 const SECRET = "private-body-should-never-appear";
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -28,6 +28,7 @@ function expectSessionUpdated(socket: RealtimeSocket): Promise<void> {
       );
     });
     socket.addEventListener("message", (event) => {
+      if (typeof event.data !== "string") throw new Error("Unexpected non-text session response");
       if (JSON.parse(event.data).type === "session.updated") resolve();
       else fail(new Error("Unexpected session response"));
     });
@@ -102,7 +103,7 @@ async function probeLoopbackTransport(
   try {
     // The sole endpoint passed to the production transport is constructed from
     // Bun's loopback listener, never from argv, environment, or real API config.
-    const url = "ws://127.0.0.1:" + server.port + "/v1/realtime?model=" + encodeURIComponent(model);
+    const url = `ws://127.0.0.1:${server.port}/v1/realtime?model=${encodeURIComponent(model)}`;
     socket = defaultSocket(url, { Authorization: AUTH });
     await Promise.race([
       expected === "session.updated" ? expectSessionUpdated(socket) : expectUnauthorizedUpgrade(socket),
@@ -113,7 +114,7 @@ async function probeLoopbackTransport(
     assert(handshakes === 1, "Expected exactly one upgrade request");
     assert(
       receivedSessionUpdate === (expected === "session.updated"),
-      "Session setup evidence did not match " + expected,
+      `Session setup evidence did not match ${expected}`,
     );
   } finally {
     if (timer) clearTimeout(timer);

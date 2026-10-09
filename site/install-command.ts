@@ -1,7 +1,7 @@
 /** One GitHub-hosted installer, independent of the landing page's origin. */
 export const INSTALL_URL = "https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh";
 export const INSTALL_SOURCE_URL = "https://github.com/tnfssc/bruv/blob/develop/scripts/install.sh";
-export const INSTALL_COMMAND = "curl -fsSL '" + INSTALL_URL + "' | sh";
+export const INSTALL_COMMAND = `curl -fsSL '${INSTALL_URL}' | sh`;
 export async function copyCommand(command: string) {
   try {
     await navigator.clipboard.writeText(command);

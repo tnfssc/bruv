@@ -1,3 +1,5 @@
+import type { RootLocalState } from "../../src/remote/root/client";
+import { requireValue } from "../lib/require-value";
 import { networkNoneFixture, assertFixtureOutputExternal, quote, wait } from "../fixtures/network-none-fixture";
 /** Typed remote root acceptance. Host tmux is presentation automation ONLY, never server ownership. */
 import assert from "node:assert/strict";
@@ -52,14 +54,14 @@ const artifacts = process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS
   ? resolve(process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS)
   : mkdtempSync(join(tmpBase, "remote-root-placement-artifacts-"));
 mkdirSync(artifacts, { recursive: true });
-const name = "bruv-root-placement-" + process.pid + "-" + Date.now();
+const name = `bruv-root-placement-${process.pid}-${Date.now()}`;
 const harness = networkNoneFixture({
   root,
   name,
   alias: ALIAS,
   bun,
   binary: probe ? undefined : binary,
-  base: base!,
+  base: requireValue(base),
   buildArg: "ROOT_PLACEMENT_BASE",
   files: {
     Dockerfile: join(fixture, "Dockerfile"),
@@ -79,7 +81,7 @@ const socket = join(root, "tmux.sock");
 const tmux = (...args: string[]) => run("tmux", ["-f", "/dev/null", "-S", socket, ...args]);
 const pane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "root-placement");
 const screen = () => tmux("capture-pane", "-p", "-t", "root-placement");
-const capture = (label: string) => writeFileSync(join(artifacts, label + ".txt"), pane());
+const capture = (label: string) => writeFileSync(join(artifacts, `${label}.txt`), pane());
 const type = (message: string) => {
   tmux("send-keys", "-t", "root-placement", "-l", message);
   tmux("send-keys", "-t", "root-placement", "Enter");
@@ -95,7 +97,7 @@ const json = (file: string) => JSON.parse(readFileSync(file, "utf8"));
 const statePath = join(home, ".bruv", "remote", "state.json");
 const rootsDir = join(home, ".bruv", "remote", "roots");
 const rootFiles = () => files(rootsDir).filter((f) => f.endsWith("/root.json"));
-const rootState = (id?: string): any => {
+const rootState = (id?: string): RootLocalState => {
   const rows = rootFiles().map(json);
   const found = id ? rows.find((s) => s.intent.sessionId === id) : rows.at(-1);
   assert(found, "missing durable root presentation pointer");
@@ -108,7 +110,7 @@ try {
   if (!probe)
     assert(existsSync(binary), "Build the final combined compiled CLI and set BRUV_BIN; probe is not acceptance");
   const { imageId, ssh } = await harness.start();
-  const receipt: any = {
+  const receipt = {
     schema: "typed-root-placement-proof-v1",
     mode: probe ? "fixture-probe-only" : "acceptance-in-progress",
     sourceCommit: run("git", ["-C", source, "rev-parse", "HEAD"]),
@@ -126,7 +128,7 @@ try {
       "abort of an actively streaming root turn (running shell-job cancellation is separate)",
       "unsupported modes rejected by server protocol (CLI rejects full-history/worktree requests only)",
     ],
-    scenarios: [],
+    scenarios: [] as Array<{ rootID?: string; [key: string]: unknown }>,
   };
   assert.equal(receipt.networkMode, "none");
   const saveReceipt = () => writeFileSync(join(artifacts, "receipt.json"), JSON.stringify(receipt, null, 2));
@@ -175,7 +177,7 @@ try {
       const command = [
         "env",
         "-i",
-        ...Object.entries(env).map(([k, v]) => k + "=" + v),
+        ...Object.entries(env).map(([k, v]) => `${k}=${v}`),
         binary,
         "--offline",
         "--no-approve",
@@ -223,16 +225,16 @@ try {
       tmux("kill-session", "-t", "root-placement");
       ptyStarted = false;
     };
-    const journal = (s: any): string => {
+    const journal = (s: RootLocalState): string => {
       assert(s.record?.sessionFile?.startsWith("/"), "no authoritative server sessionFile");
-      return ssh("cat " + quote(s.record.sessionFile));
+      return ssh(`cat ${quote(requireValue(requireValue(s.record).sessionFile))}`);
     };
     const workRows = (side: string) =>
-      ssh("cat /tmp/root-proof-" + side + ".jsonl")
+      ssh(`cat /tmp/root-proof-${side}.jsonl`)
         .split("\n")
         .filter(Boolean)
         .map((l) => JSON.parse(l));
-    const currentQuestion = (s: any, side: string) =>
+    const currentQuestion = (s: RootLocalState, side: string) =>
       questionsFromReceipt(s).find((q) => q.text === questionText(side));
     const showQuestion = async (id: string, side: string) => {
       const count = completedCommands(rootState(id), "questions.list").length;
@@ -263,7 +265,7 @@ try {
         () => rootState(id).commands[lost.request.commandId]?.receipt.state === "unknown",
       );
       copyFileSync(
-        rootFiles().find((f) => json(f).intent.sessionId === id)!,
+        requireValue(rootFiles().find((f) => json(f).intent.sessionId === id)),
         join(artifacts, "reply-loss-unknown-root.json"),
       );
       await wait(
@@ -345,7 +347,7 @@ try {
       );
       assertCancelledJob(rootState(id), running.id, post.receipt.result);
       assert.equal(ssh("test ! -e /tmp/root-running-finished && echo unfinished"), "unfinished");
-      assert.equal(rootState(id).record.state, "running", "job cancellation closed root");
+      assert.equal(requireValue(rootState(id).record).state, "running", "job cancellation closed root");
       assert.equal(rootState(id).outcome, undefined, "job cancellation returned active source");
       capture("running-job-cancelled");
       key("Escape");
@@ -355,15 +357,15 @@ try {
 
     const proveScenario = async (side: string, extra: string[]) => {
       const upper = side.toUpperCase();
-      const first = "ROOT_START_" + upper + " execute tools and a normal server worktree child, then ask me";
-      const second = "ROOT_SECOND_" + upper + " continue the same root journal and edit again";
+      const first = `ROOT_START_${upper} execute tools and a normal server worktree child, then ask me`;
+      const second = `ROOT_SECOND_${upper} continue the same root journal and edit again`;
       const existing = rootFiles().length;
       start(extra);
       await ready();
       await wait("one new root pointer", () => rootFiles().length === existing + 1);
       const candidates = rootFiles()
         .map(json)
-        .filter((s) => !receipt.scenarios.some((r: any) => r.rootID === s.intent.sessionId));
+        .filter((s) => !receipt.scenarios.some((r) => r.rootID === s.intent.sessionId));
       assert.equal(candidates.length, 1);
       const id = candidates[0].intent.sessionId;
       await wait(
@@ -371,7 +373,7 @@ try {
         () => rootState(id).record?.state === "running" && !!rootState(id).record?.sessionFile,
       );
       assertSnapshot(rootState(id), localHead, side === "drift" ? ["authorized.txt"] : []);
-      assert.equal(rootState(id).source.localRoot, repo);
+      assert.equal(requireValue(rootState(id).source).localRoot, repo);
       if (side === "drift") {
         // Drift occurs AFTER capture and AFTER our prior successful return. No reset/replay.
         writeFileSync(join(repo, "guard.txt"), "ROOT_PARENT_DRIFT\n");
@@ -380,11 +382,11 @@ try {
       type(first);
       await wait(
         "server child completed and real root question saved",
-        () => raw("docker", ["exec", name, "test", "-f", "/tmp/root-question-" + side + ".json"]).status === 0,
+        () => raw("docker", ["exec", name, "test", "-f", `/tmp/root-question-${side}.json`]).status === 0,
         120000,
       );
       const q = await showQuestion(id, side);
-      capture(side + "-01-question-picker");
+      capture(`${side}-01-question-picker`);
       key("Escape");
       await wait("picker dismissed", () => screen().includes("/close"));
       const before = rootState(id),
@@ -410,13 +412,13 @@ try {
         { id: q.id, owner: q.owner, version: q.version },
         "reattach changed saved question",
       );
-      capture(side + "-02-reattached-same-question");
+      capture(`${side}-02-reattached-same-question`);
       // REAL HUMAN PICKER ACTION, not /questions answer ID, agent tool, or remote.answer.
       key("Enter");
       await wait("normal answer picker", () => pane().includes(questionText(side)) && pane().includes(ANSWER));
-      capture(side + "-03-human-answer-choice");
+      capture(`${side}-03-human-answer-choice`);
       key("Enter");
-      await wait("human answer continues same root", () => pane().includes("ROOT_ANSWER_DONE_" + upper), 120000);
+      await wait("human answer continues same root", () => pane().includes(`ROOT_ANSWER_DONE_${upper}`), 120000);
       await wait(
         "human answer command acknowledgement",
         () => completedCommands(rootState(id), "questions.answer").length === 1,
@@ -431,7 +433,7 @@ try {
       assert.equal(answered.outcome, undefined, "first turn returned source before close");
       assert.equal(run("git", ["-C", repo, "diff"]), activeLocalDiff, "first turn mutated local source");
       type(second);
-      await wait("second explicit real root turn", () => pane().includes("ROOT_SECOND_DONE_" + upper), 120000);
+      await wait("second explicit real root turn", () => pane().includes(`ROOT_SECOND_DONE_${upper}`), 120000);
       assertOnePrompt(rootState(id), second);
       assertSameRoot(before, rootState(id));
       assert.equal(rootState(id).outcome, undefined, "second turn returned source before close");
@@ -439,9 +441,9 @@ try {
       assertWorkOnce(workRows(side));
       const afterJournal = journal(rootState(id));
       assert(afterJournal.startsWith(beforeJournal), "second turn replaced server journal");
-      assert(afterJournal.includes("ROOT_SECOND_TOOL_" + upper));
-      assert(afterJournal.includes("ROOT_ANSWER_USED_" + upper));
-      capture(side + "-04-second-root-turn");
+      assert(afterJournal.includes(`ROOT_SECOND_TOOL_${upper}`));
+      assert(afterJournal.includes(`ROOT_ANSWER_USED_${upper}`));
+      capture(`${side}-04-second-root-turn`);
       // /ps is the ordinary tasks picker backed by the root jobs facet.
       type("/ps");
       await wait("normal tasks picker", () => screen().includes("Jobs"));
@@ -450,11 +452,11 @@ try {
       const jobs = lists.at(-1).receipt.result;
       const rows = Array.isArray(jobs) ? jobs : jobs?.jobs;
       assert(Array.isArray(rows) && rows.length, "server child missing from normal jobs facet");
-      const child = JSON.parse(ssh("cat /tmp/root-child-" + side + ".json"));
-      const childIndex = rows.findIndex((j: any) => j.id === child.id);
+      const child = JSON.parse(ssh(`cat /tmp/root-child-${side}.json`));
+      const childIndex = rows.findIndex((j: { id: string }) => j.id === child.id);
       assert(childIndex >= 0, "server normal child absent from task picker");
       for (let n = 0; n < childIndex; n++) key("Down");
-      capture(side + "-05-task-picker");
+      capture(`${side}-05-task-picker`);
       key("Enter");
       await wait(
         "normal selected task inspection",
@@ -464,15 +466,15 @@ try {
       assert.equal(inspection.command.id, child.id, "task picker inspected the wrong job");
       const inspected = inspection.receipt.result;
       assert(
-        String(inspected.output).includes("ROOT_NORMAL_DONE_" + upper),
+        String(inspected.output).includes(`ROOT_NORMAL_DONE_${upper}`),
         "normal job inspect lost server child output",
       );
-      capture(side + "-06-task-inspection");
+      capture(`${side}-06-task-inspection`);
       key("Escape");
       await ready();
       type("/abort");
       await wait("typed idle abort receipt", () => completedCommands(rootState(id), "abort").length === 1);
-      assert.equal(rootState(id).record.state, "running", "abort detached/closed presentation");
+      assert.equal(requireValue(rootState(id).record).state, "running", "abort detached/closed presentation");
       type("/close");
       await wait(
         "successful authoritative root close and safe source return",
@@ -483,7 +485,7 @@ try {
       const closed = rootState(id);
       assert.equal(completedCommands(closed, "prompt").length, 2, "extra or missing root conversation prompt");
       assertSameRoot(before, closed);
-      assert.equal(closed.outcome.status, side === "clean" ? "applied" : "review");
+      assert.equal(requireValue(closed.outcome).status, side === "clean" ? "applied" : "review");
       if (side === "clean") {
         assert.equal(readFileSync(join(repo, "tracked.txt"), "utf8"), "ROOT_RETURN_TWO\n");
         assert.equal(readFileSync(join(repo, "guard.txt"), "utf8"), "ROOT_GUARD_HEAD\n");
@@ -493,7 +495,7 @@ try {
       }
       assert.equal(readFileSync(join(repo, "authorized.txt"), "utf8"), "ROOT_INCLUDED_BY_HUMAN\n");
       assert.equal(readFileSync(join(repo, "never-upload.txt"), "utf8"), "ROOT_MUST_STAY_LOCAL\n");
-      const patch = readFileSync(closed.outcome.artifact, "utf8");
+      const patch = readFileSync(requireValue(closed.outcome).artifact, "utf8");
       assert(patch.includes(side === "clean" ? "ROOT_RETURN_TWO" : "ROOT_DRIFT_RETURN_TWO"));
       if (side === "drift") {
         assert(
@@ -502,8 +504,8 @@ try {
         );
         assert(!patch.includes("ROOT_TRACKED_DIRTY"), "cumulative first-root patch replayed");
       }
-      copyFileSync(closed.outcome.artifact, join(artifacts, side + "-return.patch"));
-      capture(side + "-07-closed-source-return");
+      copyFileSync(requireValue(closed.outcome).artifact, join(artifacts, `${side}-return.patch`));
+      capture(`${side}-07-closed-source-return`);
       const integrated = run("git", ["-C", repo, "diff"]),
         outcome = JSON.stringify(closed.outcome);
       await detach();
@@ -517,17 +519,17 @@ try {
       assertWorkOnce(workRows(side));
       assertOnePrompt(rootState(id), first);
       assertOnePrompt(rootState(id), second);
-      capture(side + "-08-closed-reattach-no-replay");
+      capture(`${side}-08-closed-reattach-no-replay`);
       await detach();
-      writeFileSync(join(artifacts, side + "-server-session.jsonl"), journal(closed) + "\n");
-      writeFileSync(join(artifacts, side + "-root-state.json"), JSON.stringify(rootState(id), null, 2));
-      writeFileSync(join(artifacts, side + "-remote-work.json"), JSON.stringify(workRows(side), null, 2));
+      writeFileSync(join(artifacts, `${side}-server-session.jsonl`), `${journal(closed)}\n`);
+      writeFileSync(join(artifacts, `${side}-root-state.json`), JSON.stringify(rootState(id), null, 2));
+      writeFileSync(join(artifacts, `${side}-remote-work.json`), JSON.stringify(workRows(side), null, 2));
       receipt.scenarios.push({
         side,
         rootID: id,
-        sessionFile: closed.record.sessionFile,
+        sessionFile: requireValue(closed.record).sessionFile,
         question: { id: q.id, owner: q.owner, version: q.version },
-        outcome: closed.outcome.status,
+        outcome: requireValue(closed.outcome).status,
         twoExplicitPrompts: true,
         sameJournal: true,
         workExecutedOnce: true,
@@ -564,7 +566,7 @@ try {
       assert.equal(run("git", ["-C", repo, "diff"]), untouched.diff);
       assert.equal(ssh("cat /tmp/root-placement-inference.jsonl"), untouched.inference);
       assert.deepEqual(json(statePath), untouched.connection);
-      writeFileSync(join(artifacts, "unsupported-" + extra[0].slice(2) + ".txt"), r.stdout + r.stderr);
+      writeFileSync(join(artifacts, `unsupported-${extra[0].slice(2)}.txt`), r.stdout + r.stderr);
     }
     receipt.scenarios.push({
       side: "unsupported-cli-modes",
@@ -631,9 +633,9 @@ try {
       "root-placement-provider-errors",
       "root-placement-provider.log",
     ]) {
-      const r = raw("docker", ["cp", name + ":/tmp/" + file, join(artifacts, file)]);
+      const r = raw("docker", ["cp", `${name}:/tmp/${file}`, join(artifacts, file)]);
       if (r.status !== 0 && file !== "root-placement-provider-errors")
-        writeFileSync(join(artifacts, file + ".unavailable.txt"), r.stderr);
+        writeFileSync(join(artifacts, `${file}.unavailable.txt`), r.stderr);
     }
     writeFileSync(join(artifacts, "docker.log"), raw("docker", ["logs", name]).stderr);
   }
@@ -643,7 +645,7 @@ try {
     } catch {}
     raw("tmux", ["-S", socket, "kill-server"]);
   }
-  for (const [i, file] of rootFiles().entries()) copyFileSync(file, join(artifacts, "final-root-" + i + ".json"));
+  for (const [i, file] of rootFiles().entries()) copyFileSync(file, join(artifacts, `final-root-${i}.json`));
   harness.cleanup();
   console.log(
     "Preserved text/JSON artifacts outside repo (no video, SSH private keys, or real credentials):",

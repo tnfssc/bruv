@@ -101,7 +101,7 @@ try {
   run(["send-keys", "-t", target, "-l", "/live s"]);
   frame = await waitFor("speaker-check");
   for (const action of ["start", "stop", "setup", "status", "speaker-check"])
-    assert.match(frame, new RegExp("(?:→ |    )" + action + "(?:\\n|$)"));
+    assert.match(frame, new RegExp(`(?:→ |    )${action}(?:\\n|$)`));
   assert.ok(!frame.includes("live-lab"));
 
   const authPath = join(home, ".bruv", "agent", "auth.json");

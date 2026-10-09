@@ -31,11 +31,11 @@ const frameDurations = (frames: { durationMs: number; failed?: boolean }[]) => {
 };
 /** Reconcile independent fixture counters and timing records before deriving any report measurements. */
 function validateToolEventEvidence(id: string, e: ToolEventEvidence): string {
-  if (e.counts.networkAttempts !== 0) throw new Error(id + " attempted network activity");
+  if (e.counts.networkAttempts !== 0) throw new Error(`${id} attempted network activity`);
   if (!e.visibility.finalSeen || !e.visibility.finalStateMatches || e.visibility.pendingAfterFinal !== 0)
-    throw new Error(id + " final visible tool state is invalid");
+    throw new Error(`${id} final visible tool state is invalid`);
   if (!e.content.events.length || !e.callbacks.length || !e.frames.length || !e.inputs.length)
-    throw new Error(id + " incomplete event/frame/input evidence");
+    throw new Error(`${id} incomplete event/frame/input evidence`);
   // The direct burst is a subset of callbacks: subscribed-session callbacks belong only to total counts.
   const directCallbacks = e.callbacks.filter((c) => c.source === "direct-handleEvent");
   if (
@@ -48,7 +48,7 @@ function validateToolEventEvidence(id: string, e: ToolEventEvidence): string {
     e.burst.updateDisplayCount !== directCallbacks.reduce((n, c) => n + c.updateDisplayCount, 0) ||
     e.burst.renderResultCount !== directCallbacks.reduce((n, c) => n + c.renderResultCount, 0)
   )
-    throw new Error(id + " malformed event timing/count evidence");
+    throw new Error(`${id} malformed event timing/count evidence`);
 
   const validTiming = (startMs: number, endMs: number) =>
     Number.isFinite(startMs) && Number.isFinite(endMs) && endMs >= startMs;
@@ -58,13 +58,13 @@ function validateToolEventEvidence(id: string, e: ToolEventEvidence): string {
     e.frames.some((f) => !validTiming(f.startMs, f.endMs)) ||
     e.inputs.some((i) => !validTiming(i.enteredAtMs, i.returnedAtMs))
   )
-    throw new Error(id + " malformed event timing/count evidence");
+    throw new Error(`${id} malformed event timing/count evidence`);
   const t = e.trace;
   if (t.droppedSpans || t.droppedFrameEntries || t.droppedHeartbeats || t.droppedPendingActionLinks)
-    throw new Error(id + " profiler trace lost evidence");
+    throw new Error(`${id} profiler trace lost evidence`);
   const lines = e.frames.flatMap((f) => f.lines);
   const screenText = lines.map((line) => Bun.stripANSI(line)).join("\n");
-  if (!screenText.includes(e.visibility.finalMarker)) throw new Error(id + " final marker absent from captured screen");
+  if (!screenText.includes(e.visibility.finalMarker)) throw new Error(`${id} final marker absent from captured screen`);
   return screenText;
 }
 
@@ -94,7 +94,7 @@ export function normalizeInteraction(
     scope: string,
     parameters: InteractionCase["parameters"] = {},
   ): InteractionCase => ({
-    id: id + "/" + suffix,
+    id: `${id}/${suffix}`,
     group: id.split("/")[0] as InteractionCase["group"],
     scope,
     parameters,
@@ -103,7 +103,7 @@ export function normalizeInteraction(
   if (id.startsWith("send/")) {
     const r = raw as SendRaw,
       e = r.evidence;
-    if (!e.visibleAcknowledgment || !e.outputBytes) throw new Error(id + " missing visible send acknowledgment");
+    if (!e.visibleAcknowledgment || !e.outputBytes) throw new Error(`${id} missing visible send acknowledgment`);
     for (const capture of [r.init, { actionProfiler: r.actionProfiler, frameProfiler: r.frameProfiler }]) {
       const a = capture.actionProfiler;
       if (
@@ -113,8 +113,8 @@ export function normalizeInteraction(
         a.droppedPendingActionLinks ||
         capture.frameProfiler.droppedFrames
       )
-        throw new Error(id + " truncated profiler evidence");
-      if (a.spans.some((s) => s.syncThrew)) throw new Error(id + " synchronous profiler scope threw");
+        throw new Error(`${id} truncated profiler evidence`);
+      if (a.spans.some((s) => s.syncThrew)) throw new Error(`${id} synchronous profiler scope threw`);
     }
     const sample = Object.assign(base("paste+Enter"), {
       spans: [
@@ -129,7 +129,7 @@ export function normalizeInteraction(
         })),
       ],
       frameMs: frameDurations(r.frameProfiler.frames),
-      contentHash: e.messageHash + ":" + e.historyHash,
+      contentHash: `${e.messageHash}:${e.historyHash}`,
       screenHash: e.screenHash,
       outputHash: e.outputHash,
       work: e.work,
@@ -165,25 +165,25 @@ export function normalizeInteraction(
     };
     return [
       result("init", init, "SDK InteractiveMode init with counting terminal; not full Bruv extension startup", params),
-      result("action", sample, "real SDK editor paste/Enter, offline recording provider, " + e.journal, params),
+      result("action", sample, `real SDK editor paste/Enter, offline recording provider, ${e.journal}`, params),
     ];
   }
   if (id.startsWith("tools/events/")) {
     const e = (raw as { evidence?: ToolEventEvidence }).evidence;
-    if (e?.fixtureVersion !== 1) throw new Error(id + " missing/unsupported tool-event evidence");
+    if (e?.fixtureVersion !== 1) throw new Error(`${id} missing/unsupported tool-event evidence`);
     const screenText = validateToolEventEvidence(id, e);
     const t = e.trace;
     const sample = Object.assign(base("tool-event-burst"), {
       spans: [
         ...e.callbacks.map((c) => ({
-          name: "handleEvent:" + c.type + ":" + c.source,
+          name: `handleEvent:${c.type}:${c.source}`,
           kind: "async-prefix" as const,
           startedAtMs: c.startMs,
           endedAtMs: c.endMs,
           durationMs: c.endMs - c.startMs,
         })),
         ...e.inputs.map((i) => ({
-          name: "input:" + i.action,
+          name: `input:${i.action}`,
           kind: "sync" as const,
           startedAtMs: i.enteredAtMs,
           endedAtMs: i.returnedAtMs,
@@ -192,7 +192,7 @@ export function normalizeInteraction(
       ],
       frameMs: e.frames.map((f) => f.endMs - f.startMs),
       contiguousSyncMs: e.burst.endMs - e.burst.startMs,
-      contentHash: e.content.hash + ":" + e.historyHash,
+      contentHash: `${e.content.hash}:${e.historyHash}`,
       screenHash: createHash("sha256").update(screenText).digest("hex"),
       outputHash: e.outputHash,
       outputBytes: e.outputBytes,
@@ -298,12 +298,12 @@ export function normalizeInteraction(
         });
         if (elapsed)
           sample.spans.push({
-            name: name + ".initial-prefix",
+            name: `${name}.initial-prefix`,
             kind: "async-prefix",
             durationMs: elapsed.initialSyncMs,
           });
         if (input) {
-          sample.spans.push({ name: name + ".input", kind: "sync", durationMs: input.durationMs });
+          sample.spans.push({ name: `${name}.input`, kind: "sync", durationMs: input.durationMs });
           sample.boundary = "separate-turns";
         }
         return result(name, sample, e.scope, { size: e.size, width: 80, height: 24 });

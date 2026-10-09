@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import type { Model } from "@earendil-works/pi-ai";
+import type { Api, Model } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { recordDiagnostic } from "../diagnostics.js";
 import { subscribeProviderAttempts } from "./provider-attempts";
@@ -39,7 +39,7 @@ export function parseCacheSettings(value: unknown): CacheSettings {
     throw new Error("settings must be an object");
   const keys = Object.keys(value);
   if (keys.some((key) => key !== "cacheTtlMs"))
-    throw new Error("unknown setting: " + keys.find((key) => key !== "cacheTtlMs"));
+    throw new Error(`unknown setting: ${keys.find((key) => key !== "cacheTtlMs")}`);
   const ttlMs = (value as { cacheTtlMs?: unknown }).cacheTtlMs ?? DEFAULT_CACHE_TTL_MS;
   if (!Number.isSafeInteger(ttlMs) || (ttlMs as number) < MIN_TTL_MS || (ttlMs as number) > MAX_TTL_MS) {
     throw new Error("cacheTtlMs must be an integer from 60000 to 604800000");
@@ -51,15 +51,15 @@ export async function loadCacheSettings(path = cacheSettingsPath()): Promise<Cac
     return parseCacheSettings(JSON.parse(await readFile(path, "utf8")));
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return { ttlMs: DEFAULT_CACHE_TTL_MS };
-    throw new Error("Invalid cache settings at " + path + ": " + String(error));
+    throw new Error(`Invalid cache settings at ${path}: ${String(error)}`);
   }
 }
 export async function saveCacheSettings(settings: CacheSettings, path = cacheSettingsPath()): Promise<void> {
   const value = parseCacheSettings({ cacheTtlMs: settings.ttlMs });
   await mkdir(dirname(path), { recursive: true });
-  const temporary = path + "." + randomUUID() + ".tmp";
+  const temporary = `${path}.${randomUUID()}.tmp`;
   try {
-    await writeFile(temporary, JSON.stringify({ cacheTtlMs: value.ttlMs }, null, 2) + "\n", {
+    await writeFile(temporary, `${JSON.stringify({ cacheTtlMs: value.ttlMs }, null, 2)}\n`, {
       flag: "wx",
       mode: 0o600,
     });
@@ -85,9 +85,9 @@ export function parseCacheTtl(input: string): number {
   return result;
 }
 export function formatCacheTtl(ms: number): string {
-  if (ms % 86_400_000 === 0) return ms / 86_400_000 + "d";
-  if (ms % 3_600_000 === 0) return ms / 3_600_000 + "h";
-  return ms / 60_000 + "m";
+  if (ms % 86_400_000 === 0) return `${ms / 86_400_000}d`;
+  if (ms % 3_600_000 === 0) return `${ms / 3_600_000}h`;
+  return `${ms / 60_000}m`;
 }
 function validCall(value: unknown): value is CacheCall {
   const call = value as CacheCall;
@@ -154,7 +154,7 @@ export class CacheCountdown {
       if (meta.customType !== CACHE_CALL_ENTRY) return;
       const entry = manager.getEntry(meta.id);
       if (entry?.type === "custom" && validCall(entry.data)) {
-        const key = entry.data.provider + "/" + entry.data.model;
+        const key = `${entry.data.provider}/${entry.data.model}`;
         this.calls.set(key, Math.max(this.calls.get(key) ?? 0, entry.data.timestamp));
       }
     });
@@ -164,24 +164,24 @@ export class CacheCountdown {
         // the pre-shake request after resume; later observed calls repopulate it.
         if (entry.type === "custom" && entry.customType === "bruv-manual-shake") this.calls.clear();
         else if (entry.type === "custom" && entry.customType === CACHE_CALL_ENTRY && validCall(entry.data)) {
-          const key = entry.data.provider + "/" + entry.data.model;
+          const key = `${entry.data.provider}/${entry.data.model}`;
           this.calls.set(key, Math.max(this.calls.get(key) ?? 0, entry.data.timestamp));
         }
       }
     this.changed();
   }
-  record(pi: ExtensionAPI, model: Pick<Model<any>, "provider" | "id"> | undefined, timestamp = this.now()) {
+  record(pi: ExtensionAPI, model: Pick<Model<Api>, "provider" | "id"> | undefined, timestamp = this.now()) {
     if (!model) return;
     const call = { timestamp, provider: model.provider, model: model.id };
     // Persist first. An append failure must not leave an in-memory estimate that
     // claims an observation which cannot survive resume.
     pi.appendEntry(CACHE_CALL_ENTRY, call);
-    this.calls.set(call.provider + "/" + call.model, timestamp);
+    this.calls.set(`${call.provider}/${call.model}`, timestamp);
     this.changed();
   }
   estimate(ctx: Pick<ExtensionContext, "model">, now = this.now()): CacheEstimate {
     const model = ctx.model;
-    const timestamp = model ? this.calls.get(model.provider + "/" + model.id) : undefined;
+    const timestamp = model ? this.calls.get(`${model.provider}/${model.id}`) : undefined;
     if (timestamp === undefined) return { state: "unknown", text: "cache est ?" };
     const remaining = timestamp + this.ttlMs - now;
     if (remaining <= 0) return { state: "expired", text: "cache est expired" };
@@ -189,11 +189,11 @@ export class CacheCountdown {
     const state = remaining <= 5 * 60_000 ? "urgent" : remaining <= 15 * 60_000 ? "warning" : "active";
     // Wake only when the visible minute or warning state can change.
     const nextUpdateMs = Math.max(1, remaining - (minutes - 1) * 60_000);
-    return { state, text: "cache est " + minutes + "m", nextUpdateMs };
+    return { state, text: `cache est ${minutes}m`, nextUpdateMs };
   }
 }
 
-type CacheModel = Pick<Model<any>, "provider" | "id">;
+type CacheModel = Pick<Model<Api>, "provider" | "id">;
 type CacheAttempt = {
   operationId: string;
   model: CacheModel;
@@ -276,7 +276,7 @@ class CacheRequestObserver {
   }
 
   private modelKey(model: CacheModel) {
-    return model.provider + "/" + model.id;
+    return `${model.provider}/${model.id}`;
   }
 
   private candidates(model: CacheModel) {
@@ -365,7 +365,7 @@ export function registerCacheCountdown(pi: ExtensionAPI, countdown: CacheCountdo
     await ready;
     if (loadError)
       ctx.ui?.notify?.(
-        loadError.message + ". The file was left unchanged; using the default cache estimate.",
+        `${loadError.message}. The file was left unchanged; using the default cache estimate.`,
         "warning",
       );
   });
@@ -411,7 +411,7 @@ export function registerCacheCountdown(pi: ExtensionAPI, countdown: CacheCountdo
           "info",
         );
       } catch (error) {
-        ctx.ui.notify("Invalid cache TTL: " + (error instanceof Error ? error.message : String(error)), "error");
+        ctx.ui.notify(`Invalid cache TTL: ${error instanceof Error ? error.message : String(error)}`, "error");
       }
     },
   });

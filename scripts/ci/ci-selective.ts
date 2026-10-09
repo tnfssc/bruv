@@ -1,3 +1,4 @@
+import { requireValue } from "../lib/require-value";
 import { spawnSync } from "node:child_process";
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 export type Change = { status: string; paths: string[] };
@@ -23,7 +24,10 @@ export function isDoc(path: string): boolean {
   );
 }
 function isReferenceOnlyDiff(changes: Change[]): boolean {
-  return changes.length > 0 && changes.every((c) => c.status === "M" && c.paths.length === 1 && isDoc(c.paths[0]!));
+  return (
+    changes.length > 0 &&
+    changes.every((c) => c.status === "M" && c.paths.length === 1 && isDoc(requireValue(c.paths[0])))
+  );
 }
 
 export function planDiff(changes: Change[], blocker?: string) {
@@ -68,7 +72,7 @@ function referenceFileBlocker(cwd: string, changes: Change[], base: string, head
   let blocker: string | undefined;
   for (const change of changes) {
     for (const revision of [base, head]) {
-      if (!git(cwd, ["ls-tree", "-z", revision, "--", change.paths[0]!]).startsWith("100644 "))
+      if (!git(cwd, ["ls-tree", "-z", revision, "--", requireValue(change.paths[0])]).startsWith("100644 "))
         blocker = "Non-regular or executable reference file requires full validation.";
     }
   }
@@ -83,12 +87,12 @@ export function plan(
   if (!base || !/^[0-9a-f]{40,64}$/i.test(base))
     return planDiff([], "Missing trustworthy comparison baseline; full validation required.");
   try {
-    const headSha = git(cwd, ["rev-parse", "--verify", (head || "HEAD") + "^{commit}"]).trim();
-    const baseSha = git(cwd, ["rev-parse", "--verify", base + "^{commit}"]).trim();
+    const headSha = git(cwd, ["rev-parse", "--verify", `${head || "HEAD"}^{commit}`]).trim();
+    const baseSha = git(cwd, ["rev-parse", "--verify", `${base}^{commit}`]).trim();
     const checkoutProblem = checkoutBlocker(cwd, headSha);
     if (checkoutProblem) return { ...planDiff([], checkoutProblem), base: baseSha, head: headSha };
-    git(cwd, ["rev-parse", "--verify", baseSha + "^{tree}"]);
-    git(cwd, ["rev-parse", "--verify", headSha + "^{tree}"]);
+    git(cwd, ["rev-parse", "--verify", `${baseSha}^{tree}`]);
+    git(cwd, ["rev-parse", "--verify", `${headSha}^{tree}`]);
     const raw = git(cwd, [
       "diff",
       "--no-ext-diff",
@@ -109,17 +113,17 @@ export function plan(
 }
 export function summary(p: ReturnType<typeof planDiff>): string {
   const json = JSON.stringify(p, null, 2).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-  return "## CI plan: " + p.mode + "\n\n" + p.scope + "\n\n<pre>" + json + "</pre>\n";
+  return `## CI plan: ${p.mode}\n\n${p.scope}\n\n<pre>${json}</pre>\n`;
 }
 function publishSelection(selection: ReturnType<typeof plan>): void {
   const json = JSON.stringify(selection, null, 2);
   const markdown = summary(selection);
   mkdirSync("artifacts/ci", { recursive: true });
-  writeFileSync("artifacts/ci/selection.json", json + "\n");
+  writeFileSync("artifacts/ci/selection.json", `${json}\n`);
   writeFileSync("artifacts/ci/selection-summary.md", markdown);
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
   if (process.env.GITHUB_OUTPUT)
-    appendFileSync(process.env.GITHUB_OUTPUT, "mode=" + selection.mode + "\nfull=" + selection.full + "\n");
+    appendFileSync(process.env.GITHUB_OUTPUT, `mode=${selection.mode}\nfull=${selection.full}\n`);
   console.log(json);
 }
 
@@ -129,8 +133,8 @@ function runDocsChecks(cwd: string, selection: ReturnType<typeof plan>): number 
     process.exit(3);
   }
   if (checkoutBlocker(cwd, selection.head)) throw new Error("runner requires clean checkout at planned head");
-  const command = selection.commands[0]!;
-  const result = spawnSync(command[0]!, command.slice(1), { stdio: "inherit" });
+  const command = requireValue(selection.commands[0]);
+  const result = spawnSync(requireValue(command[0]), command.slice(1), { stdio: "inherit" });
   return result.status ?? 1;
 }
 

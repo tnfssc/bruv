@@ -14,7 +14,7 @@ export async function waitForCommandIdle(page, timeout=30000) {
  for(;;) {
   for(const [locator,state] of states) {
    const remaining=deadline-performance.now();
-   if(remaining<=0)throw Error('Command UI did not converge to idle within '+timeout+'ms');
+   if(remaining<=0)throw Error(`Command UI did not converge to idle within ${timeout}ms`);
    await locator.waitFor({state,timeout:remaining});
   }
   const visible=await Promise.all(states.map(([locator])=>locator.isVisible()));
@@ -38,7 +38,7 @@ export async function exercise({page,snapshot,config}) {
    await new Promise(r=>setTimeout(r,100));
   }
   await waitForCommandIdle(page);
-  await snapshot('command-'+n+'-idle');
+  await snapshot(`command-${n}-idle`);
  }
 }
 export async function verify({proof,t3Version,t3BinarySha256}) {

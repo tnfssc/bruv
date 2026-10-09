@@ -8,7 +8,7 @@ export function registerSubagentSettings(pi: ExtensionAPI, path = profilesPath()
     description: "Configure sub-agent profiles with a searchable model picker",
     handler: async (_args, ctx) => {
       if (ctx.mode !== "tui") {
-        ctx.ui.notify("Use /subagents in the TUI, or edit " + path, "info");
+        ctx.ui.notify(`Use /subagents in the TUI, or edit ${path}`, "info");
         return;
       }
       try {
@@ -22,15 +22,15 @@ export function registerSubagentSettings(pi: ExtensionAPI, path = profilesPath()
               keys,
               done,
               () => tui.requestRender(),
-              ctx.model ? ctx.model.provider + "/" + ctx.model.id : undefined,
+              ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
               ctx.thinkingLevel,
             ),
         );
         if (!result) return;
         await saveProfiles(result, path);
-        ctx.ui.notify("Saved " + path + ". Applies to future sub-agents.", "info");
+        ctx.ui.notify(`Saved ${path}. Applies to future sub-agents.`, "info");
       } catch (error) {
-        ctx.ui.notify("Could not configure sub-agents: " + String(error), "error");
+        ctx.ui.notify(`Could not configure sub-agents: ${String(error)}`, "error");
       }
     },
   });

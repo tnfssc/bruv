@@ -39,7 +39,7 @@ function git(cwd: string, args: string[], input?: Buffer, allowedFailure = false
     },
   });
   if (r.exitCode !== 0 && !allowedFailure)
-    throw new Error("Git " + args[0] + " failed: " + text(Buffer.from(r.stderr)).slice(0, 1000));
+    throw new Error(`Git ${args[0]} failed: ${text(Buffer.from(r.stderr)).slice(0, 1000)}`);
   return r.exitCode === 0 ? Buffer.from(r.stdout) : Buffer.alloc(0);
 }
 function assertRoot(root: string) {
@@ -145,7 +145,7 @@ function createOrphanSnapshot(root: string, checkout: string, trackedDiff: Buffe
   // Transfer only an orphan snapshot, never reachable local history or deleted secrets.
   const tree = text(git(checkout, ["write-tree"]));
   for (const row of names(git(checkout, ["ls-tree", "-rlz", tree]))) {
-    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]!))
+    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]))
       throw Error("Snapshot tree contains unsupported or credential/config paths");
   }
   const commit = text(
@@ -176,16 +176,16 @@ export function captureRepository(
     throw Error("artifacts must be outside repository");
   assertRoot(root);
   const sourceCommit = text(
-    git(root, ["rev-parse", "--verify", "--end-of-options", (options.baseRef ?? "HEAD") + "^{commit}"]),
+    git(root, ["rev-parse", "--verify", "--end-of-options", `${options.baseRef ?? "HEAD"}^{commit}`]),
   );
   if (options.baseRef !== undefined && approvedUntracked.length)
     throw Error("Explicit baseRef snapshots cannot include current untracked files");
   const entries = names(git(root, ["ls-tree", "-rlz", sourceCommit]));
   for (const row of options.baseRef === undefined ? [] : entries) {
-    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]!))
+    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]))
       throw Error("Source commit contains unsupported or credential/config paths");
   }
-  const baseBytes = entries.reduce((sum, row) => sum + Number(row.split("\t")[0]!.trim().split(/\s+/).at(-1)), 0);
+  const baseBytes = entries.reduce((sum, row) => sum + Number(row.split("\t")[0].trim().split(/\s+/).at(-1)), 0);
   const currentBytes = names(git(root, ["ls-files", "-z"])).reduce((sum, name) => {
     try {
       return sum + statSync(join(root, name)).size;
@@ -200,7 +200,7 @@ export function captureRepository(
   const sensitive = [...names(git(root, ["ls-files", "-z"])), ...selected].filter(sensitiveRepoPath);
   if (sensitive.length)
     throw Error(
-      "Repository contains credential/config paths that are not automatically transferred: " + sensitive.join(", "),
+      `Repository contains credential/config paths that are not automatically transferred: ${sensitive.join(", ")}`,
     );
   if (new Set(selected).size !== selected.length || selected.some((p) => !available.includes(p) || !regular(root, p)))
     throw Error("ask before transferring untracked files; approval must name exact regular paths");
@@ -252,7 +252,7 @@ export function captureRepository(
     bundle,
     manifest,
   };
-  writeFileSync(manifest, JSON.stringify(snapshot) + "\n", { flag: "wx", mode: 0o600 });
+  writeFileSync(manifest, `${JSON.stringify(snapshot)}\n`, { flag: "wx", mode: 0o600 });
   return snapshot;
 }
 export interface RepositoryResult {
@@ -282,7 +282,7 @@ export function collectRepositoryResult(checkout: string, snapshot: string, patc
   let total = patch.length;
   for (const name of extra) {
     if (!regular(root, name) || sensitiveRepoPath(name))
-      throw Error("Remote untracked path cannot be automatically exported: " + name);
+      throw Error(`Remote untracked path cannot be automatically exported: ${name}`);
     if (statSync(join(root, name)).size > MAX) throw Error("Remote untracked result exceeds limit");
     const diff = Bun.spawnSync(
       [
@@ -372,7 +372,7 @@ export function integrateRepositoryResult(
   });
   if (check.exitCode !== 0) return review("patch conflict or invalid patch");
   mkdirSync(receipts, { recursive: true, mode: 0o700 });
-  const receipt = join(receipts, hash(manifest.snapshot + ":" + result.sha256) + ".json");
+  const receipt = join(receipts, `${hash(`${manifest.snapshot}:${result.sha256}`)}.json`);
   let fd: number;
   try {
     fd = openSync(receipt, "wx", 0o600);
@@ -382,7 +382,7 @@ export function integrateRepositoryResult(
   try {
     writeFileSync(
       fd,
-      JSON.stringify({ status: "attempting", snapshot: manifest.snapshot, sha256: result.sha256 }) + "\n",
+      `${JSON.stringify({ status: "attempting", snapshot: manifest.snapshot, sha256: result.sha256 })}\n`,
     );
     fsyncSync(fd);
   } finally {
@@ -395,7 +395,7 @@ export function integrateRepositoryResult(
   }
   writeFileSync(
     receipt,
-    JSON.stringify({ status: "applied", snapshot: manifest.snapshot, sha256: result.sha256 }) + "\n",
+    `${JSON.stringify({ status: "applied", snapshot: manifest.snapshot, sha256: result.sha256 })}\n`,
   );
   return { status: "applied", artifact: result.patch, receipt };
 }

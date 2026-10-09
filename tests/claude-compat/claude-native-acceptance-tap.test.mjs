@@ -90,7 +90,7 @@ test("tap forwards exact bytes and records complete UTF-8 lines across chunk bou
   );
   const packet = { text: "\u03B2\u{1f989}", path: fixture.root };
   const line = JSON.stringify(packet);
-  const bytes = Buffer.from(line + '\n\nnot-json\n{"unfinished"');
+  const bytes = Buffer.from(`${line}\n\nnot-json\n{"unfinished"`);
   const split = Buffer.byteLength(line.slice(0, line.indexOf("\u{1f989}"))) + 2;
   // Do not send the rest until both forwarded streams expose the incomplete codepoint.
   const firstOutput = Promise.all([once(fixture.proc.stdout, "data"), once(fixture.proc.stderr, "data")]);
@@ -192,8 +192,8 @@ test("root diagnostics retain the compatibility allowlist and redact only record
   assert.equal(
     fixture.stderr().toString(),
     [
-      "noise " + fixture.root,
-      "[bruv-claude-compat] No configured authentication " + fixture.root + " " + fixture.root,
+      `noise ${fixture.root}`,
+      `[bruv-claude-compat] No configured authentication ${fixture.root} ${fixture.root}`,
       "[bruv-claude-compat] Unknown connector option: --example",
       "[bruv-claude-compat] trailing partial",
     ].join("\n"),
@@ -211,7 +211,7 @@ test("root diagnostics retain the compatibility allowlist and redact only record
 });
 
 for (const signal of ["SIGTERM", "SIGINT"]) {
-  test("tap forwards " + signal + " to its connector and records actual signal exit", { timeout: 5000 }, async (t) => {
+  test(`tap forwards ${signal} to its connector and records actual signal exit`, { timeout: 5000 }, async (t) => {
     const fixture = await launch(
       t,
       String.raw`

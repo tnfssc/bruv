@@ -40,7 +40,7 @@ const ansi = (n: number): string => {
     );
   const v = [0, 95, 135, 175, 215, 255];
   n -= 16;
-  return "rgb(" + [v[Math.floor(n / 36)], v[Math.floor(n / 6) % 6], v[n % 6]].join(",") + ")";
+  return `rgb(${[v[Math.floor(n / 36)], v[Math.floor(n / 6) % 6], v[n % 6]].join(",")})`;
 };
 function replay(text: string) {
   let fg = "#e5e5e5",
@@ -80,13 +80,12 @@ function replay(text: string) {
         else if (n >= 100 && n <= 107) bg = ansi(n - 100 + 8);
         else if (n === 38 || n === 48) {
           const mode = ns[++i];
-          const color =
-            mode === 5 ? ansi(ns[++i]) : mode === 2 ? "rgb(" + ns.slice(i + 1, i + 4).join(",") + ")" : null;
+          const color = mode === 5 ? ansi(ns[++i]) : mode === 2 ? `rgb(${ns.slice(i + 1, i + 4).join(",")})` : null;
           if (mode === 2) i += 3;
           if (!color) throw Error("Unsupported SGR color");
           if (n === 38) fg = color;
           else bg = color;
-        } else throw Error("Unsupported SGR: " + n);
+        } else throw Error(`Unsupported SGR: ${n}`);
       }
     } else {
       if (part.includes("\x1b")) throw Error("Non-SGR sequence in tmux viewport");
@@ -140,14 +139,14 @@ async function captureScreenshots(
     const page = await browser.newPage({ viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 1 });
     await page.route("**/*", (route: { abort(): Promise<void> }) => route.abort());
     for (const frame of timeline) {
-      const screen = await readFile(join(captureDir, frame.step + ".viewport.ansi.txt"), "utf8");
+      const screen = await readFile(join(captureDir, `${frame.step}.viewport.ansi.txt`), "utf8");
       const html = renderViewportDocument(screen, font);
-      await writeFile(join(captureDir, frame.step + ".html"), html);
+      await writeFile(join(captureDir, `${frame.step}.html`), html);
       await page.setContent(html);
       await page.evaluate(() => document.fonts.ready);
       if ((await page.locator("pre").innerText()) !== screen.replace(SGR, ""))
         throw Error("Replay changed viewport text");
-      const png = await page.screenshot({ path: join(captureDir, frame.step + ".png"), fullPage: true });
+      const png = await page.screenshot({ path: join(captureDir, `${frame.step}.png`), fullPage: true });
       screenshotHashes[frame.step] = hash(png);
     }
   } finally {
@@ -169,7 +168,7 @@ const font = (
 const screenshotHashes = await captureScreenshots(dir, timeline, font, modulePath, executablePath);
 await writeFile(
   join(dir, "screenshots.json"),
-  JSON.stringify(
+  `${JSON.stringify(
     {
       kind: "full text-identical native PTY ANSI replay, no pixel edits",
       playwrightModule: modulePath,
@@ -180,6 +179,6 @@ await writeFile(
     },
     null,
     2,
-  ) + "\n",
+  )}\n`,
 );
-console.log("Full unedited ANSI-replay screenshots: " + timeline.length);
+console.log(`Full unedited ANSI-replay screenshots: ${timeline.length}`);

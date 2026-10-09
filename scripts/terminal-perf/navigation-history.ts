@@ -35,8 +35,8 @@ export function createNavigationHistory(size: number) {
   let parentId: string | null = null;
   for (let i = 0; i < size; i++) {
     for (const [suffix, message] of [
-      ["u", { role: "user", content: "request " + i + " needle alpha", timestamp }],
-      ["a", assistant("response " + i + " needle beta\nsecond line")],
+      ["u", { role: "user", content: `request ${i} needle alpha`, timestamp }],
+      ["a", assistant(`response ${i} needle beta\nsecond line`)],
     ] as const) {
       const id = suffix + i;
       entries.push({ type: "message", id, parentId, timestamp: new Date(timestamp).toISOString(), message });
@@ -50,13 +50,13 @@ export function createNavigationHistory(size: number) {
     timestamp: new Date(timestamp).toISOString(),
     message: assistant("alternate branch needle"),
   });
-  const text = entries.map((e) => JSON.stringify(e)).join("\n") + "\n";
+  const text = `${entries.map((e) => JSON.stringify(e)).join("\n")}\n`;
   writeFileSync(file, text);
   // cwd differs by run. Hash actual content excluding the intentionally temporary header cwd.
   return {
     root,
     file,
-    primaryLeaf: "a" + (size - 1),
+    primaryLeaf: `a${size - 1}`,
     alternateLeaf: "alternate",
     contentHash: hash(
       entries
