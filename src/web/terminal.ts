@@ -32,6 +32,10 @@ export class TerminalSession {
     return this.process?.pid;
   }
 
+  get exited() {
+    return this.code !== undefined;
+  }
+
   private send(message: object) {
     const socket = this.client;
     if (!socket) return;
@@ -46,7 +50,7 @@ export class TerminalSession {
   attach(socket: ServerWebSocket<SocketData>) {
     if (this.stopping) {
       socket.close(1001, "Server stopping");
-      return;
+      return false;
     }
     const after = socket.data.after ?? 0;
     const first = this.chunks[0]?.seq ?? this.sequence + 1;
@@ -59,7 +63,7 @@ export class TerminalSession {
         }),
       );
       socket.close(1008, "Replay expired");
-      return;
+      return false;
     }
     this.client?.close(1000, "Another browser attached");
     this.client = socket;
@@ -68,9 +72,9 @@ export class TerminalSession {
       if (chunk.seq > after) this.send({ type: "output", seq: chunk.seq, data: chunk.data });
     if (this.code !== undefined) {
       this.send({ type: "exit", code: this.code });
-      return;
+      return true;
     }
-    if (this.process) return;
+    if (this.process) return true;
     try {
       this.process = Bun.spawn(this.command, {
         cwd: this.cwd,
@@ -97,6 +101,7 @@ export class TerminalSession {
       this.send({ type: "error", message: "CLI startup failed: " + String(error) });
       socket.close(1011, "CLI startup failed");
     }
+    return true;
   }
 
   detach(socket: ServerWebSocket<SocketData>) {
