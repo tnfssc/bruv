@@ -675,6 +675,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       additionalProperties: false,
     });
     expect(result.structured_output).toEqual({ title: "Actual fixture title" });
+    const request = JSON.stringify(captured);
+    expect(request.split("Return only JSON matching").length - 1).toBe(1);
+    expect(request).toContain("Answer the user's request.");
     expect(captured.tools ?? []).toHaveLength(0);
     expect(runtime.session.getActiveToolNames()).toHaveLength(0);
     expect(runtime.session.sessionManager.getSessionFile()).toBeUndefined();

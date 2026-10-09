@@ -39,7 +39,7 @@ export function expectExecuteOnce<T extends { name?: string; description?: strin
     "history.search({",
     "/live model",
     "live.stop()",
-    "await handoff(message)",
+    "handoff(",
   ]) {
     expect(instructions.split(fact).length - 1, fact).toBe(1);
   }

@@ -26,15 +26,15 @@ Count is `systemPrompt + JSON.stringify(tools)`: all descriptions, names and sch
 
 | Path | Before chars | After chars | Saved chars | Before bytes | After bytes |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Root | 19,136 | 15,577 | 3,559 | 19,168 | 15,607 |
-| Fast child | 17,243 | 13,800 | 3,443 | 17,275 | 13,830 |
-| Normal child | 17,258 | 13,815 | 3,443 | 17,290 | 13,845 |
-| Orchestrator child | 17,361 | 13,918 | 3,443 | 17,393 | 13,948 |
-| Custom root | 6,733 | 13,135 | -6,402 | 6,735 | 13,165 |
-| Custom normal child | 5,273 | 11,791 | -6,518 | 5,275 | 11,821 |
-| Live setup | 15,415 | 11,678 | 3,737 | 15,447 | 11,708 |
+| Root | 19,136 | 15,536 | 3,600 | 19,168 | 15,566 |
+| Fast child | 17,243 | 13,759 | 3,484 | 17,275 | 13,789 |
+| Normal child | 17,258 | 13,774 | 3,484 | 17,290 | 13,804 |
+| Orchestrator child | 17,361 | 13,877 | 3,484 | 17,393 | 13,907 |
+| Custom root | 6,733 | 13,094 | -6,361 | 6,735 | 13,124 |
+| Custom normal child | 5,273 | 11,750 | -6,477 | 5,275 | 11,780 |
+| Live setup | 15,415 | 11,637 | 3,778 | 15,447 | 11,667 |
 
-Root saves 18.6%. Custom paths grow on purpose: they previously skipped the reference and got only the short description. They now get the missing operational facts. No unique API fact was cut to make those paths look smaller. All captured schemas match before/after.
+Root saves 18.8%. Custom paths grow on purpose: they previously skipped the reference and got only the short description. They now get the missing operational facts. No unique API fact was cut to make those paths look smaller. All captured schemas match before/after.
 
 Production preview captures supply the root/child/custom numbers. Setup's before frame is rebuilt from exact parent assets and the captured unchanged schema; after uses the real setup factory. Captures, size script and logs stay in `.tmp/combined/`.
 
@@ -53,3 +53,11 @@ Value 8 got a short addition: review system and declarations together; say each 
 Worktree: `/home/tnfssc/.bruv/worktrees/t3-6c093fbb-5442693331ce-task_bb7cd6cb`. Branch: `bruv/deduplicate-the-complete-model-request-bb7cd6cb`. Base: `1911be75`. Parent's completed worktree stays still. Local commit only; no push or PR.
 
 `/tmp` is full. Tests use the exact owned short root `/var/tmp/cd-bb7cd6cb` through `TMPDIR`, with no ancestor Git repo. Evidence stays in this worktree. Git signing uses `TMPDIR=$PWD/.tmp/git-tmp`. No shared temp data was cleaned.
+
+## Parent review
+
+The independent combined-request audit also found the auxiliary JSON-only instruction in both its system frame and schema wrapper. The wrapper now owns it. The real auxiliary model-context test counts one copy across the full captured request; schema validation stays as it was.
+
+The fact review found no lost unique API, runtime, security or data-loss fact. It caught one repeated handoff sentence inside a single line. Removed it and changed the combined test anchor to count handoff( itself, so that repeat would fail too. Final captures are in .tmp/combined/parent-final.json.
+
+The worker had removed its fixture temp root. An early parent rerun failed with ENOENT, not a code failure. Parent tests use the exact owned short root /var/tmp/cp-VQjqhq. The auxiliary context check reads the actual captured request; its system text is not assumed to be a top-level field. Parent reran the final merged checks: 85 prompt/Live-wire/UI tests, 21 Live-owner tests and 29 native compatibility tests pass. Build, typecheck, format and diff checks pass too. No full-suite green claim. The auxiliary and within-line handoff fixes are in this final local commit. No push or release.

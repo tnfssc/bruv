@@ -43,7 +43,7 @@ Only explicit human setup grants bounded parent-repo capabilities; no credential
 - `background: true`: job still running; completion arrives later and resumes the agent.
 - `await` waits for this launch response, not necessarily job completion.
 - A nonzero exit is a failed job result, not a thrown exception.
-- `await handoff(message)` shows message, gives user turn. Code after it no run. Normal reply with no tool call gives turn back too. handoff() does same from inside execute.
+- `await handoff(message)` shows message, gives user turn. Code after it no run. Normal reply with no tool call gives turn back too.
 
 ## Jobs
 

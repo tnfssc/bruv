@@ -444,7 +444,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     noThemes: true,
     noContextFiles: options.auxiliary,
     systemPrompt: options.auxiliary
-      ? "Answer the user's request. Return only JSON matching the requested schema."
+      ? "Answer the user's request."
       : withBruvSystemPrompt([], {
           cwd: options.cwd,
           agentDir: options.agentDir,
