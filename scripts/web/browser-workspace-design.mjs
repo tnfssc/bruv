@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readlink, readFile, access } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, readlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+
 const { chromium } = await import(
   process.env.PLAYWRIGHT_CORE ? pathToFileURL(process.env.PLAYWRIGHT_CORE).href : "playwright"
 );
@@ -51,6 +52,43 @@ async function until(check, message, timeout = 15000) {
     await Bun.sleep(30);
   }
 }
+async function checkAlignment(label) {
+  const metrics = await page.evaluate(() => {
+    const rect = (selector) => {
+      const r = document.querySelector(selector).getBoundingClientRect();
+      return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, centerY: r.y + r.height / 2 };
+    };
+    return {
+      tab: rect(".tab-close"),
+      plus: rect("#new-tab"),
+      menu: rect("#tab-menu-toggle"),
+      status: rect(".connection"),
+      folder: rect(".workspace-mark"),
+      copy: rect(".workspace-copy"),
+      header: rect(".brand-row"),
+      terminal: rect("#terminal"),
+      screen: rect(".terminal-pane:not([hidden]) .xterm-screen"),
+      rows: document.querySelector(".terminal-pane:not([hidden]) .xterm-rows").childElementCount,
+    };
+  });
+  for (const name of ["plus", "menu", "status"])
+    assert(Math.abs(metrics[name].centerY - metrics.tab.centerY) < 0.6, label + ": " + name + " aligns with tabs");
+  assert(metrics.status.width >= 28 && metrics.status.height >= 28, "Status keeps a usable focus frame");
+  assert(Math.abs(metrics.folder.centerY - metrics.copy.centerY) < 0.6, "Folder aligns with workspace text");
+  if (metrics.header.height > 0) {
+    const denseHeight = await page.evaluate(() => {
+      const list = document.querySelector("#workspace-list");
+      const copies = Array.from({ length: 20 }, () => list.firstElementChild.cloneNode(true));
+      list.append(...copies);
+      const height = document.querySelector(".brand-row").getBoundingClientRect().height;
+      for (const copy of copies) copy.remove();
+      return height;
+    });
+    assert(Math.abs(denseHeight - metrics.header.height) < 0.6, "Workspace overflow must not shrink the brand header");
+  }
+  await Bun.write(join(proof, "alignment-" + label + ".json"), JSON.stringify(metrics, null, 2));
+}
+
 // UI proof uses the compiled app and real PTYs. Inspect the saved frames too.
 // Preserve caret styling: Playwright caret hiding corrupts focused xterm DOM captures in Chromium.
 const screenshot = (options) => page.screenshot({ caret: "initial", ...options });
@@ -141,7 +179,14 @@ try {
     "Connection detail is keyboard-accessible",
   );
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await checkAlignment("desktop");
   await screenshot({ path: join(proof, "populated-desktop.png") });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.waitForTimeout(250);
+  await checkAlignment("desktop-wide");
+  await screenshot({ path: join(proof, "alignment-desktop-wide.png") });
+  await page.setViewportSize({ width: 1100, height: 720 });
+  await page.waitForTimeout(250);
 
   // Menu arrows, Escape, dialog focus, validation, and cancellation.
   await page.locator("#tab-menu-toggle").focus();
@@ -156,6 +201,13 @@ try {
   await page.keyboard.press("Enter");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-input");
   await screenshot({ path: join(proof, "rename-dialog.png") });
+  await page.locator("#dialog-submit").focus();
+  assert.equal(
+    await page.locator("#dialog-submit").evaluate((e) => getComputedStyle(e).outlineOffset),
+    "2px",
+    "Primary focus ring stays distinct from its fill",
+  );
+  await screenshot({ path: join(proof, "alignment-primary-focus.png") });
   await page.locator("#dialog-input").fill("   ");
   await page.keyboard.press("Enter");
   assert(await page.locator("#workspace-dialog").isVisible(), "Blank rename stays open");
@@ -173,11 +225,24 @@ try {
   const terminalHeight = await page.locator("#terminal").evaluate((el) => el.clientHeight);
   assert(terminalHeight > 620, "Phone terminal keeps most of the screen");
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await checkAlignment("phone");
   await screenshot({ path: join(proof, "populated-phone.png") });
+  await page.setViewportSize({ width: 390, height: 780 });
+  await page.waitForTimeout(250);
+  await checkAlignment("phone-tall");
+  await screenshot({ path: join(proof, "alignment-phone-tall.png") });
+  await page.setViewportSize({ width: 390, height: 680 });
+  await page.waitForTimeout(250);
   await page.locator("#open-drawer").click();
   assert.equal(await page.evaluate(() => document.activeElement?.id), "close-drawer");
   await page.keyboard.press("Shift+Tab");
   assert(await page.evaluate(() => !!document.activeElement?.closest("#workspace-sidebar")), "Drawer traps focus");
+  await checkAlignment("phone-drawer");
+  const drawerAlignment = await page.evaluate(() => ({
+    close: document.querySelector("#close-drawer").getBoundingClientRect().right,
+    row: document.querySelector(".workspace").getBoundingClientRect().right,
+  }));
+  assert(Math.abs(drawerAlignment.close - drawerAlignment.row) < 0.6, "Drawer close shares the workspace action edge");
   await screenshot({ path: join(proof, "populated-drawer.png") });
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "open-drawer");
@@ -225,6 +290,15 @@ try {
   await page.setViewportSize({ width: 390, height: 680 });
   await page.waitForTimeout(300);
   await page.getByRole("tab").first().focus();
+  for (let step = 0; step < 3; step++) {
+    await page.keyboard.press("ArrowRight");
+    await page.waitForFunction(() => {
+      const shell = document.querySelector('[role="tab"][aria-selected="true"]').parentElement.getBoundingClientRect();
+      const list = document.querySelector("#tab-list").getBoundingClientRect();
+      return shell.left >= list.left - 1 && shell.right <= list.right + 1;
+    });
+  }
+  await screenshot({ path: join(proof, "alignment-phone-intermediate-tab.png") });
   await page.keyboard.press("End");
   const selectedTab = () => page.locator('[role="tab"][aria-selected="true"]');
   assert.equal(await selectedTab().getAttribute("id"), "tab-" + many.at(-1).id);

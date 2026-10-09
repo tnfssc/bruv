@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readlink, access } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+
 const { chromium } = await import(
   process.env.PLAYWRIGHT_CORE ? pathToFileURL(process.env.PLAYWRIGHT_CORE).href : "playwright"
 );
@@ -157,6 +158,7 @@ try {
     );
   }
   async function paste(page, value) {
+    await page.locator("#terminal .xterm-helper-textarea:visible").focus();
     await page.locator("#terminal .xterm-helper-textarea:visible").evaluate((el, value) => {
       const clipboardData = new DataTransfer();
       clipboardData.setData("text/plain", value);
@@ -288,11 +290,35 @@ try {
   assert.deepEqual((await state()).voice, voice, "Another browser command cannot steal active owner");
   assert.equal(await b.evaluate(() => window.mediaTracks.length), 0);
   assert(await a.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")));
-  await a.screenshot({ path: join(project, "artifacts/web-multiplayer-owner.png") });
-  await b.screenshot({ path: join(project, "artifacts/web-multiplayer-observer.png") });
+  await a.screenshot({ caret: "initial", path: join(project, "artifacts/web-multiplayer-owner.png") });
+  await b.screenshot({ caret: "initial", path: join(project, "artifacts/web-multiplayer-observer.png") });
   await a.setViewportSize({ width: 390, height: 680 });
   await Bun.sleep(200);
-  await a.screenshot({ path: join(project, "artifacts/web-multiplayer-owner-phone.png") });
+  await a.locator(".voice-control").focus();
+  const voiceGeometry = await a.evaluate(() => {
+    const rect = (selector) => document.querySelector(selector).getBoundingClientRect().toJSON();
+    return {
+      voice: rect(".voice-control"),
+      label: rect(".mic-label"),
+      status: rect(".connection"),
+      tab: rect(".tab-close"),
+      tooltip: rect("#audio-status"),
+    };
+  });
+  assert.equal(voiceGeometry.voice.height, 32, "Phone voice uses the shared control frame");
+  assert(
+    Math.abs(
+      voiceGeometry.voice.y + voiceGeometry.voice.height / 2 - voiceGeometry.tab.y - voiceGeometry.tab.height / 2,
+    ) < 0.6,
+    "Voice aligns with tabs",
+  );
+  assert(voiceGeometry.label.y - voiceGeometry.voice.y >= 4, "Voice focus frame does not cross its label");
+  assert(
+    Math.abs(voiceGeometry.tooltip.y - voiceGeometry.voice.bottom - 5) < 0.6,
+    "Voice tooltip uses the shared menu gap",
+  );
+  await Bun.write(join(project, "artifacts/voice-alignment.json"), JSON.stringify(voiceGeometry, null, 2));
+  await a.screenshot({ caret: "initial", path: join(project, "artifacts/web-multiplayer-owner-phone.png") });
   await a.setViewportSize({ width: 1100, height: 800 });
   await submit(a, "/fixture-live stop");
   await until(async () => (await state()).voice === null, "Explicit release not shared");
@@ -372,7 +398,10 @@ try {
   for (const [index, page] of pages.entries()) {
     try {
       console.error("BROWSER", index, await page.locator("body").innerText());
-      await page.screenshot({ path: join(project, "artifacts/web-multiplayer-failure-" + index + ".png") });
+      await page.screenshot({
+        caret: "initial",
+        path: join(project, "artifacts/web-multiplayer-failure-" + index + ".png"),
+      });
     } catch {}
   }
   throw error;

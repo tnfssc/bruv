@@ -6,6 +6,9 @@
   --muted: #a0a0a0;
   --text: #ffffff;
   --accent: #ffc799;
+  --tab-strip-height: 40px;
+  --tab-inset: 6px;
+  --control-height: 28px;
 }
 * {
   box-sizing: border-box;
@@ -86,8 +89,9 @@ aside {
   min-height: 0;
 }
 .brand-row {
-  height: 46px;
-  padding: 0 17px;
+  height: calc(var(--tab-strip-height) + var(--tab-inset));
+  flex-shrink: 0;
+  padding: 0 8px 0 17px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -130,6 +134,7 @@ aside {
   text-align: left;
 }
 .workspace-mark {
+  display: block;
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
@@ -171,12 +176,12 @@ aside {
   flex-direction: column;
 }
 .tab-bar {
-  height: 40px;
+  height: var(--tab-strip-height);
   display: flex;
   align-items: center;
   flex-shrink: 0;
   gap: 3px;
-  padding: 0 9px 0 6px;
+  padding: var(--tab-inset) 9px 0 6px;
   background: #101010;
   box-shadow: inset 0 -1px var(--line);
 }
@@ -184,14 +189,30 @@ aside {
   display: flex;
   align-self: stretch;
   min-width: 0;
-  padding-top: 6px;
   overflow-x: auto;
   scrollbar-width: none;
+}
+#tab-list[data-start-clipped="true"],
+#tab-list[data-end-clipped="true"] {
+  mask-image: linear-gradient(
+    to right,
+    var(--edge-start, #000),
+    #000 10px,
+    #000 calc(100% - 10px),
+    var(--edge-end, #000)
+  );
+}
+#tab-list[data-start-clipped="true"] {
+  --edge-start: transparent;
+}
+#tab-list[data-end-clipped="true"] {
+  --edge-end: transparent;
 }
 #tab-list::-webkit-scrollbar {
   display: none;
 }
 .terminal-tab {
+  scroll-margin-inline: 12px;
   position: relative;
   display: flex;
   align-items: center;
@@ -256,23 +277,30 @@ aside {
   color: var(--text);
   background: #343434;
 }
+.tab-bar > .icon-button {
+  width: 28px;
+  height: var(--control-height);
+}
 #new-tab {
   flex-shrink: 0;
   width: 28px;
-  height: 28px;
+  height: var(--control-height);
   font-size: 20px;
 }
 .terminal-controls {
   display: flex;
   align-items: center;
   margin-left: auto;
-  padding-left: 8px;
-  gap: 12px;
+  padding-left: 4px;
+  gap: 4px;
   flex-shrink: 0;
 }
 .connection,
 .voice-control {
-  padding: 0;
+  min-width: 28px;
+  height: var(--control-height);
+  justify-content: center;
+  padding: 0 6px;
   cursor: default;
   position: relative;
   display: flex;
@@ -282,7 +310,7 @@ aside {
   background: transparent;
 }
 .connection {
-  padding: 8px 3px;
+  padding: 0;
   border-radius: 4px;
 }
 .connection-dot {
@@ -305,7 +333,7 @@ aside {
   position: absolute;
   z-index: 10;
   right: 0;
-  top: calc(100% + 9px);
+  top: calc(100% + 5px);
   width: max-content;
   max-width: min(310px, 85vw);
   padding: 8px 10px;
@@ -482,8 +510,9 @@ dialog input {
     display: inline-flex;
   }
   .tab-bar {
-    height: 40px;
-    padding: 0 4px;
+    --control-height: 32px;
+    height: var(--tab-strip-height);
+    padding: var(--tab-inset) 4px 0;
   }
   .terminal-tab {
     width: 164px;
@@ -506,4 +535,8 @@ dialog input {
   #terminal {
     margin: 8px 6px 4px;
   }
+}
+
+.primary-button:focus-visible {
+  outline-offset: 2px;
 }

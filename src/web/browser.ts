@@ -1,6 +1,6 @@
-import { connectBrowserAudio } from "./browser-audio";
-import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import { Terminal } from "@xterm/xterm";
+import { connectBrowserAudio } from "./browser-audio";
 
 type Tab = { id: string; name: string; pid?: number; exited?: boolean };
 type Workspace = { id: string; name: string; cwd: string; tabs: Tab[] };
@@ -270,8 +270,14 @@ function selectTab(id: string) {
 function revealSelectedTab() {
   document
     .getElementById("tab-" + selectedTabs[selectedWorkspace])
-    ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    ?.parentElement?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  updateTabOverflow();
 }
+function updateTabOverflow() {
+  tabList.setAttribute("data-start-clipped", String(tabList.scrollLeft > 1));
+  tabList.setAttribute("data-end-clipped", String(tabList.scrollWidth - tabList.clientWidth - tabList.scrollLeft > 1));
+}
+tabList.addEventListener("scroll", updateTabOverflow);
 let scrolledTab: string | undefined;
 function render() {
   const focusedTabControl = document.activeElement?.id;
@@ -359,6 +365,7 @@ function render() {
   action("close-tab").disabled = busy || !active;
   persistSelection();
   renderStatus();
+  requestAnimationFrame(updateTabOverflow);
   if (selectionChanged) requestAnimationFrame(resizeSelected);
 }
 function send(session: Session, message: object) {

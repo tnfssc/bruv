@@ -16,6 +16,8 @@ class Element {
   listeners = new Map<string, (event: any) => any>();
   clientWidth = 1000;
   clientHeight = 600;
+  scrollLeft = 0;
+  scrollWidth = 1000;
   id = "";
   setAttribute(key: string, value: string) {
     this.attributes[key] = value;
@@ -559,4 +561,24 @@ test("each terminal uses the pure-black Vesper palette", async () => {
       brightWhite: "#ffffff",
     });
   }
+});
+
+test("overflow cues show only the edges with hidden tabs", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  const list = b.node("tab-list");
+  list.clientWidth = 320;
+  list.scrollWidth = 900;
+  list.fire("scroll");
+  expect(list.attributes["data-start-clipped"]).toBe("false");
+  expect(list.attributes["data-end-clipped"]).toBe("true");
+  list.scrollLeft = 580;
+  list.fire("scroll");
+  expect(list.attributes["data-start-clipped"]).toBe("true");
+  expect(list.attributes["data-end-clipped"]).toBe("false");
+  list.scrollLeft = 0;
+  list.scrollWidth = 320;
+  list.fire("scroll");
+  expect(list.attributes["data-start-clipped"]).toBe("false");
+  expect(list.attributes["data-end-clipped"]).toBe("false");
 });
