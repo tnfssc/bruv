@@ -78,7 +78,14 @@ test("web help describes a real browser terminal", async () => {
   try {
     for (const flag of ["--help", "-h"]) {
       expect(await runWeb([flag])).toBe(0);
-      expect(log.mock.calls.at(-1)?.[0]).toContain("real Bruv TUI");
+      const help = log.mock.calls.at(-1)?.[0] as string;
+      expect(help).toContain("real Bruv TUI");
+      expect(help).toContain("Type /live");
+      expect(help).toContain("/live stop");
+      expect(help).toContain("owner browser");
+      expect(help).toContain("Folders and CLIs are on this server");
+      expect(help).toContain("localhost SSH tunnel");
+      expect(help).not.toMatch(/Enable microphone|Disable microphone/i);
     }
   } finally {
     log.mockRestore();
@@ -95,4 +102,14 @@ test("web rejects unsafe bind and invalid port options", async () => {
   } finally {
     error.mockRestore();
   }
+});
+
+test("browser README uses command-driven voice and server-side folders", async () => {
+  const readme = await Bun.file(new URL("../../src/web/README.md", import.meta.url)).text();
+  expect(readme).toContain("Type `/live` in the terminal");
+  expect(readme).toContain("`/live stop`");
+  expect(readme).toContain("not on the browser device");
+  expect(readme).toContain("same hostname and port");
+  expect(readme).toContain("Only the owner browser captures and plays audio");
+  expect(readme).not.toMatch(/Enable microphone|Disable microphone/i);
 });

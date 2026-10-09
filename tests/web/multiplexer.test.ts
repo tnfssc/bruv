@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, expect, test } from "bun:test";
@@ -218,8 +218,9 @@ test("tabs have their own cwd, PID, input, replay and launch credentials; reconn
   expect(() => process.kill(metadata[2].pid, 0)).toThrow();
   expect(() => process.kill(metadata[0].pid, 0)).not.toThrow();
   current = await mutate(app, "/api/workspaces", "POST", {});
-  expect(current.workspaces[1]!.cwd).toBe(cwd);
-  expect(current.workspaces[1]!.tabs).toHaveLength(1);
+  expect(current.workspaces).toHaveLength(1);
+  expect(current.workspaces[0]!.cwd).toBe(cwd);
+  expect(current.workspaces[0]!.tabs).toHaveLength(1);
 });
 
 test("audio admission is global across live PTYs, and audio close frees only that owner", async () => {
@@ -264,7 +265,7 @@ test("audio admission is global across live PTYs, and audio close frees only tha
 for (const mode of ["disconnect", "delete", "delete-workspace"] as const) {
   test("audio owner releases on terminal " + mode + "; stale capabilities stay rejected", async () => {
     const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/command-audio-cli.ts")] });
-    const current = await mutate(app, "/api/workspaces", "POST", {});
+    const current = await mutate(app, "/api/workspaces", "POST", { cwd: directory() });
     const workspace = current.workspaces[1]!;
     const id = workspace.tabs[0]!.id;
     const first = connect(app);
@@ -397,4 +398,72 @@ test("terminal release invalidates an audio authorization still waiting", async 
   authorize(true);
   expect((await admission)?.status).toBe(403);
   expect(upgrades).toBe(0);
+});
+
+test("Add reuses the resolved launch folder without changing its tab, CLI or name", async () => {
+  const cwd = directory();
+  const alias = join(directory(), "alias");
+  symlinkSync(cwd, alias, "dir");
+  const app = start({ cwd: alias });
+  const terminal = connect(app);
+  await until(() => terminal.text().includes("META "));
+  const before = await state(app);
+  expect(before.defaultCwd).toBe(realpathSync(cwd));
+  for (const body of [{}, { cwd: alias }, { cwd: join(cwd, "."), name: "Ignored rename" }, { cwd: "." }]) {
+    const response = await request(app, "/api/workspaces", "POST", body);
+    expect(response.status).toBe(200);
+    const result = await response.json();
+    expect(result.workspaceId).toBe("workspace");
+    expect(result.created).toBe(false);
+    expect(result).toEqual({ ...before, workspaceId: "workspace", created: false });
+    expect(app.terminal.pid).toBe(before.workspaces[0]!.tabs[0]!.pid);
+  }
+});
+
+test("concurrent Add requests create one workspace for a resolved folder", async () => {
+  const cwd = directory();
+  const alias = join(directory(), "alias");
+  symlinkSync(cwd, alias, "dir");
+  const app = start();
+  const before = await state(app);
+  const responses = await Promise.all(
+    Array.from({ length: 12 }, (_, i) => request(app, "/api/workspaces", "POST", { cwd: i % 2 ? alias : cwd })),
+  );
+  expect(responses.every((response) => response.status === 200)).toBe(true);
+  const results = await Promise.all(responses.map((response) => response.json()));
+  expect(results.filter((result) => result.created)).toHaveLength(1);
+  const current = await state(app);
+  const added = current.workspaces[1]!;
+  expect(current.workspaces).toHaveLength(2);
+  expect(added.cwd).toBe(realpathSync(cwd));
+  expect(added.tabs).toHaveLength(1);
+  expect(added.tabs[0]!.pid).toBeUndefined();
+  for (const result of results) {
+    expect(result.workspaceId).toBe(added.id);
+    expect(result).toEqual({ ...current, workspaceId: added.id, created: result.created });
+  }
+  expect(current.workspaces[0]).toEqual(before.workspaces[0]);
+  const terminal = connect(app, added.tabs[0]!.id);
+  await until(() => terminal.text().includes("META "));
+  const running = await state(app);
+  const reused = await (await request(app, "/api/workspaces", "POST", { cwd: alias })).json();
+  expect(reused.created).toBe(false);
+  expect(reused).toEqual({ ...running, workspaceId: added.id, created: false });
+});
+
+test("different folders with the same basename stay separate", async () => {
+  const first = join(directory(), "project");
+  const second = join(directory(), "project");
+  mkdirSync(first);
+  mkdirSync(second);
+  const app = start({ cwd: first });
+  const response = await request(app, "/api/workspaces", "POST", { cwd: second });
+  expect(response.status).toBe(200);
+  const result = await response.json();
+  expect(result.created).toBe(true);
+  expect(result.workspaceId).not.toBe("workspace");
+  const workspaces: State["workspaces"] = result.workspaces;
+  expect(workspaces.map((workspace) => workspace.name)).toEqual(["project", "project"]);
+  expect(workspaces.map((workspace) => workspace.cwd)).toEqual([realpathSync(first), realpathSync(second)]);
+  expect(workspaces.map((workspace) => workspace.tabs.length)).toEqual([1, 1]);
 });

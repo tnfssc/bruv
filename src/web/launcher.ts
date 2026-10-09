@@ -8,7 +8,7 @@ import { loadWebAssets } from "./assets";
 import { startWebServer } from "./server";
 
 export const WEB_HELP =
-  "Usage: bruv web [--port PORT] [--host 127.0.0.1|::1|localhost] [-- CLI_ARGS...]\n\nRuns the real Bruv TUI in a local browser terminal. Open the printed token URL.\nBrowsers share workspace tabs and terminal input; disconnect keeps the CLIs alive. Ctrl-C here stops them.\nLoopback only; use an SSH tunnel for remote access. Treat the URL as a shell credential.\nClick Enable microphone, then type /live. Your browser handles microphone and speakers; agents run here.\nUse bruv web --setup for the separate external T3 provider setup guide.";
+  "Usage: bruv web [--port PORT] [--host 127.0.0.1|::1|localhost] [-- CLI_ARGS...]\n\nRuns the real Bruv TUI in a local browser terminal. Open the printed token URL.\nFolders and CLIs are on this server. Add reuses a folder already open here.\nBrowsers share tabs and terminal input; disconnect keeps the CLIs alive. Ctrl-C here stops them.\nLoopback only; remote access needs a localhost SSH tunnel with the same host and port as the URL.\nTreat the URL as a shell credential.\nType /live and allow browser microphone permission. Only the owner browser captures and plays audio.\nVoice stays on its original tab. /live stop releases voice, not coding jobs; start again explicitly.\nUse bruv web --setup for the separate external T3 provider setup guide.";
 
 export function webCommand(args: string[]): string[] {
   return isCompiledInvocation() ? [process.execPath, ...args] : [process.execPath, process.argv[1]!, ...args];
@@ -53,7 +53,7 @@ export async function runWeb(args: string[]): Promise<number> {
     const command = webCommand(["--theme", themePath, "--use-theme", vesper.name, ...cliArgs]);
     const app = startWebServer({ hostname, port, command, assets: await loadWebAssets() });
     console.log("Bruv browser terminal: " + app.url);
-    console.log("Keep this process running. Ctrl-C stops the server and its CLI. The URL grants terminal control.");
+    console.log("Keep this process running. Ctrl-C stops the server and its CLIs. The URL grants terminal control.");
     return await new Promise<number>((resolve) => {
       let stopping = false;
       const stop = () => {

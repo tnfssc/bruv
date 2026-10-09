@@ -1,4 +1,6 @@
-import { resolve } from "node:path";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { createConnection, type Socket } from "node:net";
 import { afterEach, expect, test } from "bun:test";
 import type { ServerWebSocket } from "bun";
@@ -16,10 +18,12 @@ const apps: App[] = [];
 const sockets: WebSocket[] = [];
 const rawSockets: Socket[] = [];
 const terminals: TerminalSession[] = [];
+const directories: string[] = [];
 afterEach(async () => {
   for (const socket of sockets.splice(0)) socket.terminate();
   for (const socket of rawSockets.splice(0)) socket.destroy();
   await Promise.all([...apps.splice(0).map((app) => app.stop()), ...terminals.splice(0).map((t) => t.stop())]);
+  for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true });
 });
 function start(custom = command) {
   const app = startWebServer({
@@ -152,7 +156,9 @@ test("events and REST share ordered complete snapshots for concurrent mutations,
   await until(() => app.terminal.cols === 96);
   await Bun.sleep(20);
   expect(client.socket.readyState).toBe(WebSocket.OPEN);
-  const workspace = await mutate(app, "/api/workspaces", "POST", { name: "Other" });
+  const cwd = mkdtempSync(join(tmpdir(), "bruv-multiplayer-"));
+  directories.push(cwd);
+  const workspace = await mutate(app, "/api/workspaces", "POST", { cwd, name: "Other" });
   await until(() => events.latest().revision === workspace.revision);
   const otherId = workspace.workspaces[1].id;
   const deletedTab = await mutate(app, "/api/tabs/" + id, "DELETE", { confirm: true });

@@ -1,5 +1,5 @@
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import { statSync } from "node:fs";
+import { realpathSync, statSync } from "node:fs";
 import { basename, resolve } from "node:path";
 import type { Server, ServerWebSocket, WebSocketHandler } from "bun";
 import { createAudioRelay, type AudioRelayData } from "./audio-relay";
@@ -38,7 +38,7 @@ export function startWebServer(options: WebServerOptions) {
   if (!["127.0.0.1", "::1", "localhost"].includes(hostname))
     throw new Error("bruv web only binds loopback; use an SSH tunnel for remote access.");
   const token = randomBytes(32).toString("hex");
-  const defaultCwd = resolve(options.cwd ?? process.cwd());
+  const defaultCwd = realpathSync(resolve(options.cwd ?? process.cwd()));
   type Tab = { id: string; name: string; terminal: TerminalSession };
   type Workspace = { id: string; name: string; cwd: string; tabs: Tab[] };
   const workspaces: Workspace[] = [];
@@ -246,12 +246,20 @@ export function startWebServer(options: WebServerOptions) {
           if (createWorkspace) {
             if (body.cwd !== undefined && typeof body.cwd !== "string")
               return response("Invalid directory", "text/plain", 400);
-            const cwd = resolve(defaultCwd, (body.cwd as string | undefined) ?? defaultCwd);
+            let cwd = resolve(defaultCwd, (body.cwd as string | undefined) ?? defaultCwd);
             try {
+              cwd = realpathSync(cwd);
               if (!statSync(cwd).isDirectory()) throw new Error("Not a directory");
             } catch {
               return response("Directory not found", "text/plain", 400);
             }
+            // Keep lookup and creation synchronous so concurrent Adds share one workspace.
+            const existing = workspaces.find((workspace) => workspace.cwd === cwd);
+            if (existing)
+              return response(
+                JSON.stringify({ ...state(), workspaceId: existing.id, created: false }),
+                "application/json",
+              );
             const workspace: Workspace = {
               id: randomUUID(),
               name: (body.name as string | undefined) ?? (basename(cwd) || cwd),
@@ -260,6 +268,11 @@ export function startWebServer(options: WebServerOptions) {
             };
             workspaces.push(workspace);
             addTab(workspace);
+            publish();
+            return response(
+              JSON.stringify({ ...state(), workspaceId: workspace.id, created: true }),
+              "application/json",
+            );
           } else if (createTab) addTab(workspace!, body.name as string | undefined);
           else if (renameTab) tab!.name = body.name as string;
           else if (deleteTab) {
