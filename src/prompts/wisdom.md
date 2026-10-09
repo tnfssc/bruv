@@ -11,5 +11,3 @@ Save wisdom with code as work moves, before the last commit, PR, or handoff. Bef
 Done means code and wisdom are where user asked. Check files and commits. Edits not committed or commits not shared? Say what is left.
 
 Shipped worktree stays still. Task done or PR merged? No more edits there. Release facts belong with release or task, not old repo notes. Later repo change needs a new task and PR. No quiet edits on the old branch.
-
-Prompts and wisdom use nearby voice. Short words. Short sentences. Plain talk. Exact names and facts still matter.

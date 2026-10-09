@@ -1,3 +1,4 @@
+import { expectExecuteOnce } from "./combined-request";
 import { getCurrentSystemPrompt, getCurrentTools, type TranscriptContext } from "@earendil-works/pi-ai";
 import { test, expect } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -15,9 +16,9 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { registerExecuteTool } from "../../src/typescript/extension";
 import asynchronousTasksExtension from "../../src/agent/extension";
-import { bruvSystemPrompt, executeGuidance, executeReference, workingValues } from "../../src/prompts";
+import { bruvSystemPrompt, workingValues } from "../../src/prompts";
 
-test("Pi session assembles the registered execute guidance into its system prompt", async () => {
+test("Pi session leaves execute help in the tool declaration", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-prompt-delivery-"));
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   try {
@@ -47,10 +48,10 @@ test("Pi session assembles the registered execute guidance into its system promp
       tools: ["execute"],
     }));
     const prompt = session.systemPrompt;
-    for (const guidance of executeGuidance) expect(prompt).toContain(guidance);
-    expect(prompt).toContain("- execute:");
+    expect(prompt).not.toContain(tool.description);
+    expect(prompt).not.toContain("- execute:");
+    expect(session.getActiveToolNames()).toEqual(["execute"]);
     expect(prompt).not.toContain("- bash:");
-    console.log("Registered guidance reaches Pi session:", executeGuidance.join("\n").length, "characters");
   } finally {
     session?.dispose();
     await rm(dir, { recursive: true, force: true });
@@ -124,8 +125,7 @@ test("production tasks extension guidance reaches the actual stream context", as
     expect(streamedContext).toBeDefined();
     const prompt = getCurrentSystemPrompt(streamedContext!.messages);
     for (const value of workingValues) expect(prompt).toContain(value);
-    for (const reference of executeReference) expect(prompt).toContain(reference);
-    expect(prompt).toContain("await handoff(message)");
+    expectExecuteOnce(prompt, getCurrentTools(streamedContext!.messages));
     expect(prompt).toContain('You help user build software inside "bruv", a coding tool.');
     expect(prompt).not.toContain("Pi documentation (");
     expect(prompt).not.toContain("Main documentation:");

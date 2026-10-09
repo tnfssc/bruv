@@ -1,3 +1,4 @@
+import { expectExecuteOnce } from "../prompts/combined-request";
 /** Real offline Pi -> Live owner -> registered execute -> production task manager integration. */
 import { afterEach, expect, test } from "bun:test";
 import { existsSync, writeFileSync } from "node:fs";
@@ -8,6 +9,7 @@ import {
   type AssistantMessage,
   createAssistantMessageEventStream,
   getCurrentSystemPrompt,
+  getCurrentTools,
 } from "@earendil-works/pi-ai";
 import { getModel } from "@earendil-works/pi-ai/compat";
 import {
@@ -200,7 +202,7 @@ test("main Live owns first-turn instructions, actual execute and background comp
   expect(instructions).toContain("VERTICAL_PROJECT_GUIDANCE");
   expect(instructions).toContain("VERTICAL_CUSTOM_APPEND");
   expect(instructions).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
-  expect(instructions).toContain("shell 3 seconds");
+  expectExecuteOnce(instructions, f.owner.orchestration.tools);
   expect(f.owner.orchestration.tools.map((t) => t.name)).toEqual(["execute"]);
   f.owner.inputTranscript("Launch isolated local marker job");
   const launch = await f.owner.orchestration.execute({
@@ -324,11 +326,11 @@ test("main Live receives capability and delegation guidance in its assembled roo
   const f = await fixture();
   const root = f.owner.orchestration.instructions;
   const execute = f.owner.orchestration.tools?.find((tool) => tool.name === "execute");
-  expect(root).toContain("Network, files and worker access depend on the environment");
+  expectExecuteOnce(root!, f.owner.orchestration.tools);
   expect(root).toContain("Past denial is not proof of a current limit");
   expect(root).toContain("User asks to delegate? Launch subagent");
   expect(root).toContain("Use tools for authorized work beyond coding too");
-  expect(execute?.description).toContain("call the shell() or subagent() globals inside execute");
+  expect(execute?.description).toContain("These helpers are globals inside execute");
   expect(execute?.description).toContain("depends on the actual environment and result");
   f.owner.close();
   await f.owner.released;
@@ -337,6 +339,7 @@ test("main Live receives capability and delegation guidance in its assembled roo
 test("custom root prompt is byte-identical to ordinary prompt assembly before first text model turn", async () => {
   const f = await fixture({ customPrompt: "VERTICAL_CUSTOM_ROOT_SYSTEM" });
   const livePrompt = f.owner.orchestration.instructions;
+  expectExecuteOnce(livePrompt!, f.owner.orchestration.tools);
   expect(livePrompt).toContain("VERTICAL_CUSTOM_ROOT_SYSTEM");
   expect(livePrompt).toContain("VERTICAL_PROJECT_GUIDANCE");
   // User-owned custom root prompt retains the ordinary override semantics.
@@ -346,6 +349,7 @@ test("custom root prompt is byte-identical to ordinary prompt assembly before fi
   let ordinaryPrompt: string | undefined;
   f.session.agent.streamFunction = (_model, context) => {
     ordinaryPrompt = getCurrentSystemPrompt(context.messages);
+    expectExecuteOnce(ordinaryPrompt, getCurrentTools(context.messages));
     return offlineAssistantStream({ api: "openai-codex-responses", provider: "openai-codex", id: "gpt-5.6-luna" }, [
       { type: "text", text: "offline" },
     ]);
@@ -567,6 +571,7 @@ test.each(["gemini-3.8-live", "gemini-3.8-live-extended-thinking"])(
     f.setContextSink((text, options) => voice.sendContext(text, options));
     expect(params.model).toBe(model);
     expect(params.config.systemInstruction).toBe(f.owner.orchestration.instructions);
+    expectExecuteOnce(params.config.systemInstruction, params.config.tools[0].functionDeclarations);
     expect(params.config.tools[0].functionDeclarations.map((tool: any) => tool.name)).toEqual(["execute"]);
     params.callbacks.onmessage({
       serverContent: { inputTranscription: { text: "run offline marker", finished: true } },

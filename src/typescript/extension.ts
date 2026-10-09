@@ -2,7 +2,7 @@ import { taskRowFromLaunch, taskRowKey, type TaskRow } from "../ui/task-rows";
 import { type ExtensionAPI, type ExtensionContext, SettingsManager } from "@earendil-works/pi-coding-agent";
 import * as z from "zod/mini";
 import { type DiagnosticRecord, diagnosticRecorder, inspectDiagnostics } from "../diagnostics";
-import { backgroundHandoff, executeGuidance } from "../prompts";
+import { backgroundHandoff } from "../prompts";
 import { ExecuteParameters, executeDeclaration } from "./definition";
 import {
   type ExecutePreviewState,
@@ -58,8 +58,6 @@ export function registerExecuteTool(
   pi.registerTool({
     ...executeDeclaration(),
     label: "Execute",
-    promptSnippet: "Run JS/TS.",
-    promptGuidelines: executeGuidance,
     renderShell: "self",
     renderCall: (args, theme, context) => {
       if (!context.state.resultVisible) previewStates.add(context.state);

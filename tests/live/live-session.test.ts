@@ -1,3 +1,5 @@
+import { expectExecuteOnce } from "../prompts/combined-request";
+import { setupProbeOrchestration } from "../../src/live/setup-probe";
 import { ThinkingLevel } from "@google/genai";
 import { describe, expect, test } from "bun:test";
 import { VoiceSession } from "../../src/live/session.js";
@@ -60,6 +62,20 @@ const audio = (data = "AAAAAA==", mimeType = "audio/pcm;rate=24000") => ({
 });
 
 describe("voice-only SDK session", () => {
+  test("setup sends execute help once across Gemini instructions and declarations", async () => {
+    const h = harness();
+    const s = new VoiceSession({}, h.adapter, setupProbeOrchestration());
+    const connecting = s.connect("offline");
+    const config = h.params.config!;
+    expectExecuteOnce(
+      config.systemInstruction as string,
+      (config.tools![0]! as { functionDeclarations: any[] }).functionDeclarations,
+    );
+    h.ready();
+    await connecting;
+    s.close();
+  });
+
   test("direct main agent uses external instructions and dispatches execute once", async () => {
     const h = harness();
     const calls: unknown[] = [];

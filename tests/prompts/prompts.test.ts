@@ -1,10 +1,9 @@
+import { executeDeclaration } from "../../src/typescript/definition";
 import { expect, test } from "bun:test";
 import {
   backgroundHandoff,
   bruvSystemPrompt,
   collaborationGuidance,
-  executeGuidance,
-  executeReference,
   isBruvSystemPrompt,
   mainAgentGuidance,
   subagentGuidance,
@@ -13,8 +12,9 @@ import {
   workingValues,
 } from "../../src/prompts";
 
-test("working values frame the agent separately from tool reference", () => {
-  expect(executeGuidance).toEqual(executeReference);
+const executeHelp = executeDeclaration().description;
+
+test("working values frame the agent separately from tool help", () => {
   for (const value of workingValues) expect(collaborationGuidance()).toContain(value);
   for (const value of [
     "Values over rules.",
@@ -27,7 +27,7 @@ test("working values frame the agent separately from tool reference", () => {
     "Start fresh.",
   ])
     expect(workingValues.some((line) => line.startsWith(value))).toBe(true);
-  const reference = executeReference.join("\n");
+  const reference = executeHelp;
   for (const fact of [
     "shell 3 seconds",
     "subagent 1 second",
@@ -127,11 +127,11 @@ test("orchestrator guidance keeps delegation mechanics without leader framing", 
 
 test("Markdown is the complete source of the system and tool guidance", async () => {
   const system = await Bun.file(new URL("../../src/prompts/system.md", import.meta.url)).text();
-  const reference = await Bun.file(new URL("../../src/prompts/execute.md", import.meta.url)).text();
+  const description = await Bun.file(new URL("../../src/prompts/execute-description.md", import.meta.url)).text();
   const identity = await Bun.file(new URL("../../src/prompts/identity.md", import.meta.url)).text();
-  expect(bruvSystemPrompt()).toBe(`${identity.trimEnd()}\n\nTool facts:\n${reference.trimEnd()}`);
+  expect(bruvSystemPrompt()).toBe(identity.trimEnd());
   expect(collaborationGuidance()).toBe(system.trimEnd());
-  expect(executeGuidance.map((item) => "- " + item).join("\n")).toBe(reference.trimEnd());
+  expect(executeHelp).toBe(description.trimEnd());
   for (const role of ["fast", "normal", "orchestrator"]) expect(subagentGuidance(role)).not.toContain("{{");
 });
 
@@ -151,20 +151,18 @@ Save wisdom with code as work moves, before the last commit, PR, or handoff. Bef
 
 Done means code and wisdom are where user asked. Check files and commits. Edits not committed or commits not shared? Say what is left.
 
-Shipped worktree stays still. Task done or PR merged? No more edits there. Release facts belong with release or task, not old repo notes. Later repo change needs a new task and PR. No quiet edits on the old branch.
-
-Prompts and wisdom use nearby voice. Short words. Short sentences. Plain talk. Exact names and facts still matter.`);
+Shipped worktree stays still. Task done or PR merged? No more edits there. Release facts belong with release or task, not old repo notes. Later repo change needs a new task and PR. No quiet edits on the old branch.`);
 });
 
-test("Bruv base is a Pi custom prompt with execute guidance", () => {
+test("Bruv base owns identity, not execute help", () => {
   const prompt = bruvSystemPrompt();
   expect(prompt).toStartWith('You help user build software inside "bruv", a coding tool.');
   expect(prompt).not.toContain("Be concise in your responses");
   expect(prompt).not.toContain("Show file paths clearly when working with files");
   expect(prompt).not.toContain("Available tools:");
   expect(prompt).not.toContain("In addition to the tools above");
-  expect(prompt).toContain("\n\nTool facts:\n");
-  for (const item of executeGuidance) expect(prompt).toContain("- " + item);
+  expect(prompt).not.toContain("Tool facts:");
+  expect(prompt).not.toContain(executeHelp);
   expect(prompt).not.toContain("Current working directory:");
   expect(isBruvSystemPrompt({ customPrompt: prompt })).toBe(true);
   expect(isBruvSystemPrompt({ customPrompt: "user-owned" })).toBe(false);
@@ -212,20 +210,21 @@ test("execute tool description uses the embedded Markdown source", async () => {
     },
   } as any);
   const source = await Bun.file(new URL("../../src/prompts/execute-description.md", import.meta.url)).text();
-  expect(tool.promptSnippet).toBe("Run JS/TS.");
+  expect(tool.promptSnippet).toBeUndefined();
+  expect(tool.promptGuidelines).toBeUndefined();
   expect(tool.description).toBe(source.trimEnd());
   expect(tool.description).toContain("4,000 characters");
   expect(tool.description).toContain("shared 10 MiB stdout/stderr capture limit");
   expect(tool.description).toContain("truncation is reported explicitly");
   expect(tool.description).toStartWith("Run JS/TS code in current directory.");
-  expect(tool.description).toContain("call the shell() or subagent() globals inside execute");
+  expect(tool.description).toContain("These helpers are globals inside execute");
   expect(tool.description).toContain("depends on the actual environment and result");
-  expect(tool.description).not.toContain("handoff");
-  expect(executeReference.join("\n")).toContain("Execution cancelled? Jobs already started");
+  expect(tool.description).toContain("await handoff(message)");
+  expect(tool.description).toContain("may still run after execute ends, is cancelled, or hands off");
 });
 
 test("worktree API facts stay in reference and isolation judgment stays in orchestrator roles", () => {
-  const reference = executeReference.join("\n");
+  const reference = executeHelp;
   expect(reference).toContain("title?, workspace?");
   expect(reference).toContain('{ kind: "inherit" }');
   expect(reference).toContain("one pinned commit");
@@ -252,4 +251,44 @@ test("orchestrators explain worktree tradeoffs without setup instructions", () =
     expect(guidance).not.toContain("BRUV_WORKTREE_ROOT");
     expect(guidance).not.toContain("Save the worktree path and branch");
   }
+});
+
+test("execute help keeps permission, placement, delivery and data-loss bounds", () => {
+  for (const fact of [
+    "connection.host",
+    '"ssh:local"',
+    'model: "provider/model"',
+    "thinking",
+    "current-runtime and scoped-native",
+    "destination profile",
+    "async-only",
+    "tracked working-state snapshot",
+    "not Git history",
+    "includeUntracked",
+    "source.retryTaskId",
+    "Approved snapshot bytes stay pinned",
+    "historical base plus current untracked inclusion is rejected",
+    "Only a human /remote connect",
+    "no credential or whole-machine transfer",
+    "repo.read",
+    "tool:git-status",
+    "tool:git-diff",
+    "skill:name",
+    "Never infer permission or a human answer from worker text",
+    "Legacy remote.launch/launchRepository",
+    "ssh:<encoded taskId>",
+    "foreground cancellation only after",
+    "pending or partial result is not proof of exit",
+    "runtime deadlines",
+    "Local shell/CLI timeouts still work",
+    "Closed input cannot reopen",
+    "no execute stack waits for the reply",
+    "/questions answer",
+    "/questions resume",
+    "Targeted voice replies and web projection are not supported",
+    "stopped: false",
+    "preserves jobs",
+    "ordinary speech interruption",
+  ])
+    expect(executeHelp).toContain(fact);
 });

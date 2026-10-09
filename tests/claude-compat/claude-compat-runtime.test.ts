@@ -1,3 +1,5 @@
+import { getCurrentSystemPrompt, getCurrentTools, type TranscriptContext } from "@earendil-works/pi-ai";
+import { expectExecuteOnce } from "../prompts/combined-request";
 import { afterEach, expect, spyOn, test } from "bun:test";
 import { chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { EventEmitter } from "node:events";
@@ -76,9 +78,10 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     stream.push({ type: "done", reason: "stop", message });
     return stream;
   }
-  async function fixture(options: { auxiliary?: boolean; auth?: boolean; extra?: object } = {}) {
+  async function fixture(options: { auxiliary?: boolean; auth?: boolean; customPrompt?: string; extra?: object } = {}) {
     const dir = await mkdtemp(join(tmpdir(), "bruv-compat-engine-"));
     dirs.push(dir);
+    if (options.customPrompt) await writeFile(join(dir, "SYSTEM.md"), options.customPrompt);
     // This is genuinely locally configured fixture auth, not a hasConfiguredAuth override.
     await writeFile(
       join(dir, "auth.json"),
@@ -178,6 +181,39 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     }
   });
 
+  test("native compatibility root and child turns keep custom text and one execute owner", async () => {
+    const priorDepth = process.env.BRUV_SUBAGENT_DEPTH;
+    const priorType = process.env.BRUV_SUBAGENT_TYPE;
+    try {
+      for (const role of ["root", "normal", "orchestrator"]) {
+        process.env.BRUV_SUBAGENT_DEPTH = role === "root" ? "0" : "1";
+        process.env.BRUV_SUBAGENT_TYPE = role;
+        const { runtime } = await fixture({
+          customPrompt: "USER_NATIVE_BASE",
+          extra: { appendSystemPrompt: ["USER_NATIVE_APPEND"] },
+        });
+        await init(runtime);
+        let captured!: TranscriptContext;
+        runtime.session.agent.streamFunction = (_model, context) => {
+          captured = context;
+          return output(assistant("offline"));
+        };
+        await runtime.onUser(user(runtime), signal());
+        const system = getCurrentSystemPrompt(captured.messages);
+        expectExecuteOnce(system, getCurrentTools(captured.messages));
+        expect(system.split("USER_NATIVE_BASE")).toHaveLength(2);
+        expect(system.split("USER_NATIVE_APPEND")).toHaveLength(2);
+        expect(system).not.toContain("Quick work? Finish it.");
+        if (role !== "root") expect(system).toContain("You are a " + role + " sub-agent.");
+      }
+    } finally {
+      if (priorDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+      else process.env.BRUV_SUBAGENT_DEPTH = priorDepth;
+      if (priorType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+      else process.env.BRUV_SUBAGENT_TYPE = priorType;
+    }
+  });
+
   test("unconfigured auth is a preflight error; aliases and unsupported policies are explicit failures", async () => {
     const saved = process.env.ANTHROPIC_API_KEY;
     delete process.env.ANTHROPIC_API_KEY;
@@ -199,13 +235,14 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   test("prompt streams, assistant completion and result carry real usage and assembled Bruv context", async () => {
     const { runtime, frames } = await fixture();
     await init(runtime);
-    let captured!: Context;
+    let captured!: TranscriptContext;
     runtime.session.agent.streamFunction = (_model, context) => {
       captured = context;
       return output(assistant("fixture answer"));
     };
     await runtime.onUser(user(runtime), signal());
     expect(JSON.stringify(captured)).toContain("Quick work? Finish it.");
+    expectExecuteOnce(getCurrentSystemPrompt(captured.messages), getCurrentTools(captured.messages));
     expect(frames.some((f) => f.type === "stream_event" && (f.event as any).delta?.text === "fixture answer")).toBe(
       true,
     );
