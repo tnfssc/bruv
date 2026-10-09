@@ -12,7 +12,9 @@ export async function prepareWebAssets(
   });
   if (!build.success) throw new Error(build.logs.map(String).join("\n"));
   const out = resolve(root, "dist/runtime-assets/web");
-  await write(resolve(out, "terminal.js.asset"), await build.outputs[0]!.text());
+  const javascript = build.outputs[0];
+  if (!javascript) throw new Error("Browser build output missing");
+  await write(resolve(out, "terminal.js.asset"), await javascript.text());
   await write(
     resolve(out, "ghostty-vt.wasm.asset"),
     await Bun.file(resolve(root, "node_modules/ghostty-web/ghostty-vt.wasm")).bytes(),
@@ -33,9 +35,11 @@ export async function prepareWebAssets(
     minify: true,
   });
   if (!controls.success) throw new Error(controls.logs.map(String).join("\n"));
+  const css = controls.outputs[0];
+  if (!css) throw new Error("Browser controls output missing");
   await write(
     resolve(out, "terminal.css.asset"),
-    (await controls.outputs[0]!.text()) +
+    (await css.text()) +
       "\n" +
       (await Bun.file(resolve(root, "src/web/browser.css")).text()) +
       "\n" +

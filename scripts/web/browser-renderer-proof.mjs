@@ -8,7 +8,10 @@ export async function watchRenderer(page) {
     CanvasRenderingContext2D.prototype.fillText = function (text, x, y, ...rest) {
       if (this.canvas.closest?.(".terminal-pane")) {
         let cells = window.terminalPaint.get(this.canvas);
-        if (!cells) window.terminalPaint.set(this.canvas, (cells = new Map()));
+        if (!cells) {
+          cells = new Map();
+          window.terminalPaint.set(this.canvas, cells);
+        }
         cells.set(x + ":" + y, { text, x, y, font: this.font, color: this.fillStyle });
       }
       return fillText.call(this, text, x, y, ...rest);

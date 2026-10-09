@@ -62,7 +62,9 @@ try {
   const binary = Buffer.from(await Bun.file(binaryPath).arrayBuffer());
   let wasmCopies = 0,
     offset = 0;
-  while ((offset = binary.indexOf(wasm, offset)) >= 0) {
+  while (true) {
+    offset = binary.indexOf(wasm, offset);
+    if (offset < 0) break;
     wasmCopies++;
     offset += wasm.length;
   }

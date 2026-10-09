@@ -299,15 +299,15 @@ body:has(#workspace-list:empty) aside {
   font-size: var(--ui-font-size);
   border-color: var(--accent);
 }
+.tab-close {
+  color: var(--muted);
+  font-size: 16px;
+}
 .terminal-tab:has(.tab-name-input) .tab-close {
   display: none;
 }
 .terminal-tab:has(.tab-name-input) {
   padding-right: var(--space-1);
-}
-.tab-close {
-  color: var(--muted);
-  font-size: 16px;
 }
 .tab-close:hover:not(:disabled),
 .tab-close:focus-visible {
@@ -363,9 +363,6 @@ body:has(#workspace-list:empty) aside {
   clip-path: inset(50%);
   white-space: pre;
 }
-[hidden] {
-  display: none !important;
-}
 #empty-terminal {
   height: 100%;
   display: flex;
@@ -382,6 +379,12 @@ body:has(#workspace-list:empty) aside {
 h1 {
   font-size: 18px;
   font-weight: 500;
+  margin: 0 0 var(--section-gap);
+}
+dialog p {
+  color: var(--muted);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
   margin: 0 0 var(--section-gap);
 }
 #empty-content > p:empty {
@@ -411,12 +414,6 @@ dialog h2 {
   font-size: 16px;
   font-weight: 500;
   margin: 0 0 var(--label-gap);
-}
-dialog p {
-  color: var(--muted);
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-  margin: 0 0 var(--section-gap);
 }
 dialog label,
 #folder-form label {
@@ -513,4 +510,13 @@ dialog label,
   #empty-terminal {
     padding: var(--space-4);
   }
+}
+
+[hidden],
+.workspace small[hidden],
+#terminal-status[hidden],
+#voice-status[hidden],
+#empty-terminal[hidden],
+#open-drawer[hidden] {
+  display: none;
 }

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, mkdir, mkdtemp, readFile, readlink } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -34,7 +34,6 @@ const proc = Bun.spawn(
     stderr: "pipe",
   },
 );
-let cliPids = [];
 let output = "",
   errors = "",
   browser,
@@ -171,7 +170,7 @@ async function checkFormSpacing(selector, label) {
     };
   });
   const height = form.phone ? 44 : 32;
-  if (form.field && form.field.height) {
+  if (form.field?.height) {
     assert.equal(form.field.height, height, label + ": field uses shared control height");
     assert.equal(form.fieldFont, form.phone ? "16px" : "13px", label + ": form field text size");
     assert.equal(form.field.y - form.label.bottom, 4, label + ": label gap");

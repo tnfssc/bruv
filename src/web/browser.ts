@@ -42,20 +42,25 @@ type VoiceOwner = {
   releasing: boolean;
   device?: Awaited<ReturnType<typeof connectBrowserAudio>>;
 };
-const status = document.querySelector<HTMLElement>("#status")!;
-const container = document.querySelector<HTMLElement>("#terminal")!;
-const workspaceList = document.querySelector<HTMLElement>("#workspace-list")!;
-const tabList = document.querySelector<HTMLElement>("#tab-list")!;
-const notice = document.querySelector<HTMLElement>("#notice")!;
-const syncStatus = document.querySelector<HTMLElement>("#sync-status")!;
-const audioStatus = document.querySelector<HTMLElement>("#audio-status")!;
-const empty = document.querySelector<HTMLElement>("#empty-terminal")!;
-const voiceControl = document.querySelector<HTMLElement>("#voice-status")!;
-const folderForm = document.querySelector<HTMLFormElement>("#folder-form")!;
-const folderInput = document.querySelector<HTMLInputElement>("#folder-input")!;
-const folderError = document.querySelector<HTMLElement>("#folder-error")!;
-const terminalStatus = document.querySelector<HTMLElement>("#terminal-status")!;
-const action = (id: string) => document.querySelector<HTMLButtonElement>("#" + id)!;
+function requiredElement<T extends Element = HTMLElement>(selector: string, root: ParentNode = document): T {
+  const element = root.querySelector<T>(selector);
+  if (!element) throw new Error(`Missing element: ${selector}`);
+  return element;
+}
+const status = requiredElement<HTMLElement>("#status");
+const container = requiredElement<HTMLElement>("#terminal");
+const workspaceList = requiredElement<HTMLElement>("#workspace-list");
+const tabList = requiredElement<HTMLElement>("#tab-list");
+const notice = requiredElement<HTMLElement>("#notice");
+const syncStatus = requiredElement<HTMLElement>("#sync-status");
+const audioStatus = requiredElement<HTMLElement>("#audio-status");
+const empty = requiredElement<HTMLElement>("#empty-terminal");
+const voiceControl = requiredElement<HTMLElement>("#voice-status");
+const folderForm = requiredElement<HTMLFormElement>("#folder-form");
+const folderInput = requiredElement<HTMLInputElement>("#folder-input");
+const folderError = requiredElement<HTMLElement>("#folder-error");
+const terminalStatus = requiredElement<HTMLElement>("#terminal-status");
+const action = (id: string) => requiredElement<HTMLButtonElement>("#" + id);
 
 let drawerOpen = false;
 function setDrawer(open: boolean) {
@@ -64,12 +69,12 @@ function setDrawer(open: boolean) {
   document.body.setAttribute("data-drawer", open ? "open" : "closed");
   action("open-drawer").setAttribute("aria-expanded", String(open));
   action("drawer-backdrop").hidden = !open;
-  document.querySelector<HTMLElement>("main")!.inert = open;
+  requiredElement<HTMLElement>("main").inert = open;
   action(open ? "close-drawer" : "open-drawer").focus();
 }
 action("open-drawer").addEventListener("click", () => setDrawer(true));
 for (const id of ["close-drawer", "drawer-backdrop"]) action(id).addEventListener("click", () => setDrawer(false));
-document.querySelector<HTMLElement>("#workspace-sidebar")!.addEventListener("keydown", (event) => {
+requiredElement<HTMLElement>("#workspace-sidebar").addEventListener("keydown", (event) => {
   if (!drawerOpen) return;
   if (event.key === "Escape") {
     setDrawer(false);
@@ -103,14 +108,14 @@ type DialogOptions = {
   submit: string;
   destructive?: boolean;
 };
-const dialog = document.querySelector<HTMLDialogElement>("#workspace-dialog")!;
-const dialogInput = document.querySelector<HTMLInputElement>("#dialog-input")!;
+const dialog = requiredElement<HTMLDialogElement>("#workspace-dialog");
+const dialogInput = requiredElement<HTMLInputElement>("#dialog-input");
 let dialogResult: ((value: string | null) => void) | undefined;
 function askDialog(options: DialogOptions): Promise<string | null> {
-  document.querySelector<HTMLElement>("#dialog-title")!.textContent = options.title;
-  document.querySelector<HTMLElement>("#dialog-description")!.textContent = options.description;
-  document.querySelector<HTMLElement>("#dialog-label")!.textContent = options.label ?? "";
-  document.querySelector<HTMLElement>("#dialog-field")!.hidden = !options.label;
+  requiredElement<HTMLElement>("#dialog-title").textContent = options.title;
+  requiredElement<HTMLElement>("#dialog-description").textContent = options.description;
+  requiredElement<HTMLElement>("#dialog-label").textContent = options.label ?? "";
+  requiredElement<HTMLElement>("#dialog-field").hidden = !options.label;
   dialogInput.required = !!options.label;
   dialogInput.value = options.value ?? "";
   action("dialog-submit").textContent = options.submit;
@@ -124,7 +129,7 @@ function askDialog(options: DialogOptions): Promise<string | null> {
     dialogResult = resolve;
   });
 }
-document.querySelector<HTMLFormElement>("#dialog-form")!.addEventListener("submit", (event) => {
+requiredElement<HTMLFormElement>("#dialog-form").addEventListener("submit", (event) => {
   event.preventDefault();
   if (dialogInput.required && !dialogInput.value.trim()) {
     dialogInput.focus();
@@ -323,7 +328,8 @@ function startRename(id: string) {
   });
   input.addEventListener("blur", () => finishRename(false, false));
   editingTab = { id, input };
-  const shell = entry.parentElement!;
+  const shell = entry.parentElement;
+  if (!shell) throw new Error("Missing tab shell");
   shell.style.width = shell.getBoundingClientRect().width + "px";
   entry.replaceWith(input);
   input.focus({ preventScroll: true });
@@ -392,8 +398,8 @@ function renderWorkspaces() {
     entry.title = item.cwd;
     entry.setAttribute("aria-label", "Open workspace " + item.name + " · " + item.cwd);
     entry.setAttribute("aria-pressed", String(item.id === selectedWorkspace));
-    entry.querySelector(".workspace-name")!.textContent = item.name;
-    const suffix = entry.querySelector("small")!;
+    requiredElement(".workspace-name", entry).textContent = item.name;
+    const suffix = requiredElement("small", entry);
     const duplicates = state.workspaces.filter((other) => other.name === item.name);
     suffix.textContent = duplicates.length > 1 ? distinguishingPath(item, duplicates) : "";
     suffix.hidden = duplicates.length < 2;
@@ -439,7 +445,7 @@ function render() {
     shell.setAttribute("data-active", String(active));
     if (editingTab?.id !== tab.id) {
       let entry = shell.firstElementChild as HTMLButtonElement | null;
-      if (!entry || !entry.classList.contains("tab-select")) {
+      if (!entry?.classList.contains("tab-select")) {
         const replacement = tabButton(tab);
         if (entry) entry.replaceWith(replacement);
         else shell.append(replacement);
@@ -495,9 +501,9 @@ function render() {
   empty.hidden = !!active && !accessRequired;
   syncStatus.hidden = !listLoaded;
   notice.hidden = !listLoaded || accessRequired;
-  document.querySelector<HTMLElement>(".tab-bar")!.hidden = accessRequired || !state.workspaces.length;
+  requiredElement<HTMLElement>(".tab-bar").hidden = accessRequired || !state.workspaces.length;
   const awaiting = !accessRequired && !listLoaded;
-  empty.querySelector("h1")!.textContent = accessRequired
+  requiredElement("h1", empty).textContent = accessRequired
     ? "Access required"
     : awaiting
       ? listFailed
@@ -506,7 +512,7 @@ function render() {
       : current
         ? "No terminals in " + current.name
         : "Open a folder";
-  empty.querySelector("p")!.textContent = accessRequired
+  requiredElement("p", empty).textContent = accessRequired
     ? "Open the full URL printed by bruv web, including its token."
     : awaiting
       ? listFailed
@@ -520,13 +526,13 @@ function render() {
   action("new-tab").hidden = accessRequired || !current || !active;
   action("new-tab").disabled = busy;
   action("open-drawer").hidden = accessRequired || (!current && !state.workspaces.length);
-  document.querySelector<HTMLElement>("#current-workspace")!.textContent = current?.name ?? "Folders";
+  requiredElement<HTMLElement>("#current-workspace").textContent = current?.name ?? "Folders";
   action("open-drawer").title = current?.cwd ?? "Workspaces";
   action("open-drawer").setAttribute("aria-label", "Open workspaces" + (current ? " · " + current.name : ""));
   const showFolder = !accessRequired && listLoaded && (!current || folderOpen);
   folderForm.hidden = !showFolder;
   if (showFolder) {
-    const host = document.querySelector<HTMLElement>(current ? "#rail-entry" : "#empty-entry")!;
+    const host = requiredElement<HTMLElement>(current ? "#rail-entry" : "#empty-entry");
     if (folderForm.parentElement !== host) {
       const focused = document.activeElement === folderInput;
       const start = folderInput.selectionStart,
@@ -1057,7 +1063,8 @@ async function removeWorkspace(id: string) {
   }
   const ok = await change("/api/workspaces/" + encodeURIComponent(id), "DELETE", { confirm: true });
   if (ok && !drawerOpen) {
-    if (selected()) selected()!.term.focus();
+    const active = selected();
+    if (active) active.term.focus();
     else if (!workspace()) folderInput.focus();
     else action("empty-action").focus();
   }
@@ -1114,7 +1121,7 @@ if (token) {
       console.error("Terminal renderer could not load.", error);
       listLoaded = true;
       listFailed = true;
-      empty.querySelector("h1")!.textContent = "Terminal unavailable";
-      empty.querySelector("p")!.textContent = "Reload to try again.";
+      requiredElement("h1", empty).textContent = "Terminal unavailable";
+      requiredElement("p", empty).textContent = "Reload to try again.";
     });
 }

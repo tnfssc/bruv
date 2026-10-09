@@ -42,3 +42,34 @@ All commands use `TMPDIR=/var/tmp`; scratch logs are in `.tmp/strict-*`.
 
 Values stay unchanged. This applies the existing simple-owner, scope and
 honest-proof values; it does not add a new project-wide rule.
+
+## Remaining warnings after Ghostty integration
+
+Base: `b82058ce`. This pass owns the 63 warnings left across browser DOM,
+server routes, CSS, asset build and browser probes. Strict lint now passes:
+zero warnings or errors; 216 style infos remain. No lint rules or ignores
+changed. The pinned Ghostty patch is untouched.
+
+Required DOM/build values now fail at use instead of carrying non-null
+assertions. Route values narrow after the existing validation. Stop still
+shares one promise. Probe selectors, waits and assertions stay; SGR release
+matching checks the ESC prefix outside its regex, with the same packet test.
+Theme escape bytes stay 0x1b. Unused probe bindings are gone.
+
+CSS puts base rules before specific rules and hides elements through the
+cascade, not `!important`. Keep the ID-qualified hidden rules and the
+workspace suffix rule: plain `[hidden]` loses to their display rules.
+A scratch Chromium comparison matched old/new display for the fixture DOM
+and 80 hidden cases across desktop/phone widths and open/closed drawers.
+
+All commands use `TMPDIR=/var/tmp`. Root `check`, `lint`,
+`format:check` and `git diff --check` pass. Focused browser, server,
+multiplexer, multiplayer, theme, font/WASM, packaging, accessibility and touch
+tests: 98 pass, 0 fail. Source theme probe passes all 16 ANSI colors, default
+foreground, black surfaces and RGB. Logs and scratch proof are in
+`.tmp/strict-*`; no generated artifacts are committed.
+
+No compiled browser gate or full-suite claim here. Parent runs those gates
+on the combined head. No physical phone, Safari, microphone, provider or
+screen-reader proof. Values stay unchanged: this applies the warning gate
+and existing behavior-preservation and honest-proof values.

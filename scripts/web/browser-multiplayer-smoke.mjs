@@ -260,7 +260,7 @@ try {
   await openFolder(b, two);
   await a.getByRole("button", { name: "Open workspace two · " + two, exact: true }).waitFor();
   assert.equal(await selected(a), "tab-" + tab.id, "Remote creation stole A selection");
-  let current = await state(),
+  const current = await state(),
     second = current.workspaces.find((w) => w.cwd === two);
   assert(second);
   assert.equal(current.workspaces.length, 2);

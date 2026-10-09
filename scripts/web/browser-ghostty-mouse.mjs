@@ -128,7 +128,10 @@ try {
   assert(!inputs.slice(first).some((m) => m.data === "\x1b[A"), "Wheel became editor history key");
   const clickStart = inputs.length;
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  await until(() => inputs.slice(clickStart).some((m) => /^\x1b\[<0;\d+;\d+m$/.test(m.data)), "SGR release missing");
+  await until(
+    () => inputs.slice(clickStart).some((m) => m.data.startsWith("\x1b") && /^\[<0;\d+;\d+m$/.test(m.data.slice(1))),
+    "SGR release missing",
+  );
   const paint = await paintedTerminal(page);
   await page.screenshot({ path: join(proof, "fullscreen-scroll.png") });
   Object.assign(result, {

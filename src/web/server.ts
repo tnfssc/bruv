@@ -234,7 +234,8 @@ export function startWebServer(options: WebServerOptions) {
             return response("JSON body required", "text/plain", 400);
           }
           const workspace = workspaceMatch && workspaces.find((w) => w.id === workspaceMatch[1]);
-          const tab = tabMatch && tabs.get(tabMatch[1]!);
+          const tabId = tabMatch?.[1];
+          const tab = tabId ? tabs.get(tabId) : undefined;
           if ((workspaceMatch && !workspace) || (tabMatch && !tab)) return response("Not found", "text/plain", 404);
           if (
             (body.name !== undefined && (typeof body.name !== "string" || !body.name.trim())) ||
@@ -274,15 +275,16 @@ export function startWebServer(options: WebServerOptions) {
               JSON.stringify({ ...state(), workspaceId: workspace.id, created: true }),
               "application/json",
             );
-          } else if (createTab) addTab(workspace!, body.name as string | undefined);
-          else if (renameTab) tab!.name = body.name as string;
-          else if (deleteTab) {
-            const owner = workspaces.find((w) => w.tabs.includes(tab!))!;
-            owner.tabs.splice(owner.tabs.indexOf(tab!), 1);
-            cleanup = disposeTab(tab!);
-          } else if (deleteWorkspace) {
-            workspaces.splice(workspaces.indexOf(workspace!), 1);
-            cleanup = Promise.all(workspace!.tabs.map(disposeTab)).then(() => {});
+          } else if (createTab && workspace) addTab(workspace, body.name as string | undefined);
+          else if (renameTab && tab) tab.name = body.name as string;
+          else if (deleteTab && tab) {
+            const owner = workspaces.find((w) => w.tabs.includes(tab));
+            if (!owner) throw new Error("Missing workspace for tab");
+            owner.tabs.splice(owner.tabs.indexOf(tab), 1);
+            cleanup = disposeTab(tab);
+          } else if (deleteWorkspace && workspace) {
+            workspaces.splice(workspaces.indexOf(workspace), 1);
+            cleanup = Promise.all(workspace.tabs.map(disposeTab)).then(() => {});
           }
           publish();
           const result = json();
@@ -329,7 +331,7 @@ export function startWebServer(options: WebServerOptions) {
       },
       message(socket, message) {
         if (socket.data.channel === "terminal") {
-          let event;
+          let event: { type?: unknown; request?: unknown; message?: unknown } | null | undefined;
           try {
             event = JSON.parse(String(message));
           } catch {
@@ -375,12 +377,13 @@ export function startWebServer(options: WebServerOptions) {
     origin,
     url: origin + "/#token=" + token,
     stop() {
-      return (stopped ??= (async () => {
+      stopped ??= (async () => {
         // Stop accepting connections immediately, then tear down owned resources.
         const cleanup = [...tabs.values()].map(disposeTab);
         server.stop(true);
         await Promise.all([...cleanup, extension?.stop?.()]);
-      })());
+      })();
+      return stopped;
     },
   };
 }

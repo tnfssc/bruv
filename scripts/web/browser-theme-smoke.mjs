@@ -9,12 +9,12 @@ const { chromium } = await import(pathToFileURL(process.env.PLAYWRIGHT_CORE).hre
 const proof = resolve(import.meta.dir, "../../artifacts/ghostty/theme");
 await mkdir(proof, { recursive: true });
 // A real shell PTY, with the same built browser assets as the compiled app.
-const lines = ["printf '\033[2J\033[HDEFAULT foreground on pure black\n\n'"];
+const lines = ["printf '\x1b[2J\x1b[HDEFAULT foreground on pure black\n\n'"];
 for (let i = 0; i < 16; i++) {
   const code = i < 8 ? 30 + i : 90 + i - 8;
-  lines.push("printf '\033[" + code + "mANSI " + i + "   AaBb 0123\033[0m\n'");
+  lines.push("printf '\x1b[" + code + "mANSI " + i + "   AaBb 0123\x1b[0m\n'");
 }
-lines.push("printf '\n\033[38;2;255;199;153mExplicit RGB peach\033[0m\n'; sleep 120");
+lines.push("printf '\n\x1b[38;2;255;199;153mExplicit RGB peach\x1b[0m\n'; sleep 120");
 const app = startWebServer({ port: 0, command: ["/bin/sh", "-c", lines.join("; ")], assets: await loadWebAssets() });
 let browser;
 try {
