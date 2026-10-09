@@ -183,7 +183,7 @@ export class SourceApprovalService {
       allowFreeText: false,
       requester: "Source handoff",
       taskIds: [jobId(record.intent.taskId)],
-      reason: "Only a human CLI answer can include pinned untracked bytes. Default is omit all untracked files.",
+      reason: "Pinned untracked bytes need a human CLI answer. All untracked files stay out by default.",
     });
     if (q.status === "pending" && !q.blocked)
       q = await this.questions.block(ctx, {

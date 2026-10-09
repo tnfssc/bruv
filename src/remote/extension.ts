@@ -557,7 +557,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       publish(
         {
           error: String(error),
-          hint: "No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.",
+          hint: "A failed/uncertain submission proves neither an answer nor confirmed cancellation. Check saved status.",
         },
         "error",
       );
@@ -583,7 +583,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               host: rest[0],
               ...(await client.connect(rest[0], rest[1])),
               scope:
-                "Host and cache are shared across this OS user’s sessions. Repository snapshots and local read-only capabilities require explicit actions; no credentials copied.",
+                "Host and cache are shared across this OS user’s sessions. Repo snapshots and local read-only grants need explicit actions. No credentials copied.",
             };
             break;
           case "status":
@@ -748,7 +748,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         publish(
           {
             error: String(error),
-            hint: "/remote status shows saved task/question IDs. Offline transcript remains available; uncertain operations must reconcile the same ID.",
+            hint: "/remote status shows saved task/question IDs. Transcript works offline. An uncertain operation needs the same ID to reconcile.",
           },
           "error",
         );

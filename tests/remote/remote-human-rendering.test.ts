@@ -20,9 +20,9 @@ test("preparation-only status preserves both recovery states, without pretending
     ],
   );
   expect(text).toContain("snap · snapshot incomplete");
-  expect(text).toContain("inspect local preparation");
+  expect(text).toContain("check local preparation");
   expect(text).toContain("prepared · prepared, launch not confirmed");
-  expect(text).toContain("reconcile with owner before retrying same task ID");
+  expect(text).toContain("check with owner before retrying the same task ID");
   expect(text).toContain("/local/prepared");
   expect(text).not.toContain("No saved tasks");
   expect(text).not.toContain("private prompt");
@@ -60,8 +60,8 @@ test.each([
   for (const text of [status([t]), renderHuman(t)]) {
     expect(text).toContain("Cancellation: " + label);
     expect(text).toContain("observed task state: " + (terminal === "terminal" ? "cancelled" : "running"));
-    if (terminal === "not terminal") expect(text).toContain("/remote sync task-1 for terminal truth");
-    else expect(text).not.toContain("for terminal truth");
+    if (terminal === "not terminal") expect(text).toContain("/remote sync task-1 to check terminal state");
+    else expect(text).not.toContain("to check terminal state");
   }
 });
 
@@ -170,7 +170,7 @@ test("conflict details identify the retained artifact without implying automatic
   });
   expect(text).toContain("local file changed");
   expect(text).toContain("/safe/return.patch");
-  expect(text).toContain("Inspect local worktree before applying");
+  expect(text).toContain("Check local worktree before applying");
 });
 
 test("saved task details describe capability waits without granting access", () => {

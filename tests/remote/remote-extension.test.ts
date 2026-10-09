@@ -398,7 +398,7 @@ test("many polls do not append routine progress; transitions and reconnect are s
   expect(poll()).toContain("offline");
   expect(poll()).toBe("");
   delete t.lastError;
-  expect(poll()).toContain("recovered");
+  expect(poll()).toContain("connection back");
   expect(poll()).toBe("");
   t.task.questions.push({
     status: "pending",
@@ -579,7 +579,7 @@ test("attention deduplicates hundreds of polls, reconnects and volatile diagnost
     expect(attention.update(state, (key) => keys.push(key))).toEqual([]);
   }
   task.lastError = undefined;
-  expect(attention.update(state).join(" ")).toContain("recovered");
+  expect(attention.update(state).join(" ")).toContain("connection back");
   task.lastError = "ssh: reconnect timeout";
   expect(attention.update(state).join(" ")).toContain("offline");
   expect(attention.update(state)).toEqual([]);
@@ -664,10 +664,10 @@ test("each genuine outage and recovery is noticed once, including recovery after
   const restored = new RemoteAttention();
   restored.restore(saved);
   expect(restored.connection("owner", true, "different diagnostic", remember)).toEqual([]);
-  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("recovered");
+  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("connection back");
   expect(restored.connection("owner", false, undefined, remember)).toEqual([]);
   expect(restored.connection("owner", true, "new outage", remember)[0]).toContain("new outage");
-  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("recovered");
+  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("connection back");
   expect(saved).toHaveLength(4);
 });
 
@@ -950,7 +950,7 @@ test("review action exposes cached conflict artifact and leaves picker without c
   await extension.run("", { hasUI: true, ui: { custom: async () => ["task:review", "details"][picks++] } });
   expect(picks).toBe(2);
   expect(messages.at(-1).content).toContain("/safe/return.patch");
-  expect(messages.at(-1).content).toContain("Inspect local worktree before applying");
+  expect(messages.at(-1).content).toContain("Check local worktree before applying");
 });
 
 test("menu repository launch asks about untracked files before snapshot or transfer", async () => {

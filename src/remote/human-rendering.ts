@@ -54,7 +54,7 @@ const cancellationLine = (t: RemoteTask) =>
       ? " (terminal)."
       : "; /remote sync " +
         safe(t.taskId) +
-        " for terminal truth" +
+        " to check terminal state" +
         (t.cancelDelivery.status === "uncertain" ? "; reconcile before retrying" : "") +
         ".");
 export function taskLine(t: RemoteTask): string {
@@ -205,7 +205,7 @@ export function renderHuman(value: unknown, kind = "result"): string {
       "Authority: " + (Array.isArray(v.grant.kinds) ? v.grant.kinds.map(safe).join(", ") : "unknown"),
       "Local repository: " + safe(v.scope),
       "Grant: " + safe(v.grant.id),
-      "Read-only named authority for this task; not arbitrary shell or credentials.",
+      "Read-only named authority for this task. No arbitrary shell or credentials.",
     ].join("\n");
   if (v.revoked === true && v.grantId)
     return (
@@ -242,9 +242,9 @@ export function renderHuman(value: unknown, kind = "result"): string {
           safe(p.taskId) +
           " · " +
           (p.state === "snapshot_incomplete"
-            ? "snapshot incomplete; inspect local preparation before starting a new launch"
+            ? "snapshot incomplete; check local preparation before a new launch"
             : p.state === "prepared_not_confirmed_launched"
-              ? "prepared, launch not confirmed; reconcile with owner before retrying same task ID"
+              ? "prepared, launch not confirmed; check with owner before retrying the same task ID"
               : "state unknown; inspect local preparation") +
           (p.artifact ? " · local artifact: " + safe(p.artifact) : ""),
       ),
@@ -260,10 +260,10 @@ export function renderHuman(value: unknown, kind = "result"): string {
       t.lastError && "Offline; cached observation: " + detail(t.lastError),
       t.integrationError && "Result review: " + detail(t.integrationError),
       obj(t.repository).status === "review" &&
-        "Repository result review: " + detail(obj(t.repository).reason ?? "returned changes require review"),
+        "Repository result review: " + detail(obj(t.repository).reason ?? "returned changes need review"),
       obj(t.repository).status === "review" &&
         obj(t.repository).artifact &&
-        "Inspect local worktree before applying. Local review artifact: " + safe(obj(t.repository).artifact),
+        "Check local worktree before applying. Local review artifact: " + safe(obj(t.repository).artifact),
       t.task?.error && "Task error: " + detail(t.task.error),
       ...((t.task?.questions as any[] | undefined) ?? [])
         .filter((q) => q.status === "pending")
@@ -283,7 +283,7 @@ export function renderHuman(value: unknown, kind = "result"): string {
       cancellationLine(t),
       t.transcriptComplete === false && "Warning: transcript incomplete.",
       t.task?.state === "done" && (v.finalAssistantText || assistantText(t.events)),
-      "Last synchronized state, not live status. /remote transcript " + safe(t.taskId) + " for full events.",
+      "Last synced state, not live status. /remote transcript " + safe(t.taskId) + " for full events.",
     ]
       .filter(Boolean)
       .join("\n");
@@ -329,7 +329,7 @@ export class RemoteAttention {
         " · " +
         (offline
           ? "offline; cached state only" + (error ? ": " + detail(error) : "")
-          : "connection recovered; state synchronized"),
+          : "connection back; state synced"),
     ];
   }
 
@@ -352,7 +352,7 @@ export class RemoteAttention {
       if (obj(t.repository).status === "review")
         add(
           "repository-review:" + (obj(t.repository).artifact ?? ""),
-          "repository result review needed: " + detail(obj(t.repository).reason ?? "returned changes require review"),
+          "repository result review needed: " + detail(obj(t.repository).reason ?? "returned changes need review"),
         );
       if (t.task?.state === "blocked")
         add("blocked", "blocked; /remote to review pending questions or capability requests");

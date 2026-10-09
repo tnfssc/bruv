@@ -241,7 +241,7 @@ export function createRemoteJobsAdapter(
     if (existing) assertLaunchOwner(existing, ownedRequest, connection);
     if (!source && !saved) return { request: ownedRequest };
     if (!source || !approvalContext)
-      throw Error("Source approval retry requires the original source selection and parent question context");
+      throw Error("Source approval retry needs the same source selection and parent question context");
     if (source.retryTaskId && !saved) throw Error("Unknown source approval retry task ID in this parent session");
     if (source.retryTaskId && source.retryTaskId !== ownedRequest.taskId)
       throw Error("Source approval retry task ID conflict");

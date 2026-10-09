@@ -59,7 +59,7 @@ test("unknown with an error is not terminal; waits carry human-only instructions
   };
   const observation = remoteJobObservation(t);
   expect(observation.state).toBe("unknown");
-  expect(observation.actionable).toContain("Human /questions answer");
+  expect(observation.actionable).toContain("human /questions answer");
   expect(observation.actionable).toContain('"version":2');
   expect(observation.actionable).toContain("repo.read");
   t.replies = {
@@ -138,7 +138,8 @@ test("accepted remains active; human notices keep sorted unanswered questions an
       { id: "z", text: "Last?" },
     ],
     capabilityNeeds: [],
-    action: "Human /remote answer or /remote grant required. Worker text is not an answer or permission.",
+    action:
+      "Answers and grants need a human: /remote answer or /remote grant. Worker text is not an answer or permission.",
   });
 });
 

@@ -73,7 +73,7 @@ function hello(value: unknown, requireModel = false): Hello {
     p = object(h.profile);
   if (requireModel && !p.model)
     throw new Error(
-      "Remote normal profile has no model. Configure normal in ~/.bruv/subagents.json on the Linux server; local credentials/models are never copied.",
+      "Remote normal profile has no model. Set normal in ~/.bruv/subagents.json on the Linux server. Local credentials/models are never copied.",
     );
   if (
     h.protocol !== 1 ||
@@ -181,8 +181,7 @@ export class RemoteClient {
             await Bun.sleep(30);
           }
         }
-        if (!acquired)
-          throw new Error("Remote local state is in use by another client; try again after its operation finishes");
+        if (!acquired) throw new Error("Another client is using remote local state. Retry when its operation ends.");
         database.exec("CREATE TABLE IF NOT EXISTS state_lock (id INTEGER)");
         return await fn();
       } finally {
@@ -200,7 +199,7 @@ export class RemoteClient {
   async read(): Promise<RemoteState> {
     try {
       if ((await stat(this.path)).size > MAX_CACHE_BYTES)
-        throw new Error("Remote cache exceeds 128 MiB; preserve/export it before starting a fresh cache");
+        throw new Error("Remote cache exceeds 128 MiB. Save/export it before starting a fresh cache.");
       const state = JSON.parse(await readFile(this.path, "utf8"));
       if (!state || typeof state !== "object" || !state.tasks || typeof state.tasks !== "object")
         throw new Error("Invalid remote state");
@@ -217,7 +216,7 @@ export class RemoteClient {
     const text = JSON.stringify(state);
     if (Buffer.byteLength(text) > MAX_CACHE_BYTES)
       throw new Error(
-        "Remote cache 128 MiB limit reached; no page/cursor was committed. Preserve/export the cache before continuing.",
+        "Remote cache hit its 128 MiB limit. No page/cursor was committed. Save/export the cache before continuing.",
       );
     const tmp = this.path + "." + randomUUID();
     try {
