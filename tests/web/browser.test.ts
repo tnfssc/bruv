@@ -32,6 +32,29 @@ class Element {
   fire(type: string, event: any = {}) {
     return this.listeners.get(type)?.(event);
   }
+  querySelector() {
+    return new Element();
+  }
+  querySelectorAll() {
+    return this.children;
+  }
+  value = "";
+  required = false;
+  returnValue = "";
+  open = false;
+  showModal() {
+    this.open = true;
+  }
+  close(value = "") {
+    this.open = false;
+    this.returnValue = value;
+    this.fire("close");
+  }
+  select() {}
+  scrollIntoView() {}
+  click() {
+    this.fire("click");
+  }
   focus() {}
   remove() {}
 }
@@ -311,7 +334,7 @@ test("global voice is named, observers cannot disable it, and selection never tr
   b.flushFrames();
   expect(b.audioOptions.owner).toBe("cap-a");
   expect(b.node("audio-status").textContent).toContain("One / A");
-  expect(b.node("audio-toggle").textContent).toBe("Disable microphone");
+  expect(b.node("audio-toggle").attributes["aria-label"]).toBe("Disable microphone");
   expect(b.deviceClosed).toBe(0);
   b.terminal("b").close();
   expect(b.deviceClosed).toBe(0);
@@ -341,4 +364,42 @@ test("authoritative release closes only the local owner device", async () => {
   expect(b.node("audio-status").textContent).toContain("Releasing microphone");
   b.snapshot(snapshot(5));
   expect(b.node("audio-toggle").disabled).toBe(false);
+});
+
+test("compact status keeps connection and voice labels accessible", () => {
+  const b = browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  expect(b.node("connection").attributes["data-state"]).toBe("connected");
+  expect(b.node("connection").attributes["aria-label"]).toBe("Connected");
+  expect(b.node("terminal-status").hidden).toBe(true);
+  b.terminal("a").message({ type: "exit", code: 1 });
+  expect(b.node("terminal-status").hidden).toBe(false);
+  expect(b.node("terminal-status").textContent).toContain("Bruv exited");
+});
+
+test("dialogs cancel safely and rename the captured tab, not a later selection", async () => {
+  const b = browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  const count = b.requests.length;
+  void b.node("close-tab").fire("click");
+  expect(b.node("workspace-dialog").open).toBe(true);
+  expect(b.node("dialog-description").textContent).toContain("for everyone");
+  b.node("dialog-cancel").fire("click");
+  await tick();
+  expect(b.requests).toHaveLength(count);
+  void b.node("rename-tab").fire("click");
+  b.node("dialog-input").value = "  ";
+  b.node("dialog-form").fire("submit", { preventDefault() {} });
+  expect(b.node("workspace-dialog").open).toBe(true);
+  expect(b.requests).toHaveLength(count);
+  b.node("tab-list").children[1].fire("click");
+  b.node("dialog-input").value = "  Build  ";
+  b.node("dialog-form").fire("submit", { preventDefault() {} });
+  await tick();
+  expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
+  expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
 });

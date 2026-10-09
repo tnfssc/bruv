@@ -120,17 +120,19 @@ try {
   assert.equal(new URL(page.url()).hash, "", "Token removed from address bar");
 
   async function dialogClick(selector, answer) {
-    const answered = new Promise((resolve) =>
-      page.once("dialog", async (dialog) => {
-        if (answer === false) await dialog.dismiss();
-        else await dialog.accept(typeof answer === "string" ? answer : undefined);
-        resolve();
-      }),
-    );
+    if (["#rename-tab", "#close-tab"].includes(selector)) await page.locator("#tab-menu-toggle").click();
+    if (selector === "#remove-workspace") {
+      if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
+      await page.locator("#workspace-menu-toggle").click();
+    }
     await page.locator(selector).click();
-    await answered;
+    await page.locator("#workspace-dialog").waitFor({ state: "visible" });
+    if (typeof answer === "string") await page.locator("#dialog-input").fill(answer);
+    await page.locator(answer === false ? "#dialog-cancel" : "#dialog-submit").click();
+    await page.locator("#workspace-dialog").waitFor({ state: "hidden" });
   }
   async function select(workspace, tab) {
+    if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
     await page.getByRole("button", { name: "Open workspace " + workspace.name, exact: true }).click();
     await page.locator('[id="tab-' + tab.id + '"]').click();
     await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
@@ -285,7 +287,9 @@ try {
 
   await select(other.workspace, other.tab);
   assert.equal(await page.locator("#audio-status").innerText(), label, "Switching did not move voice");
+  await page.locator("#audio-toggle").focus();
   await page.screenshot({ path: join(project, "artifacts/web-workspaces-voice-owner.png") });
+  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   assert(
     await page.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")),
     "Switching kept microphone",
@@ -374,7 +378,11 @@ try {
   );
   assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), "Narrow page overflow");
   await page.screenshot({ path: join(project, "artifacts/web-workspaces-narrow.png") });
+  await page.locator("#open-drawer").click();
+  await page.screenshot({ path: join(project, "artifacts/web-workspaces-drawer.png") });
+  await page.keyboard.press("Escape");
   await page.setViewportSize({ width: 1100, height: 720 });
+  await page.waitForTimeout(300);
   await page.screenshot({ path: join(project, "artifacts/web-workspaces-wide.png") });
   // Arrow navigation is local to this workspace's tab strip.
   await page.locator('[id="tab-' + owner.tab.id + '"]').focus();

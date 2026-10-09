@@ -44,7 +44,139 @@ const syncStatus = document.querySelector<HTMLElement>("#sync-status")!;
 const audioButton = document.querySelector<HTMLButtonElement>("#audio-toggle")!;
 const audioStatus = document.querySelector<HTMLElement>("#audio-status")!;
 const empty = document.querySelector<HTMLElement>("#empty-terminal")!;
+const connection = document.querySelector<HTMLElement>(".connection")!;
+const voiceControl = document.querySelector<HTMLElement>(".voice-control")!;
+const micLabel = document.querySelector<HTMLElement>(".mic-label")!;
+const terminalStatus = document.querySelector<HTMLElement>("#terminal-status")!;
 const action = (id: string) => document.querySelector<HTMLButtonElement>("#" + id)!;
+
+// Menus keep destructive actions out of the working surface.
+let openMenu: { menu: HTMLElement; trigger: HTMLButtonElement } | undefined;
+function closeMenu(restoreFocus = false) {
+  if (!openMenu) return;
+  openMenu.menu.hidden = true;
+  openMenu.trigger.setAttribute("aria-expanded", "false");
+  if (restoreFocus) openMenu.trigger.focus();
+  openMenu = undefined;
+}
+for (const id of ["workspace", "tab"]) {
+  const trigger = action(id + "-menu-toggle");
+  const menu = document.querySelector<HTMLElement>("#" + id + "-menu")!;
+  const items = () => Array.from(menu.querySelectorAll<HTMLButtonElement>("button:not(:disabled)"));
+  trigger.addEventListener("click", () => {
+    const wasOpen = openMenu?.menu === menu;
+    closeMenu();
+    if (wasOpen) return;
+    const rect = trigger.getBoundingClientRect();
+    menu.hidden = false;
+    menu.style.top = rect.bottom + 5 + "px";
+    menu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - menu.offsetWidth - 8)) + "px";
+    trigger.setAttribute("aria-expanded", "true");
+    openMenu = { menu, trigger };
+    items()[0]?.focus();
+  });
+  menu.addEventListener("keydown", (event) => {
+    const choices = items();
+    const index = choices.indexOf(document.activeElement as HTMLButtonElement);
+    if (event.key === "Escape" || event.key === "Tab") {
+      closeMenu(true);
+      return;
+    }
+    let next: number;
+    if (event.key === "ArrowDown") next = (index + 1) % choices.length;
+    else if (event.key === "ArrowUp") next = (index + choices.length - 1) % choices.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = choices.length - 1;
+    else return;
+    event.preventDefault();
+    choices[next]?.focus();
+  });
+  menu.addEventListener("click", () => closeMenu(true));
+}
+document.addEventListener("pointerdown", (event) => {
+  if (openMenu && !openMenu.menu.contains(event.target as Node) && !openMenu.trigger.contains(event.target as Node))
+    closeMenu();
+});
+let drawerOpen = false;
+function setDrawer(open: boolean) {
+  if (drawerOpen === open) return;
+  drawerOpen = open;
+  document.body.setAttribute("data-drawer", open ? "open" : "closed");
+  action("open-drawer").setAttribute("aria-expanded", String(open));
+  action("drawer-backdrop").hidden = !open;
+  document.querySelector<HTMLElement>("main")!.inert = open;
+  closeMenu();
+  action(open ? "close-drawer" : "open-drawer").focus();
+}
+action("open-drawer").addEventListener("click", () => setDrawer(true));
+for (const id of ["close-drawer", "drawer-backdrop"]) action(id).addEventListener("click", () => setDrawer(false));
+document.querySelector<HTMLElement>("#workspace-sidebar")!.addEventListener("keydown", (event) => {
+  if (!drawerOpen) return;
+  if (event.key === "Escape") {
+    setDrawer(false);
+    return;
+  }
+  if (event.key !== "Tab") return;
+  const choices = Array.from(document.querySelectorAll<HTMLButtonElement>("#workspace-sidebar button:not(:disabled)"));
+  const first = choices[0],
+    last = choices.at(-1);
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last?.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first?.focus();
+  }
+});
+window.addEventListener("resize", () => {
+  closeMenu();
+  if (window.innerWidth > 700) setDrawer(false);
+});
+
+type DialogOptions = {
+  title: string;
+  description: string;
+  label?: string;
+  value?: string;
+  submit: string;
+  destructive?: boolean;
+};
+const dialog = document.querySelector<HTMLDialogElement>("#workspace-dialog")!;
+const dialogInput = document.querySelector<HTMLInputElement>("#dialog-input")!;
+let dialogResult: ((value: string | null) => void) | undefined;
+function askDialog(options: DialogOptions): Promise<string | null> {
+  closeMenu(true);
+  document.querySelector<HTMLElement>("#dialog-title")!.textContent = options.title;
+  document.querySelector<HTMLElement>("#dialog-description")!.textContent = options.description;
+  document.querySelector<HTMLElement>("#dialog-label")!.textContent = options.label ?? "";
+  document.querySelector<HTMLElement>("#dialog-field")!.hidden = !options.label;
+  dialogInput.required = !!options.label;
+  dialogInput.value = options.value ?? "";
+  action("dialog-submit").textContent = options.submit;
+  action("dialog-submit").className = options.destructive ? "danger" : "primary-button";
+  dialog.returnValue = "";
+  dialog.showModal();
+  if (options.label) {
+    dialogInput.focus();
+    dialogInput.select();
+  } else action("dialog-cancel").focus();
+  return new Promise((resolve) => {
+    dialogResult = resolve;
+  });
+}
+document.querySelector<HTMLFormElement>("#dialog-form")!.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (dialogInput.required && !dialogInput.value.trim()) {
+    dialogInput.focus();
+    return;
+  }
+  dialog.close("save");
+});
+action("dialog-cancel").addEventListener("click", () => dialog.close());
+dialog.addEventListener("close", () => {
+  dialogResult?.(dialog.returnValue === "save" ? dialogInput.value : null);
+  dialogResult = undefined;
+});
 
 // Storage can be blocked by browser privacy settings. The full URL still works.
 let token = new URLSearchParams(location.hash.slice(1)).get("token");
@@ -102,7 +234,11 @@ function renderAudio() {
   const shared = state.voice;
   const elsewhere = shared && sessions.get(shared.tabId)?.ownerId !== shared.ownerId;
   audioButton.hidden = !!elsewhere;
-  audioButton.textContent = voice || shared ? "Disable microphone" : "Enable microphone";
+  audioButton.setAttribute("aria-label", voice || shared ? "Disable microphone" : "Enable microphone");
+  audioButton.setAttribute("aria-pressed", String(!!voice));
+  micLabel.textContent = voice || shared ? "Mic on" : "Mic off";
+  voiceControl.setAttribute("data-active", String(!!(voice || shared)));
+  voiceControl.setAttribute("data-elsewhere", String(!!elsewhere));
   audioButton.disabled = voice ? voice.releasing : !!shared || !session?.ready || !session.capability;
   audioStatus.textContent = elsewhere
     ? "Voice in another browser · " + voiceLabel(shared.tabId)
@@ -111,15 +247,21 @@ function renderAudio() {
       : shared
         ? "Releasing microphone… · " + voiceLabel(shared.tabId)
         : "Voice off";
+  voiceControl.setAttribute("aria-label", audioStatus.textContent);
 }
 function renderStatus() {
   status.textContent =
     selected()?.status ??
     (token ? "Select or add a workspace." : "Open the full URL printed by bruv web (including its token).");
+  connection.setAttribute("data-state", selected()?.ready ? "connected" : selected()?.halted ? "ended" : "connecting");
+  connection.setAttribute("aria-label", status.textContent);
+  terminalStatus.textContent = status.textContent;
+  terminalStatus.hidden = !!selected()?.ready || (!selected() && !!token);
   renderAudio();
 }
 function selectWorkspace(id: string) {
   selectedWorkspace = id;
+  setDrawer(false);
   render();
   selected()?.term.focus();
 }
@@ -131,13 +273,24 @@ function selectTab(id: string) {
 function render() {
   workspaceList.replaceChildren();
   for (const item of state.workspaces) {
-    const entry = button(item.name, "Open workspace " + item.name, () => selectWorkspace(item.id));
+    const entry = button("", "Open workspace " + item.name, () => selectWorkspace(item.id));
     entry.className = "workspace";
     entry.title = item.cwd;
     entry.setAttribute("aria-pressed", String(item.id === selectedWorkspace));
+    const mark = document.createElement("span");
+    mark.innerHTML =
+      '<svg class="workspace-mark" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h5l2 2h7a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg>';
+    entry.append(mark);
+    const copy = document.createElement("span");
+    copy.className = "workspace-copy";
+    const name = document.createElement("span");
+    name.className = "workspace-name";
+    name.textContent = item.name;
+    copy.append(name);
     const cwd = document.createElement("small");
     cwd.textContent = item.cwd;
-    entry.append(cwd);
+    copy.append(cwd);
+    entry.append(copy);
     workspaceList.append(entry);
   }
   const current = workspace();
@@ -153,9 +306,15 @@ function render() {
     entry.setAttribute("role", "tab");
     entry.setAttribute("aria-selected", String(active));
     entry.setAttribute("aria-controls", "terminal-" + tab.id);
+    entry.title = tab.name;
     entry.tabIndex = active ? 0 : -1;
     tabList.append(entry);
   }
+  requestAnimationFrame(() =>
+    document
+      .getElementById("tab-" + selectedTabs[selectedWorkspace])
+      ?.scrollIntoView({ block: "nearest", inline: "nearest" }),
+  );
   const active = selected();
   let selectionChanged = false;
   for (const session of sessions.values()) {
@@ -167,9 +326,13 @@ function render() {
     }
   }
   empty.hidden = !!active;
-  empty.textContent = current
-    ? "Open a new tab to start a terminal in this workspace."
-    : "Add an existing folder to start a terminal. Removing a workspace never deletes its folder.";
+  empty.querySelector("h1")!.textContent = current ? "Ready when you are." : "Your terminal, together.";
+  empty.querySelector("p")!.textContent = current
+    ? "Open a terminal in " + current.name + "."
+    : "Add an existing folder to get started.";
+  action("empty-action").textContent = current ? "New tab" : "Add workspace";
+  action("empty-action").disabled = busy || !token;
+  action("tab-menu-toggle").disabled = busy || !active;
   for (const id of ["add-workspace", "reload-workspaces"]) action(id).disabled = busy || !token;
   action("remove-workspace").disabled = busy || !current;
   action("new-tab").disabled = busy || !current;
@@ -324,7 +487,7 @@ function connect(session: Session) {
       session.term.resize(message.cols, message.rows);
       session.ready = true;
       session.term.options.disableStdin = false;
-      session.status = "Connected · real Bruv TUI";
+      session.status = "Connected";
       if (selected() === session) {
         resizeSelected();
         if (document.activeElement === document.body) session.term.focus();
@@ -484,8 +647,15 @@ async function change(path: string, method = "GET", body?: object, choose?: (nex
     render();
   }
 }
-action("add-workspace").addEventListener("click", () => {
-  const cwd = prompt("Existing workspace directory (leave blank for launch directory):", state.defaultCwd);
+action("empty-action").addEventListener("click", () => action(workspace() ? "new-tab" : "add-workspace").click());
+action("add-workspace").addEventListener("click", async () => {
+  const cwd = await askDialog({
+    title: "Add workspace",
+    description: "Use an existing folder. Each workspace has its own terminals.",
+    label: "Folder path",
+    value: state.defaultCwd,
+    submit: "Add workspace",
+  });
   if (cwd === null) return;
   const before = new Set(state.workspaces.map((item) => item.id));
   void change("/api/workspaces", "POST", { cwd: cwd.trim() || state.defaultCwd }, (next) => {
@@ -507,20 +677,44 @@ action("new-tab").addEventListener("click", () => {
     }
   });
 });
-action("rename-tab").addEventListener("click", () => {
+action("rename-tab").addEventListener("click", async () => {
   const tab = workspace()?.tabs.find((tab) => tab.id === selected()?.id);
   if (!tab) return;
-  const name = prompt("Tab name:", tab.name)?.trim();
+  const name = (
+    await askDialog({
+      title: "Rename tab",
+      description: "Give this terminal a name.",
+      label: "Tab name",
+      value: tab.name,
+      submit: "Save",
+    })
+  )?.trim();
   if (name) void change("/api/tabs/" + encodeURIComponent(tab.id), "PATCH", { name });
 });
-action("close-tab").addEventListener("click", () => {
+action("close-tab").addEventListener("click", async () => {
   const tab = workspace()?.tabs.find((tab) => tab.id === selected()?.id);
-  if (tab && confirm('Close "' + tab.name + '"? Its terminal will stop.'))
+  if (
+    tab &&
+    (await askDialog({
+      title: "Close “" + tab.name + "”?",
+      description: "This terminal and its running work will stop for everyone.",
+      submit: "Close tab",
+      destructive: true,
+    })) !== null
+  )
     void change("/api/tabs/" + encodeURIComponent(tab.id), "DELETE", { confirm: true });
 });
-action("remove-workspace").addEventListener("click", () => {
+action("remove-workspace").addEventListener("click", async () => {
   const current = workspace();
-  if (current && confirm('Remove "' + current.name + '" and stop all its terminals? The folder will not be deleted.'))
+  if (
+    current &&
+    (await askDialog({
+      title: "Remove “" + current.name + "”?",
+      description: "All its terminals will stop for everyone. The folder will not be deleted.",
+      submit: "Remove workspace",
+      destructive: true,
+    })) !== null
+  )
     void change("/api/workspaces/" + encodeURIComponent(current.id), "DELETE", { confirm: true });
 });
 action("reload-workspaces").addEventListener("click", () => void change("/api/workspaces"));

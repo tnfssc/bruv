@@ -152,17 +152,19 @@ try {
     await page.keyboard.press("Enter");
   }
   async function dialog(page, selector, answer) {
-    const done = new Promise((resolve) =>
-      page.once("dialog", async (d) => {
-        if (answer === false) await d.dismiss();
-        else await d.accept(typeof answer === "string" ? answer : undefined);
-        resolve();
-      }),
-    );
+    if (["#rename-tab", "#close-tab"].includes(selector)) await page.locator("#tab-menu-toggle").click();
+    if (selector === "#remove-workspace") {
+      if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
+      await page.locator("#workspace-menu-toggle").click();
+    }
     await page.locator(selector).click();
-    await done;
+    await page.locator("#workspace-dialog").waitFor({ state: "visible" });
+    if (typeof answer === "string") await page.locator("#dialog-input").fill(answer);
+    await page.locator(answer === false ? "#dialog-cancel" : "#dialog-submit").click();
+    await page.locator("#workspace-dialog").waitFor({ state: "hidden" });
   }
   async function select(page, workspace, id) {
+    if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
     await page.getByRole("button", { name: "Open workspace " + workspace.name, exact: true }).click();
     await page.locator('[id="tab-' + id + '"]').click();
     await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));

@@ -2,19 +2,32 @@
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content"><title>Bruv terminal</title><link rel="stylesheet" href="/terminal.css"><script type="module" src="/terminal.js"></script></head>
 <body>
-  <header><strong>Bruv</strong><span id="status" role="status">Starting terminal…</span><button type="button" id="audio-toggle" disabled>Enable microphone</button><span id="audio-status" role="status">Voice off</span></header>
-  <div id="sync-status" role="status"></div>
-  <div id="notice" role="alert"></div>
   <div class="workspace-layout">
-    <aside aria-label="Workspaces">
-      <div class="sidebar-heading"><strong>Workspaces</strong><button type="button" id="add-workspace">Add</button><button type="button" id="reload-workspaces" aria-label="Reload workspaces">↻</button></div>
+    <button id="drawer-backdrop" aria-label="Close workspaces" hidden></button>
+    <aside id="workspace-sidebar" aria-label="Workspaces">
+      <div class="brand-row"><strong class="brand"><span aria-hidden="true">b.</span> bruv</strong><button class="icon-button drawer-close" id="close-drawer" aria-label="Close workspaces">×</button></div>
+      <div class="sidebar-heading"><span>Workspaces</span><button class="icon-button" type="button" id="add-workspace" aria-label="Add workspace" title="Add workspace">+</button><button class="icon-button" id="workspace-menu-toggle" aria-label="Workspace actions" aria-haspopup="menu" aria-expanded="false" aria-controls="workspace-menu">⋯</button></div>
       <nav id="workspace-list" aria-label="Choose workspace"></nav>
-      <button type="button" id="remove-workspace">Remove workspace</button>
     </aside>
     <main class="terminal-area">
-      <div class="tab-bar"><div id="tab-list" role="tablist" aria-label="Terminal tabs"></div><div class="tab-actions"><button type="button" id="new-tab">New tab</button><button type="button" id="rename-tab">Rename</button><button type="button" id="close-tab">Close tab</button></div></div>
-      <div id="terminal"><p id="empty-terminal">Add an existing folder to start a terminal. Removing a workspace never deletes its folder.</p></div>
+      <div class="tab-bar">
+        <button class="icon-button" id="open-drawer" aria-label="Open workspaces" aria-expanded="false" aria-controls="workspace-sidebar"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h14v12H3zM8 4v12"/></svg></button>
+        <div id="tab-list" role="tablist" aria-label="Terminal tabs"></div>
+        <button class="icon-button" type="button" id="new-tab" aria-label="New tab" title="New tab">+</button>
+        <button class="icon-button" id="tab-menu-toggle" aria-label="Tab actions" aria-haspopup="menu" aria-expanded="false" aria-controls="tab-menu">⋯</button>
+        <div class="terminal-controls">
+          <div class="connection" tabindex="0" aria-label="Terminal connection"><span class="connection-dot" aria-hidden="true"></span><span id="status" class="tooltip" role="status">Starting terminal…</span></div>
+          <div class="voice-control" tabindex="0" aria-label="Voice status"><button class="icon-button" type="button" id="audio-toggle" aria-label="Enable microphone" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="10" rx="3"/><path d="M4 9v1a6 6 0 0 0 12 0V9M10 16v3M7 19h6"/></svg><span class="mic-label">Mic off</span></button><span id="audio-status" class="tooltip" role="status">Voice off</span></div>
+        </div>
+      </div>
+      <div id="sync-status" role="status"></div>
+      <div id="notice" role="alert"></div>
+      <div id="terminal-status" role="status" hidden></div>
+      <div id="terminal"><div id="empty-terminal"><span class="empty-mark" aria-hidden="true">›_</span><h1>Your terminal, together.</h1><p>Add a workspace to get started.</p><button id="empty-action" class="primary-button">Add workspace</button></div></div>
     </main>
   </div>
+  <div id="workspace-menu" class="context-menu" role="menu" aria-label="Workspace actions" hidden><button id="reload-workspaces" role="menuitem">Reload workspaces</button><button id="remove-workspace" role="menuitem" class="danger">Remove workspace…</button></div>
+  <div id="tab-menu" class="context-menu" role="menu" aria-label="Tab actions" hidden><button id="rename-tab" role="menuitem">Rename tab…</button><button id="close-tab" role="menuitem" class="danger">Close tab…</button></div>
+  <dialog id="workspace-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description"><form id="dialog-form"><h2 id="dialog-title"></h2><p id="dialog-description"></p><div id="dialog-field"><label id="dialog-label" for="dialog-input"></label><input id="dialog-input" autocomplete="off" required></div><div class="dialog-actions"><button type="button" id="dialog-cancel">Cancel</button><button type="submit" id="dialog-submit" class="primary-button">Save</button></div></form></dialog>
 </body>
 </html>

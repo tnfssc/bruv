@@ -31,7 +31,8 @@ Voice keeps one explicit microphone owner across the server. Everyone sees its w
 ## Behavior
 
 - The sidebar lists server folders. **Add workspace** uses an existing directory; the launch directory is the default. Removing a workspace never deletes files.
-- Each workspace has its own terminal tabs. Add, select, rename, or close tabs from its tab strip. Each tab owns a real Bruv CLI in that folder. Closing a tab or workspace asks before terminating its CLIs.
+- Each workspace has its own terminal tabs. Use + to add a tab and the tab menu to rename or close it. The workspace menu holds reload and remove. Compact dialogs confirm shared destructive actions. Each tab owns a real Bruv CLI in that folder.
+- On phones, open the workspace drawer from the left end of the tab strip. Escape closes drawers, menus, and dialogs. Tab arrows move between terminals. Connection and voice details appear on hover or keyboard focus; microphone ownership does not follow tab selection.
 - Switching workspaces or tabs keeps sessions and output alive. Reload and reconnect use the server-owned in-memory state. Server restart does not restore workspaces or tabs.
 - `--port 0` chooses a free local port. Remote tunnels should use a fixed matching port.
 - Arguments after `--` go to Bruv. Example: `bruv web -- --offline --provider openai --model gpt-4o`.
@@ -59,6 +60,7 @@ bun test tests/web tests/live/browser-audio.test.ts tests/t3/web-launcher.test.t
 # Use installed test tools; Playwright is not a production dependency.
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-smoke.mjs
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-multiplayer-smoke.mjs
+CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-workspace-design.mjs
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-audio-probe.ts
 ```
 
