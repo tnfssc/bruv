@@ -77,3 +77,5 @@ Local final tests/web: 64 pass, zero failures, 477 assertions. An earlier launch
 Limits: no physical phone/keyboard, screen-reader or audible speech acceptance; no paid provider calls. Stale list, initial PTY retry, pending cancellation and late device release have focused browser tests, not a claim that every outage was visually accepted. Final hosted PR64 gate belongs to parent.
 
 Values assessed and unchanged: shipped-path proof, honest evidence limits, explicit ownership and preserving user work already cover these lessons. Local gesture and capture recipes stay here rather than growing the shared values set.
+
+Final integrated check at proof-tree 8a959eb9: typecheck and tests/web passed, 67 tests, zero failures, 538 assertions (unit-complete.log). The extra three tests cover the server owner's folder reuse contract. Parent has already applied the frontend through 066c9e42 under local hashes; the final fixture/proof commit 6d6c151 and this note are the remaining task commits to bring over. Parent's later touch teardown change is not included in this proof tree.
