@@ -113,7 +113,7 @@ function askDialog(options: DialogOptions): Promise<string | null> {
   dialogInput.required = !!options.label;
   dialogInput.value = options.value ?? "";
   action("dialog-submit").textContent = options.submit;
-  action("dialog-submit").className = options.destructive ? "danger" : "primary-button";
+  action("dialog-submit").className = options.destructive ? "btn btn-outline btn-error" : "btn btn-primary";
   dialog.showModal();
   if (options.label) {
     dialogInput.focus();
@@ -303,7 +303,7 @@ function startRename(id: string) {
   const entry = document.getElementById("tab-" + id);
   if (!tab || !entry) return;
   const input = document.createElement("input");
-  input.className = "tab-name-input";
+  input.className = "input tab-name-input";
   input.autocomplete = "off";
   input.spellcheck = false;
   input.id = "tab-name-" + id;
@@ -332,7 +332,7 @@ function tabButton(tab: Tab) {
   const entry = button("", "", () => {
     if (!editingTab) selectTab(tab.id);
   });
-  entry.className = "tab-select";
+  entry.className = "btn btn-ghost tab-select";
   entry.id = "tab-" + tab.id;
   entry.setAttribute("role", "tab");
   entry.setAttribute("aria-controls", "terminal-" + tab.id);
@@ -380,11 +380,11 @@ function renderWorkspaces() {
       row.className = "workspace-row";
       const entry = button("", "", () => selectWorkspace(item.id));
       entry.id = "workspace-" + item.id;
-      entry.className = "workspace";
+      entry.className = "btn btn-ghost workspace";
       entry.innerHTML = '<span class="workspace-name"></span><small></small>';
       const remove = button("×", "", () => void removeWorkspace(item.id));
       remove.id = "workspace-remove-" + item.id;
-      remove.className = "workspace-remove";
+      remove.className = "btn btn-ghost btn-square workspace-remove";
       row.append(entry, remove);
     }
     const entry = row.firstElementChild as HTMLButtonElement;
@@ -438,7 +438,7 @@ function render() {
     shell.setAttribute("data-active", String(active));
     if (editingTab?.id !== tab.id) {
       let entry = shell.firstElementChild as HTMLButtonElement | null;
-      if (!entry || entry.className !== "tab-select") {
+      if (!entry || !entry.classList.contains("tab-select")) {
         const replacement = tabButton(tab);
         if (entry) entry.replaceWith(replacement);
         else shell.append(replacement);
@@ -463,7 +463,7 @@ function render() {
         if (currentTab) void closeTab(currentTab);
       });
       close.id = "tab-close-" + tab.id;
-      close.className = "tab-close";
+      close.className = "btn btn-ghost btn-square tab-close";
       shell.append(close);
     }
     const closeLabel = (tab.exited || sessions.get(tab.id)?.loss === "exit" ? "Remove tab " : "Close tab ") + tab.name;

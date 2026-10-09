@@ -19,6 +19,7 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
     "src/live/browser-protocol.ts",
     "src/web/index.html",
     "src/web/browser.css",
+    "src/web/controls.css",
     "src/web/terminal-font.css",
     "src/web/fonts/JetBrainsMonoNerdFontMono-Regular.woff2",
     "scripts/build/pi-host-adaptation.ts",
@@ -32,7 +33,7 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
   // Host adaptation may write to Pi. Copy it; never link the shared dependency into this fixture.
   const piPackage = "node_modules/@earendil-works/pi-coding-agent";
   await cp(join(root, piPackage), join(fixture, piPackage), { recursive: true });
-  for (const name of ["@xterm/xterm", "@xterm/addon-fit"]) {
+  for (const name of ["@xterm/xterm", "@xterm/addon-fit", "daisyui"]) {
     await cp(join(root, "node_modules", name), join(fixture, "node_modules", name), { recursive: true });
   }
 }
@@ -112,6 +113,14 @@ describe("build asset preparation", () => {
       expect(await readFile(join(assets, "web/terminal.css.asset"), "utf8")).toContain(
         await readFile(join(fixture, "node_modules/@xterm/xterm/css/xterm.css"), "utf8"),
       );
+      const css = await readFile(join(assets, "web/terminal.css.asset"), "utf8");
+      expect(css).toContain("daisyUI 5.7.47 - MIT License");
+      expect(css).toContain(".btn");
+      expect(css).toContain(".input");
+      expect(css).not.toContain(".modal-box");
+      expect(css).not.toContain("@import");
+      // Bun lowers logical corners and nesting. Keep the selective build well below the full 1.14 MB bundle.
+      expect(Buffer.byteLength(css)).toBeLessThan(250_000);
       const browserCode = await readFile(join(assets, "web/terminal.js.asset"), "utf8");
       expect(browserCode).toContain("xterm");
       expect(browserCode).not.toContain('from "@xterm');

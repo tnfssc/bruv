@@ -1,0 +1,3 @@
+/* Only native DOM controls. No Tailwind runtime or full daisyUI theme bundle. */
+@import "daisyui/components/button.css";
+@import "daisyui/components/input.css";

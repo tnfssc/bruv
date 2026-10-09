@@ -76,7 +76,7 @@ async function checkAlignment(label) {
       rows: document.querySelector(".terminal-pane:not([hidden]) .xterm-rows").childElementCount,
     };
   });
-  const minimum = metrics.phone ? 32 : 24;
+  const minimum = metrics.phone ? 48 : 32;
   for (const name of ["tab", "select", "plus", "drawer", "closeDrawer", "workspace", "remove", "add"]) {
     if (!metrics[name]) continue;
     assert(
@@ -101,7 +101,84 @@ async function checkAlignment(label) {
     });
     assert(Math.abs(denseHeight - metrics.header.height) < 0.6, "Workspace overflow must not shrink the brand header");
   }
+  await checkSpacing(label);
   await Bun.write(join(proof, "alignment-" + label + ".json"), JSON.stringify(metrics, null, 2));
+}
+
+async function checkSpacing(label) {
+  const spacing = await page.evaluate(() => {
+    const style = (selector) => getComputedStyle(document.querySelector(selector));
+    const rect = (selector) => document.querySelector(selector).getBoundingClientRect().toJSON();
+    const root = getComputedStyle(document.documentElement);
+    return {
+      scale: [1, 2, 3, 4, 5, 6].map((n) => root.getPropertyValue("--space-" + n).trim()),
+      phone: innerWidth <= 700,
+      header: rect(".tab-bar"),
+      brand: rect(".brand-row"),
+      control: rect("#new-tab"),
+      title: rect('[role="tab"][aria-selected="true"]'),
+      close: rect(".tab-close"),
+      gutter: style("#terminal").marginLeft,
+      headerPadding: style(".tab-bar").paddingLeft,
+      labelGap: style("#folder-form label").marginBottom,
+      sectionGap: style(".folder-actions").marginTop,
+      actionGap: style(".folder-actions").gap,
+      logo: rect(".brand svg"),
+      logoRatio:
+        document.querySelector(".brand svg").viewBox.baseVal.width /
+        document.querySelector(".brand svg").viewBox.baseVal.height,
+      controlsUseLibrary: [
+        ...document.querySelectorAll("button:not(#drawer-backdrop), input:not(.xterm-helper-textarea)"),
+      ].every((el) => el.classList.contains(el.tagName === "BUTTON" ? "btn" : "input")),
+    };
+  });
+  assert.deepEqual(spacing.scale, ["4px", "8px", "12px", "16px", "24px", "32px"]);
+  assert.equal(spacing.header.height, spacing.phone ? 64 : 48, label + ": shared header height");
+  assert.equal(spacing.brand.height, spacing.header.height, label + ": rail and terminal headers");
+  for (const name of ["control", "title", "close"])
+    assert.equal(spacing[name].height, spacing.phone ? 48 : 32, label + ": " + name + " shared height");
+  assert.equal(spacing.gutter, spacing.phone ? "8px" : "12px");
+  assert.equal(spacing.headerPadding, spacing.gutter, label + ": shared content gutter");
+  assert.equal(spacing.labelGap, "8px");
+  assert.equal(spacing.sectionGap, "16px");
+  assert.equal(spacing.actionGap, "8px");
+  assert(Math.abs(spacing.logo.width / spacing.logo.height - spacing.logoRatio) < 0.01, "Logo keeps its optical ratio");
+  assert(spacing.controlsUseLibrary, label + ": native controls use daisyUI");
+  await Bun.write(join(proof, "spacing-" + label + ".json"), JSON.stringify(spacing, null, 2));
+}
+async function checkFormSpacing(selector, label) {
+  const form = await page.locator(selector).evaluate((el) => {
+    const field = el.querySelector("input");
+    const label = el.querySelector("label");
+    const actions = el.querySelector(".folder-actions, .dialog-actions");
+    const error = el.querySelector("#folder-error");
+    const rect = (node) => node.getBoundingClientRect().toJSON();
+    return {
+      phone: innerWidth <= 700,
+      field: field && rect(field),
+      label: label && rect(label),
+      actions: rect(actions),
+      buttons: [...actions.querySelectorAll("button:not([hidden])")].map(rect),
+      error: error && { color: getComputedStyle(error).color, marginTop: getComputedStyle(error).marginTop },
+      actionGap: getComputedStyle(actions).gap,
+      sectionGap: getComputedStyle(actions).marginTop,
+      dialogPadding: el.closest("dialog") && getComputedStyle(el.closest("dialog")).padding,
+    };
+  });
+  const height = form.phone ? 48 : 32;
+  if (form.field && form.field.height) {
+    assert.equal(form.field.height, height, label + ": field uses shared control height");
+    assert.equal(form.field.y - form.label.bottom, 8, label + ": label gap");
+  }
+  for (const button of form.buttons) assert.equal(button.height, height, label + ": actions use shared control height");
+  assert.equal(form.actionGap, "8px");
+  assert.equal(form.sectionGap, "16px");
+  if (form.dialogPadding) assert.equal(form.dialogPadding, "24px");
+  if (form.error) {
+    assert.equal(form.error.color, "rgb(245, 161, 145)", label + ": same inline error color in rail and empty form");
+    assert.equal(form.error.marginTop, "8px", label + ": same field-to-error gap");
+  }
+  await Bun.write(join(proof, "spacing-" + label + ".json"), JSON.stringify(form, null, 2));
 }
 
 async function connected() {
@@ -233,6 +310,7 @@ try {
   await page.locator('#folder-input[aria-invalid="true"]').waitFor();
   assert.match(await page.locator("#folder-error").innerText(), /Directory not found/);
   assert.equal(await page.evaluate(() => document.activeElement?.id), "folder-input");
+  await checkFormSpacing("#folder-form", "folder-error-desktop");
   await screenshot({ path: join(proof, "folder-error-desktop.png") });
   await page.locator("#cancel-folder").click();
   await page.locator("#folder-form").waitFor({ state: "hidden" });
@@ -361,7 +439,7 @@ try {
   await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   const terminalHeight = await page.locator("#terminal").evaluate((el) => el.clientHeight);
-  assert(terminalHeight > 620, "Phone terminal keeps most of the screen");
+  assert.equal(terminalHeight, 600, "Phone: 64px header and two 8px terminal gutters");
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   await checkAlignment("phone");
   await screenshot({ path: join(proof, "populated-phone.png") });
@@ -390,11 +468,12 @@ try {
     "dialog-cancel",
     "Destructive dialog focuses cancel",
   );
+  await checkFormSpacing("#dialog-form", "close-dialog-phone");
   await screenshot({ path: join(proof, "phone-close-dialog.png") });
   await page.keyboard.press("Escape");
 
   const phoneTitleStyle = await titleStyle(title);
-  assert.equal(phoneTitleStyle.fontSize, "11px");
+  assert.equal(phoneTitleStyle.fontSize, "16px");
   // Chromium touch emulation, not a physical phone. Dispatch both taps in one
   // short gesture; locator waits can turn them into two unrelated touches.
   const touch = await page.context().newCDPSession(page);
@@ -602,6 +681,8 @@ try {
   await page.locator("#dialog-submit").click();
   await page.waitForFunction(() => document.activeElement?.id === "empty-action");
   await page.getByRole("heading", { name: "No terminals in bruv" }).waitFor();
+  await page.locator("#empty-action:not([disabled])").waitFor();
+  await page.waitForTimeout(300); // Let the library enabled-state color transition settle.
   await screenshot({ path: join(proof, "empty-tabs-phone.png") });
   await page.locator("#empty-action").click();
   await connected();
@@ -612,7 +693,11 @@ try {
   assert.equal(await page.locator("#folder-form").count(), 1, "Empty view owns the same form");
   assert.equal(await page.locator("#cancel-folder").isVisible(), false, "Empty view needs no reveal or cancel");
   await page.setViewportSize({ width: 1100, height: 720 });
+  await checkFormSpacing("#folder-form", "empty-desktop");
   await screenshot({ path: join(proof, "empty-workspaces-desktop.png") });
+  await page.setViewportSize({ width: 390, height: 680 });
+  await checkFormSpacing("#folder-form", "empty-phone");
+  await screenshot({ path: join(proof, "empty-workspaces-phone.png") });
   assert.deepEqual(failures, []);
   console.log(
     JSON.stringify({

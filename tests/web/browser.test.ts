@@ -536,11 +536,13 @@ test("F2, Escape, blur and blank names do not submit; a removed editor exits saf
   const entry = () => b.node("tab-list").children[0].children[0];
   for (const end of ["Escape", "blur", "Enter"]) {
     entry().fire("keydown", key("F2"));
-    expect(entry().className).toBe("tab-name-input");
+    expect(entry().classList.contains("tab-name-input")).toBe(true);
+    expect(entry().classList.contains("input")).toBe(true);
     entry().value = end === "Enter" ? "   " : "Never saved";
     if (end === "blur") entry().fire("blur");
     else entry().fire("keydown", key(end));
-    expect(entry().className).toBe("tab-select");
+    expect(entry().classList.contains("tab-select")).toBe(true);
+    expect(entry().classList.contains("btn")).toBe(true);
     expect(b.requests).toHaveLength(count);
   }
   entry().fire("dblclick");
@@ -562,7 +564,8 @@ test("touch double-tap starts inline rename and close still needs confirmation",
   entry.fire("pointerup", { pointerType: "touch", timeStamp: 100, preventDefault() {} });
   entry.fire("pointerup", { pointerType: "touch", timeStamp: 300, preventDefault() {} });
   const input = b.node("tab-list").children[0].children[0];
-  expect(input.className).toBe("tab-name-input");
+  expect(input.classList.contains("tab-name-input")).toBe(true);
+  expect(input.classList.contains("input")).toBe(true);
   input.fire("keydown", key("Escape"));
   void b.node("tab-list").children[0].children[1].fire("click");
   expect(b.node("workspace-dialog").open).toBe(true);

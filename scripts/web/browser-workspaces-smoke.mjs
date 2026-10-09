@@ -96,6 +96,10 @@ function instrumentBrowser() {
   };
   const gum = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
   navigator.mediaDevices.getUserMedia = async (...args) => {
+    if (window.denyNextMedia) {
+      window.denyNextMedia = false;
+      throw new DOMException("Fixture microphone denial", "NotAllowedError");
+    }
     const stream = await gum(...args);
     window.mediaTracks.push(...stream.getTracks());
     if (window.delayNextMedia) {
@@ -137,7 +141,15 @@ try {
   browser = await chromium.launch({
     executablePath: process.env.CHROMIUM_BIN,
     headless: process.env.HEADLESS !== "0",
-    args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
+    args: [
+      "--no-sandbox",
+      "--use-fake-device-for-media-stream",
+      "--use-fake-ui-for-media-stream",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-renderer-backgrounding",
+      "--disable-background-timer-throttling",
+      ...(process.env.HEADLESS === "0" ? ["--ozone-platform=x11"] : []),
+    ],
   });
   page = await browser.newPage({ viewport: { width: 1100, height: 720 } });
   page.setDefaultTimeout(15000);
@@ -205,6 +217,44 @@ try {
       id,
     );
   }
+
+  async function captureVoice(name) {
+    const out = join(project, "artifacts/spacing-voice");
+    await mkdir(out, { recursive: true });
+    for (const viewport of [
+      { width: 1100, height: 720 },
+      { width: 390, height: 680 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.waitForTimeout(300);
+      const geometry = await page.locator("#voice-status").evaluate((el) => ({
+        rect: el.getBoundingClientRect().toJSON(),
+        buttons: [...el.querySelectorAll("button:not([hidden])")].map((button) => ({
+          rect: button.getBoundingClientRect().toJSON(),
+          font: getComputedStyle(button).fontSize,
+          library: button.classList.contains("btn"),
+        })),
+        gap: getComputedStyle(el).gap,
+        padding: getComputedStyle(el).paddingLeft,
+        width: innerWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+      }));
+      assert.equal(geometry.scrollWidth, geometry.width, "Voice strip fits viewport");
+      assert.equal(geometry.gap, "8px");
+      assert.equal(geometry.padding, viewport.width <= 700 ? "8px" : "12px");
+      for (const button of geometry.buttons) {
+        assert.equal(button.rect.height, viewport.width <= 700 ? 48 : 32);
+        assert(button.library);
+        assert(button.rect.right <= geometry.width);
+        assert.equal(button.font, viewport.width <= 700 ? "16px" : "13px");
+      }
+      const label = name + "-" + (viewport.width <= 700 ? "phone" : "desktop");
+      await Bun.write(join(out, label + ".json"), JSON.stringify(geometry, null, 2));
+      await page.screenshot({ caret: "initial", path: join(out, label + ".png") });
+    }
+    await page.setViewportSize({ width: 1100, height: 720 });
+  }
+
   async function allDevicesReleased() {
     await page.waitForFunction(
       () =>
@@ -304,6 +354,7 @@ try {
   await page.keyboard.press("Escape");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => typeof window.releaseMedia === "function");
+  await captureVoice("pending");
   await select(other.workspace, other.tab);
   await paste("/fixture-live start");
   await page.keyboard.press("Escape");
@@ -320,12 +371,31 @@ try {
   await page.locator("#voice-status").waitFor({ state: "hidden" });
   console.log("PENDING_MICROPHONE_RELEASED_WITHOUT_TRANSFER");
 
+  // A real CLI request with an emulated permission denial, then a fresh retry.
+  await select(owner.workspace, owner.tab);
+  await page.evaluate(() => {
+    window.denyNextMedia = true;
+  });
+  await paste("/fixture-live start");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Enter");
+  await page.locator("#dismiss-voice").waitFor({ state: "visible" });
+  assert.match(await page.locator("#audio-status").innerText(), /denied/i);
+  await captureVoice("denied");
+  await page.locator("#dismiss-voice").click();
+  await page.locator("#voice-status").waitFor({ state: "hidden" });
+  await until(
+    async () => (await terminalText(owner.tab.id)).includes("Microphone permission denied"),
+    "CLI receives the denial before retry",
+  );
+
   await select(owner.workspace, owner.tab);
   await paste("/fixture-live start");
   await page.keyboard.press("Escape");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   assert.equal(await page.locator("#cancel-voice").isVisible(), false, "Only pending requests can be cancelled");
+  await captureVoice("live");
 
   const otherCapability = await page.evaluate(
     (id) =>

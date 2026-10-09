@@ -57,3 +57,7 @@ No physical microphone or audible-speech acceptance, paid-provider call, physica
 ## Values
 
 Values unchanged. Existing values already require direct user flows, scarce attention, visible ownership, preserving shared work, shipped-path checks and honest evidence. This task adds concrete recipes and proof, not a new general rule.
+
+## Spacing follow-up
+
+The user rejected the prior spacing despite its green tests. The component-based rebuild and fresh visual evidence are recorded in [spacing system](spacing-system.md). It starts from 0c651e35 in a new task tree; the finished surface-rethink tree remains read-only.

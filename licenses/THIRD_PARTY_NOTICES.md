@@ -30,3 +30,8 @@ The browser terminal embeds JetBrainsMono Nerd Font Mono Regular (Nerd Fonts
 3.5.1, JetBrains Mono 2.304), licensed under OFL-1.1. Its source, conversion,
 copyright and icon notices live in third-party/jetbrains-mono-nerd-font and
 are reproduced in THIRD_PARTY_LICENSES.txt. Only its WOFF2 container changed.
+
+Browser buttons and fields use the selective native DOM CSS from daisyUI 5.7.47
+(MIT). Bun bundles only button.css and input.css, without Tailwind, React,
+or the full daisyUI stylesheet. The production dependency graph includes its
+complete MIT license in THIRD_PARTY_LICENSES.txt.

@@ -38,6 +38,7 @@
     "@modelcontextprotocol/sdk": "1.32.1",
     "@xterm/addon-fit": "0.11.0",
     "@xterm/xterm": "6.0.0",
+    "daisyui": "5.7.47",
     "es-module-lexer": "^3.0.3",
     "resolve.exports": "2.0.3",
     "ws": "8.22.0",

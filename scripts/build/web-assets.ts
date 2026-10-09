@@ -23,9 +23,17 @@ export async function prepareWebAssets(
     resolve(out, "JetBrainsMonoNerdFontMono-Regular.woff2.asset"),
     await Bun.file(resolve(root, "src/web/fonts/JetBrainsMonoNerdFontMono-Regular.woff2")).bytes(),
   );
+  const controls = await Bun.build({
+    entrypoints: [resolve(root, "src/web/controls.css")],
+    target: "browser",
+    minify: true,
+  });
+  if (!controls.success) throw new Error(controls.logs.map(String).join("\n"));
   await write(
     resolve(out, "terminal.css.asset"),
     (await Bun.file(resolve(root, "node_modules/@xterm/xterm/css/xterm.css")).text()) +
+      "\n" +
+      (await controls.outputs[0]!.text()) +
       "\n" +
       (await Bun.file(resolve(root, "src/web/browser.css")).text()) +
       "\n" +
