@@ -10,7 +10,7 @@ function recording() {
   const calls: string[][] = [];
   const viewport = "\x1b[32m/questions /close\x1b[0m\nVisible output";
   const scrollback = "Original scrollback\n" + viewport;
-  let exitCode = "0";
+  let completion = ["1:0:"];
   let failCapture = false;
   let failStart = false;
   const terminal = new PresentationTerminal(
@@ -21,8 +21,8 @@ function recording() {
         if (failCapture) throw Error("pane gone");
         return args.includes("-S") ? scrollback : viewport;
       }
-      if (args.at(-1) === "#{pane_dead}") return "1";
-      if (args.at(-1) === "#{pane_dead_status}") return exitCode;
+      if (args.at(-1) === "#{pane_dead}:#{pane_dead_status}:#{pane_dead_signal}")
+        return completion.length > 1 ? completion.shift()! : completion[0];
       return "";
     },
     () => calls.push(["kill-server"]),
@@ -34,8 +34,8 @@ function recording() {
     terminal,
     viewport,
     scrollback,
-    exit(code: string) {
-      exitCode = code;
+    completion(...states: string[]) {
+      completion = states;
     },
     failCapture() {
       failCapture = true;
@@ -120,10 +120,9 @@ test("detach proves zero exit and captures the last view before removal; reopen 
   try {
     r.terminal.start("reviewed command", "/disposable/repo");
     await r.terminal.detach("05-detached", "Detach locally", 34);
-    expect(r.calls.slice(-6)).toEqual([
+    expect(r.calls.slice(-5)).toEqual([
       ["send-keys", "-t", "root-placement", "C-d"],
-      ["display-message", "-p", "-t", "root-placement", "#{pane_dead}"],
-      ["display-message", "-p", "-t", "root-placement", "#{pane_dead_status}"],
+      ["display-message", "-p", "-t", "root-placement", "#{pane_dead}:#{pane_dead_status}:#{pane_dead_signal}"],
       ["capture-pane", "-e", "-p", "-S", "-", "-t", "root-placement"],
       ["capture-pane", "-e", "-p", "-t", "root-placement"],
       ["kill-session", "-t", "root-placement"],
@@ -144,11 +143,27 @@ test("detach proves zero exit and captures the last view before removal; reopen 
   }
 });
 
-test("failed detach cannot become a scheduled success and retains failure cleanup", async () => {
+test("detach waits for the reaped child after PTY EOF", async () => {
   const r = recording();
   try {
     r.terminal.start("reviewed command", "/disposable/repo");
-    r.exit("1");
+    r.completion("0::", "1::", "1:0:");
+    await r.terminal.detach("05-detached", "Detach locally", 34);
+    const reads = r.calls.filter((c) => c[0] === "display-message");
+    expect(reads).toHaveLength(3);
+    expect(r.calls.indexOf(reads.at(-1)!)).toBeLessThan(r.calls.findIndex((c) => c[0] === "capture-pane"));
+    expect(json(r.artifacts, "timeline.json")).toHaveLength(1);
+    expect(r.calls.at(-1)).toEqual(["kill-session", "-t", "root-placement"]);
+  } finally {
+    r.clean();
+  }
+});
+
+test.each(["1:1:", "1::15"])("failed detach %s retains failure evidence and cleanup", async (completion) => {
+  const r = recording();
+  try {
+    r.terminal.start("reviewed command", "/disposable/repo");
+    r.completion("1::", completion);
     await expect(r.terminal.detach("05-detached", "Detach locally", 34)).rejects.toThrow();
     expect(readdirSync(r.artifacts)).toEqual([]);
     expect(r.calls.some((c) => c[0] === "kill-session")).toBe(false);
@@ -187,7 +202,10 @@ test("start failure does not claim ownership of a started PTY", () => {
 });
 
 // tmux is already required by the capture producer. No CLI, container, or provider is started here.
-test("native isolated PTY preserves dimensions, detach/reopen and evidence files", async () => {
+test.each([
+  ["normal exit", ""],
+  ["EOF before child exit", "; trap '' HUP; exec 0<&- 1>&- 2>&-; sleep 0.2; exit 0"],
+])("native isolated PTY preserves dimensions, detach/reopen and evidence files (%s)", async (_label, finish) => {
   const root = mkdtempSync(join(tmpdir(), "bruv-clean-native-pty-test-"));
   const home = join(root, "home");
   const agent = join(root, "agent");
@@ -211,7 +229,7 @@ test("native isolated PTY preserves dimensions, detach/reopen and evidence files
     return result.stdout.trim();
   };
   const terminal = new PresentationTerminal(run, () => raw("kill-server"), artifacts);
-  const command = "printf '\\033[32m/questions /close\\033[0m\\n'; cat";
+  const command = "printf '\\033[32m/questions /close\\033[0m\\n'; cat" + finish;
   try {
     terminal.start(command, root);
     await terminal.ready();
