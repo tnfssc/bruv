@@ -1,7 +1,7 @@
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { realpathSync, statSync } from "node:fs";
 import { basename, resolve } from "node:path";
-import type { Server, ServerWebSocket, WebSocketHandler } from "bun";
+import type { ServerWebSocket } from "bun";
 import { createAudioRelay, type AudioRelayData } from "./audio-relay";
 import { CAPTURE_WORKLET } from "./browser-audio";
 import { SOCKET_BYTES, TerminalSession, type SocketData } from "./terminal";
@@ -13,14 +13,6 @@ export interface WebAssets {
   font: Uint8Array<ArrayBuffer>;
   wasm: Uint8Array<ArrayBuffer>;
 }
-export type WebRouteResult = Response | "upgraded" | undefined;
-
-/** Extensions own only their routes/socket channels; authentication is shared. */
-export interface WebExtension {
-  fetch(request: Request, server: Server<SocketData>): WebRouteResult | Promise<WebRouteResult>;
-  websocket?: WebSocketHandler<SocketData>;
-  stop?(): void | Promise<void>;
-}
 export interface WebServerOptions {
   command: string[];
   cwd?: string;
@@ -28,7 +20,6 @@ export interface WebServerOptions {
   hostname?: string;
   port?: number;
   assets: WebAssets;
-  extension?: WebExtension;
 }
 
 export function startWebServer(options: WebServerOptions) {
@@ -71,9 +62,7 @@ export function startWebServer(options: WebServerOptions) {
   };
   // State is shared; never publish the capability that authorizes a microphone.
   const publicOwnerId = (capability: string) => createHash("sha256").update(capability).digest("hex");
-  const audioOrigins: string[] = [];
   const relay = createAudioRelay({
-    allowedOrigins: audioOrigins,
     authorizeBrowser: (request, id) => {
       if (!authenticated(request, true)) return false;
       const protocols =
@@ -167,7 +156,6 @@ export function startWebServer(options: WebServerOptions) {
   };
   const response = (body: BodyInit, type: string, status = 200) =>
     new Response(body, { status, headers: { ...headers, "Content-Type": type } });
-  const extension = options.extension;
   const server = Bun.serve<SocketData>({
     hostname,
     port: options.port ?? 3773,
@@ -291,9 +279,7 @@ export function startWebServer(options: WebServerOptions) {
           if (cleanup) await cleanup;
           return result;
         }
-        const result = await extension?.fetch(request, server);
-        if (result === "upgraded") return;
-        return result ?? response("Not found", "text/plain", 404);
+        return response("Not found", "text/plain", 404);
       }
       if (request.method !== "GET") return response("Method not allowed", "text/plain", 405);
       if (url.pathname === "/audio-worklet.js") return response(CAPTURE_WORKLET, "text/javascript; charset=utf-8");
@@ -327,7 +313,6 @@ export function startWebServer(options: WebServerOptions) {
           listeners.add(socket);
           sendState(socket, state());
         } else if (socket.data.channel === "live-audio") relay.websocket.open(audioSocket(socket));
-        else extension?.websocket?.open?.(socket);
       },
       message(socket, message) {
         if (socket.data.channel === "terminal") {
@@ -341,25 +326,18 @@ export function startWebServer(options: WebServerOptions) {
             relay.failRequest(String(socket.data.tabId), String(socket.data.audioOwner), event.request, event.message);
           else tabs.get(String(socket.data.tabId))?.terminal.message(socket, message);
         } else if (socket.data.channel === "live-audio") relay.websocket.message(audioSocket(socket), message);
-        else if (socket.data.channel !== "state") extension?.websocket?.message(socket, message);
       },
-      close(socket, code, reason) {
+      close(socket) {
         if (socket.data.channel === "terminal") {
           const tab = tabs.get(String(socket.data.tabId));
           if (tab) relay.releaseAttachment(tab.id, String(socket.data.audioOwner));
           tab?.terminal.detach(socket);
         } else if (socket.data.channel === "state") listeners.delete(socket);
         else if (socket.data.channel === "live-audio") relay.websocket.close(audioSocket(socket));
-        else extension?.websocket?.close?.(socket, code, reason);
-      },
-      drain(socket) {
-        if (socket.data.channel !== "terminal" && socket.data.channel !== "state")
-          extension?.websocket?.drain?.(socket);
       },
     },
   });
   origin = server.url.origin;
-  audioOrigins.push(origin);
   const initialWorkspace: Workspace = {
     id: "workspace",
     name: basename(defaultCwd) || defaultCwd,
@@ -381,7 +359,7 @@ export function startWebServer(options: WebServerOptions) {
         // Stop accepting connections immediately, then tear down owned resources.
         const cleanup = [...tabs.values()].map(disposeTab);
         server.stop(true);
-        await Promise.all([...cleanup, extension?.stop?.()]);
+        await Promise.all(cleanup);
       })();
       return stopped;
     },

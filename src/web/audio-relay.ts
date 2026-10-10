@@ -13,7 +13,6 @@ export type AudioRelayData = {
 type Socket = ServerWebSocket<AudioRelayData>;
 type Session = {
   secret: string;
-  generation: number;
   cli?: Socket;
   browser?: Socket;
   tickets: Map<string, string | undefined>;
@@ -21,10 +20,8 @@ type Session = {
 };
 export interface AudioRelayOptions {
   pathname?: string;
-  /** Exact externally visible origins (scheme + host + port), never a wildcard. */
-  allowedOrigins: readonly string[];
-  /** Verify web auth and an attached capability. Return its ID to scope voice release. */
-  authorizeBrowser(request: Request, sessionId: string): boolean | string | Promise<boolean | string>;
+  /** Verify exact Origin, web auth and an attached capability. Return its ID to scope voice release. */
+  authorizeBrowser(request: Request, sessionId: string): string | false;
   requestBrowser?(sessionId: string, ownerId: string, request: string): boolean;
   cancelBrowser?(sessionId: string, ownerId: string, request: string): void;
   onOwnerChange?(owner: { tabId: string; ownerId: string } | null): void;
@@ -34,18 +31,17 @@ export function createAudioRelay(options: AudioRelayOptions) {
   const sessions = new Map<string, Session>();
   // Reserve on the CLI request, before any browser can acquire devices.
   let browserOwner:
-    | { sessionId: string; session: Session; admission?: string; ownerId?: string; request: string }
+    | { sessionId: string; session: Session; admission?: string; ownerId: string; request: string }
     | undefined;
   function clearOwner() {
     if (!browserOwner) return;
     const owner = browserOwner;
-    if (owner.ownerId) options.cancelBrowser?.(owner.sessionId, owner.ownerId, owner.request);
+    options.cancelBrowser?.(owner.sessionId, owner.ownerId, owner.request);
     browserOwner = undefined;
     options.onOwnerChange?.(null);
   }
   const pathname = options.pathname ?? "/api/live/audio";
   function closeSession(s: Session) {
-    s.generation++;
     if (browserOwner?.session === s) clearOwner();
     const sockets = new Set([...s.pending, s.cli, s.browser]);
     s.cli = s.browser = undefined;
@@ -77,7 +73,7 @@ export function createAudioRelay(options: AudioRelayOptions) {
     registerSession(sessionId: string): string {
       if (!sessionId || sessions.has(sessionId)) throw new Error("Audio session already registered or empty");
       const secret = randomBytes(32).toString("hex");
-      sessions.set(sessionId, { secret, generation: 0, tickets: new Map(), pending: new Set() });
+      sessions.set(sessionId, { secret, tickets: new Map(), pending: new Set() });
       return secret;
     },
     inputTicket(sessionId: string, ownerId: string | undefined): string {
@@ -101,11 +97,6 @@ export function createAudioRelay(options: AudioRelayOptions) {
         closeSession(s);
       }
     },
-    /** Release current voice without revoking the surviving CLI's launch secret. */
-    releaseSession(sessionId: string) {
-      const s = sessions.get(sessionId);
-      if (s) closeSession(s);
-    },
     /** An observer leaving must not release another attachment's voice. */
     releaseAttachment(sessionId: string, ownerId: string) {
       const s = sessions.get(sessionId);
@@ -124,12 +115,12 @@ export function createAudioRelay(options: AudioRelayOptions) {
     matches(request: Request) {
       return new URL(request.url).pathname === pathname;
     },
-    async upgrade(
+    upgrade(
       request: Request,
       server: {
         upgrade(request: Request, options: { data: AudioRelayData; headers?: Record<string, string> }): boolean;
       },
-    ): Promise<Response | undefined> {
+    ): Response | undefined {
       const url = new URL(request.url);
       if (url.pathname !== pathname) return new Response("Not found", { status: 404 });
       const sessionId = url.searchParams.get("session") ?? "";
@@ -139,15 +130,8 @@ export function createAudioRelay(options: AudioRelayOptions) {
       if (!s || (role !== "cli" && role !== "browser")) return new Response("Forbidden", { status: 403 });
       let admission: string | undefined;
       if (role === "browser") {
-        if (!origin || !options.allowedOrigins.includes(origin)) return new Response("Forbidden", { status: 403 });
-        const generation = s.generation;
-        // Synchronous ownership checks and reservation stay in one turn.
-        const authorization = options.authorizeBrowser(request, sessionId);
-        const owner =
-          typeof authorization === "boolean" || typeof authorization === "string" ? authorization : await authorization;
+        const owner = options.authorizeBrowser(request, sessionId);
         if (!owner) return new Response("Forbidden", { status: 403 });
-        if (sessions.get(sessionId) !== s || s.generation !== generation)
-          return new Response("Forbidden", { status: 403 });
         if (
           !browserOwner ||
           browserOwner.session !== s ||
@@ -159,7 +143,7 @@ export function createAudioRelay(options: AudioRelayOptions) {
           return new Response("No microphone request for this attachment", { status: 403 });
         admission = randomBytes(16).toString("hex");
         browserOwner.admission = admission;
-        if (typeof owner === "string") options.onOwnerChange?.({ tabId: sessionId, ownerId: owner });
+        options.onOwnerChange?.({ tabId: sessionId, ownerId: owner });
       } else if (origin) return new Response("Forbidden", { status: 403 });
       const protocols = request.headers
         .get("sec-websocket-protocol")

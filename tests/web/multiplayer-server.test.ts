@@ -196,6 +196,12 @@ test("state socket needs token, exact Origin/Host and bruv-state protocol", asyn
 });
 
 test("shared size is the minimum active viewport; inactive joins and empty views retain size", async () => {
+  // A pong follows earlier frames on this socket, including resize and visibility.
+  const settled = (socket: WebSocket) =>
+    new Promise<void>((resolve) => {
+      socket.once("pong", () => resolve());
+      socket.ping();
+    });
   const app = start();
   const first = connect(app);
   const second = connect(app);
@@ -216,17 +222,18 @@ test("shared size is the minimum active viewport; inactive joins and empty views
   second.send({ type: "visibility", active: false });
   await until(() => app.terminal.cols === 120);
   first.send({ type: "visibility", active: false });
-  await Bun.sleep(30);
+  await settled(first.socket);
   expect([app.terminal.cols, app.terminal.rows]).toEqual([120, 40]);
   third.send({ type: "resize", cols: 100, rows: 30 });
   await until(() => app.terminal.cols === 100);
   second.send({ type: "resize", cols: 80, rows: 35 });
   await until(() => app.terminal.cols === 80);
   expect(app.terminal.rows).toBe(30);
-  const count = first.messages.filter((m) => m.type === "size").length;
+  await settled(second.socket);
+  const count = second.messages.filter((m) => m.type === "size").length;
   second.send({ type: "resize", cols: 80, rows: 35 });
-  await Bun.sleep(30);
-  expect(first.messages.filter((m) => m.type === "size")).toHaveLength(count);
+  await settled(second.socket);
+  expect(second.messages.filter((m) => m.type === "size")).toHaveLength(count);
   second.socket.close();
   await until(() => app.terminal.cols === 100);
   third.send({ type: "resize", cols: 0, rows: 0 });

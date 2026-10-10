@@ -54,16 +54,8 @@ async function until(check: () => boolean, timeout = 5000) {
   }
 }
 
-test("loopback, token, Origin and Host guard terminal and extension routes", async () => {
-  let calls = 0;
-  const app = start({
-    extension: {
-      fetch: () => {
-        calls++;
-        return new Response("extension");
-      },
-    },
-  });
+test("loopback, token, Origin and Host guard terminal and state routes", async () => {
+  const app = start();
   expect(app.terminal.pid).toBeUndefined();
   const auth = { Origin: app.origin, Authorization: "Bearer " + app.token };
   expect((await fetch(app.origin + "/")).status).toBe(200);
@@ -74,11 +66,10 @@ test("loopback, token, Origin and Host guard terminal and extension routes", asy
     { ...auth, Authorization: "Bearer wrong" },
   ] as Record<string, string>[]) {
     expect((await fetch(app.origin + "/api/terminal", { headers })).status).toBe(403);
-    expect((await fetch(app.origin + "/api/audio", { headers })).status).toBe(403);
+    expect((await fetch(app.origin + "/api/workspaces", { headers })).status).toBe(403);
   }
-  expect(calls).toBe(0);
-  expect(await (await fetch(app.origin + "/api/audio", { headers: auth })).text()).toBe("extension");
-  expect(calls).toBe(1);
+  expect((await fetch(app.origin + "/api/workspaces", { headers: auth })).status).toBe(200);
+  expect((await fetch(app.origin + "/api/audio", { headers: auth })).status).toBe(404);
   expect((await fetch(app.origin + "/", { headers: { Host: "evil.example" } })).status).toBe(403);
   expect((await fetch(app.origin + "/api/terminal", { headers: auth })).status).toBe(426);
   expect(app.terminal.pid).toBeUndefined();
@@ -179,40 +170,24 @@ test("shutdown is idempotent and reaps PTY process even if it ignores TERM", asy
   await expect(fetch(app.origin + "/")).rejects.toThrow();
 });
 
-test("extension WebSockets share authentication and shutdown without owning terminal", async () => {
-  let stopped = false;
-  const app = start({
-    extension: {
-      fetch(request, server) {
-        if (new URL(request.url).pathname !== "/api/audio") return;
-        return server.upgrade(request, { data: { channel: "audio" }, headers: { "Sec-WebSocket-Protocol": "bruv" } })
-          ? "upgraded"
-          : new Response("WebSocket required", { status: 426 });
-      },
-      websocket: {
-        message(socket, message) {
-          socket.send(message);
-        },
-      },
-      stop() {
-        stopped = true;
-      },
+test("state WebSocket shares authentication and closes on shutdown without starting a terminal", async () => {
+  const app = start();
+  const socket = new WebSocket(
+    app.origin.replace("http", "ws") + "/api/events",
+    ["bruv-state", "bruv-token." + app.token],
+    {
+      headers: { Origin: app.origin },
     },
-  });
-  const socket = new WebSocket(app.origin.replace("http", "ws") + "/api/audio", ["bruv", "bruv-token." + app.token], {
-    headers: { Origin: app.origin },
-  });
+  );
   sockets.push(socket);
-  let echoed = "";
-  socket.on("message", (message) => {
-    echoed = String(message);
-  });
-  await until(() => socket.readyState === WebSocket.OPEN);
-  socket.send("audio-interface-proof");
-  await until(() => echoed === "audio-interface-proof");
+  const messages: any[] = [];
+  socket.on("message", (message) => messages.push(JSON.parse(String(message))));
+  await until(() => messages.some((message) => message.type === "state"));
+  expect(socket.protocol).toBe("bruv-state");
   expect(app.terminal.pid).toBeUndefined();
   await app.stop();
-  expect(stopped).toBe(true);
+  await until(() => socket.readyState === WebSocket.CLOSED);
+  await app.stop();
 });
 
 test("failed CLI startup reports an error and reconnect never retries it", async () => {
@@ -247,6 +222,21 @@ test("built-in audio authenticates both peers and disconnect leaves the terminal
   terminal.socket.send(JSON.stringify({ type: "input", data: "/live\r" }));
   await until(() => terminal.messages.some((m) => m.type === "audio-request"));
   const request = terminal.messages.find((m) => m.type === "audio-request").request;
+  // Use a real pending request and attachment, so only auth rejects these peers.
+  const auth = {
+    Authorization: "Bearer " + app.token,
+    "Sec-WebSocket-Protocol": "bruv-audio, bruv-owner." + owner,
+  };
+  for (const headers of [
+    auth,
+    { ...auth, Origin: "http://evil.example" },
+    { ...auth, Origin: app.origin + "/" },
+    { ...auth, Origin: app.origin.replace("127.0.0.1", "localhost") },
+    { ...auth, Origin: app.origin, Authorization: "Bearer wrong" },
+    { Origin: app.origin, "Sec-WebSocket-Protocol": auth["Sec-WebSocket-Protocol"] },
+  ]) {
+    expect((await fetch(route + "&request=" + request, { headers })).status).toBe(403);
+  }
   const browser = new WebSocket(
     route.replace(/^http/, "ws") + "&request=" + request,
     ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],

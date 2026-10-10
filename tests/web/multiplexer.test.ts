@@ -291,10 +291,9 @@ for (const mode of ["disconnect", "delete", "delete-workspace"] as const) {
   });
 }
 
-test("CLI requests reserve before browser open; stale closes cannot release a fresh request", async () => {
+test("CLI requests reserve before browser open; stale closes cannot release a fresh request", () => {
   const origin = "http://127.0.0.1:3773";
   const relay = createAudioRelay({
-    allowedOrigins: [origin],
     authorizeBrowser: () => "private",
     requestBrowser: () => true,
   });
@@ -306,11 +305,14 @@ test("CLI requests reserve before browser open; stale closes cannot release a fr
       return true;
     },
   };
-  const messages: any[] = [];
-  const socket = (data: AudioRelayData) =>
-    ({
+  const socket = (data: AudioRelayData) => {
+    const messages: any[] = [];
+    const closes: number[] = [];
+    const ws = {
       data,
-      close() {},
+      close(code: number) {
+        closes.push(code);
+      },
       send(text: string) {
         messages.push(JSON.parse(text));
         return text.length;
@@ -318,86 +320,87 @@ test("CLI requests reserve before browser open; stale closes cannot release a fr
       getBufferedAmount() {
         return 0;
       },
-    }) as unknown as ServerWebSocket<AudioRelayData>;
+    } as unknown as ServerWebSocket<AudioRelayData>;
+    return { ws, messages, closes };
+  };
   const issue = (id: keyof typeof secrets) => {
     const ticket = relay.inputTicket(id, "private");
     const cli = socket({ channel: "live-audio", sessionId: id, role: "cli", authenticated: false });
-    relay.websocket.open(cli);
-    relay.websocket.message(cli, JSON.stringify({ type: "hello", secret: secrets[id], request: ticket }));
-    return ticket;
+    relay.websocket.open(cli.ws);
+    relay.websocket.message(cli.ws, JSON.stringify({ type: "hello", secret: secrets[id], request: ticket }));
+    return { ticket, cli };
   };
   const request = (id: string, ticket: string) =>
     new Request(origin + relay.pathname + "?role=browser&session=" + id + "&request=" + ticket, {
       headers: { Origin: origin },
     });
-  let ticket = issue("one");
-  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
-  const rejected = issue("two");
-  expect(messages.at(-1)).toMatchObject({ type: "request-error" });
-  expect((await relay.upgrade(request("two", rejected), server))?.status).toBe(403);
-  const old = socket(admitted[0]!);
-  relay.websocket.open(old);
-  relay.releaseSession("one");
-  ticket = issue("one");
-  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
-  const fresh = socket(admitted[1]!);
-  relay.websocket.open(fresh);
-  relay.websocket.close(old);
-  expect((await relay.upgrade(request("two", rejected), server))?.status).toBe(403);
-  relay.websocket.close(fresh);
-  ticket = issue("two");
-  expect(await relay.upgrade(request("two", ticket), server)).toBeUndefined();
-  const cancelled = socket(admitted[2]!);
-  relay.releaseSession("two");
-  ticket = issue("two");
-  expect(await relay.upgrade(request("two", ticket), server)).toBeUndefined();
-  relay.websocket.open(cancelled);
-  relay.websocket.close(cancelled);
-  expect((await relay.upgrade(request("one", ticket), server))?.status).toBe(403);
-  relay.unregisterSession("two");
-  ticket = issue("one");
-  expect(
-    (
-      await relay.upgrade(request("one", ticket), {
-        upgrade() {
-          return false;
-        },
-      })
-    )?.status,
-  ).toBe(400);
-  ticket = issue("one");
-  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
-  relay.websocket.close(socket(admitted.at(-1)!));
-  ticket = issue("one");
-  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
-  relay.unregisterSession("one");
-});
+  const busy = () => {
+    const competing = issue("two");
+    expect(competing.cli.messages.at(-1)).toEqual({
+      type: "request-error",
+      message: "Voice is already active in another browser or terminal. Stop it there first.",
+    });
+    expect(competing.cli.closes).toEqual([1000]);
+    expect(relay.upgrade(request("two", competing.ticket), server)?.status).toBe(403);
+  };
+  const exchange = (cli: ReturnType<typeof socket>, browser: ReturnType<typeof socket>) => {
+    relay.websocket.message(cli.ws, '{"type":"start"}');
+    expect(browser.messages.at(-1)).toEqual({ type: "start" });
+    const capture = { type: "capture", data: "AAA=", epoch: 7 };
+    relay.websocket.message(browser.ws, JSON.stringify(capture));
+    expect(cli.messages.at(-1)).toEqual(capture);
+    expect(cli.closes).toEqual([]);
+    expect(browser.closes).toEqual([]);
+  };
+  try {
+    const oldRequest = issue("one");
+    expect(relay.upgrade(request("one", oldRequest.ticket), server)).toBeUndefined();
+    busy(); // Reserved even before the browser opens.
+    const old = socket(admitted.at(-1)!);
+    relay.websocket.open(old.ws);
+    expect(oldRequest.cli.messages).toEqual([{ type: "hello" }]);
+    relay.releaseAttachment("one", "private");
 
-test("terminal release invalidates an audio authorization still waiting", async () => {
-  const origin = "http://127.0.0.1:3773";
-  let authorize!: (value: boolean) => void;
-  const relay = createAudioRelay({
-    allowedOrigins: [origin],
-    authorizeBrowser: () =>
-      new Promise<boolean>((resolve) => {
-        authorize = resolve;
-      }),
-  });
-  relay.registerSession("terminal");
-  let upgrades = 0;
-  const admission = relay.upgrade(
-    new Request(origin + relay.pathname + "?role=browser&session=terminal", { headers: { Origin: origin } }),
-    {
-      upgrade() {
-        upgrades++;
-        return true;
-      },
-    },
-  );
-  relay.releaseSession("terminal");
-  authorize(true);
-  expect((await admission)?.status).toBe(403);
-  expect(upgrades).toBe(0);
+    const freshRequest = issue("one");
+    expect(relay.upgrade(request("one", freshRequest.ticket), server)).toBeUndefined();
+    const fresh = socket(admitted.at(-1)!);
+    relay.websocket.open(fresh.ws);
+    expect(freshRequest.cli.messages).toEqual([{ type: "hello" }]);
+    relay.websocket.close(old.ws);
+    relay.websocket.close(oldRequest.cli.ws);
+    exchange(freshRequest.cli, fresh);
+    busy(); // A new, valid ticket must still get busy after both stale closes.
+    relay.websocket.close(fresh.ws);
+
+    const cancelledRequest = issue("two");
+    expect(relay.upgrade(request("two", cancelledRequest.ticket), server)).toBeUndefined();
+    const cancelled = socket(admitted.at(-1)!);
+    relay.releaseAttachment("two", "private");
+    const currentRequest = issue("two");
+    expect(relay.upgrade(request("two", currentRequest.ticket), server)).toBeUndefined();
+    const current = socket(admitted.at(-1)!);
+    relay.websocket.open(current.ws);
+    relay.websocket.open(cancelled.ws);
+    expect(cancelled.closes).toEqual([1008]);
+    relay.websocket.close(cancelled.ws);
+    exchange(currentRequest.cli, current);
+    const competing = issue("one");
+    expect(competing.cli.messages.at(-1)?.message).toContain("already active");
+    relay.unregisterSession("two");
+
+    const failedRequest = issue("one");
+    expect(relay.upgrade(request("one", failedRequest.ticket), { upgrade: () => false })?.status).toBe(400);
+    expect(failedRequest.cli.messages.at(-1)?.message).toContain("connection failed");
+    const retry = issue("one");
+    expect(relay.upgrade(request("one", retry.ticket), server)).toBeUndefined();
+    // The admitted socket can close before open and must release this request.
+    relay.websocket.close(socket(admitted.at(-1)!).ws);
+    const last = issue("one");
+    expect(relay.upgrade(request("one", last.ticket), server)).toBeUndefined();
+  } finally {
+    relay.unregisterSession("one");
+    relay.unregisterSession("two");
+  }
 });
 
 test("Add reuses the resolved launch folder without changing its tab, CLI or name", async () => {
