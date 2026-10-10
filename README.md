@@ -1,5 +1,7 @@
 # bruv
 
+![A real bruv run, sped up: it works through an app, a fresh agent finds two gaps, they get fixed, and a receipt appears](site/assets/done.gif)
+
 **It finishes.** GPT runs don't stop halfway. A fresh agent checks the work against what you
 asked, and you get a receipt showing what it tried and anything still missing.
 

@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>bruv: Codex models, less babysitting</title>
+    <title>bruv: done means checked</title>
     <meta
       name="description"
-      content="A coding agent for your ChatGPT plan. Same GPT-6 Astra, more done per turn: agents race in parallel, long work runs in the background, and it gets what you mean."
+      content="A coding agent for your ChatGPT plan. GPT-6 Astra keeps going until the job is finished, a fresh agent checks the work, and you get a receipt."
     />
-    <meta property="og:title" content="bruv: Codex models, less babysitting" />
+    <meta property="og:title" content="bruv: done means checked" />
     <meta
       property="og:description"
-      content="Same GPT-6 Astra. Same ChatGPT plan. Give it the whole job and come back to it done."
+      content="GPT-6 Astra keeps going until the job is finished. A fresh agent checks it before you hear done."
     />
     <meta property="og:image" content="https://bruv.sharath.page/assets/og.png" />
     <meta property="og:url" content="https://bruv.sharath.page/" />
@@ -33,9 +33,10 @@
       <section class="hero">
         <div class="pitch">
           <p class="eyebrow">For people with a ChatGPT plan</p>
-          <h1>Codex models.<br />Less babysitting.</h1>
+          <h1>Done means<br />checked.</h1>
           <p class="lede">
-            Same GPT-6 Astra, same plan. Hand bruv the whole job, go do something else, and come back to it done.
+            bruv keeps GPT-6 Astra working until the job is finished. Then a fresh agent tries the result before you
+            hear “done”, and you get a receipt.
           </p>
           <div class="install-box" id="hero-install">
             <code>pi install git:github.com/tnfssc/bruv</code>
@@ -43,27 +44,53 @@
           </div>
           <p class="small">Needs <a href="https://pi.dev">Pi</a>. <a href="#install">Full setup</a> takes a minute.</p>
         </div>
-        <figure class="term" aria-label="A bruv session: three agents race on a task and the best result is applied">
-          <div class="term-bar"><span></span><span></span><span></span><b>~/shop</b></div>
-          <div class="term-body" id="race-demo"></div>
-          <div class="term-foot"><span id="race-foot-left">~/shop (main)</span><span>gpt-6-astra • high</span></div>
+        <figure class="term video">
+          <video src="assets/done.mp4" poster="assets/done-poster.png" autoplay muted loop playsinline aria-label="A real 38 minute bruv run, sped up: it works through every page of an app, a fresh agent finds two gaps, they get fixed, and a receipt appears"></video>
+          <figcaption>A real 38-minute run on GPT-6 Astra, sped up.</figcaption>
         </figure>
       </section>
 
       <section class="feature">
         <div class="copytext">
-          <h2>Ask once. Three agents race.</h2>
+          <h2>It doesn't stop halfway.</h2>
           <p>
-            <code>/race</code> gives one task to several agents, each in its own copy of your repo, starting from your
-            current changes. They run your checks. You get a scoreboard, press Enter, and the winner lands in your working
-            tree. The rest are cleaned up.
+            GPT models like to end with “Next I'll…” or “Want me to continue?”. In bruv a run only ends when the model
+            says the work is done, needs you, or is blocked. Until then it keeps going, so you can walk away.
           </p>
         </div>
         <ul class="points">
-          <li><b>Starts from where you are.</b> Uncommitted and untracked files included. Your files aren't touched.</li>
-          <li><b>Proof, not promises.</b> Each agent reports whether your checks pass. bruv runs them again after you pick.</li>
-          <li><b>Nothing left behind.</b> Worktrees and branches are removed after you choose.</li>
+          <li><b>On by default for GPT.</b> <code>/keep-going off</code> if you'd rather drive turn by turn.</li>
+          <li><b>Still yours.</b> Type to steer it any time; Esc or Stop ends everything at once.</li>
+          <li><b>Goals on top.</b> <code>/goal</code> adds an objective and a token budget for the big jobs.</li>
         </ul>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>A second agent checks before “done”.</h2>
+          <p>
+            The model that did the work is the worst judge of it. When it says done, bruv starts a fresh agent that sees
+            only what you asked for and what changed. It runs the thing, tries the cases you'd try, and sends back
+            what's missing.
+          </p>
+        </div>
+        <figure class="still">
+          <img src="assets/check-gap.png" alt="Check found 2 gaps: navigating away during settings save discards updates; live API changes not verified. Fixing, then checking again." />
+          <figcaption>From the run above: “done” wasn't done. Both gaps were fixed and checked again.</figcaption>
+        </figure>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>Then you get a receipt.</h2>
+          <p>
+            What you asked, what was actually checked, and what changed. In the terminal and in T3 Code. It's the first
+            thing you read when you come back.
+          </p>
+        </div>
+        <figure class="still">
+          <img src="assets/receipt.png" alt="Receipt: Done, 38 minutes, 300 calls, 5 agents. Production build succeeds, 62 browser tests pass, live signup and settings checked. Changed 47 files." />
+        </figure>
       </section>
 
       <section class="feature intent">
@@ -81,8 +108,12 @@
             Rewrote README.md around “Codex models. Less babysitting.” Goals, parallel work and racing now lead, then a
             quick start. Moved the full reference to docs/USAGE.md. Checked the links.
           </p>
-          <p class="you">did the race thing actually pass the tests in this tree tho</p>
-          <p class="bot">Yes. Just checked here with a2's changes applied: lint, types and all 71 tests pass.</p>
+          <p class="you">go through every page of this app like an actual user, find everything thats broken or janky and fix all of it</p>
+          <p class="bot">
+            Finished the full audit and fixes, including the settings-save bug. 62 browser tests pass in development and
+            production. Checked live: signup, settings, publishing, editing, deleting, comments, favorites, follows,
+            logout.
+          </p>
         </div>
       </section>
 

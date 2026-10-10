@@ -1,0 +1,60 @@
+[
+  {
+    "from": 1791645083126,
+    "to": 1791645088626,
+    "speed": 1.6,
+    "rows": 28,
+    "caption": "One loose message. Then walk away.",
+    "hide": "fd not found|fd installed|extended-keys|tmux.conf|restart tmux"
+  },
+  {
+    "from": 1791645088626,
+    "to": 1791645107126,
+    "speed": 8,
+    "rows": 28,
+    "caption": "It goes through every page while you're gone.",
+    "hide": "fd not found|fd installed|extended-keys|tmux.conf|restart tmux"
+  },
+  {
+    "from": 1791645107126,
+    "to": 1791646438126,
+    "speed": 200,
+    "rows": 28,
+    "caption": "It goes through every page while you're gone.",
+    "hide": "fd not found|fd installed|extended-keys|tmux.conf|restart tmux"
+  },
+  {
+    "from": 1791646438126,
+    "to": 1791646662126,
+    "speed": 50,
+    "rows": 28,
+    "caption": "It says done. A fresh agent checks the work.",
+    "hide": "fd not found|fd installed|extended-keys|tmux.conf|restart tmux"
+  },
+  {
+    "from": 1791646662126,
+    "to": 1791646665126,
+    "speed": 1,
+    "rows": 28,
+    "hold": 5000,
+    "caption": "The check found 2 things it missed.",
+    "hide": "fd not found|fd installed|extended-keys|tmux.conf|restart tmux"
+  },
+  {
+    "from": 1791646665126,
+    "to": 1791647379126,
+    "speed": 150,
+    "rows": 28,
+    "caption": "Fixed. Checked again.",
+    "hide": "fd not found|fd installed|extended-keys|tmux.conf|restart tmux"
+  },
+  {
+    "from": 1791647379126,
+    "to": 1791647382126,
+    "speed": 1,
+    "rows": 28,
+    "hold": 6500,
+    "caption": "Then you get a receipt.",
+    "hide": "fd not found|fd installed|extended-keys|tmux.conf|restart tmux"
+  }
+]
