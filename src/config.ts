@@ -12,6 +12,9 @@ export interface Config {
   checkWork?: boolean;
   keepGoing?: "auto" | "on" | "off";
   codexImportOffered?: boolean;
+  migrateOffered?: boolean;
+  /** Message to show once the reload after /bruv-migrate finishes. */
+  migrated?: { message: string; model: boolean };
   fast?: boolean;
   fastConfirmed?: boolean;
   profiles?: Partial<Record<"fast" | "normal", Profile>>;

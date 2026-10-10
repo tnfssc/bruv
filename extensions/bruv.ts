@@ -12,6 +12,7 @@ import { registerFinishRender } from "../src/finish-render";
 import { registerFooter } from "../src/footer";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
+import { registerMigrate } from "../src/migrate";
 import { registerNotifications } from "../src/notify";
 import { registerPrompt } from "../src/prompt";
 import { registerQuestions } from "../src/questions";
@@ -47,5 +48,6 @@ export default function bruv(pi: ExtensionAPI): void {
   registerPrompt(pi);
   registerCodemode(pi);
   registerCodexImport(pi);
+  registerMigrate(pi);
   registerReview(pi);
 }

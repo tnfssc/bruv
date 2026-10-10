@@ -133,7 +133,7 @@ export function registerFinish(
           customType: "bruv-keep-going",
           display: false,
           content:
-            "You ended your turn without calling finish. If everything asked is done and checked, or you need the user, write your reply and call finish. Otherwise keep going.",
+            "You ended your turn without calling finish. If your last reply already answers the user, call finish now without repeating it. If you need the user, say so and call finish. Otherwise keep going.",
         },
       ],
       continue: true,

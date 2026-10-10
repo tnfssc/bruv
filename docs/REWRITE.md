@@ -213,6 +213,7 @@ bruv/
     usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
     codex-import.ts       confirmed Codex settings import (~200)
+    migrate.ts            confirmed bruv 0.x import (~170)
     review.ts             diff review command and pickers (~100)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
@@ -227,6 +228,8 @@ bruv/
     finish-render.ts      finish results and receipt frame (~100)
     notify.ts             desktop alerts and terminal title (~100)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
+  scripts/
+    install.sh            installs Pi and bruv; the old 0.x install URL points here
   prompts/
     system.md
     codemode.md           guidance + examples appended to the codemode tool description
@@ -247,7 +250,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 3,350 lines, including Codex import, review and the terminal layout. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 3,520 lines, including Codex import, review and the terminal layout. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -694,7 +697,7 @@ src/                      (all current code; the new src/ is written from scratc
 tests/                    (all current tests)
 wisdom/
 docs/PRODUCT.md docs/ARCHITECTURE.md docs/historical/ docs/releases/ docs/README.md
-site/ native/ patches/ licenses/ scripts/
+site/ native/ patches/ licenses/ scripts/ (except scripts/install.sh, rewritten)
 .github/workflows/dependency-updates.yml .github/workflows/live.yml .github/workflows/release.yml
 bun.lock (regenerate)  bunfig.toml (recreate only if needed)  CONTRIBUTING.md (fold into README)
 ```
@@ -729,23 +732,29 @@ No release workflow: users install from git (3.16).
 
 ### 3.16 Install and migration
 
-README install section:
+`scripts/install.sh` stays at the path bruv 0.x was installed from, so the old command now
+installs the new bruv. The site build also serves it as `https://bruv.sharath.page/install.sh`. It installs Pi with Pi's own installer when `pi` is missing (piped through
+`cat` so that installer does not start Pi), runs `pi install git:github.com/tnfssc/bruv`
+(`BRUV_PACKAGE` overrides it for testing), and, when a 0.x binary is in `~/.local/bin`, asks
+before moving `bruv` and `bruv-claude-compat` to `~/.bruv/0.x` and writing a `bruv` script that
+runs `pi`. It ends with next steps: `/bruv-migrate` for 0.x users, `/login` and `/bruv-setup`
+for new users, and the T3 provider switch.
 
-```sh
-# Install Pi (see https://pi.dev), then:
-pi install git:github.com/tnfssc/bruv
-pi            # then /bruv-setup once and /reload
-```
+`/bruv-migrate` (`src/migrate.ts`) previews and asks before copying from `~/.bruv`
+(`BRUV_OLD_HOME` overrides it):
+
+- Sign-ins Pi lacks, merged into `auth.json` with mode 600. Existing Pi sign-ins are never replaced.
+- `defaultProvider`, `defaultModel`, `defaultThinkingLevel`, `theme` and `hideThinkingBlock` when Pi has none.
+- `subagents.json` fast and normal models into `bruv.json` profiles, when unset.
+- Sessions whose folder still exists, into Pi's session folders, never overwriting. A custom
+  session folder receives them flat.
+- Codemode only and quiet start, as `/bruv-setup` does.
+
+It then reloads. The reloaded extension switches to the copied default model (Pi chose its model
+before the sign-in existed) and shows what was copied. The first session start with `~/.bruv/agent`
+present suggests `/bruv-migrate` once. Nothing under `~/.bruv` is changed.
 
 For development: `pi install /path/to/bruv/checkout` (local packages load from the path, no copy).
-
-Migration for the user (README section "Coming from bruv 0.x"):
-
-- Sign in again with `/login` in Pi, or copy `~/.bruv/agent/auth.json` to `~/.pi/agent/auth.json`.
-- Old sessions under `~/.bruv/agent/sessions` are not migrated.
-- Move `~/.bruv/subagents.json` profiles into `~/.pi/agent/bruv.json` (format in 3.7).
-- T3: enable the Pi provider (binary `pi`), disable the "bruv (not Claude)" provider.
-- Remove the old binaries: `~/.local/bin/bruv`, `~/.local/bin/bruv-claude-compat`.
 
 ### 3.17 Repo rules for agents (`AGENTS.md`, under 60 lines)
 

@@ -19,6 +19,7 @@ Disable the old "bruv (not Claude)" provider.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
 - `/status` switches between bruv's one-line footer and Pi's full footer with token and cache details.
+- `/bruv-migrate` brings your sign-in, settings, agent models and sessions over from bruv 0.x after showing what it will copy. It never changes `~/.bruv`.
 - `/bruv-setup` turns on scripting for all tool calls and a quiet start; run `/reload` afterward.
 
 Goal examples:

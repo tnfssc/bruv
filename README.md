@@ -18,12 +18,13 @@ bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, not a pl
 
 ## Get started
 
-Install [Pi](https://pi.dev), then add bruv:
+One command installs [Pi](https://pi.dev) if you don't have it, then adds bruv:
 
 ```sh
-pi install git:github.com/tnfssc/bruv
-pi
+curl -fsSL https://bruv.sharath.page/install.sh | sh
 ```
+
+Already have Pi? `pi install git:github.com/tnfssc/bruv` does the same.
 
 Inside Pi, use `/login` to sign in to your model provider.
 Run `/bruv-setup`, confirm, then `/reload`. You're ready to work.
@@ -48,7 +49,7 @@ Parallel agents use more quota too.
 
 ## Commands
 
-`/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/status` · `/bruv-setup`
+`/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/status` · `/bruv-setup` · `/bruv-migrate`
 
 Coming from Codex? `/import-codex` previews your model, MCP servers, skills, prompts and trusted projects, then asks before importing. Sign in to Pi with `/login`; Codex sign-in tokens stay separate.
 
@@ -61,11 +62,19 @@ Coming from Codex? `/import-codex` previews your model, MCP servers, skills, pro
 
 ## Coming from bruv 0.x
 
-- Sign in again with `/login` in Pi, or copy `~/.bruv/agent/auth.json` to `~/.pi/agent/auth.json`.
-- Old sessions under `~/.bruv/agent/sessions` are not migrated.
-- Move `~/.bruv/subagents.json` profiles to `~/.pi/agent/bruv.json` ([format](docs/USAGE.md#configuration)).
-- In T3, enable the Pi provider with binary `pi` and disable the "bruv (not Claude)" provider.
-- Remove `~/.local/bin/bruv` and `~/.local/bin/bruv-claude-compat`.
+Run the install command above. The command you used for 0.x does the same thing now:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh | sh
+```
+
+It installs Pi if needed, adds bruv, and offers to turn your `bruv` command into one that starts Pi.
+The old binaries move to `~/.bruv/0.x`. Then start `bruv` and run `/bruv-migrate`. It lists what it will
+bring over and asks first: your sign-in, model, thinking and theme settings, agent models from
+`subagents.json`, and sessions for folders that still exist (open them with `/resume`). Nothing in
+`~/.bruv` changes.
+
+In T3, turn on the Pi provider (binary `pi`) and turn off "bruv (not Claude)".
 
 ## Development
 
