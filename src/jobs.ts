@@ -6,7 +6,12 @@ import { stripVTControlCharacters } from "node:util";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
 
-const StatusSchema = Type.Union([Type.Literal("running"), Type.Literal("done"), Type.Literal("failed")]);
+const StatusSchema = Type.Union([
+  Type.Literal("running"),
+  Type.Literal("done"),
+  Type.Literal("failed"),
+  Type.Literal("stopped"),
+]);
 const SummarySchema = Type.Object({
   id: Type.String(),
   kind: Type.Union([Type.Literal("job"), Type.Literal("agent")]),
@@ -131,7 +136,7 @@ export class Jobs {
       item.tail = Buffer.from(String(outputError));
       item.exitCode = 1;
     }
-    item.status = !item.stopped && item.exitCode === 0 ? "done" : "failed";
+    item.status = item.stopped ? "stopped" : item.exitCode === 0 ? "done" : "failed";
     item.endedAt = Date.now();
     item.finish();
     this.changed();
@@ -279,8 +284,13 @@ export function registerJobs(pi: ExtensionAPI, jobs: Jobs) {
     outputSchema: ResultSchema,
     async execute(_id, args, signal, _update, ctx) {
       const item = jobs.create("job", args.title ?? args.command, workDirectory(ctx), args.detach);
+      // Agent settings are for Pi processes bruv starts, not for the commands they run.
+      const { BRUV_DEPTH, BRUV_FAST, ...env } = process.env;
       void jobs.run(item, () =>
-        jobs.process(item, process.env.SHELL ?? "/bin/sh", ["-c", args.command], args.cwd ?? ctx.cwd, args),
+        jobs.process(item, process.env.SHELL ?? "/bin/sh", ["-c", args.command], args.cwd ?? ctx.cwd, {
+          ...args,
+          env,
+        }),
       );
       await jobs.wait([item.id], true, args.waitSeconds ?? 3, () => ctx.hasPendingMessages(), signal);
       return toolResult(jobs.result(item));

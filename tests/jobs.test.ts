@@ -87,7 +87,7 @@ test("stop kills the process group including a child that ignores TERM", async (
   const pid = item.pid as number;
   jobs.stop(item.id);
   await jobs.shutdown();
-  expect(item.status).toBe("failed");
+  expect(item.status).toBe("stopped");
   // A reaped or zombie child cannot run more work.
   const ps = Bun.spawnSync(["ps", "-eo", "pgid=,stat="]).stdout.toString();
   expect(
@@ -105,7 +105,7 @@ test("timeouts and shutdown stop jobs, including detached jobs", async () => {
   void jobs.run(detached, () => jobs.process(detached, "/bin/sh", ["-c", "sleep 10"], dir));
   await item.completion;
   await jobs.shutdown();
-  expect([item.status, detached.status]).toEqual(["failed", "failed"]);
+  expect([item.status, detached.status]).toEqual(["stopped", "stopped"]);
 }, 7000);
 
 test("a log write failure completes the item with an error", async () => {
@@ -126,6 +126,6 @@ test("shutdown after a stop does not wait for the kill timer", async () => {
   jobs.stop(item.id);
   const began = performance.now();
   await jobs.shutdown();
-  expect(item.status).toBe("failed");
+  expect(item.status).toBe("stopped");
   expect(performance.now() - began).toBeLessThan(1000);
 });

@@ -98,7 +98,11 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
       mkdirSync(sessions, { recursive: true });
       const promptPath = fileURLToPath(new URL(`../prompts/agent-${profile}.md`, import.meta.url));
       const ids = prompts.map((prompt, index) => {
-        const item = jobs.create("agent", args.title ?? prompt.slice(0, 100), directory);
+        const item = jobs.create(
+          "agent",
+          args.title ? (prompts.length > 1 ? `${args.title} ${index + 1}` : args.title) : prompt.slice(0, 100),
+          directory,
+        );
         const sessionPath = join(sessions, `${item.id}.jsonl`);
         item.sessionPath = sessionPath;
         const parser = agentParser(jobs, item);

@@ -36,10 +36,10 @@ test.each([false, true])("codemode starts a job, waits, and parses fake child ag
       fauxAssistantMessage(
         fauxToolCall("codemode", {
           code: `
-        const job = await tools.job_start({command: "sleep 0.2; echo done", waitSeconds: 0});
+        const job = await tools.job_start({command: "sleep 0.2; echo fast=$BRUV_FAST", waitSeconds: 0});
         const result = await tools.wait({ids: [job.id], all: true});
         if (result.done[0].exitCode !== 0) throw new Error("job failed");
-        const {ids} = await tools.agent({prompts: ["one", "two"], model: "faux/selected", thinking: "low"});
+        const {ids} = await tools.agent({prompts: ["one", "two"], title: "Lint", model: "faux/selected", thinking: "low"});
         return await tools.wait({ids, all: true});`,
         }),
         { stopReason: "toolUse" },
@@ -52,6 +52,9 @@ test.each([false, true])("codemode starts a job, waits, and parses fake child ag
     ]);
     await app.session.prompt("go");
     expect(jobs.list().map((item) => item.status)).toEqual(["done", "done", "done"]);
+    // Agent settings stay out of plain commands; each agent in a batch gets its own title.
+    expect(jobs.result(jobs.get("j1")).output).toBe("fast=\n");
+    expect(jobs.list().map((item) => item.title)).toEqual([expect.any(String), "Lint 1", "Lint 2"]);
     for (const id of ["a1", "a2"]) {
       const result = jobs.result(jobs.get(id));
       expect(result.usage).toEqual({ input: 7, output: 3, cost: 0.3 });

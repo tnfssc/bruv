@@ -181,7 +181,7 @@ test("abort ends codemode wait within one second, stops the job and reports it n
     const item = app.jobs.get("j1");
     expect(item.stopped).toBe(true);
     await item.completion;
-    expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("failed");
+    expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("stopped");
     expect(app.faux.state.callCount).toBe(2);
     await app.nextPrompt();
     expect(app.reports()).toHaveLength(1);
