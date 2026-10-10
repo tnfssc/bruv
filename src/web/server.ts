@@ -104,7 +104,7 @@ export function startWebServer(options: WebServerOptions) {
         () => {
           if (tabs.has(id)) publish();
         },
-        (owner) => relay.inputTicket(id, owner),
+        (owner, previous) => relay.inputTicket(id, owner, previous),
       ),
     };
     workspace.tabs.push(tab);

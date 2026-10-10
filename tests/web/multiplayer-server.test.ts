@@ -11,7 +11,7 @@ import { TerminalSession, SOCKET_BYTES, type SocketData } from "../../src/web/te
 const command = [
   process.execPath,
   "-e",
-  'process.stdin.setRawMode(true);console.log("PID",process.pid);process.stdin.on("data",d=>{if(d.toString()==="exit")process.exit(7);console.log("INPUT",d.toString())});setInterval(()=>{},1000)',
+  'process.stdin.setRawMode(true);console.log("PID",process.pid);process.stdin.on("data",d=>{const text=d.toString().replace(/\\x1b\\]777;bruv-input;[^\\x07]*\\x07/g,"");if(text==="exit")process.exit(7);console.log("INPUT",text)});setInterval(()=>{},1000)',
 ];
 type App = ReturnType<typeof startWebServer>;
 const apps: App[] = [];
@@ -350,7 +350,7 @@ test("native backpressure closes a paused observer without stopping the healthy 
   const app = start([
     process.execPath,
     "-e",
-    'process.stdin.setRawMode(true);console.log("RUNNING");process.stdin.on("data",d=>{if(d.toString()==="flood"){let left=128;const t=setInterval(()=>{process.stdout.write("x".repeat(65536));if(!--left){clearInterval(t);console.log("END")}},3)}else console.log("INPUT",d.toString())});setInterval(()=>{},1000)',
+    'process.stdin.setRawMode(true);console.log("RUNNING");process.stdin.on("data",d=>{const text=d.toString().replace(/\\x1b\\]777;bruv-input;[^\\x07]*\\x07/g,"");if(text==="flood"){let left=128;const t=setInterval(()=>{process.stdout.write("x".repeat(65536));if(!--left){clearInterval(t);console.log("END")}},3)}else console.log("INPUT",text)});setInterval(()=>{},1000)',
   ]);
   const healthy = connect(app);
   await until(() => !!healthy.owner());

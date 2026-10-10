@@ -1,11 +1,15 @@
-import { afterEach, expect, test } from "bun:test";
+import { afterEach, expect, spyOn, test } from "bun:test";
 import { createAudioRelay, type AudioRelayData } from "../../src/web/audio-relay";
 import { BrowserLiveAudio, browserAudioEnvironment } from "../../src/live/browser-audio";
-import { BROWSER_INPUT_MARKER, parseAudio } from "../../src/live/browser-protocol";
+import { parseAudio } from "../../src/live/browser-protocol";
 import { liveLocalOnly } from "../../src/live/status";
 import liveExtension from "../../src/live/extension";
 import { LIVE_PROVIDERS } from "../../src/live/providers";
 import type { VoiceCallbacks } from "../../src/live/types";
+import { StdinBuffer } from "@earendil-works/pi-tui";
+import { CompactEditor } from "../../src/ui/editor";
+import * as startup from "../../src/ui/startup";
+import { InputOwnership } from "../../src/web/input-ownership";
 import { CAPTURE_WORKLET, connectBrowserAudio } from "../../src/web/browser-audio";
 
 const cleanup: (() => void | Promise<void>)[] = [];
@@ -158,6 +162,26 @@ test("CLI tickets are required, attributed and consumed once; fresh commands can
   expect(f.requests).toHaveLength(2);
 });
 
+test("renewing an input label retains an unspent ticket, never a consumed or detached one", async () => {
+  const f = fixture();
+  const request = f.ticket();
+  for (let n = 0; n < 100; n++) expect(f.relay.inputTicket("owner", privateOwner, request)).toBe(request);
+  expect(f.relay.inputTicket("owner", "other-owner", request)).not.toBe(request);
+  const pending = BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request, timeoutMs: 1000 });
+  await until(() => f.requests.length === 1);
+  const browser = await openBrowser(f.browser + "&request=" + request);
+  const audio = await pending;
+  audio.close();
+  await until(() => browser.readyState === WebSocket.CLOSED);
+  const fresh = f.relay.inputTicket("owner", privateOwner, request);
+  expect(fresh).not.toBe(request);
+  f.relay.releaseAttachment("owner", privateOwner);
+  expect(f.relay.inputTicket("owner", privateOwner, fresh)).not.toBe(fresh);
+  await expect(BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request, timeoutMs: 1000 })).rejects.toThrow(
+    "unmixed browser command",
+  );
+});
+
 test("another terminal cannot steal active audio and observer release leaves it alive", async () => {
   const f = fixture();
   const { browser, request } = await acquire(f);
@@ -289,7 +313,7 @@ test("malformed/browser tool messages and backpressure close audio; no arbitrary
   relay.unregisterSession("s");
 });
 
-test("actual /live command defaults use relay audio; fake provider closes on browser loss without cancelling jobs", async () => {
+test("actual editor /live rejects mixed continuation before provider or mic; one owner starts relay audio", async () => {
   const f = fixture();
   const prior = { url: process.env.BRUV_LIVE_RELAY_URL, secret: process.env.BRUV_LIVE_RELAY_SECRET };
   process.env.BRUV_LIVE_RELAY_URL = f.cli;
@@ -302,6 +326,7 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
   });
   let command: any;
   let callbacks!: VoiceCallbacks;
+  let providerOpened = 0;
   let providerClosed = 0;
   let ownerClosed = 0;
   let jobCancellation = 0;
@@ -310,6 +335,7 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
   const events = { on: () => () => {}, emit: () => {} };
   const handlers = new Map<string, any>();
   let observeInput: any;
+  let keyHold: Promise<void> | undefined;
   liveExtension(
     {
       events,
@@ -322,7 +348,10 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
     } as any,
     {
       local: () => true,
-      key: async () => "fake-key",
+      key: async () => {
+        await keyHold;
+        return "fake-key";
+      },
       config: {
         load: async () => ({ provider: "google", model: LIVE_PROVIDERS.google.models[0], inputMode: "continuous" }),
         save: async () => {},
@@ -339,6 +368,7 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
           released: Promise.resolve(),
         }) as any,
       voice: (c) => {
+        providerOpened++;
         callbacks = c;
         return {
           state: "ready",
@@ -373,16 +403,62 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
   cleanup.push(async () => {
     await command("stop", ctx);
   });
+  const editor = new CompactEditor(
+    { requestRender() {} } as any,
+    { borderColor: (s: string) => s } as any,
+    { matches: () => false } as any,
+  );
+  const editorGetter = spyOn(startup, "getActiveCompactEditor").mockReturnValue(editor);
+  let pending: Promise<void> | undefined;
+  editor.onSubmit = (text) => {
+    pending = command(text.trim().slice("/live".length).trim(), ctx);
+  };
   handlers.get("session_start")({}, ctx);
-  const request = f.ticket();
-  expect(observeInput(BROWSER_INPUT_MARKER + request + "\x07")).toEqual({ consume: true });
-  const pending = command("start", ctx);
+  const stdin = new StdinBuffer();
+  stdin.on("data", (data) => {
+    if (!observeInput(data)) editor.handleInput(data);
+  });
+  const input = new InputOwnership(
+    (owner, previous) => f.relay.inputTicket("owner", owner, previous),
+    (bytes) => stdin.process(bytes),
+  );
+  const type = (owner: string, data: string) => input.input(Buffer.from(data), owner);
+  cleanup.push(async () => {
+    input.close();
+    stdin.destroy();
+    await handlers.get("session_shutdown")({});
+    editorGetter.mockRestore();
+  });
+  type(privateOwner, "/live\\\r");
+  expect(editor.getText()).toBe("/live\n");
+  expect(pending).toBeUndefined();
+  type("second-private-attachment", "\r");
+  await pending;
+  expect(f.requests).toEqual([]);
+  expect(providerOpened).toBe(0);
+  expect(ownerClosed).toBe(1);
+  expect(notes.some((n) => n.includes("unmixed browser command"))).toBe(true);
+  pending = undefined;
+  let releaseKey!: () => void;
+  keyHold = new Promise((resolve) => {
+    releaseKey = resolve;
+  });
+  type(privateOwner, "/live\\\r");
+  expect(pending).toBeUndefined();
+  type(privateOwner, "\r");
+  // Later input while startup awaits a dialog/credential must not evict its captured ticket.
+  for (let n = 0; n < 100; n++) type(privateOwner, "x");
+  expect(f.requests).toEqual([]);
+  releaseKey();
   await until(() => f.requests.length === 1);
+  const request = f.requests[0].request;
+  expect(f.requests[0].owner).toBe(privateOwner);
   const browser = await openBrowser(f.browser + "&request=" + request);
   browser.onmessage = ({ data }) => {
     if (JSON.parse(String(data)).type === "start") browser.send('{"type":"ready"}');
   };
   await pending;
+  expect(providerOpened).toBe(1);
   const pcm = Buffer.alloc(640).toString("base64");
   browser.send(JSON.stringify({ type: "capture", data: pcm }));
   await until(() => sent.length === 1);
@@ -390,7 +466,7 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
   expect(callbacks).toBeDefined();
   browser.close();
   await until(() => providerClosed === 1);
-  expect(ownerClosed).toBe(1);
+  expect(ownerClosed).toBe(2);
   expect(jobCancellation).toBe(0);
   expect(notes.some((n) => n.includes("No agent work was cancelled"))).toBe(true);
 });

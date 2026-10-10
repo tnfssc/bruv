@@ -13,7 +13,7 @@ const assets = {
 const fixture = [
   process.execPath,
   "-e",
-  'process.stdin.setRawMode(true); console.log("TTY "+process.stdin.isTTY+" "+process.stdout.isTTY); console.log("SIZE "+process.stdout.columns+" "+process.stdout.rows); process.on("SIGWINCH",()=>console.log("SIZE "+process.stdout.columns+" "+process.stdout.rows)); process.stdin.on("data",d=>{if(d.toString()==="exit")process.exit(7);console.log("INPUT",d.toString())}); setInterval(()=>{},1000);',
+  'process.stdin.setRawMode(true); console.log("TTY "+process.stdin.isTTY+" "+process.stdout.isTTY); console.log("SIZE "+process.stdout.columns+" "+process.stdout.rows); process.on("SIGWINCH",()=>console.log("SIZE "+process.stdout.columns+" "+process.stdout.rows)); process.stdin.on("data",d=>{const text=d.toString().replace(/\\x1b\\]777;bruv-input;[^\\x07]*\\x07/g,"");if(text==="exit")process.exit(7);console.log("INPUT",text)}); setInterval(()=>{},1000);',
 ];
 type App = ReturnType<typeof startWebServer>;
 const apps: App[] = [];
@@ -326,6 +326,7 @@ test("base64 input reaches the raw PTY without UTF-8 conversion", async () => {
   await until(() => peer.text().includes("RAW READY"));
   const bytes = Buffer.from([0x1b, 0x5b, 0x4d, 0x20, 0x80, 0xff]);
   peer.socket.send(JSON.stringify({ type: "input", data: bytes.toString("base64"), encoding: "base64" }));
-  await until(() => peer.text().includes("BYTES " + bytes.toString("hex")));
-  expect(peer.text()).toContain("BYTES 1b5b4d2080ff");
+  // Private labels precede the payload; the original binary packet stays intact.
+  await until(() => peer.text().includes(bytes.toString("hex")));
+  expect(peer.text()).toContain("1b5b4d2080ff");
 });

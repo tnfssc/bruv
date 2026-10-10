@@ -2,13 +2,22 @@ import { StdinBuffer } from "@earendil-works/pi-tui";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import liveExtension from "../../../src/live/extension";
 import { BrowserLiveAudio, browserAudioEnvironment } from "../../../src/live/browser-audio";
+import { CompactEditor } from "../../../src/ui/editor";
 import { LIVE_PROVIDERS } from "../../../src/live/providers";
 
 /** Real Live command/audio lifecycle; only the provider and root owner are fake. */
 
+const commandEditor = import.meta.main
+  ? new CompactEditor(
+      { requestRender() {} } as any,
+      { borderColor: (s: string) => s } as any,
+      { matches: (data: string, action: string) => action === "app.interrupt" && data === "\x03" } as any,
+    )
+  : undefined;
 let failProvider = () => {};
 function install(pi: ExtensionAPI) {
   liveExtension(pi, {
+    ...(commandEditor ? { editor: () => commandEditor } : {}),
     local: () => true,
     audio: (callbacks, signal, request) => {
       const route = browserAudioEnvironment();
@@ -117,27 +126,24 @@ if (import.meta.main) {
       },
     },
   };
-  events.get("session_start")?.({}, ctx);
-  const stdin = new StdinBuffer();
-  let input = "";
-  const submit = () => {
-    const line = input;
-    input = "";
+  const editor = commandEditor!;
+  editor.onEscape = () => editor.setText("");
+  editor.onSubmit = (line) => {
     console.log();
     if (line === "/fake-provider-error") failProvider();
     else if (line.startsWith("/live")) void command(line.slice(5).trim(), ctx).catch(console.error);
   };
+  events.get("session_start")?.({}, ctx);
+  const stdin = new StdinBuffer();
   stdin.on("data", (data) => {
     if (observeInput(data)?.consume) return;
-    if (data === "\r" || data === "\n") submit();
-    else if (data === "\x03") input = "";
-    else {
-      input += data;
-      process.stdout.write(data);
-    }
+    editor.handleInput(data);
+    process.stdout.write(data);
   });
   stdin.on("paste", (data) => {
-    input += data;
+    const paste = "\x1b[200~" + data + "\x1b[201~";
+    observeInput(paste);
+    editor.handleInput(paste);
     process.stdout.write(data);
   });
   process.stdin.on("data", (data) => stdin.process(data));

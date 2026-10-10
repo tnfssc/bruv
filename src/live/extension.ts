@@ -53,6 +53,7 @@ function stopWarning(errors: readonly string[]): string {
 
 export interface LiveDependencies {
   local(mode: string): boolean;
+  editor: typeof getActiveCompactEditor;
   /** Local-only bounded test; result is a sanitized human-readable summary, never PCM. */
   speakerCheck(args: { audio: LiveDependencies["audio"]; signal: AbortSignal }): Promise<string>;
   key(signal: AbortSignal, provider?: LiveProviderId): Promise<string>;
@@ -80,6 +81,7 @@ export interface LiveDependencies {
   >;
 }
 const defaults: LiveDependencies = {
+  editor: () => getActiveCompactEditor(),
   speakerCheck: async (args) => {
     const { runSpeakerCheck } = await import("./speaker-check");
     const { speakerCheckSummary } = await import("./speaker-summary");
@@ -269,7 +271,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     }
     private syncTalkInput() {
       if (!this.alive || this.state !== "running" || this.inputMode !== "push-to-talk") return;
-      const editor = getActiveCompactEditor();
+      const editor = deps.editor();
       if (editor === this.talkEditor) return;
       const detach = this.detachTalkInput;
       this.detachTalkInput = undefined;
@@ -814,7 +816,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       return matches.length ? matches.map((value) => ({ value, label: value })) : null;
     },
     handler: async (args, ctx) => {
-      const request = browserInput.take();
+      const request = browserInput.take(deps.editor());
       if (!loaded) {
         try {
           if (!loading) loading = deps.config.load();
@@ -1263,7 +1265,16 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
   });
   pi.on("session_start", (_event, ctx) => {
     removeBrowserInput?.();
-    if (process.env.BRUV_LIVE_RELAY_URL) removeBrowserInput = ctx.ui.onTerminalInput(browserInput.observe);
+    removeBrowserInput = undefined;
+    if (process.env.BRUV_LIVE_RELAY_URL) {
+      const removeInput = ctx.ui.onTerminalInput(browserInput.observe);
+      const editor = deps.editor();
+      const detachEditor = editor ? browserInput.attach(editor) : undefined;
+      removeBrowserInput = () => {
+        removeInput();
+        detachEditor?.();
+      };
+    }
     conversationCtx = ctx;
     sequence++;
     entry?.abort();

@@ -76,9 +76,11 @@ export function createAudioRelay(options: AudioRelayOptions) {
       sessions.set(sessionId, { secret, tickets: new Map(), pending: new Set() });
       return secret;
     },
-    inputTicket(sessionId: string, ownerId: string | undefined): string {
+    inputTicket(sessionId: string, ownerId: string | undefined, previous?: string): string {
       const s = sessions.get(sessionId);
       if (!s) throw new Error("Unknown audio session");
+      // Input labels can share an unspent ticket. Admission still consumes it once.
+      if (ownerId && previous && s.tickets.get(previous) === ownerId) return previous;
       const ticket = randomBytes(16).toString("hex");
       s.tickets.set(ticket, ownerId);
       while (s.tickets.size > 64) {

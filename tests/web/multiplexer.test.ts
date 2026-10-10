@@ -14,7 +14,7 @@ const command = [
   `
   process.stdin.setRawMode(true);
   console.log("META " + JSON.stringify({cwd:process.cwd(),pid:process.pid,url:process.env.BRUV_LIVE_RELAY_URL,secret:process.env.BRUV_LIVE_RELAY_SECRET}));
-  process.stdin.on("data",d=>{if(d.toString()==="exit")process.exit(7);console.log("INPUT",d.toString())});
+  process.stdin.on("data",d=>{const text=d.toString().replace(/\\x1b\\]777;bruv-input;[^\\x07]*\\x07/g,"");if(text==="exit")process.exit(7);console.log("INPUT",text)});
   setInterval(()=>{},1000);
 `,
 ];

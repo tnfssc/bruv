@@ -33,7 +33,7 @@ export class TerminalSession {
     private cwd: string,
     private env: NodeJS.ProcessEnv = process.env,
     private onChange: () => void = () => {},
-    inputTicket?: (owner: string | undefined) => string,
+    inputTicket?: (owner: string | undefined, previous?: string) => string,
   ) {
     if (inputTicket) this.ownership = new InputOwnership(inputTicket, (bytes) => this.process?.terminal?.write(bytes));
   }
