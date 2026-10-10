@@ -219,6 +219,7 @@ bruv/
     status.ts             shared footer parts (~30)
     render.ts             readable codemode calls and output (~200)
     turn.ts               turn counts and non-context summary (~100)
+    receipt.ts            framed non-context completion receipt (~100)
     notify.ts             desktop alerts and terminal title (~100)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
   prompts/
@@ -241,7 +242,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 2,850 lines, including Codex import and review. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 2,950 lines, including Codex import and review. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -624,6 +625,11 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
   single-line renderer shows scripts, calls, agents started, and elapsed time, plus weekly plan
   use gained during the run when both readings cover the same window. Automatic continuations
   belong to the same run. This entry never enters model context.
+- Accepted checked finishes replace `bruv-turn` with a `bruv-receipt` custom entry. Its accent
+  frame contains Done, time, calls, agents, weekly use change, the first request line (70 chars),
+  up to five checked items, every unfixed gap, and changed file/insertion/deletion totals from
+  Git shortstat against the snapshot, including new files. Failed checks show “Check didn't
+  complete.” Entries stay out of model context. RPC saves the entry but has no visible fallback.
 - In interactive TUI mode on a real stdout TTY, notify with OSC 777 or Kitty OSC 99 plus BEL
   after non-aborted runs longer than 30 seconds settle, and when
   an active goal completes or stops. Use `bruv` as the title and one short body line. Strip terminal

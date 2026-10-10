@@ -8,7 +8,9 @@ import { type Checker, registerCheck } from "../src/check";
 import { readConfig, saveConfig } from "../src/config";
 import { registerFinish } from "../src/finish";
 import { Jobs, registerJobs } from "../src/jobs";
+import { type Receipt, registerReceipt } from "../src/receipt";
 import { registerSettle } from "../src/settle";
+import { registerTurn } from "../src/turn";
 import { sdk } from "./sdk";
 
 setDefaultTimeout(15000);
@@ -43,6 +45,7 @@ async function setup(repo = true) {
         registerJobs(pi, jobs);
         check = registerCheck(pi, jobs, registerAgents(pi, jobs), dir);
         const hasFinished = registerFinish(pi, dir, check);
+        registerTurn(pi, jobs, () => undefined, registerReceipt(pi, check.report));
       },
     ],
     undefined,
@@ -70,6 +73,12 @@ async function setup(repo = true) {
       if (previous === undefined) delete process.env.BRUV_PI_COMMAND;
       else process.env.BRUV_PI_COMMAND = previous;
     },
+    receipts: () =>
+      app.session.sessionManager
+        .getBranch()
+        .flatMap((entry) =>
+          entry.type === "custom" && entry.customType === "bruv-receipt" ? [entry.data as Receipt] : [],
+        ),
     configDir: dir,
   };
 }
@@ -140,6 +149,7 @@ test("two gaps continue, the third finish accepts them, and a new message resets
     expect(app.faux.state.callCount).toBe(3);
     expect(app.children()).toHaveLength(2);
     expect(app.check()?.gaps).toEqual(["missing-781"]);
+    expect(app.receipts()[0].gaps).toEqual(["missing-781"]);
     app.fixture({ answer: answer() });
     app.faux.setResponses([
       () => {
@@ -202,6 +212,7 @@ test.each([{ fail: true }, { answer: "invalid-781" }, { answer: "```json\n{}\n``
       await app.session.prompt("go");
       expect(app.faux.state.callCount).toBe(1);
       expect(app.check()?.failed).toBe(true);
+      expect(app.receipts()[0].failed).toBe(true);
     } finally {
       await app.close();
     }
@@ -254,6 +265,47 @@ test("abort during the check stops its child and does not accept finish", async 
     expect(app.children()[0]).toMatchObject({ stopped: true, status: "stopped" });
     expect(app.check()).toBeUndefined();
     expect(app.faux.state.callCount).toBe(1);
+  } finally {
+    await app.close();
+  }
+});
+
+test("accepted checks replace the turn entry without reaching model context", async () => {
+  const app = await setup();
+  try {
+    app.faux.setResponses([
+      () => {
+        app.change();
+        return finish();
+      },
+    ]);
+    await app.session.prompt("receipt-request-781");
+    expect(app.receipts()).toHaveLength(1);
+    expect(app.receipts()[0]).toMatchObject({
+      asked: "receipt-request-781",
+      calls: 1,
+      agents: 1,
+      checked: ["used-781"],
+    });
+    expect(
+      app.session.sessionManager
+        .getBranch()
+        .some((entry) => entry.type === "custom" && entry.customType === "bruv-turn"),
+    ).toBe(false);
+    app.faux.setResponses([
+      (context) => {
+        expect(JSON.stringify(context.messages)).not.toContain("used-781");
+        expect(JSON.stringify(context.messages)).not.toContain("bruv-receipt");
+        return finish();
+      },
+    ]);
+    await app.session.prompt("next");
+    expect(app.receipts()).toHaveLength(1);
+    expect(
+      app.session.sessionManager
+        .getBranch()
+        .filter((entry) => entry.type === "custom" && entry.customType === "bruv-turn"),
+    ).toHaveLength(1);
   } finally {
     await app.close();
   }

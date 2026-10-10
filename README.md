@@ -1,13 +1,16 @@
 # bruv
 
-**GPT models keep going until the work is done or they need you.**
+**It finishes.** GPT runs don't stop halfway. A fresh agent checks the work against what you
+asked, and you get a receipt showing what it tried and anything still missing.
 
 A reply halfway through no longer ends the run: the model writes its answer and calls `finish`.
+When files changed, a fresh check tries the result before accepting done. Plain answers skip the check.
 
 Give it a goal, let agents work in parallel, and come back to results—not another request to continue.
 bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, not a plugin for it.
 
 - **Keep working without “continue.”** GPT runs keep going by default. `/keep-going on|off|auto` changes this; `/goal` adds an objective, evidence and an optional token budget.
+- **See what was checked.** The terminal receipt lists the request, checks, remaining gaps, changed files, time and usage. `/check on|off` controls the fresh check.
 - **Don't wait on one thing at a time.** Run tests in the background while agents investigate bugs or build separate parts in their own copies of your repo.
 - **Do more per turn.** The model can read files, make edits, and run checks in one script, filtering long logs before they fill the conversation.
 
@@ -43,7 +46,7 @@ Parallel agents use more quota too.
 
 ## Commands
 
-`/keep-going` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/bruv-setup`
+`/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/bruv-setup`
 
 Coming from Codex? `/import-codex` previews your model, MCP servers, skills, prompts and trusted projects, then asks before importing. Sign in to Pi with `/login`; Codex sign-in tokens stay separate.
 

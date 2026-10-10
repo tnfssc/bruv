@@ -12,7 +12,12 @@ export type TurnSummary = {
 };
 const week = (usage?: PlanUsage) =>
   [usage?.rate_limits.primary, usage?.rate_limits.secondary].find((w) => w?.window_minutes === 10080);
-export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: ExtensionContext) => PlanUsage | undefined) {
+export function registerTurn(
+  pi: ExtensionAPI,
+  jobs: Jobs,
+  usage: (ctx: ExtensionContext) => PlanUsage | undefined,
+  receipt: (summary: TurnSummary) => boolean = () => false,
+) {
   let run:
     | { start: number; scripts: number; calls: number; agents: Set<string>; week: ReturnType<typeof week> }
     | undefined;
@@ -58,12 +63,13 @@ export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: Extensio
       latest && finished.week && latest.reset_at === finished.week.reset_at
         ? Math.round(latest.used_percent - finished.week.used_percent)
         : 0;
-    pi.appendEntry<TurnSummary>("bruv-turn", {
+    const summary: TurnSummary = {
       scripts: finished.scripts,
       calls: finished.calls,
       agents: [...jobs.items.values()].filter((item) => item.kind === "agent" && !finished.agents.has(item.id)).length,
       elapsedSeconds: Math.floor((Date.now() - finished.start) / 1000),
       ...(delta > 0 ? { weekPercent: delta } : {}),
-    });
+    };
+    if (!receipt(summary)) pi.appendEntry<TurnSummary>("bruv-turn", summary);
   });
 }
