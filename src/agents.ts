@@ -61,7 +61,7 @@ export function agentParser(jobs: Jobs, item: Work) {
   };
 }
 
-export function registerAgents(pi: ExtensionAPI, jobs: Jobs) {
+export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boolean = () => false) {
   if (process.env.BRUV_DEPTH) return;
   pi.registerTool({
     name: "agent",
@@ -114,7 +114,7 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs) {
           if (selected.thinking) command.push("--thinking", selected.thinking);
           command.push("--", prompt);
           const code = await jobs.process(item, process.env.BRUV_PI_COMMAND ?? "pi", command, cwd, {
-            env: { ...process.env, BRUV_DEPTH: "1" },
+            env: { ...process.env, BRUV_DEPTH: "1", BRUV_FAST: isFast() ? "1" : undefined },
             stdout: parser.push,
           });
           return parser.finish() ? 1 : code;

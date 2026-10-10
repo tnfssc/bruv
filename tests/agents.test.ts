@@ -17,7 +17,7 @@ test("profile fields fall back independently and calls take precedence", () => {
   });
 });
 
-test("codemode starts a job, waits, and parses fake child agents", async () => {
+test.each([false, true])("codemode starts a job, waits, and parses fake child agents (fast=%s)", async (fast) => {
   const previous = process.env.BRUV_PI_COMMAND;
   const previousDir = process.env.PI_CODING_AGENT_DIR;
   const previousFast = process.env.BRUV_FAST;
@@ -27,7 +27,7 @@ test("codemode starts a job, waits, and parses fake child agents", async () => {
   const app = await sdk([
     (pi) => {
       registerJobs(pi, jobs);
-      registerAgents(pi, jobs);
+      registerAgents(pi, jobs, () => fast);
     },
   ]);
   process.env.PI_CODING_AGENT_DIR = app.dir;
@@ -57,7 +57,7 @@ test("codemode starts a job, waits, and parses fake child agents", async () => {
       expect(result.usage).toEqual({ input: 7, output: 3, cost: 0.3 });
       const answer = JSON.parse(result.answer as string);
       expect(answer.depth).toBe("1");
-      expect(answer.fast).toBe("1");
+      expect(answer.fast).toBe(fast ? "1" : undefined);
       expect(answer.cwd).toBe(app.dir);
       expect(answer.args.slice(0, 2)).toEqual(["--mode", "json"]);
       expect(answer.args[answer.args.indexOf("--model") + 1]).toBe("faux/selected");

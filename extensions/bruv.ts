@@ -1,6 +1,7 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerAgents } from "../src/agents";
 import { registerCodemode } from "../src/codemode";
+import { registerFast } from "../src/fast";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerPrompt } from "../src/prompt";
@@ -12,7 +13,8 @@ export default async function bruv(pi: ExtensionAPI): Promise<void> {
   registerUI(pi, jobs);
   registerSettle(pi, jobs);
   registerJobs(pi, jobs);
-  registerAgents(pi, jobs);
+  const isFast = registerFast(pi);
+  registerAgents(pi, jobs, isFast);
   const goalPrompt = registerGoal(pi);
   registerPrompt(pi, goalPrompt);
   await registerCodemode(pi);
