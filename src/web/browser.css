@@ -100,15 +100,6 @@ button:focus:not(:focus-visible) {
   color: var(--muted);
   font-size: 20px;
 }
-.icon-button svg {
-  width: var(--space-4);
-  height: var(--space-4);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
 .workspace-layout {
   display: flex;
   height: 100%;
@@ -294,9 +285,6 @@ body:has(#workspace-list:empty) aside {
   display: block;
 }
 #tab-list .tab-name-input {
-  --font-size: var(--ui-font-size);
-  --font-size-min: var(--ui-font-size);
-  font-size: var(--ui-font-size);
   border-color: var(--accent);
 }
 .tab-close {
@@ -415,7 +403,6 @@ dialog h2 {
   font-weight: 500;
   margin: 0 0 var(--label-gap);
 }
-dialog label,
 #folder-form label {
   display: block;
   margin-bottom: var(--label-gap);
@@ -502,10 +489,6 @@ dialog label,
   #open-drawer,
   .drawer-close {
     display: inline-flex;
-  }
-  .terminal-tab {
-    min-width: 128px;
-    max-width: min(208px, 100%);
   }
   #empty-terminal {
     padding: var(--space-4);

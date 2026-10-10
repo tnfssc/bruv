@@ -43,6 +43,13 @@ class Element {
     this.attributes[key] = value;
   }
   style: Record<string, string> = {};
+  getClientRects() {
+    for (let element: Element | null = this; element; element = element.parentElement) if (element.hidden) return [];
+    return [this.getBoundingClientRect()];
+  }
+  contains(element: Element): boolean {
+    return this === element || this.children.some((child) => child.contains(element));
+  }
   getBoundingClientRect() {
     return { left: 0, right: this.clientWidth, width: this.clientWidth };
   }
@@ -54,8 +61,9 @@ class Element {
     return this.children.at(-1) ?? null;
   }
   parentElement: Element | null = null;
-  get isConnected() {
-    return this.parentElement !== null;
+  connectedRoot = false;
+  get isConnected(): boolean {
+    return this.parentElement ? this.parentElement.isConnected : this.connectedRoot;
   }
   className = "";
   classList = { contains: (name: string) => this.className.split(" ").includes(name) };
@@ -169,6 +177,7 @@ async function browser(
     if (!nodes.has(id)) {
       const element = new Element();
       element.id = id;
+      element.connectedRoot = true;
       if (id === "empty-terminal") {
         for (const tagName of ["H1", "P"]) element.append(Object.assign(new Element(), { tagName }));
       }
@@ -684,7 +693,7 @@ test("request cancellation closes only the local owner device", async () => {
   await tick();
   expect(b.deviceClosed).toBe(2);
   expect(b.audioOptions.signal.aborted).toBe(true);
-  expect(b.node("audio-status").textContent).toContain("Releasing microphone");
+  expect(b.node("audio-status").textContent).toContain("Microphone reserved");
   b.snapshot(snapshot(5));
   expect(b.node("voice-status").hidden).toBe(true);
 });
@@ -720,6 +729,13 @@ test("inline rename saves only its captured tab and retains its input through sn
   expect(b.requests).toHaveLength(count + 1);
   expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
   expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
+  const saved = snapshot(3);
+  saved.workspaces[0].tabs[0].name = "Build";
+  b.requests.at(-1)!.resolve(saved);
+  await tick();
+  expect(b.node("terminal").children.find((element) => element.id === "terminal-a")?.attributes["aria-label"]).toBe(
+    "Build",
+  );
 });
 
 test("deleting another tab before the editor preserves the input and saves the right ID", async () => {
@@ -1408,4 +1424,108 @@ test("unacknowledged protocol replies stay within the replay byte budget", async
   expect(b.terminal("a").sent.some((m: any) => m.type === "input")).toBe(false);
   expect(b.terminals[0].options.disableStdin).toBe(true);
   expect(b.node("status").textContent).toContain("View lost");
+});
+
+test("drawer wraps only rendered controls after cancelling folder entry", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("open-drawer").click();
+  b.node("add-workspace").click();
+  b.node("cancel-folder").click();
+  const first = b.node("add-workspace"),
+    last = b.node("workspace-list").lastElementChild!.lastElementChild!;
+  b.node("folder-form").append(b.node("open-folder"));
+  b.document.querySelectorAll = () => [first, b.node("close-drawer"), last, b.node("open-folder")];
+  first.focus();
+  b.node("workspace-sidebar").fire("keydown", { ...key("Tab"), shiftKey: true });
+  expect(b.document.activeElement).toBe(last);
+  b.node("workspace-sidebar").fire("keydown", key("Tab"));
+  expect(b.document.activeElement).toBe(first);
+});
+
+test("drawer deletion returns focus to a surviving workspace", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("open-drawer").click();
+  const remove = b.node("workspace-list").children[0].lastElementChild!;
+  remove.focus();
+  remove.click();
+  b.node("dialog-form").fire("submit");
+  await tick();
+  const next = snapshot(2);
+  next.workspaces.shift();
+  b.requests.at(-1)!.resolve(next);
+  await tick();
+  expect(b.document.body.attributes["data-drawer"]).toBe("open");
+  expect(b.document.activeElement?.id).toBe("workspace-two");
+});
+
+test("remote row removal restores drawer focus but does not steal dialog focus", async () => {
+  for (const confirmation of [false, true]) {
+    const b = await browser();
+    b.snapshot(snapshot(1));
+    b.requests[0].resolve(snapshot(1));
+    await tick();
+    b.node("open-drawer").click();
+    const remove = b.node("workspace-list").children[0].lastElementChild!;
+    remove.focus();
+    if (confirmation) remove.click();
+    const next = snapshot(2);
+    next.workspaces.shift();
+    b.snapshot(next);
+    if (confirmation) {
+      expect(b.document.activeElement?.id).toBe("dialog-cancel");
+      b.node("workspace-dialog").fire("cancel");
+      await tick();
+    }
+    expect(b.document.activeElement?.id).toBe("workspace-two");
+  }
+});
+
+test("panel name survives inline edits and follows shared names", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  const panel = b.node("terminal").children.find((element) => element.id === "terminal-a")!;
+  const title = b.node("tab-list").children[0].firstElementChild!;
+  title.fire("keydown", key("F2"));
+  const editor = b.node("tab-list").children[0].firstElementChild!;
+  expect(panel.attributes["aria-label"]).toBe("A");
+  const next = snapshot(2);
+  next.workspaces[0].tabs[0].name = "Shared name";
+  b.snapshot(next);
+  expect(panel.attributes["aria-label"]).toBe("Shared name");
+  expect(b.document.activeElement).toBe(editor);
+  editor.fire("keydown", key("Escape"));
+  expect(panel.attributes["aria-label"]).toBe("Shared name");
+});
+
+test("voice owner stays releasing until device close settles", async () => {
+  let finish!: () => void;
+  const closing = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  const b = await browser(async () => ({ close: () => closing }));
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.ready("a");
+  b.terminal("a").message({ type: "audio-request", request: "first" });
+  await tick();
+  b.terminal("a").message({ type: "audio-cancel", request: "first" });
+  await tick();
+  expect(b.node("audio-status").textContent).toContain("Releasing microphone");
+  b.terminal("a").message({ type: "audio-request", request: "second" });
+  expect(b.terminal("a").sent.at(-1)).toMatchObject({ type: "audio-error", request: "second" });
+  finish();
+  await tick();
+  expect(b.node("voice-status").hidden).toBe(true);
+  b.terminal("a").message({ type: "audio-request", request: "third" });
+  await tick();
+  expect(b.node("audio-status").textContent).toContain("Requesting microphone");
 });

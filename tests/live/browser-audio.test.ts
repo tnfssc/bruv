@@ -541,6 +541,7 @@ test("browser client with fake devices sends PCM, schedules 24k output, flushes,
   expect(contextsClosed).toBe(1);
   expect(states).toContain("running");
   expect(states).toContain("closed");
+  expect(states.filter((state) => state === "closed")).toHaveLength(1);
 });
 
 test("CLI waits for its exact browser; session revocation closes both and rejects reuse", async () => {
@@ -587,3 +588,115 @@ test("insecure browser context reports HTTPS before acquiring devices", async ()
     });
   }
 });
+
+for (const mode of ["abort", "rejected close", "CLI stop and disconnect"]) {
+  test("browser shares pending cleanup: " + mode, async () => {
+    const originals = new Map<string, PropertyDescriptor | undefined>();
+    function replace(name: string, value: unknown) {
+      originals.set(name, Object.getOwnPropertyDescriptor(globalThis, name));
+      Object.defineProperty(globalThis, name, { configurable: true, writable: true, value });
+    }
+    cleanup.push(() => {
+      for (const [name, descriptor] of originals)
+        if (descriptor) Object.defineProperty(globalThis, name, descriptor);
+        else Reflect.deleteProperty(globalThis, name);
+    });
+    let finish!: () => void, reject!: (error: Error) => void;
+    const closing = new Promise<void>((resolve, fail) => {
+      finish = resolve;
+      reject = fail;
+    });
+    let contextsClosed = 0,
+      tracksStopped = 0;
+    class Context {
+      currentTime = 0;
+      destination = {};
+      audioWorklet = { addModule: async () => {} };
+      resume = async () => {};
+      close() {
+        contextsClosed++;
+        return closing;
+      }
+      createMediaStreamSource = () => ({ connect() {}, disconnect() {} });
+    }
+    class Worklet {
+      port = { onmessage: null, postMessage() {} };
+      connect() {}
+      disconnect() {}
+    }
+    let socket!: Socket;
+    class Socket {
+      static OPEN = 1;
+      readyState = 1;
+      bufferedAmount = 0;
+      onopen?: () => void;
+      onclose?: () => void;
+      onmessage?: (event: { data: string }) => void;
+      sent: any[] = [];
+      constructor() {
+        socket = this;
+        queueMicrotask(() => this.onopen?.());
+      }
+      send(text: string) {
+        this.sent.push(JSON.parse(text));
+      }
+      close() {
+        this.readyState = 3;
+        this.onclose?.();
+      }
+      message(value: unknown) {
+        this.onmessage?.({ data: JSON.stringify(value) });
+      }
+    }
+    replace("location", { href: "http://localhost/", protocol: "http:", host: "localhost" });
+    replace("isSecureContext", true);
+    replace("navigator", {
+      mediaDevices: {
+        getUserMedia: async () => ({
+          getTracks: () => [
+            {
+              stop() {
+                tracksStopped++;
+              },
+            },
+          ],
+        }),
+      },
+    });
+    replace("AudioContext", Context);
+    replace("AudioWorkletNode", Worklet);
+    replace("WebSocket", Socket);
+    const controller = new AbortController();
+    const states: string[] = [];
+    const device = await connectBrowserAudio({
+      url: "ws://localhost/audio?role=browser&session=owner",
+      signal: controller.signal,
+      onState: (state) => states.push(state),
+    });
+    if (mode === "CLI stop and disconnect") {
+      socket.message({ type: "start" });
+      socket.message({ type: "stop" });
+    } else controller.abort();
+    let settled = false;
+    const explicit = device.close().finally(() => {
+      settled = true;
+    });
+    const observed = explicit.catch((error) => error);
+    await Bun.sleep(0);
+    expect(settled).toBe(false);
+    expect(states.filter((state) => state === "closed")).toHaveLength(0);
+    expect(socket.sent.some((message) => message.type === "stopped")).toBe(false);
+    expect(tracksStopped).toBe(1);
+    expect(contextsClosed).toBe(1);
+    if (mode === "CLI stop and disconnect") socket.close();
+    if (mode === "rejected close") reject(new Error("Context close failed"));
+    else finish();
+    const result = await observed;
+    if (mode === "rejected close") expect(result.message).toBe("Context close failed");
+    await Bun.sleep(0);
+    expect(settled).toBe(true);
+    expect(states.filter((state) => state === "closed")).toHaveLength(1);
+    expect(tracksStopped).toBe(1);
+    expect(contextsClosed).toBe(1);
+  });
+}

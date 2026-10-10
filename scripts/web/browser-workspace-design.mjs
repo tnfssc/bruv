@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -8,18 +7,19 @@ const { chromium } = await import(
   process.env.PLAYWRIGHT_CORE ? pathToFileURL(process.env.PLAYWRIGHT_CORE).href : "playwright"
 );
 const project = resolve(import.meta.dir, "../..");
-const root = await mkdtemp(join(tmpdir(), "bruv-web-workspaces-"));
+await mkdir(join(project, ".tmp"), { recursive: true });
+const root = await mkdtemp(join(project, ".tmp/browser-workspaces-"));
 const firstCwd = join(root, "bruv");
 const secondCwd = join(root, "api-service");
 const agent = join(root, "agent");
-await Promise.all([firstCwd, secondCwd, agent, join(project, "artifacts")].map((p) => mkdir(p, { recursive: true })));
+await Promise.all([firstCwd, secondCwd, agent, join(project, ".tmp")].map((p) => mkdir(p, { recursive: true })));
 const proc = Bun.spawn(
   [join(project, "dist/bruv"), "web", "--port", "0", "--", "--offline", "--provider", "openai", "--model", "gpt-4o"],
   {
     cwd: firstCwd,
     env: {
       PATH: process.env.PATH,
-      TMPDIR: process.env.TMPDIR,
+      TMPDIR: join(project, ".tmp"),
       HOME: root,
       LANG: "C.UTF-8",
       SHELL: "/bin/sh",
@@ -201,7 +201,7 @@ async function connected() {
 // UI proof uses the compiled app and real PTYs. Inspect the saved frames too.
 // Keep the input caret visible in focused terminal captures.
 const screenshot = (options) => page.screenshot({ caret: "initial", ...options });
-const proof = join(project, "artifacts/ghostty/workspace-design");
+const proof = join(project, ".tmp/ghostty/workspace-design");
 await mkdir(proof, { recursive: true });
 try {
   await until(() => output.includes("#token="), "No server URL");
@@ -390,6 +390,15 @@ try {
   const firstTab = initial.workspaces[0].tabs[0];
   const title = page.locator('[id="tab-' + firstTab.id + '"]');
   const editor = page.getByRole("textbox", { name: "Tab name", exact: true });
+  const accessibility = await page.context().newCDPSession(page);
+  async function panelNamed(name) {
+    await page.getByRole("tabpanel", { name, exact: true }).waitFor();
+    const tree = await accessibility.send("Accessibility.getFullAXTree");
+    assert(
+      tree.nodes.some((node) => node.role?.value === "tabpanel" && node.name?.value === name),
+      "Panel name survives edit: " + name,
+    );
+  }
   async function titleStyle(locator) {
     return locator.evaluate((el) => {
       const style = getComputedStyle(el);
@@ -407,6 +416,7 @@ try {
   const renameShell = page.locator("#tab-shell-" + firstTab.id);
   const shellBeforeRename = await renameShell.boundingBox();
   await title.dblclick();
+  await panelNamed("Terminal");
   const editBox = await editor.boundingBox();
   assert.deepEqual(await titleStyle(editor), desktopTitleStyle, "Desktop edit preserves text size and inset");
   for (const key of ["x", "y", "height"])
@@ -427,6 +437,7 @@ try {
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "tab-" + firstTab.id);
   assert.equal((await api()).workspaces[0].tabs[0].name, "Terminal");
+  await panelNamed("Terminal");
   await title.press("F2");
   await editor.fill("   ");
   await page.keyboard.press("Enter");
@@ -447,10 +458,13 @@ try {
   await api("/api/tabs/" + firstTab.id, "PATCH", { name: "Remote title" });
   await page.waitForFunction(() => document.querySelector(".tab-close")?.title === "Close tab Remote title");
   assert(await editor.evaluate((el) => el === window.renameInput && document.activeElement === el));
+  assert.equal(await page.locator("#terminal-" + firstTab.id).getAttribute("aria-label"), "Remote title");
+  await panelNamed("Remote title");
   assert.equal(await editor.inputValue(), "  Terminal keyboard  ");
   assert.deepEqual(await editor.evaluate((el) => [el.selectionStart, el.selectionEnd]), [4, 10]);
   await page.keyboard.press("Enter");
   await until(async () => (await api()).workspaces[0].tabs[0].name === "Terminal keyboard", "Keyboard rename missing");
+  await panelNamed("Terminal keyboard");
   await rename("Terminal");
 
   await page.setViewportSize({ width: 390, height: 680 });
@@ -472,7 +486,22 @@ try {
   await page.locator("#open-drawer").click();
   assert.equal(await page.evaluate(() => document.activeElement?.id), "close-drawer");
   await page.keyboard.press("Shift+Tab");
-  assert(await page.evaluate(() => !!document.activeElement?.closest("#workspace-sidebar")), "Drawer traps focus");
+  assert.equal(await page.evaluate(() => document.activeElement?.id), "add-workspace");
+  await page.locator("#add-workspace").click();
+  await page.locator("#cancel-folder").click();
+  const lastDrawerControl = await page.locator(".workspace-remove").last().getAttribute("id");
+  await page.keyboard.press("Shift+Tab");
+  assert.equal(
+    await page.evaluate(() => document.activeElement?.id),
+    lastDrawerControl,
+    "Hidden folder form cannot break backward wrap",
+  );
+  await page.keyboard.press("Tab");
+  assert.equal(
+    await page.evaluate(() => document.activeElement?.id),
+    "add-workspace",
+    "Forward boundary wraps inside drawer",
+  );
   await checkAlignment("phone-drawer");
   const drawerAlignment = await page.evaluate(() => ({
     close: document.querySelector("#close-drawer").getBoundingClientRect().right,
@@ -519,8 +548,20 @@ try {
   }
   await doubleTouch(title);
   await editor.waitFor();
-  assert.deepEqual(await titleStyle(editor), phoneTitleStyle, "Phone edit preserves text size and inset");
-  await editor.fill("Phone draft");
+  const phoneEditorStyle = await titleStyle(editor);
+  assert.equal(phoneEditorStyle.fontSize, "16px", "Phone rename uses the field size, not title size");
+  assert.equal(phoneEditorStyle.paddingLeft, phoneTitleStyle.paddingLeft);
+  assert.equal(phoneEditorStyle.textX, phoneTitleStyle.textX);
+  assert.equal(await page.locator("#terminal-" + firstTab.id).getAttribute("aria-label"), "Terminal");
+  await editor.fill("Phone draft with a long unbroken suffix " + "x".repeat(80));
+  await editor.press("End");
+  assert(
+    await editor.evaluate(
+      (el) => document.activeElement === el && el.selectionStart === el.value.length && el.scrollLeft > 0,
+    ),
+    "Long draft keeps its caret in view",
+  );
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await screenshot({ path: join(proof, "inline-rename-phone.png") });
   await page.keyboard.press("Escape");
   await doubleTouch(title);
@@ -694,7 +735,7 @@ try {
     const panel = focused?.closest('[role="tabpanel"]');
     return (
       (focused?.matches('.terminal-renderer[role="textbox"]') || focused?.tagName === "TEXTAREA") &&
-      panel?.getAttribute("aria-labelledby") === document.querySelector('[role="tab"][aria-selected="true"]')?.id
+      panel?.id === document.querySelector('[role="tab"][aria-selected="true"]')?.getAttribute("aria-controls")
     );
   });
   await readyToType();
@@ -712,6 +753,29 @@ try {
   await screenshot({ path: join(proof, "empty-tabs-phone.png") });
   await page.locator("#empty-action").click();
   await connected();
+  await page.locator("#open-drawer").click();
+  const removedWorkspace = (await api()).workspaces[0];
+  await page.locator('[id="workspace-remove-' + removedWorkspace.id + '"]').click();
+  await page.locator("#dialog-submit").click();
+  await page.waitForFunction(() => document.activeElement?.matches('.workspace[aria-pressed="true"]'));
+  assert.equal(await page.evaluate(() => document.body.dataset.drawer), "open");
+  // A focused remote row disappears without a local dialog.
+  const remoteWorkspace = (await api()).workspaces[0];
+  const extra = await api("/api/workspaces", "POST", { cwd: firstCwd });
+  await page.locator('[id="workspace-' + extra.workspaceId + '"]').waitFor();
+  const remoteRemove = page.locator('[id="workspace-remove-' + remoteWorkspace.id + '"]');
+  await remoteRemove.focus();
+  await api("/api/workspaces/" + remoteWorkspace.id, "DELETE", { confirm: true });
+  await page.waitForFunction(() => document.activeElement?.matches('.workspace[aria-pressed="true"]'));
+  // Escape must recover even when another attachment removes the invoker.
+  const dialogWorkspace = (await api()).workspaces[0];
+  await api("/api/workspaces", "POST", { cwd: secondCwd });
+  await page.locator('[id="workspace-remove-' + dialogWorkspace.id + '"]').click();
+  await api("/api/workspaces/" + dialogWorkspace.id, "DELETE", { confirm: true });
+  await page.locator('[id="workspace-row-' + dialogWorkspace.id + '"]').waitFor({ state: "detached" });
+  assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-cancel");
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => document.activeElement?.matches('.workspace[aria-pressed="true"]'));
   for (const workspace of (await api()).workspaces)
     await api("/api/workspaces/" + workspace.id, "DELETE", { confirm: true });
   await page.getByRole("heading", { name: "Open a folder" }).waitFor();
@@ -780,6 +844,7 @@ try {
   }
   console.error(
     "DESIGN_FAILURE",
+    error,
     await page
       ?.locator("body")
       .innerText()
@@ -789,6 +854,7 @@ try {
 } finally {
   await browser?.close();
   proc.kill("SIGTERM");
-  assert.equal(await proc.exited, 0);
-  console.log("WEB_EXIT 0", "STDERR", errors, "FIXTURE", root);
+  const exit = await proc.exited;
+  console.log("WEB_EXIT", exit, "STDERR", errors, "FIXTURE", root);
+  assert.equal(exit, 0);
 }

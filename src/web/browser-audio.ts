@@ -66,6 +66,8 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
   let capture: AudioWorkletNode | undefined;
   let ws: WebSocket | undefined;
   let closed = false;
+  let releasePromise: Promise<void> | undefined;
+  let closePromise: Promise<void> | undefined;
   let active = false;
   let connected = false;
   let generation = 0;
@@ -95,8 +97,8 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
     clearInterval(reportTimer);
     reportTimer = undefined;
   }
-  async function release() {
-    if (closed) return;
+  function release(): Promise<void> {
+    if (releasePromise) return releasePromise;
     closed = true;
     active = false;
     flush();
@@ -105,23 +107,23 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
     if (capture) capture.port.onmessage = null;
     for (const track of stream?.getTracks() ?? []) track.stop();
     options.signal?.removeEventListener("abort", abort);
-    await context.close();
+    releasePromise = context.close();
+    return releasePromise;
   }
-  async function close() {
-    try {
-      await release();
-    } finally {
+  function close(): Promise<void> {
+    closePromise ??= release().finally(() => {
       ws?.close();
       options.onState?.("closed");
-    }
+    });
+    return closePromise;
   }
   async function fail() {
     options.onState?.("error");
     if (ws?.readyState === WebSocket.OPEN) ws.send('{"type":"error"}');
-    await close();
+    await close().catch(() => {});
   }
   const abort = () => {
-    void close();
+    void close().catch(() => {});
   };
   options.signal?.addEventListener("abort", abort, { once: true });
   try {
@@ -181,7 +183,7 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
       socket.onclose = () => {
         clearTimeout(timer);
         reject(new Error("Browser audio disconnected"));
-        if (connected) void close();
+        if (connected) void close().catch(() => {});
       };
     });
     ws.onmessage = ({ data }) => {
@@ -204,8 +206,7 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
         void release()
           .then(() => {
             send({ type: "stopped" });
-            ws?.close();
-            options.onState?.("closed");
+            return close();
           })
           .catch(() => {
             void fail();

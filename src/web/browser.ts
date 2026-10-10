@@ -39,7 +39,6 @@ type VoiceOwner = {
   tabId: string;
   capability: string;
   ownerId: string;
-  generation: number;
   state: string;
   pending: boolean;
   releasing: boolean;
@@ -88,7 +87,7 @@ requiredElement<HTMLElement>("#workspace-sidebar").addEventListener("keydown", (
     document.querySelectorAll<HTMLButtonElement>(
       "#workspace-sidebar button:not(:disabled), #workspace-sidebar input:not(:disabled)",
     ),
-  );
+  ).filter((element) => element.getClientRects().length > 0);
   const first = choices[0],
     last = choices.at(-1);
   if (event.shiftKey && document.activeElement === first) {
@@ -106,51 +105,35 @@ window.addEventListener("resize", () => {
 type DialogOptions = {
   title: string;
   description: string;
-  label?: string;
-  value?: string;
   submit: string;
-  destructive?: boolean;
 };
 const dialog = requiredElement<HTMLDialogElement>("#workspace-dialog");
-const dialogInput = requiredElement<HTMLInputElement>("#dialog-input");
-let dialogResult: ((value: string | null) => void) | undefined;
-function askDialog(options: DialogOptions): Promise<string | null> {
+let dialogResult: ((confirmed: boolean) => void) | undefined;
+function askDialog(options: DialogOptions): Promise<boolean> {
   requiredElement<HTMLElement>("#dialog-title").textContent = options.title;
   requiredElement<HTMLElement>("#dialog-description").textContent = options.description;
-  requiredElement<HTMLElement>("#dialog-label").textContent = options.label ?? "";
-  requiredElement<HTMLElement>("#dialog-field").hidden = !options.label;
-  dialogInput.required = !!options.label;
-  dialogInput.value = options.value ?? "";
   action("dialog-submit").textContent = options.submit;
-  action("dialog-submit").className = options.destructive ? "btn btn-outline btn-error" : "btn btn-primary";
   dialog.showModal();
-  if (options.label) {
-    dialogInput.focus();
-    dialogInput.select();
-  } else action("dialog-cancel").focus();
+  action("dialog-cancel").focus();
   return new Promise((resolve) => {
     dialogResult = resolve;
   });
 }
 requiredElement<HTMLFormElement>("#dialog-form").addEventListener("submit", (event) => {
   event.preventDefault();
-  if (dialogInput.required && !dialogInput.value.trim()) {
-    dialogInput.focus();
-    return;
-  }
-  finishDialog(dialogInput.value);
+  finishDialog(true);
 });
-function finishDialog(value: string | null) {
+function finishDialog(confirmed: boolean) {
   // Settle before closing: native focus returns before the queued close event.
   const resolve = dialogResult;
   dialogResult = undefined;
   dialog.close();
-  resolve?.(value);
+  resolve?.(confirmed);
 }
-action("dialog-cancel").addEventListener("click", () => finishDialog(null));
+action("dialog-cancel").addEventListener("click", () => finishDialog(false));
 dialog.addEventListener("cancel", (event) => {
   event.preventDefault();
-  finishDialog(null);
+  finishDialog(false);
 });
 
 // Storage can be blocked by browser privacy settings. The full URL still works.
@@ -183,7 +166,6 @@ let voiceError: { tabId: string; message: string } | undefined;
 let busy = false;
 let unloading = false;
 let voice: VoiceOwner | undefined;
-let voiceGeneration = 0;
 const socketOrigin = location.origin.replace(/^http/, "ws");
 const workspace = () => state.workspaces.find((item) => item.id === selectedWorkspace);
 const selected = () => sessions.get(selectedTabs[selectedWorkspace]);
@@ -192,11 +174,10 @@ function persistSelection() {
     sessionStorage.setItem(storageKey, JSON.stringify({ workspaceId: selectedWorkspace, tabs: selectedTabs }));
   } catch {}
 }
-function button(text: string, label: string, click: () => void) {
+function button(text: string, click: () => void) {
   const element = document.createElement("button");
   element.type = "button";
   element.textContent = text;
-  element.setAttribute("aria-label", label);
   element.addEventListener("click", click);
   return element;
 }
@@ -219,9 +200,8 @@ function renderAudio() {
       ? (voice.releasing ? "Releasing microphone…" : voice.state) +
         (selected()?.id === voice.tabId ? "" : " · " + voiceLabel(voice.tabId))
       : shared
-        ? (elsewhere ? "Voice in another browser · " : "Releasing microphone… · ") + voiceLabel(shared.tabId)
+        ? (elsewhere ? "Voice in another browser · " : "Microphone reserved… · ") + voiceLabel(shared.tabId)
         : "";
-  voiceControl.setAttribute("data-elsewhere", String(!!elsewhere));
   action("cancel-voice").hidden = !voice?.pending || voice.releasing;
   action("dismiss-voice").hidden = !voiceError;
 }
@@ -339,7 +319,7 @@ function startRename(id: string) {
   input.select();
 }
 function tabButton(tab: Tab) {
-  const entry = button("", "", () => {
+  const entry = button("", () => {
     if (!editingTab) selectTab(tab.id);
   });
   entry.className = "btn btn-ghost tab-select";
@@ -372,27 +352,28 @@ function tabButton(tab: Tab) {
 let scrolledTab: string | undefined;
 // Shared snapshots update rows, not their identity or local focus.
 function renderWorkspaces() {
+  const focused = document.activeElement;
+  let removedFocus = false;
   const rows = new Map(Array.from(workspaceList.children).map((row) => [row.id, row]));
   for (const [id, row] of rows) {
     if (!state.workspaces.some((item) => "workspace-row-" + item.id === id)) {
+      if (focused && row.contains(focused)) removedFocus = true;
       row.remove();
-      rows.delete(id);
     }
   }
   let index = 0;
   for (const item of state.workspaces) {
     const id = "workspace-row-" + item.id;
     let row = rows.get(id);
-    rows.delete(id);
     if (!row) {
       row = document.createElement("div");
       row.id = id;
       row.className = "workspace-row";
-      const entry = button("", "", () => selectWorkspace(item.id));
+      const entry = button("", () => selectWorkspace(item.id));
       entry.id = "workspace-" + item.id;
       entry.className = "btn btn-ghost workspace";
       entry.innerHTML = '<span class="workspace-name"></span><small></small>';
-      const remove = button("×", "", () => void removeWorkspace(item.id));
+      const remove = button("×", () => void removeWorkspace(item.id));
       remove.id = "workspace-remove-" + item.id;
       remove.className = "btn btn-ghost btn-square workspace-remove";
       row.append(entry, remove);
@@ -413,7 +394,17 @@ function renderWorkspaces() {
     if (workspaceList.children[index] !== row) workspaceList.insertBefore(row, workspaceList.children[index] ?? null);
     index++;
   }
-  for (const row of rows.values()) row.remove();
+  if (removedFocus && drawerOpen && !dialog.open) focusWorkspaceControl();
+}
+function focusWorkspaceControl() {
+  if (drawerOpen) {
+    (document.getElementById("workspace-" + selectedWorkspace) ?? action("close-drawer")).focus();
+  } else {
+    const active = selected();
+    if (active) active.term.focus();
+    else if (!workspace()) folderInput.focus();
+    else action("empty-action").focus();
+  }
 }
 function distinguishingPath(item: Workspace, duplicates: Workspace[]) {
   const parts = item.cwd.split("/").filter(Boolean);
@@ -433,17 +424,16 @@ function render() {
   for (const [id, shell] of previous) {
     if (!current?.tabs.some((tab) => "tab-shell-" + tab.id === id)) {
       shell.remove();
-      previous.delete(id);
     }
   }
   let index = 0;
   for (const tab of current?.tabs ?? []) {
     const shellId = "tab-shell-" + tab.id;
     const shell = previous.get(shellId) ?? document.createElement("div");
-    previous.delete(shellId);
     shell.id = shellId;
     shell.className = "terminal-tab";
     shell.setAttribute("role", "presentation");
+    sessions.get(tab.id)?.element.setAttribute("aria-label", tab.name);
     const active = tab.id === selectedTabs[selectedWorkspace];
     shell.setAttribute("data-active", String(active));
     if (editingTab?.id !== tab.id) {
@@ -468,7 +458,7 @@ function render() {
     }
     let close = shell.children[1] as HTMLButtonElement | undefined;
     if (!close) {
-      close = button("×", "", () => {
+      close = button("×", () => {
         const currentTab = workspace()?.tabs.find((item) => item.id === tab.id);
         if (currentTab) void closeTab(currentTab);
       });
@@ -640,7 +630,6 @@ async function releaseVoice() {
   if (!owner || owner.releasing) return;
   owner.releasing = true;
   owner.controller.abort();
-  ++voiceGeneration;
   renderAudio();
   try {
     await owner.device?.close();
@@ -661,7 +650,6 @@ async function requestVoice(session: Session, request: string) {
     tabId: session.id,
     capability: session.capability,
     ownerId: session.ownerId,
-    generation: ++voiceGeneration,
     state: "Requesting microphone…",
     pending: true,
     releasing: false,
@@ -681,7 +669,7 @@ async function requestVoice(session: Session, request: string) {
       token,
       owner: owner.capability,
       onState(value) {
-        if (voice !== owner || owner.generation !== voiceGeneration || owner.releasing) return;
+        if (voice !== owner || owner.releasing) return;
         if (value === "closed" || value === "error") {
           if (value === "error") {
             const message = "Browser audio failed. Check microphone access and connection, then type /live to retry.";
@@ -695,12 +683,7 @@ async function requestVoice(session: Session, request: string) {
         renderAudio();
       },
     });
-    if (
-      voice !== owner ||
-      owner.generation !== voiceGeneration ||
-      !session.ready ||
-      session.capability !== owner.capability
-    ) {
+    if (voice !== owner || owner.releasing || !session.ready || session.capability !== owner.capability) {
       await device.close();
       return;
     }
@@ -848,7 +831,7 @@ function attach(tab: Tab) {
   element.className = "terminal-pane";
   element.hidden = true;
   element.setAttribute("role", "tabpanel");
-  element.setAttribute("aria-labelledby", "tab-" + tab.id);
+  element.setAttribute("aria-label", tab.name);
   container.append(element);
   const term = new Terminal({
     ghostty,
@@ -1092,9 +1075,8 @@ async function closeTab(tab: Tab) {
       ? "This CLI has ended. Removing its terminal stops any remaining work for everyone."
       : "This terminal and its running work will stop for everyone.",
     submit: ended ? "Remove tab" : "Close tab",
-    destructive: true,
   });
-  if (confirmed === null) {
+  if (!confirmed) {
     const invoker =
       document.getElementById(origin ?? "") ??
       document.getElementById("tab-" + selected()?.id) ??
@@ -1124,19 +1106,15 @@ async function removeWorkspace(id: string) {
       current.cwd +
       "\nAll its terminals and any remaining work will stop for everyone. The folder will not be deleted.",
     submit: "Remove workspace",
-    destructive: true,
   });
-  if (confirmed === null) {
-    invoker?.focus();
+  if (!confirmed) {
+    if (invoker?.isConnected) invoker.focus();
+    else focusWorkspaceControl();
     return;
   }
   const ok = await change("/api/workspaces/" + encodeURIComponent(id), "DELETE", { confirm: true });
-  if (ok && !drawerOpen) {
-    const active = selected();
-    if (active) active.term.focus();
-    else if (!workspace()) folderInput.focus();
-    else action("empty-action").focus();
-  }
+  if (ok || !invoker?.isConnected) focusWorkspaceControl();
+  else invoker.focus();
 }
 window.addEventListener("beforeunload", () => {
   unloading = true;
