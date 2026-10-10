@@ -1,11 +1,39 @@
 import { expect, test } from "bun:test";
 import { resolve } from "node:path";
+import { stripVTControlCharacters } from "node:util";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
+import { initTheme } from "@earendil-works/pi-coding-agent";
 import { registerAgents } from "../src/agents";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerTurn, type TurnSummary } from "../src/turn";
 import type { PlanUsage } from "../src/usage";
 import { sdk } from "./sdk";
+
+test("summary renders only positive counts and durations of at least one second", async () => {
+  initTheme("dark", false);
+  const app = await sdk([(pi) => registerTurn(pi, new Jobs(), () => undefined)]);
+  try {
+    const runner = app.session.extensionRunner;
+    const renderer = runner.getEntryRenderer("bruv-turn");
+    expect(renderer).toBeDefined();
+    for (const [data, numbers] of [
+      [{ scripts: 2, calls: 3, agents: 0, elapsedSeconds: 0 }, [2, 3]],
+      [{ scripts: 0, calls: 3, agents: 0, elapsedSeconds: 0.999, weekPercent: 0 }, [3]],
+      [{ scripts: 2, calls: 0, agents: 4, elapsedSeconds: 1, weekPercent: 5 }, [2, 4, 1, 5]],
+      [{ scripts: 0, calls: 0, agents: 0, elapsedSeconds: 0 }, []],
+    ] satisfies [TurnSummary, number[]][]) {
+      const rows = renderer?.(
+        { type: "custom", customType: "bruv-turn", id: "summary", parentId: null, timestamp: "", data },
+        { expanded: false },
+        runner.createContext().ui.theme,
+      )?.render(200);
+      const text = stripVTControlCharacters(rows?.join("") ?? "").trim();
+      expect(text ? text.split(" · ").map(Number.parseFloat) : []).toEqual(numbers);
+    }
+  } finally {
+    await app.close();
+  }
+});
 
 test("one summary counts scripts, nested calls and agents across continuations without entering context", async () => {
   const previous = process.env.BRUV_PI_COMMAND;

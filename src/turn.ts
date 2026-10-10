@@ -22,8 +22,11 @@ export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: Extensio
       const data = entry.data as TurnSummary;
       const seconds = data.elapsedSeconds;
       const elapsed = seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m${seconds % 60}s`;
-      const parts = [`${data.scripts} scripts`, `${data.calls} calls`, `${data.agents} agents`, elapsed];
-      if (data.weekPercent !== undefined) parts.push(`+${data.weekPercent}% week`);
+      const parts = (["scripts", "calls", "agents"] as const)
+        .filter((key) => data[key] > 0)
+        .map((key) => `${data[key]} ${key}`);
+      if (seconds >= 1) parts.push(elapsed);
+      if (data.weekPercent !== undefined && data.weekPercent > 0) parts.push(`+${data.weekPercent}% week`);
       return [truncateToWidth(theme.fg("dim", parts.join(" · ")), width)];
     },
   }));

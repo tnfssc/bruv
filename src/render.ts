@@ -52,7 +52,8 @@ function callLine(call: Call, theme: Theme) {
               : "";
   const failed = call.status === "error" || (call.exit !== undefined && call.exit !== 0);
   const mark = failed ? "✗" : call.status === "ok" ? "✓" : "…";
-  const time = call.durationMs === undefined ? "" : ` · ${+(call.durationMs / 1000).toFixed(1)}s`;
+  const time =
+    call.durationMs !== undefined && call.durationMs >= 1000 ? ` · ${+(call.durationMs / 1000).toFixed(1)}s` : "";
   const exit =
     call.exit !== undefined && call.exit !== 0 ? call.exit : /exit (?:code: ?)?(\d+)/i.exec(call.error ?? "")?.[1];
   return `${theme.fg(failed ? "error" : call.status === "ok" ? "success" : "dim", mark)} ${oneLine(call.name)}${target ? ` ${oneLine(target)}` : ""}${exit ? ` · exit ${exit}` : time}`;

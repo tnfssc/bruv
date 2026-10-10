@@ -19,6 +19,56 @@ test("JSON output becomes plain lines and unknown data stays intact", () => {
     expect(outputLines(value, false)).toEqual([value]);
 });
 
+test("nested call durations below one second are hidden for saved and live calls", async () => {
+  initTheme("dark", false);
+  const app = await sdk([registerRender]);
+  try {
+    const runner = app.session.extensionRunner;
+    const renderer = runner.resolveToolRenderers("codemode", () => undefined);
+    expect(renderer?.renderResult).toBeDefined();
+    const theme = runner.createContext().ui.theme;
+    for (const source of ["saved", "live"]) {
+      for (const name of ["read", "edit", "bash"]) {
+        for (const durationMs of [undefined, 0, 1, 499, 999, 1000, 1500]) {
+          const id = `${source}-${name}-${durationMs}`;
+          if (source === "live") {
+            await runner.emit({
+              type: "tool_execution_end",
+              toolCallId: id,
+              parentToolCallId: id,
+              toolName: name,
+              result: { content: [] },
+              isError: false,
+              durationMs,
+            });
+          }
+          for (const expanded of [false, true]) {
+            const rows = renderer
+              ?.renderResult?.(
+                {
+                  content: [],
+                  details: { calls: source === "saved" ? [{ id, name, args: "{}", status: "ok", durationMs }] : [] },
+                },
+                { expanded, isPartial: false },
+                theme,
+                { args: {}, toolCallId: id, expanded } as Parameters<NonNullable<ToolRenderers["renderResult"]>>[3],
+              )
+              .render(200)
+              .map(stripVTControlCharacters);
+            expect(rows).toHaveLength(1);
+            const fields = rows?.[0].trimEnd().split(" · ") ?? [];
+            const visible = durationMs !== undefined && durationMs >= 1000;
+            expect(fields).toHaveLength(visible ? 2 : 1);
+            if (visible) expect(fields[1]).toBe(`${durationMs / 1000}s`);
+          }
+        }
+      }
+    }
+  } finally {
+    await app.close();
+  }
+});
+
 test("codemode lists real nested calls, expands output and script, and restores saved calls", async () => {
   initTheme("dark", false);
   const jobs = new Jobs();
