@@ -6,6 +6,7 @@ import { registerFast } from "../src/fast";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerPrompt } from "../src/prompt";
+import { registerQuestions } from "../src/questions";
 import { registerSettle } from "../src/settle";
 import { registerUI } from "../src/ui";
 
@@ -17,6 +18,7 @@ export default async function bruv(pi: ExtensionAPI): Promise<void> {
   const isFast = registerFast(pi);
   registerAgents(pi, jobs, isFast);
   registerCodexCompaction(pi);
+  registerQuestions(pi);
   const goalPrompt = registerGoal(pi);
   registerPrompt(pi, goalPrompt);
   await registerCodemode(pi);
