@@ -1,0 +1,85 @@
+import { expect, test } from "bun:test";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
+import { registerAgents, resolveProfile } from "../src/agents";
+import { Jobs, registerJobs } from "../src/jobs";
+import { sdk } from "./sdk";
+
+test("profile fields fall back independently and calls take precedence", () => {
+  const parent = { model: "parent/model", thinking: "medium" };
+  const config = { profiles: { fast: { thinking: "low" as const } } };
+  expect(resolveProfile(config, "normal", parent, {})).toEqual(parent);
+  expect(resolveProfile(config, "fast", parent, {})).toEqual({ model: parent.model, thinking: "low" });
+  expect(resolveProfile(config, "fast", parent, { model: "override/model", thinking: "high" })).toEqual({
+    model: "override/model",
+    thinking: "high",
+  });
+});
+
+test("codemode starts a job, waits, and parses fake child agents", async () => {
+  const previous = process.env.BRUV_PI_COMMAND;
+  const previousDir = process.env.PI_CODING_AGENT_DIR;
+  process.env.BRUV_PI_COMMAND = resolve("tests/fixtures/pi-child.ts");
+  const jobs = new Jobs();
+  const app = await sdk([
+    (pi) => {
+      registerJobs(pi, jobs);
+      registerAgents(pi, jobs);
+    },
+  ]);
+  process.env.PI_CODING_AGENT_DIR = app.dir;
+  try {
+    app.faux.setResponses([
+      fauxAssistantMessage(
+        fauxToolCall("codemode", {
+          code: `
+        const job = await tools.job_start({command: "sleep 0.2; echo done", waitSeconds: 0});
+        const result = await tools.wait({ids: [job.id], all: true});
+        if (result.done[0].exitCode !== 0) throw new Error("job failed");
+        const {ids} = await tools.agent({prompts: ["one", "two"], model: "faux/selected", thinking: "low"});
+        return await tools.wait({ids, all: true});`,
+        }),
+        { stopReason: "toolUse" },
+      ),
+      (context) => {
+        const result = [...context.messages].reverse().find((message) => message.role === "toolResult");
+        expect(result?.role === "toolResult" && result.isError).toBe(false);
+        return fauxAssistantMessage("finished");
+      },
+    ]);
+    await app.session.prompt("go");
+    expect(jobs.list().map((item) => item.status)).toEqual(["done", "done", "done"]);
+    for (const id of ["a1", "a2"]) {
+      const result = jobs.result(jobs.get(id));
+      expect(result.usage).toEqual({ input: 7, output: 3, cost: 0.3 });
+      const answer = JSON.parse(result.answer as string);
+      expect(answer.depth).toBe("1");
+      expect(answer.cwd).toBe(app.dir);
+      expect(answer.args.slice(0, 2)).toEqual(["--mode", "json"]);
+      expect(answer.args[answer.args.indexOf("--model") + 1]).toBe("faux/selected");
+      expect(answer.args[answer.args.indexOf("--thinking") + 1]).toBe("low");
+      expect(answer.separator).toBe("one\u2028two");
+      expect(existsSync(result.sessionPath as string)).toBe(true);
+    }
+  } finally {
+    await app.close();
+    if (previous === undefined) delete process.env.BRUV_PI_COMMAND;
+    else process.env.BRUV_PI_COMMAND = previous;
+    if (previousDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
+    else process.env.PI_CODING_AGENT_DIR = previousDir;
+  }
+});
+
+test("child sessions do not register agent", async () => {
+  const previous = process.env.BRUV_DEPTH;
+  process.env.BRUV_DEPTH = "1";
+  const app = await sdk([(pi) => registerAgents(pi, new Jobs())]);
+  try {
+    expect(app.session.getAllTools().map((tool) => tool.name)).not.toContain("agent");
+  } finally {
+    await app.close();
+    if (previous === undefined) delete process.env.BRUV_DEPTH;
+    else process.env.BRUV_DEPTH = previous;
+  }
+});
