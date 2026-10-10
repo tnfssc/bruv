@@ -30,10 +30,24 @@ export function codexResponsesUrl(baseUrl: string) {
   return base.endsWith("/codex/responses") ? base : `${base}${base.endsWith("/codex") ? "" : "/codex"}/responses`;
 }
 
-function headersFor(captured: Record<string, string | null>, model: Model<string>, sessionId: string) {
+async function headersFor(captured: Record<string, string | null>, model: Model<string>, ctx: ExtensionContext) {
   const headers = new Headers(model.headers);
   for (const [name, value] of Object.entries(captured))
     value === null ? headers.delete(name) : headers.set(name, value);
+  if (!headers.has("Authorization") || !headers.has("chatgpt-account-id")) {
+    const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
+    if (auth.ok && auth.apiKey) {
+      try {
+        const claims = JSON.parse(Buffer.from(auth.apiKey.split(".")[1] ?? "", "base64url").toString("utf8"));
+        const accountId = claims["https://api.openai.com/auth"]?.chatgpt_account_id;
+        if (typeof accountId !== "string" || !accountId) throw new Error();
+        headers.set("Authorization", `Bearer ${auth.apiKey}`);
+        headers.set("chatgpt-account-id", accountId);
+      } catch {
+        throw new Error("Codex sign-in is invalid. Sign in again with /login.");
+      }
+    }
+  }
   if (!headers.has("Authorization") || !headers.has("chatgpt-account-id"))
     throw new Error("Codex sign-in headers are missing.");
   for (const name of [
@@ -51,7 +65,7 @@ function headersFor(captured: Record<string, string | null>, model: Model<string
   headers.set("accept", "text/event-stream");
   headers.set("content-type", "application/json");
   headers.set("OpenAI-Beta", "responses=experimental");
-  headers.set("session-id", sessionId);
+  headers.set("session-id", ctx.sessionManager.getSessionId());
   headers.set("x-client-request-id", randomUUID());
   return headers;
 }
@@ -239,7 +253,7 @@ export function registerCodexCompaction(
     try {
       const response = await (options.fetch ?? globalThis.fetch)(codexResponsesUrl(request.model.baseUrl), {
         method: "POST",
-        headers: headersFor(request.headers, request.model, ctx.sessionManager.getSessionId()),
+        headers: await headersFor(request.headers, request.model, ctx),
         body: JSON.stringify({
           ...payload,
           service_tier: "default",

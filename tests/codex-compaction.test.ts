@@ -32,7 +32,10 @@ const eventStream = (events: unknown[]) => {
     }),
   );
 };
-async function setup(fetch: (url: string, init: RequestInit) => Promise<Response>) {
+async function setup(
+  fetch: (url: string, init: RequestInit) => Promise<Response>,
+  requestHeaders: Record<string, string | null> = headers,
+) {
   let notices = 0;
   const app = await sdk([(pi) => registerCodexCompaction(pi, { fetch })], {
     notify: () => {
@@ -49,7 +52,7 @@ async function setup(fetch: (url: string, init: RequestInit) => Promise<Response
     baseUrl: "https://fixture.invalid/backend-api/codex/",
   });
   const runner = app.session.extensionRunner;
-  await runner.emitBeforeProviderHeaders(headers);
+  await runner.emitBeforeProviderHeaders(requestHeaders);
   await runner.emitBeforeProviderRequest(structuredClone(body));
   return { ...app, runner, notices: () => notices };
 }
@@ -182,4 +185,29 @@ test("Codex URL accepts each supported base path", () => {
   expect(codexResponsesUrl("")).toBe("https://chatgpt.com/backend-api/codex/responses");
   for (const suffix of ["", "/codex", "/codex/responses", "/codex/responses/"])
     expect(codexResponsesUrl(`https://fixture.invalid${suffix}`)).toBe("https://fixture.invalid/codex/responses");
+});
+
+test("compaction resolves Codex sign-in when the header event omits it", async () => {
+  const claims = { "https://api.openai.com/auth": { chatgpt_account_id: "account-782" } };
+  const apiKey = `test.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.test`;
+  let calls = 0;
+  const app = await setup(
+    async (_url, init) => {
+      calls++;
+      const sent = new Headers(init.headers);
+      expect(sent.get("Authorization")).toBe(`Bearer ${apiKey}`);
+      expect(sent.get("chatgpt-account-id")).toBe("account-782");
+      expect(sent.get("x-extra")).toBe(headers["x-extra"]);
+      return eventStream([{ type: "response.completed", response: { output: [item] } }]);
+    },
+    { "x-extra": headers["x-extra"] },
+  );
+  try {
+    app.runner.createContext().modelRegistry.registerProvider(app.faux.getModel().provider, { apiKey });
+    const result = await app.session.compact();
+    expect(result.details).toMatchObject({ strategy: "codex-native", item });
+    expect(calls).toBe(1);
+  } finally {
+    await app.close();
+  }
 });
