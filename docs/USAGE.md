@@ -18,7 +18,8 @@ Disable the old "bruv (not Claude)" provider.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
-- `/bruv-setup` turns on scripting for all tool calls; run `/reload` afterward.
+- `/status` switches between bruv's one-line footer and Pi's full footer with token and cache details.
+- `/bruv-setup` turns on scripting for all tool calls and a quiet start; run `/reload` afterward.
 
 Goal examples:
 
@@ -114,6 +115,12 @@ A notice offers the import once when Codex settings are found.
 
 ## What you see
 
+Tool calls fold into one dim line per stretch of work, like `7 tools called`. While the run is
+active it also says what the newest script is doing. Click the line to open every call in it, or
+press Ctrl+O to open all of them. The input has no frame: its prompt mark turns into a spinner while
+bruv works, and the footer is one line with the folder, branch, plan use, fast mode, context use
+and model.
+
 The terminal board shows every running job and agent, its elapsed time, and live agent tools and tokens.
 Finished rows show the result and worktree change totals (`+85 −3 · 4 files`). Only the three most
 recent finishes or those from the last 30 seconds stay visible; older rows fold into done, failed
@@ -122,6 +129,7 @@ old. Your next prompt also clears finished rows.
 Totals are counted once against the starting commit, including committed and uncommitted edits and new files.
 Titles shorten to leave room for totals and elapsed time.
 The footer shows usage, fast mode, goal, then agent cost, separated by ` · `. Only active parts appear.
+Cost appears only when you are not on a subscription.
 Script results list the tool calls and show plain output. Bash call rows show the first command line, cut to 60 columns.
 Expand a result to see the full script and output.
 When a check finds gaps, the finish result shows a red count and every gap, wrapped to fit,

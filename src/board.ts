@@ -39,6 +39,11 @@ export class WorkBoard {
   }
   invalidate() {}
   render(width: number) {
+    // Indent like the transcript above it.
+    return this.rows(Math.max(1, width - 1)).map((row) => ` ${row}`);
+  }
+
+  private rows(width: number) {
     const shown = visibleWork(this.items, this.now());
     if (!shown.length) return [];
     const rows = shown.map((item) => {

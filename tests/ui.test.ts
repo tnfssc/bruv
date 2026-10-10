@@ -141,7 +141,7 @@ test("board keeps running work, the latest three finishes and all recent finishe
     for (const item of running) expect(rows.some((row) => row.includes(item.id))).toBe(true);
     for (const id of ["j2", "j4", "j6"]) expect(rows.some((row) => row.includes(id))).toBe(true);
     expect(rows.at(-1)?.match(/\d+/g)?.map(Number)).toEqual([1, 2, 2]);
-    expect(board.render(80).at(-1)).toBe(theme.fg("dim", rows.at(-1) as string));
+    expect(board.render(80).at(-1)).toBe(` ${theme.fg("dim", (rows.at(-1) as string).slice(1))}`);
     now = 95000;
     rows = render();
     expect(rows).toHaveLength(9);

@@ -23,7 +23,7 @@ test("JSON output becomes plain lines and unknown data stays intact", () => {
 
 test("nested call durations below one second are hidden for saved and live calls", async () => {
   initTheme("dark", false);
-  const app = await sdk([registerRender]);
+  const app = await sdk([(pi) => void registerRender(pi)]);
   try {
     const runner = app.session.extensionRunner;
     const renderer = runner.resolveToolRenderers("codemode", () => undefined);

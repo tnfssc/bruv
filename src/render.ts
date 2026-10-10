@@ -36,30 +36,47 @@ export function outputLines(text: string, expanded: boolean): string[] {
       });
     });
 }
-function callLine(call: Call, theme: Theme) {
+/** The script's opening comment, which the prompt asks the model to write for the user. */
+export function scriptLabel(code: unknown): string | undefined {
+  if (typeof code !== "string") return undefined;
+  const match = /^\s*(?:\/\/|\/\*)\s*(.+?)\s*(?:\*\/)?\s*$/m.exec(code.split("\n").find((line) => line.trim()) ?? "");
+  return match ? oneLine(match[1]).slice(0, 120) : undefined;
+}
+
+function target(call: Call) {
   const args = call.arguments ?? {};
-  const target =
-    call.name === "agent" && call.ids
-      ? call.ids.join(", ")
-      : typeof args.path === "string"
-        ? args.path
-        : typeof args.command === "string"
-          ? truncateToWidth(plain(args.command).split(/\r\n|[\r\n]/)[0], 60, "…")
-          : Array.isArray(args.ids)
-            ? args.ids.join(", ")
-            : typeof args.id === "string"
-              ? args.id
-              : "";
+  return call.name === "agent" && call.ids
+    ? call.ids.join(", ")
+    : typeof args.path === "string"
+      ? args.path
+      : typeof args.command === "string"
+        ? truncateToWidth(plain(args.command).split(/\r\n|[\r\n]/)[0], 60, "…")
+        : Array.isArray(args.ids)
+          ? args.ids.join(", ")
+          : typeof args.id === "string"
+            ? args.id
+            : "";
+}
+
+function callLine(call: Call, theme: Theme) {
+  const where = target(call);
   const failed = call.status === "error" || (call.exit !== undefined && call.exit !== 0);
   const mark = failed ? "✗" : call.status === "ok" ? "✓" : "…";
   const time =
     call.durationMs !== undefined && call.durationMs >= 1000 ? ` · ${+(call.durationMs / 1000).toFixed(1)}s` : "";
   const exit =
     call.exit !== undefined && call.exit !== 0 ? call.exit : /exit (?:code: ?)?(\d+)/i.exec(call.error ?? "")?.[1];
-  return `${theme.fg(failed ? "error" : call.status === "ok" ? "success" : "dim", mark)} ${oneLine(call.name)}${target ? ` ${oneLine(target)}` : ""}${exit ? ` · exit ${exit}` : time}`;
+  return `${theme.fg(failed ? "error" : call.status === "ok" ? "success" : "dim", mark)} ${oneLine(call.name)}${where ? ` ${oneLine(where)}` : ""}${exit ? ` · exit ${exit}` : time}`;
 }
 
-export function registerRender(pi: ExtensionAPI) {
+export interface Scripts {
+  /** Nested calls made by a script so far. */
+  count(id: string): number;
+  /** What the script is doing: its opening comment, else its latest call. */
+  label(id: string, code: unknown): string | undefined;
+}
+
+export function registerRender(pi: ExtensionAPI): Scripts {
   const calls = new Map<string, Map<string, Call>>();
   const remember = (parent: string, call: Call) => {
     let list = calls.get(parent);
@@ -118,7 +135,11 @@ export function registerRender(pi: ExtensionAPI) {
       renderCall(args, theme, context) {
         if (!record(args) || typeof args.code !== "string")
           return fallback?.renderCall?.(args, theme, context) ?? new Text("", 0, 0);
-        return new Text(context.expanded ? plain(args.code) : theme.fg("toolTitle", "codemode"), 0, 0);
+        return new Text(
+          context.expanded ? plain(args.code) : theme.fg("toolTitle", scriptLabel(args.code) ?? "codemode"),
+          0,
+          0,
+        );
       },
       renderResult(result, options, theme, context) {
         const details = result.details as CodemodeToolDetails | undefined;
@@ -168,4 +189,12 @@ export function registerRender(pi: ExtensionAPI) {
       },
     };
   });
+  return {
+    count: (id) => calls.get(id)?.size ?? 0,
+    label(id, code) {
+      const latest = [...(calls.get(id)?.values() ?? [])].at(-1);
+      const where = latest && target(latest);
+      return scriptLabel(code) ?? (latest ? oneLine(`${latest.name}${where ? ` ${where}` : ""}`) : undefined);
+    },
+  };
 }

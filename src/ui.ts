@@ -83,7 +83,7 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
     if (!renderers) {
       renderers = true;
       for (const customType of ["bruv-report", "bruv-answer"]) {
-        pi.registerMessageRenderer(customType, (message, options) => {
+        pi.registerMessageRenderer(customType, (message, options, theme) => {
           const content =
             typeof message.content === "string"
               ? message.content
@@ -91,7 +91,12 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
                   .filter((block) => block.type === "text")
                   .map((block) => block.text)
                   .join("\n");
-          return new Text(options.expanded ? content : content.split("\n")[0], 0, 0);
+          if (options.expanded) return new Text(content, options.outputPad, 0);
+          const status = (message.details as { status?: Work["status"] } | undefined)?.status;
+          const mark = status && { running: "↗", done: "✓", failed: "✗", stopped: "■" }[status];
+          const color = status === "done" ? "success" : status === "failed" ? "error" : "dim";
+          const first = theme.fg("dim", content.split("\n")[0]);
+          return new Text(mark ? `${theme.fg(color, mark)} ${first}` : first, options.outputPad, 0);
         });
       }
       pi.registerToolRenderer((name, next) => {

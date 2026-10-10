@@ -1,12 +1,15 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Activity, registerActivity } from "../src/activity";
 import { registerAgents } from "../src/agents";
 import { registerCheck } from "../src/check";
 import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
+import { registerEditor } from "../src/editor";
 import { registerFast } from "../src/fast";
 import { registerFinish } from "../src/finish";
 import { registerFinishRender } from "../src/finish-render";
+import { registerFooter } from "../src/footer";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerNotifications } from "../src/notify";
@@ -21,8 +24,13 @@ import { registerUsage } from "../src/usage";
 
 export default function bruv(pi: ExtensionAPI): void {
   const jobs = new Jobs();
+  // Registered first so it wraps every other tool renderer.
+  const activity = new Activity();
+  registerActivity(pi, activity);
   registerUI(pi, jobs);
-  registerRender(pi);
+  activity.scripts = registerRender(pi);
+  registerEditor(pi);
+  registerFooter(pi);
   registerFinishRender(pi);
   registerNotifications(pi);
   registerSettle(pi, jobs, () => hasFinished());

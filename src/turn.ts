@@ -27,7 +27,7 @@ export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: Extensio
         .map((key) => `${data[key]} ${key}`);
       if (seconds >= 1) parts.push(elapsed);
       if (data.weekPercent !== undefined && data.weekPercent > 0) parts.push(`+${data.weekPercent}% week`);
-      return [truncateToWidth(theme.fg("dim", parts.join(" · ")), width)];
+      return [` ${truncateToWidth(theme.fg("dim", parts.join(" · ")), Math.max(0, width - 1))}`];
     },
   }));
   let hasReceipt = false;

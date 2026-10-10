@@ -219,6 +219,9 @@ bruv/
     board.ts              short work board and row display (~120)
     status.ts             shared footer parts (~30)
     render.ts             readable codemode calls and output (~200)
+    activity.ts           one line per run of tool calls, click to open (~200)
+    editor.ts             borderless input with the spinner in the prompt mark (~90)
+    footer.ts             one-line footer, /status, quiet start (~110)
     turn.ts               turn counts and non-context summary (~100)
     receipt.ts            completion receipt text (~50)
     finish-render.ts      finish results and receipt frame (~100)
@@ -244,7 +247,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 2,950 lines, including Codex import and review. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 3,350 lines, including Codex import, review and the terminal layout. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -660,6 +663,25 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
   the project folder name at settle or shutdown. Stop the title timer when idle.
 - While `wait` blocks in the TUI, set the working message to the pending IDs. Parallel waits share
   the message; completing or failing one wait leaves the other waits visible.
+- Terminal layout, ported from bruv 0.x with public Pi hooks only (`src/activity.ts`, `src/editor.ts`,
+  `src/footer.ts`):
+  - Consecutive tool calls show as one dim line, “N tools called”, counting nested script calls.
+    Prose, user messages, reports, summaries and `finish` start a new line. While the run is
+    active, the latest line adds what the newest script is doing: its opening comment (the
+    codemode prompt asks for one), else its latest call. Failed scripts add “· N failed”.
+    Clicking the line opens every call in it; Ctrl+O opens all. Lines are rebuilt from the
+    branch on session start and tree changes.
+  - The input has no borders. A prompt mark sits in a two-column gutter and becomes Pi's working
+    spinner; retries and compaction show their message on a line above. Pi reserves three rows
+    for the input, so blank rows go above it and the input sits on the footer. Keep an editor
+    installed by another extension.
+  - One-line footer: folder and branch, the `bruv` status, cost only when not on a subscription,
+    context percent (warning above 70, error above 90), other statuses as a count, and model and
+    thinking level on the right. Narrow terminals drop parts in a fixed order. `/status` switches
+    to Pi's full footer and back. The startup banner is hidden; `/bruv-setup` also sets
+    `quietStartup` so Pi skips its resource list.
+  - `finish` draws no call line, only its result. Reports and summaries are indented like the
+    transcript; collapsed reports start with a colored status mark.
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,
   bounded, seam, authority).
 

@@ -47,6 +47,7 @@ test("setup confirms, merges settings, and preserves other keys", async () => {
     ...original,
     defaultTools: ["+codemode"],
     codemode: { inlineBudget: 1200, mode: "only" },
+    quietStartup: true,
   });
 });
 

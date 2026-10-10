@@ -31,7 +31,7 @@ test("receipt frames counts, five checks and every gap within terminal width", a
           { content: [], details: { status: "done", receipt: data } },
           { expanded: false, isPartial: false },
           theme,
-          { args: {}, toolCallId: "receipt", expanded: false } as Parameters<
+          { args: {}, toolCallId: "receipt", expanded: false, outputPad: 0 } as Parameters<
             NonNullable<ToolRenderers["renderResult"]>
           >[3],
         )
@@ -71,7 +71,9 @@ test("finish wraps every gap, colors the count, and expands the raw note", async
           { content: [], details: { status, gaps: items, note } },
           { expanded, isPartial: false },
           theme,
-          { args: {}, toolCallId: "finish", expanded } as Parameters<NonNullable<ToolRenderers["renderResult"]>>[3],
+          { args: {}, toolCallId: "finish", expanded, outputPad: 0 } as Parameters<
+            NonNullable<ToolRenderers["renderResult"]>
+          >[3],
         )
         .render(40) ?? [];
     const rows = render("done");

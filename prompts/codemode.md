@@ -1,3 +1,5 @@
+Start every script with a short comment that says what it does in plain words, like the examples. The user sees it while the script runs.
+
 ```js
 // Read several files at once
 const [a, b] = await Promise.all([tools.read({ path: "src/a.ts" }), tools.read({ path: "src/b.ts" })]);
