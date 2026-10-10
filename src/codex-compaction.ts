@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { arch, platform, release } from "node:os";
 import { calculateCost, type Model, type Usage } from "@earendil-works/pi-ai";
-import { getPiUserAgent } from "@earendil-works/pi-ai/utils/pi-user-agent";
 import {
   type CompactionEntry,
   convertToLlm,
@@ -61,7 +61,7 @@ async function headersFor(captured: Record<string, string | null>, model: Model<
   ])
     headers.delete(name);
   headers.set("originator", "pi");
-  headers.set("User-Agent", getPiUserAgent());
+  headers.set("User-Agent", `pi (${platform()} ${release()}; ${arch()})`);
   headers.set("accept", "text/event-stream");
   headers.set("content-type", "application/json");
   headers.set("OpenAI-Beta", "responses=experimental");
