@@ -533,13 +533,13 @@ Port the essential behavior of `src/agent/native-compaction.ts` (read it with
 
 Only when `ctx.hasUI`.
 
-- Widget `bruv` above the editor: one line per running job or agent: `a2 Fix lint in foo.ts · 3m12s ·
-  edit`. Agent progress shows the last tool or current token count. Completed items show their
-  status and stay visible until the next prompt; hide them on the next widget update. Hide the
-  widget when no items remain.
-- This module sets only the total agent cost status. Fast and goal set their own status keys.
-- Update the widget on creation, completion, stop, session reset, and a one-second timer, never on
-  output chunks. Clear the widget, cost status, and timer at shutdown.
+- Only in TUI mode, widget `bruv` above the editor uses a component with one row per job or agent.
+  Running rows show a spinner, ID, title, agent tool and tokens, and elapsed time. Finished rows
+  show a green check, red failure mark, or dim stop mark, plus worktree changes counted once
+  against the starting commit, including new files without changing staging.
+- Finished rows stay until the next prompt. Truncate each row to terminal width using theme colors.
+- Animate every 100 ms while work runs; stop the timer when idle or disposed. Clear the widget
+  and agent cost status at shutdown. Fast and goal set their own status keys.
 - Register renderers only in UI sessions. `bruv-report` and `bruv-answer` show the first content
   line when collapsed and all content when expanded. `agent` and `wait` show one status line per
   item; expanded results include recent output or the final answer, output path, and session path.

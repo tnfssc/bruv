@@ -40,6 +40,9 @@ export interface Work extends Omit<Result, "output" | "elapsedSeconds"> {
   seen: boolean;
   stopped: boolean;
   progress?: string;
+  tokens?: number;
+  base?: string;
+  changes?: { added: number; removed: number; files: number };
   pid?: number;
   endedAt?: number;
   completion: Promise<void>;

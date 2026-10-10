@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { Jobs } from "../src/jobs";
-import { createWorktree } from "../src/worktree";
+import { createWorktree, worktreeChanges } from "../src/worktree";
 
 test("worktrees keep branches, run setup scripts, and report setup failure", async () => {
   mkdirSync(".tmp", { recursive: true });
@@ -31,6 +31,9 @@ test("worktrees keep branches, run setup scripts, and report setup failure", asy
     });
     expect(first.worktree).toEqual({ path: join(dir, ".bruv/worktrees/12345678-a1"), branch: "bruv/12345678-a1" });
     expect(readFileSync(join(first.worktree?.path as string, "setup.txt"), "utf8")).toBe("ready\n");
+    const path = first.worktree?.path as string;
+    expect(await worktreeChanges(path, first.base as string)).toEqual({ files: 1, added: 1, removed: 0 });
+    expect(execFileSync("git", ["diff", "--cached", "--name-only"], { cwd: path, encoding: "utf8" })).toBe("");
     const otherJobs = new Jobs();
     const other = otherJobs.create("agent", "other session", join(dir, "other-logs"));
     await otherJobs.run(other, async () => {

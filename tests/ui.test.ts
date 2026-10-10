@@ -1,15 +1,21 @@
-import { expect, test } from "bun:test";
+import { expect, spyOn, test } from "bun:test";
 import { fauxAssistantMessage } from "@earendil-works/pi-ai";
+import { initTheme } from "@earendil-works/pi-coding-agent";
+import type { Component } from "@earendil-works/pi-tui";
+import { visibleWidth } from "@earendil-works/pi-tui";
 import { agentParser } from "../src/agents";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerUI } from "../src/ui";
 import { sdk } from "./sdk";
 
-test.each([false, true])("work display follows UI availability (%s)", async (hasUI) => {
+test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its timer (%s)", async (mode) => {
+  initTheme("dark", false);
   const jobs = new Jobs();
-  const widgets: unknown[] = [];
-  const statuses: (string | undefined)[] = [];
-  let refreshed: (() => void) | undefined;
+  let board: (Component & { dispose?: () => void }) | undefined;
+  let renders = 0;
+  let widgets = 0;
+  const timers = spyOn(globalThis, "setInterval");
+  const cleared = spyOn(globalThis, "clearInterval");
   const app = await sdk(
     [
       (pi) => {
@@ -17,54 +23,50 @@ test.each([false, true])("work display follows UI availability (%s)", async (has
         registerJobs(pi, jobs);
       },
     ],
-    hasUI
-      ? {
-          setWidget: (_key, content) => {
-            widgets.push(content);
-            refreshed?.();
-          },
-          setStatus: (_key, content) => {
-            statuses.push(content);
-          },
-        }
-      : undefined,
+    {
+      setWidget: (_key, content) => {
+        widgets++;
+        board =
+          typeof content === "function"
+            ? content({ requestRender: () => renders++ } as never, app.session.extensionRunner.createContext().ui.theme)
+            : undefined;
+      },
+    },
+    undefined,
+    mode,
   );
   try {
-    const item = jobs.create("agent", "fixture", app.dir);
-    const updates = widgets.length;
+    const before = timers.mock.calls.length;
+    const item = jobs.create("agent", "界".repeat(100), app.dir);
     const parser = agentParser(jobs, item);
-    for (let i = 0; i < 10; i++) {
-      const chunk = `${JSON.stringify({ type: "tool_execution_start", toolName: "read" })}\n`;
-      jobs.append(item, chunk);
-      parser.push(chunk);
-    }
-    expect(widgets).toHaveLength(updates);
-    item.usage = { input: 1, output: 2, cost: 0.25 };
-    if (hasUI) {
-      await new Promise<void>((resolve) => {
-        refreshed = resolve;
-      });
-      expect(widgets.length).toBeGreaterThan(updates);
-      expect(widgets[widgets.length - 1]).toHaveLength(1);
-      expect(statuses[statuses.length - 1]).toBeDefined();
-      expect(app.session.extensionRunner.getMessageRenderer("bruv-report")).toBeDefined();
-      expect(app.session.extensionRunner.getMessageRenderer("bruv-answer")).toBeDefined();
-    }
-    await jobs.run(item, async () => 0);
-    if (hasUI) {
-      expect(widgets[widgets.length - 1]).toHaveLength(1);
+    parser.push(`${JSON.stringify({ type: "tool_execution_start", toolName: "read" })}\n`);
+    parser.push(`${JSON.stringify({ type: "message_update", usage: { input: 2, output: 3 } })}\n`);
+    expect(item.progress).toBe("read");
+    expect(item.tokens).toBe(5);
+    if (mode === "tui") {
+      expect(timers.mock.calls.length).toBe(before + 1);
+      const timer = timers.mock.results.at(-1)?.value;
+      const tick = timers.mock.calls.at(-1)?.[0] as () => void;
+      const previous = renders;
+      tick();
+      expect(renders).toBe(previous + 1);
+      expect(board?.render(30)).toHaveLength(1);
+      expect(visibleWidth((board as Component).render(30)[0])).toBeLessThanOrEqual(30);
+      await jobs.run(item, async () => 0);
+      expect(cleared.mock.calls.some(([value]) => value === timer)).toBe(true);
+      expect(board?.render(80)).toHaveLength(1);
       app.faux.setResponses([fauxAssistantMessage("ready")]);
       await app.session.prompt("next");
-      await new Promise<void>((resolve) => {
-        refreshed = resolve;
-      });
-      expect(widgets[widgets.length - 1]).toBeUndefined();
+      expect(board).toBeUndefined();
     } else {
-      expect(widgets).toEqual([]);
-      expect(statuses).toEqual([]);
+      await jobs.run(item, async () => 0);
+      expect(widgets).toBe(0);
+      expect(timers.mock.calls.length).toBe(before);
     }
   } finally {
+    for (const item of jobs.items.values()) if (item.status === "running") await jobs.run(item, async () => 0);
     await app.close();
+    timers.mockRestore();
+    cleared.mockRestore();
   }
-  if (hasUI) expect(statuses[statuses.length - 1]).toBeUndefined();
 });

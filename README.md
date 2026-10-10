@@ -65,6 +65,11 @@ The model calls these through `tools.<name>(...)` in Pi's scripting tool.
 - At the end of a turn, the model gets unseen results or one reminder to wait. Detached jobs do not cause reminders.
 - Work left running at the end of a turn reports with your next message. Closing Pi stops all jobs and agents.
 
+## What you see
+
+The terminal board shows each job and agent, its elapsed time, and live agent tools and tokens.
+Finished rows show the result and worktree change totals, and stay until your next prompt.
+
 ## Configuration
 
 Set agent profiles in `~/.pi/agent/bruv.json`:

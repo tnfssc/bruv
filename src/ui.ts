@@ -1,32 +1,87 @@
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { Text } from "@earendil-works/pi-tui";
-import type { Jobs, Result, Summary } from "./jobs";
+import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
+import { Text, truncateToWidth } from "@earendil-works/pi-tui";
+import type { Jobs, Result, Summary, Work } from "./jobs";
 
 const oneLine = (text: string) => text.replace(/[\r\n\t]+/g, " ");
 const duration = (seconds: number) => (seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m${seconds % 60}s`);
 const line = (item: Summary) => `${item.id} ${oneLine(item.title)} · ${item.status} · ${duration(item.elapsedSeconds)}`;
 
+export class WorkBoard {
+  private timer?: ReturnType<typeof setInterval>;
+  private frame = 0;
+  items: Work[] = [];
+  constructor(
+    private jobs: Jobs,
+    private theme: Theme,
+    private requestRender: () => void,
+  ) {}
+  update(items: Work[]) {
+    this.items = items;
+    if (items.some((item) => item.status === "running") && !this.timer) {
+      this.timer = setInterval(() => {
+        this.frame++;
+        this.requestRender();
+      }, 100);
+      this.timer.unref();
+    } else if (!items.some((item) => item.status === "running")) this.dispose();
+    this.requestRender();
+  }
+  dispose() {
+    clearInterval(this.timer);
+    this.timer = undefined;
+  }
+  invalidate() {}
+  render(width: number) {
+    return this.items.map((item) => {
+      const running = item.status === "running";
+      const mark = running
+        ? "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"[this.frame % 10]
+        : { running: "", done: "✓", failed: "✗", stopped: "■" }[item.status];
+      const color = running
+        ? "accent"
+        : item.status === "done"
+          ? "success"
+          : item.status === "failed"
+            ? "error"
+            : "dim";
+      const parts = [this.theme.fg(color, mark), item.id, oneLine(item.title)];
+      if (running && item.kind === "agent") {
+        if (item.progress) parts.push(oneLine(item.progress));
+        parts.push(`${item.tokens ?? (item.usage?.input ?? 0) + (item.usage?.output ?? 0)} tokens`);
+      }
+      if (!running && item.changes) {
+        const { added, removed, files } = item.changes;
+        parts.push(`+${added} −${removed}`, `${files} files`);
+      }
+      parts.push(this.theme.fg("dim", duration(this.jobs.summary(item).elapsedSeconds)));
+      return truncateToWidth(parts.join(" · "), width);
+    });
+  }
+}
+
 export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
   let ctx: ExtensionContext | undefined;
   let renderers = false;
-  let lastPromptAt = 0;
-  let timer: ReturnType<typeof setInterval> | undefined;
+  const hidden = new Set<Work>();
+  let board: WorkBoard | undefined;
   const update = () => {
-    if (!ctx?.hasUI) return;
-    const visible = jobs
-      .list()
-      .filter((item) => item.status === "running" || (jobs.get(item.id).endedAt ?? 0) > lastPromptAt);
-    ctx.ui.setWidget(
-      "bruv",
-      visible.length
-        ? visible.map((item) => {
-            if (item.status !== "running") return line(item);
-            const progress = jobs.get(item.id).progress;
-            return `${item.id} ${oneLine(item.title)} · ${duration(item.elapsedSeconds)}${progress ? ` · ${oneLine(progress)}` : ""}`;
-          })
-        : undefined,
-      { placement: "aboveEditor" },
-    );
+    if (!ctx?.hasUI || ctx.mode !== "tui") return;
+    const visible = [...jobs.items.values()].filter((item) => !hidden.has(item));
+    if (!visible.length) {
+      board?.dispose();
+      board = undefined;
+      ctx.ui.setWidget("bruv", undefined);
+    } else if (board) board.update(visible);
+    else
+      ctx.ui.setWidget(
+        "bruv",
+        (tui, theme) => {
+          board = new WorkBoard(jobs, theme, () => tui.requestRender());
+          board.update(visible);
+          return board;
+        },
+        { placement: "aboveEditor" },
+      );
     const cost = [...jobs.items.values()].reduce((sum, item) => sum + (item.usage?.cost ?? 0), 0);
     ctx.ui.setStatus(
       "bruv-agents",
@@ -35,10 +90,11 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
   };
   jobs.listeners.add(update);
   pi.on("session_start", (_event, context) => {
-    clearInterval(timer);
+    board?.dispose();
+    board = undefined;
     ctx = context;
-    lastPromptAt = 0;
-    if (!ctx.hasUI) return;
+    hidden.clear();
+    if (!ctx.hasUI || ctx.mode !== "tui") return;
     if (!renderers) {
       renderers = true;
       for (const customType of ["bruv-report", "bruv-answer"]) {
@@ -86,15 +142,15 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
         };
       });
     }
-    timer = setInterval(update, 1000);
-    timer.unref();
     update();
   });
   pi.on("before_agent_start", () => {
-    lastPromptAt = Date.now();
+    for (const item of jobs.items.values()) if (item.status !== "running") hidden.add(item);
+    update();
   });
   pi.on("session_shutdown", () => {
-    clearInterval(timer);
+    board?.dispose();
+    board = undefined;
     if (ctx?.hasUI) {
       ctx.ui.setWidget("bruv", undefined);
       ctx.ui.setStatus("bruv-agents", undefined);

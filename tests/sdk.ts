@@ -7,6 +7,7 @@ export async function sdk(
   extensionFactories: Pi.ExtensionFactory[],
   ui?: Partial<Pi.ExtensionUIContext>,
   cwd?: string,
+  mode: Pi.ExtensionContext["mode"] = "rpc",
 ) {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/sdk-"));
@@ -46,7 +47,7 @@ export async function sdk(
     sessionManager: Pi.SessionManager.create(cwd ?? dir, dir),
   });
   await session.bindExtensions({
-    mode: "rpc",
+    mode,
     uiContext: ui ? { ...session.extensionRunner.createContext().ui, ...ui } : undefined,
   });
   return {

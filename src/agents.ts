@@ -5,7 +5,7 @@ import type { ExtensionAPI, ExtensionContext, JsonAgentSessionEvent } from "@ear
 import { type Static, Type } from "typebox";
 import { type Config, readConfig } from "./config";
 import { type Jobs, toolResult, type Work, workDirectory } from "./jobs";
-import { createWorktree } from "./worktree";
+import { createWorktree, worktreeChanges } from "./worktree";
 
 export function resolveProfile(
   config: Config,
@@ -30,7 +30,9 @@ export function agentParser(jobs: Jobs, item: Work) {
     if (!line.trim()) return;
     const value = JSON.parse(line) as JsonAgentSessionEvent | { type: "session" };
     if (value.type === "tool_execution_start") item.progress = value.toolName;
-    if (value.type === "message_update") item.progress = `${value.usage.input + value.usage.output} tokens`;
+    if (value.type === "tool_execution_end") item.progress = undefined;
+    if (value.type === "message_update")
+      item.tokens = usage.input + usage.output + value.usage.input + value.usage.output;
     if (value.type === "message_end" && value.message.role === "assistant") {
       const message = value.message;
       item.answer = message.content
@@ -40,6 +42,7 @@ export function agentParser(jobs: Jobs, item: Work) {
       usage.input += message.usage.input;
       usage.output += message.usage.output;
       usage.cost += message.usage.cost.total;
+      item.tokens = usage.input + usage.output;
       failed ||= message.stopReason === "error" || message.stopReason === "aborted";
       if (message.errorMessage) jobs.append(item, `\n${message.errorMessage}\n`);
     }
@@ -102,21 +105,31 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
       item.sessionPath = sessionPath;
       const parser = agentParser(jobs, item);
       void jobs.run(item, async () => {
-        let cwd = ctx.cwd;
-        if (args.worktree) {
-          const options = typeof args.worktree === "object" ? { ...args.worktree } : {};
-          if (options.branch && prompts.length > 1) options.branch += `-${index + 1}`;
-          cwd = (await createWorktree(jobs, item, cwd, ctx.sessionManager.getSessionId(), options)).path;
+        try {
+          let cwd = ctx.cwd;
+          if (args.worktree) {
+            const options = typeof args.worktree === "object" ? { ...args.worktree } : {};
+            if (options.branch && prompts.length > 1) options.branch += `-${index + 1}`;
+            cwd = (await createWorktree(jobs, item, cwd, ctx.sessionManager.getSessionId(), options)).path;
+          }
+          const command = ["--mode", "json", "--session", sessionPath, "--append-system-prompt", promptPath];
+          if (selected.model) command.push("--model", selected.model);
+          if (selected.thinking) command.push("--thinking", selected.thinking);
+          command.push("--", prompt);
+          const code = await jobs.process(item, process.env.BRUV_PI_COMMAND ?? "pi", command, cwd, {
+            env: { ...process.env, BRUV_DEPTH: "1", BRUV_FAST: isFast() ? "1" : undefined },
+            stdout: parser.push,
+          });
+          return parser.finish() ? 1 : code;
+        } finally {
+          if (item.worktree) {
+            try {
+              item.changes = await worktreeChanges(item.worktree.path, item.base as string);
+            } catch (error) {
+              jobs.append(item, `\nCould not count changes: ${String(error)}\n`);
+            }
+          }
         }
-        const command = ["--mode", "json", "--session", sessionPath, "--append-system-prompt", promptPath];
-        if (selected.model) command.push("--model", selected.model);
-        if (selected.thinking) command.push("--thinking", selected.thinking);
-        command.push("--", prompt);
-        const code = await jobs.process(item, process.env.BRUV_PI_COMMAND ?? "pi", command, cwd, {
-          env: { ...process.env, BRUV_DEPTH: "1", BRUV_FAST: isFast() ? "1" : undefined },
-          stdout: parser.push,
-        });
-        return parser.finish() ? 1 : code;
       });
       return item.id;
     });
