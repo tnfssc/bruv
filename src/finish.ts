@@ -3,6 +3,7 @@ import { type Static, Type } from "typebox";
 import type { Checker } from "./check";
 import { type Config, readConfig, saveConfig } from "./config";
 import { toolResult } from "./jobs";
+import { receiptLines } from "./receipt";
 import type { TurnSummary } from "./turn";
 
 const parameters = Type.Object({
@@ -29,6 +30,10 @@ const output = Type.Object({
   ),
 });
 export type FinishResult = Static<typeof output>;
+function result(data: FinishResult) {
+  const text = data.receipt ? receiptLines(data.receipt).join("\n") : (data.note ?? data.status);
+  return { ...toolResult(data), content: [{ type: "text" as const, text }] };
+}
 
 export function registerFinish(
   pi: ExtensionAPI,
@@ -65,7 +70,7 @@ export function registerFinish(
       async execute(_id, args, signal, _update, ctx) {
         if (active && args.status === "done") {
           const retry = await check?.run(ctx, signal);
-          if (retry) return toolResult({ status: args.status, ...retry });
+          if (retry) return result({ status: args.status, ...retry });
         }
         signal?.throwIfAborted();
         finished = true;
@@ -75,7 +80,7 @@ export function registerFinish(
           ...args,
           ...(report && counts ? { receipt: { ...structuredClone(report), ...counts } } : {}),
         };
-        return { ...toolResult(args), details: data, structuredContent: data, terminate: true };
+        return { ...result(data), terminate: true };
       },
     });
   };

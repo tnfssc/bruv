@@ -126,7 +126,8 @@ Expand a finish result to see its raw note too.
 An accepted checked finish shows a framed receipt in its tool result with your request, up to five things the fresh agent
 actually checked, any remaining gaps, changed files and line totals, elapsed time, calls, agents,
 and any increase in weekly plan use. Failed checks say “Check didn't complete.” The receipt
-appears once, with no separate after-run entry. T3/RPC has no visible receipt yet.
+appears once, with no separate after-run entry. T3/RPC receives the same receipt as plain text
+in the finish tool result. Gap results also carry the full list as plain text. Both enter model context.
 Other runs with tools get a dim summary line with counts, elapsed time and weekly plan use.
 While working, the terminal title spins; waiting shows which agents or jobs are pending.
 In supported terminals, a desktop notification and bell announce runs longer than 30 seconds,

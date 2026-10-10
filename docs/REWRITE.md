@@ -375,7 +375,7 @@ so scripts get objects, not text.
 
 | Tool | Exposure | Input | Output |
 |---|---|---|---|
-| `finish` | model-only while keep-going or a goal is active; hidden otherwise | `{ status: "done" \| "need_you" \| "blocked", note?: string }` | Same fields; gaps return a note to keep working, accepted finishes return `terminate: true` |
+| `finish` | model-only while keep-going or a goal is active; hidden otherwise | `{ status: "done" \| "need_you" \| "blocked", note?: string }` | Status and note, plus gap list or receipt details; text carries the gaps or receipt, accepted finishes return `terminate: true` |
 | `job_start` | codemode | `{ command: string, cwd?: string, title?: string, waitSeconds?: number = 3, timeoutSeconds?: number, detach?: boolean }` | `{ id, status: "running" \| "done" \| "failed" \| "stopped", exitCode?, output, outputPath }` |
 | `agent` | codemode | `{ prompt?: string, prompts?: string[], profile?: "fast" \| "normal" = "normal", model?: string, thinking?: string, worktree?: boolean \| { branch?: string, baseRef?: string }, title?: string }` | `{ ids: string[] }` |
 | `wait` | codemode | `{ ids?: string[], all?: boolean = false, timeoutSeconds?: number = 600 }` | `{ done: Result[], running: Summary[], userMessagePending: boolean }` |
@@ -644,7 +644,9 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
   time, calls, agents, weekly use change, the first request line (70 chars),
   up to five checked items, every unfixed gap, and changed file/insertion/deletion totals from
   Git shortstat against the snapshot, including new files. Failed checks show “Check didn't
-  complete.” RPC has no visible fallback yet.
+  complete.” The result content carries the plain-text receipt in every mode, including T3/RPC
+  and model context. Gap results carry the full gap list as text too; structured fields remain
+  available to the terminal renderer.
 - In interactive TUI mode on a real stdout TTY, notify with OSC 777 or Kitty OSC 99 plus BEL
   after non-aborted runs longer than 30 seconds settle, and when
   an active goal completes or stops. Use `bruv` as the title and one short body line. Strip terminal

@@ -174,6 +174,19 @@ test("two gaps continue, the third finish accepts them, and a new message resets
     await app.session.prompt("request-781");
     expect(app.faux.state.callCount).toBe(3);
     expect(app.children()).toHaveLength(2);
+    const gapResults = app.session.messages
+      .filter((message) => message.role === "toolResult")
+      .filter((message) => message.toolName === "finish")
+      .slice(0, 2);
+    expect(gapResults).toHaveLength(2);
+    for (const message of gapResults) {
+      const text = message.content
+        .filter((block) => block.type === "text")
+        .map((block) => block.text)
+        .join("\n");
+      expect(text.split("\n")).toContain("- missing-781");
+      expect(message.details).toMatchObject({ gaps: ["missing-781"] });
+    }
     expect(app.check()?.gaps).toEqual(["missing-781"]);
     expect(app.receipts()[0].gaps).toEqual(["missing-781"]);
     app.fixture({ answer: answer() });
@@ -296,7 +309,7 @@ test("abort during the check stops its child and does not accept finish", async 
   }
 });
 
-test("accepted checks appear once in finish results and replace the turn entry", async () => {
+test("RPC receives the receipt in the finish result once and the next model request sees it", async () => {
   const app = await setup();
   try {
     app.faux.setResponses([
@@ -305,7 +318,22 @@ test("accepted checks appear once in finish results and replace the turn entry",
         return finish();
       },
     ]);
+    const rpcResults: string[] = [];
+    app.session.subscribe((event) => {
+      if (event.type === "tool_execution_end" && event.toolName === "finish")
+        rpcResults.push(
+          event.result.content
+            .filter((block: { type: string }) => block.type === "text")
+            .map((block: { text: string }) => block.text)
+            .join("\n"),
+        );
+    });
+    expect(app.session.extensionRunner.createContext().mode).toBe("rpc");
     await app.session.prompt("receipt-request-781");
+    expect(rpcResults).toHaveLength(1);
+    for (const value of ["receipt-request-781", "used-781"]) expect(rpcResults[0]).toContain(value);
+    expect(rpcResults[0].split("\n").length).toBeGreaterThan(3);
+    expect(() => JSON.parse(rpcResults[0])).toThrow();
     expect(app.receipts()).toHaveLength(1);
     expect(app.receipts()[0]).toMatchObject({
       asked: "receipt-request-781",
@@ -323,8 +351,20 @@ test("accepted checks appear once in finish results and replace the turn entry",
         .getBranch()
         .some((entry) => entry.type === "custom" && entry.customType === "bruv-receipt"),
     ).toBe(false);
-    app.faux.setResponses([finish()]);
+    let nextText = "";
+    app.faux.setResponses([
+      (context) => {
+        nextText = context.messages
+          .filter((message) => message.role === "toolResult")
+          .flatMap((message) => message.content)
+          .filter((block) => block.type === "text")
+          .map((block) => block.text)
+          .join("\n");
+        return finish();
+      },
+    ]);
     await app.session.prompt("next");
+    expect(nextText).toContain(rpcResults[0]);
     expect(app.receipts()).toHaveLength(1);
     expect(
       app.session.sessionManager
