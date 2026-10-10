@@ -3,7 +3,7 @@ import { enableJobResponseAcknowledgement, JOB_RESPONSE_ACK_EVENT, withJobReques
 import type { ChildProcess } from "node:child_process";
 import { Duplex } from "node:stream";
 import { recordDiagnostic } from "../diagnostics";
-import type { GoalUpdateInput } from "../goals/types";
+import type { GoalSetInput, GoalUpdateInput } from "../goals/types";
 
 export const JOB_BRIDGE_DIAGNOSTIC_CODES = [
   "request_blocked",
@@ -98,7 +98,7 @@ export interface ExecuteJobGlobals {
   };
   goal: {
     get(): Promise<unknown>;
-    set(input: { objective: string; criteria: string[]; constraints: string[] }): Promise<unknown>;
+    set(input: GoalSetInput): Promise<unknown>;
     update(input: GoalUpdateInput): Promise<unknown>;
     clear(): Promise<unknown>;
   };

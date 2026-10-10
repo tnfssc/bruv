@@ -62,7 +62,14 @@ class ParentQuestionContinuations {
     this.continuationPending = false;
     this.epoch++;
     this.queued.clear();
+    // A later human turn may ask new questions, but it does not reauthorize
+    // automatic delivery of answers owned by the interrupted work.
+    this.createdHere.clear();
     this.changed();
+  }
+
+  humanTurnAccepted() {
+    this.stopped = false;
   }
 
   treeNavigated() {
@@ -85,7 +92,7 @@ class ParentQuestionContinuations {
   }
 
   questionCreated(question: Question) {
-    this.createdHere.add(question.id);
+    if (!this.stopped) this.createdHere.add(question.id);
   }
 
   private replyKey(q: Question) {
@@ -278,6 +285,7 @@ export function registerQuestionRuntime(
   const service = new QuestionService();
   let remoteBridge: RemoteQuestionBridge | undefined;
   let nativeManager: object | undefined;
+  let lastStopReason: string | undefined;
   const supported = () =>
     options.supported() || (nativeManager !== undefined && nativeManager === continuations.context?.sessionManager);
   const listeners = new Set<() => void>();
@@ -319,6 +327,7 @@ export function registerQuestionRuntime(
   };
   pi.on("session_start", async (_event, ctx) => {
     attach(ctx, true);
+    lastStopReason = undefined;
     if (supported()) {
       try {
         await remoteBridge?.sync(ctx);
@@ -332,17 +341,31 @@ export function registerQuestionRuntime(
     continuations.pause();
     attach(ctx, true);
     continuations.treeNavigated();
+    lastStopReason = undefined;
+  });
+  pi.on("input", (event, ctx) => {
+    if (event.source !== "extension" && attach(ctx)) continuations.humanTurnAccepted();
   });
   pi.on("before_agent_start", (_event, ctx) => {
     if (attach(ctx)) continuations.agentStarted();
   });
+  pi.on("agent_start", (_event, ctx) => {
+    // Saved-answer turns enter through sendMessage and skip before_agent_start.
+    if (attach(ctx)) continuations.agentStarted();
+    lastStopReason = undefined;
+  });
   pi.on("agent_end", (event, ctx) => {
     if (!attach(ctx)) return;
     const last = [...event.messages].reverse().find((message) => message.role === "assistant");
-    if (ctx.signal?.aborted || last?.stopReason === "aborted" || last?.stopReason === "error") continuations.pause();
+    lastStopReason = last?.stopReason;
+    if (ctx.signal?.aborted || last?.stopReason === "aborted") continuations.pause();
   });
-  pi.on("agent_settled", (_event, ctx) => {
-    if (attach(ctx)) continuations.flush();
+  pi.on("agent_settled", (event, ctx) => {
+    if (!attach(ctx)) return;
+    // Pi emits agent_end before automatic retries. Keep queued replies while
+    // recovery is possible; only final failure or Stop revokes their delivery.
+    if (event.aborted || ctx.signal?.aborted || lastStopReason === "error") continuations.pause();
+    else continuations.flush();
   });
   pi.on("session_shutdown", () => {
     nativeManager = undefined;
@@ -362,6 +385,11 @@ export function registerQuestionRuntime(
       changed();
     },
     pause: () => continuations.pause(),
+    /** Explicit human work commands can start turns without a Pi input event. */
+    acceptHumanWork(ctx: ExtensionContext) {
+      if (!attach(ctx)) throw new Error("Question session is no longer active.");
+      continuations.humanTurnAccepted();
+    },
     hasBlockingQuestions: () => continuations.hasBlockingQuestions(),
     async handle(ctx: ExtensionContext, method: string, params: unknown) {
       if (!attach(ctx)) throw new Error("Question session is no longer active.");

@@ -248,6 +248,10 @@ test("runner isolates replay environment, pins artifacts, merges proof and remov
   assert.equal(r.cleanup.integratedReplayPassed, true);
   assert.equal(r.invocation.connectorSha256, r.artifactHash);
   assert.equal(r.invocation.normalRuntimeSha256, r.artifactHash);
+  assert.equal(
+    r.replay.config.env.BRUV_CLAUDE_COMPAT_BRUV_PATH,
+    path.join(path.dirname(r.replay.config.env.HOME), "actual-runtime"),
+  );
   assert.equal(r.replay.env.ANTHROPIC_API_KEY, undefined);
   assert.equal(r.replay.env.TEST_RECORDS, undefined);
   assert.equal(r.replay.env.T3_UPSTREAM, "owned-upstream");

@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test";
+import type { AssistantMessage } from "@earendil-works/pi-ai/compat";
 import { createEventBus } from "@earendil-works/pi-coding-agent";
 import tasksExtension from "../../src/agent/extension";
 import liveExtension from "../../src/live/extension";
@@ -92,7 +93,20 @@ test("shared task host remains separate; Live refuses a missing main owner inste
         { type: "thinking", thinking: "private" },
         { type: "text", text: "Finished coding" },
       ],
-    },
+      api: "anthropic-messages",
+      provider: "offline",
+      model: "fixture",
+      timestamp: Date.now(),
+      stopReason: "stop",
+      usage: {
+        input: 0,
+        output: 0,
+        cacheRead: 0,
+        cacheWrite: 0,
+        totalTokens: 0,
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+      },
+    } satisfies AssistantMessage,
   });
   await fire("turn_end");
   expect(updates).toEqual(["assistant", "turn_end"]);

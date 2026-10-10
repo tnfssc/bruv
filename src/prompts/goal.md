@@ -1,9 +1,7 @@
-- Goal API:
-  - goal.get()
-  - goal.set({objective, criteria, constraints})
-  - goal.update({status, progress?, evidence?, blocker?, reason?})
-  - goal.clear()
-- Goals are opt-in and durable.
+- Keep working toward the saved objective and its criteria. Recent user messages steer that work; a question or status request does not cancel the goal. Answer briefly, then continue useful work.
 - Before recording progress, check what actually changed. Don't count old evidence again.
-- Check each criterion. All met? Mark completed. Show proof.
-- Need something you can't supply? Mark blocked. Say what would unblock it.
+- Check the objective and each criterion. All met? Use goal.update({status: "completed", evidence: "..."}) with verified results. A partial result or nearly exhausted budget is not completion.
+- Stuck on an external dependency? Explain the blocker with goal.update({status: "blocked", blocker: "..."}). The runtime keeps the goal active until the same blocker recurs for three consecutive goal turns with no useful work left. Count the original turn and continuations. Try available alternatives during that audit. Changed circumstances, checked progress, user steering, and resume start a fresh audit.
+- Pause only when the user explicitly asks to pause or stop. Normal steering, questions, retries, and turns without a progress milestone do not pause a goal. Progress updates are useful records, not keepalives.
+- Goals are opt-in and durable. Create one only when the user explicitly requests a persistent goal. Do not silently replace an unfinished goal; clear it first when the user asks to abandon or replace it.
+- Set tokenBudget only when the user explicitly supplies a positive integer budget. Runtime owns tokensUsed, waiting, pendingJobIds, and budget_exceeded. Usage covers provider-reported input, output, and cache tokens for this agent's turns, not delegated work. Report saved usage when finishing a budgeted goal. The user controls budget changes and resume; do not bypass an exhausted budget.

@@ -41,6 +41,12 @@
   - Server-scoped native task IDs support list/inspect/stop. They reject input, closeInput, snooze, and setWatch. Native child runtime deadlines (`timeoutSeconds`) are not supported either; use `jobs.stop(id)` to cancel the child subtree. Local shell/CLI timeouts still work.
 - Execution cancelled? Jobs already started with shell() or subagent() may still run. jobs.list() shows their state.
 - Helpers return values, not printed output. Want see result? Use console.log.
+- Goal API (inside execute):
+  - `await goal.get()` — Read the saved goal or null.
+  - `await goal.set({objective, criteria?, constraints?, tokenBudget?})` — Start a persistent goal only when the user explicitly requests one. Ordinary tasks do not create goals. Criteria and constraints are optional string arrays. Set a positive integer tokenBudget only if the user explicitly supplies it. An unfinished goal must be cleared before replacement.
+  - `await goal.update({status, progress?, evidence?, blocker?, reason?})` — Record checked progress with active, verified completion with completed and evidence, or the same external blocker across three consecutive goal turns with blocked and blocker. Runtime keeps earlier blocker reports active. Use paused only for an explicit user pause/stop request. No progress keepalive is needed; normal user steering and questions keep the goal alive.
+  - `await goal.clear()` — Clear the saved goal when the user asks to abandon or replace it.
+  - Runtime owns tokensUsed, waiting, pendingJobIds, and budget_exceeded. User commands control resume and budget changes; agent updates cannot bypass them.
 - Questions (parent CLI session):
   - `await questions.ask({text, dedupKey?, choices?, allowFreeText?, requester?, taskIds?, reason?})` saves a question and returns at once. Work that does not need it may continue. Reuse a short explicit dedup key for retries. Choices are strings; free text is allowed unless false.
   - `await questions.list()` and `await questions.get(id)` read saved state. Keep the returned ID, owner and version for mutations.

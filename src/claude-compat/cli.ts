@@ -217,7 +217,7 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
       changePermissionMode: setMode,
       mcp,
       extensionFactories: mcp ? [{ name: "bruv-native-mcp", factory: mcpFactory(mcp), hidden: true }] : [],
-      tools: policy.tools ?? ["execute", ...(mcp?.tools().map((t) => t.name) ?? [])],
+      tools: policy.tools,
       disableHooks: policy.disableHooks,
       disableSlashCommands: args.disableSlashCommands,
       thinkingLevel: (normalWorker?.thinking ??

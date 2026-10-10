@@ -29,6 +29,12 @@ import { createClaudeCompatLiveFrontend } from "./live-frontend";
 import type { InjectedMcpSession } from "./mcp";
 import { nativeAssistantCost, nativeAssistantUsage } from "./message-usage";
 import type { PermissionDecision, PermissionRequest } from "./permissions";
+import {
+  assertNativeThinkingDisplay,
+  NATIVE_PERMISSION_GUIDANCE,
+  nativeDefaultTools,
+  nativeToolRegistry,
+} from "./selection";
 import { bindNativeTasks } from "./task-binding";
 import { writeNativeChildFrame } from "./task-child-journal";
 import type { ClaudeCompatTransport } from "./transport";
@@ -64,7 +70,7 @@ export interface ClaudeCompatRuntimeOptions {
   appendSystemPrompt?: string[];
   /** Parent-owned protocol integrations (e.g. external MCP), loaded by the same Pi runtime. */
   extensionFactories?: InlineExtension[];
-  /** Exact Pi tool names; defaults to Bruv execute. Auxiliary always uses an empty allowlist. */
+  /** Exact Pi tool allowlist; inferred defaults follow the permission mode. Auxiliary stays tool-free. */
   tools?: string[];
   /** Isolated, in-memory, tool-free session for native -p JSON generation. */
   auxiliary?: boolean;
@@ -255,14 +261,7 @@ export async function preflightClaudeCompatModel(options: ClaudeCompatRuntimeOpt
         initialModel.provider +
         ". Configure it with ordinary Bruv in the explicitly selected BRUV_CLAUDE_COMPAT_HOME; do not use T3 Claude login.",
     );
-  if (
-    options.thinkingDisplay === "summarized" &&
-    initialModel.reasoning &&
-    !["anthropic-messages", "openai-responses", "openai-codex-responses", "azure-openai-responses"].includes(
-      initialModel.api,
-    )
-  )
-    throw new Error("Thinking summaries are unsupported for this reasoning API");
+  assertNativeThinkingDisplay(initialModel, options.thinkingDisplay);
   return { settings, models, initialModel, resolveModel };
 }
 
@@ -329,6 +328,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   const lifetime = new AbortController();
   let toolTurn = new AbortController();
   let session!: AgentSession;
+  let nativeGoal: import("../goals/extension").GoalRuntime | undefined;
+  let stopForegroundWork: ((reason?: string) => void) | undefined;
   const frontend = createClaudeCompatFrontend({
     emit: async (frame) => {
       if (frame.type === "result") {
@@ -343,6 +344,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     omitThinking: options.thinkingDisplay === "omitted",
     auxiliary: options.auxiliary,
     diagnostic: options.diagnostic,
+    goal: () => nativeGoal?.get(),
+    continueGoal: () => nativeGoal?.hasPendingContinuation() ?? false,
     initialization: () => {
       const selectedModel = session.model;
       if (!selectedModel) throw new Error("Native session has no selected model");
@@ -364,6 +367,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   });
   const rootUserMessages = new WeakSet<object>();
   let nativeFast: ReturnType<typeof import("../agent/native-fast-mode").registerNativeFastMode> | undefined;
+  let nativeLive: ReturnType<typeof createClaudeCompatLiveFrontend> | undefined;
   let factories: { name: string; factory: ExtensionFactory; hidden: boolean }[] = [];
   if (!options.auxiliary) {
     const [{ default: tasks }, { default: state }, { default: remote }] = await Promise.all([
@@ -371,6 +375,12 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       import("../herdr-agent-state"),
       import("../remote/extension"),
     ]);
+    nativeLive = createClaudeCompatLiveFrontend({
+      localAudio: options.localAudio,
+      humanChoices: !!options.request,
+      request: options.request,
+      notify: (text, level) => frontend.notice(text, level),
+    });
     factories = [
       {
         name: "bruv-tools",
@@ -378,6 +388,34 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           tasks(pi, {
             executablePath: options.executablePath,
             profilesPath: options.profilesPath,
+            canContinueGoal: () =>
+              options.permissionMode !== "plan" && session?.getActiveToolNames().includes("execute") === true,
+            onGoalRuntime: (goal) => {
+              nativeGoal = goal;
+            },
+            onForegroundStop: (stop) => {
+              stopForegroundWork = stop;
+            },
+            sendGoalContinuation: (text) => {
+              const version = interruptVersion;
+              void session
+                .prompt(text, {
+                  source: "extension",
+                  expandPromptTemplates: false,
+                  streamingBehavior: "followUp",
+                  preflightResult: (disposition) => {
+                    if (disposition === "handled") return;
+                    checkOpen();
+                    if (version !== interruptVersion) throw new Error("Interrupted during goal admission");
+                  },
+                })
+                .catch((error) => {
+                  if (closed || version !== interruptVersion) return;
+                  nativeGoal?.interrupt("Paused because goal continuation could not start");
+                  frontend.fail(error);
+                  frontend.settle();
+                });
+            },
             onNativeFastMode: (control) => {
               nativeFast = control;
             },
@@ -428,12 +466,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       { name: "bruv-herdr-agent-state", factory: state, hidden: true },
       {
         name: "bruv-live",
-        factory: createClaudeCompatLiveFrontend({
-          localAudio: options.localAudio,
-          humanChoices: !!options.request,
-          request: options.request,
-          notify: (text, level) => frontend.notice(text, level),
-        }).factory,
+        factory: nativeLive.factory,
         hidden: true,
       },
       { name: "bruv-remote", factory: remote, hidden: true },
@@ -455,7 +488,10 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           agentDir: options.agentDir,
           projectTrusted: settings.isProjectTrusted(),
         })[1],
-    appendSystemPrompt: options.appendSystemPrompt,
+    appendSystemPrompt: [
+      ...(options.appendSystemPrompt ?? []),
+      ...(options.auxiliary ? [] : [NATIVE_PERMISSION_GUIDANCE]),
+    ],
     extensionFactories: [
       ...factories,
       ...(options.auxiliary ? [] : (options.extensionFactories ?? [])),
@@ -464,7 +500,23 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
         name: "bruv-native-permissions",
         hidden: true,
         factory: (pi) => {
+          pi.on("context", (event) => {
+            if (options.auxiliary) return;
+            return {
+              messages: [
+                ...event.messages,
+                {
+                  role: "custom" as const,
+                  customType: "bruv-native-permission-state",
+                  content: `Native permission state: ${options.permissionMode ?? "default"}. Available tools: ${session.getActiveToolNames().join(", ") || "none"}.`,
+                  display: false,
+                  timestamp: Date.now(),
+                },
+              ],
+            };
+          });
           pi.on("before_agent_start", async () => {
+            if (closed) return;
             // A task wake can begin the next Pi run before native writes drain.
             // Finish the previous result/lease release before acquiring another.
             if (options.mcp) await frontend.flush();
@@ -560,11 +612,14 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     settingsManager: settings,
     sessionManager: manager,
     resourceLoader: loader,
-    tools: options.auxiliary ? [] : (options.tools ?? ["execute"]),
+    tools: options.auxiliary
+      ? []
+      : (options.tools ?? nativeToolRegistry(options.mcp?.tools().map((tool) => tool.name) ?? [])),
   }));
   const commands = createClaudeCompatCommands({
     session,
     humanControls: human,
+    isRunning: () => !session.isIdle || nativeGoal?.hasPendingContinuation() === true,
     notify: async (text, level) => {
       frontend.notice(text, level);
       await frontend.flush();
@@ -581,6 +636,25 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     closePromise: Promise<void> | undefined,
     initialized = false;
   let admission = Promise.resolve();
+  let pendingAdmissions = 0;
+  const reserveAdmission = () => {
+    const previous = admission;
+    let release!: () => void;
+    admission = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    pendingAdmissions++;
+    let released = false;
+    return {
+      previous,
+      accepted() {
+        if (released) return;
+        released = true;
+        pendingAdmissions--;
+        release();
+      },
+    };
+  };
   let interruptVersion = 0;
   const checkOpen = () => {
     if (closed) throw new Error("Connector session is closed");
@@ -591,15 +665,18 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     lifetime.abort(new Error("Connector closed"));
     toolTurn.abort();
     human?.dispose();
+    nativeLive?.cancel();
     closePromise = (async () => {
       const errors: unknown[] = [];
       frontend.interrupt();
+      stopForegroundWork?.("Paused because the connector closed");
       currentMainOwner(session.sessionManager)?.stopForeground();
       // An admitted Pi preflight must see closed before it can start a provider call.
       await admission;
       session.clearQueue();
       try {
         await session.abort();
+        frontend.settle();
       } catch (error) {
         errors.push(error);
       }
@@ -654,13 +731,24 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
 
   // Bruv's extension installs its ordinary CLI execute-only default at session_start.
   // Native selection belongs to this composition, after those defaults have run.
-  const selectedTools = options.auxiliary ? [] : (options.tools ?? ["execute"]);
   const availableTools = new Set(session.getAllTools().map((t) => t.name));
-  for (const name of selectedTools)
-    if (!availableTools.has(name)) {
-      await close();
-      throw new Error(`Unavailable native tool: ${name}`);
-    }
+  const selectTools = (mode = options.permissionMode) => {
+    const mcpTools =
+      options.mcp
+        ?.tools()
+        .map((tool) => tool.name)
+        .filter((name) => availableTools.has(name)) ?? [];
+    const selected = options.auxiliary ? [] : (options.tools ?? nativeDefaultTools(mode, mcpTools));
+    for (const name of selected) if (!availableTools.has(name)) throw new Error(`Unavailable native tool: ${name}`);
+    return selected;
+  };
+  let selectedTools: string[];
+  try {
+    selectedTools = selectTools();
+  } catch (error) {
+    await close();
+    throw error;
+  }
   session.setActiveToolsByName(selectedTools);
 
   const controls: Record<string, CompatControlHandler> = {
@@ -694,11 +782,14 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       interruptVersion++;
       toolTurn.abort(new Error("Interrupted"));
       human?.interrupt();
+      nativeLive?.cancel();
       frontend.interrupt();
+      stopForegroundWork?.("Paused by user");
       await admission;
       session.clearQueue();
       currentMainOwner(session.sessionManager)?.stopForeground();
       await session.abort();
+      frontend.settle();
       await frontend.flush();
       return {};
     },
@@ -708,15 +799,18 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
             checkOpen();
             if (typeof message.request.mode !== "string") throw new Error("set_permission_mode requires mode");
             if (!options.changePermissionMode) throw new Error("No native permission mode binding");
+            const tools = selectTools(message.request.mode);
             options.changePermissionMode(message.request.mode);
             options.permissionMode = message.request.mode;
+            session.setActiveToolsByName(tools);
             return {};
           },
         }
       : {}),
     apply_flag_settings: async (message) => {
       checkOpen();
-      if (!session.isIdle) throw new Error("Cannot change Fast during a running turn; interrupt first");
+      if (!session.isIdle || frontend.isRunning())
+        throw new Error("Cannot change Fast during a running turn; interrupt first");
       const settings = message.request.settings;
       if (
         !settings ||
@@ -732,11 +826,13 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     },
     set_model: async (message) => {
       checkOpen();
-      if (!session.isIdle) throw new Error("Cannot change model during a running turn; interrupt first");
+      if (!session.isIdle || frontend.isRunning())
+        throw new Error("Cannot change model during a running turn; interrupt first");
       if (typeof message.request.model !== "string") throw new Error("set_model requires an exact model ID");
       const model = resolveModel(message.request.model);
       if (!models.hasConfiguredAuth(model.provider))
         throw new Error(`No configured authentication for ${model.provider}`);
+      assertNativeThinkingDisplay(model, options.thinkingDisplay);
       await session.setModel(model);
       return {};
     },
@@ -747,32 +843,92 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     if (message.session_id && message.session_id !== (options.nativeSessionId ?? session.sessionId))
       throw new Error("User session_id does not match the owning Bruv session");
     if (message.parent_tool_use_id != null) throw new Error("Child user input is unsupported on the root connector");
-    if (
-      !options.disableSlashCommands &&
-      /^\/bruv(?=[:\s]|$)/.test(typeof message.message.content === "string" ? message.message.content.trim() : "")
-    ) {
-      if (session.isStreaming) throw new Error("Interrupt the model turn before running a human command");
-      // T3 correlates root output to the actual submitted user frame. Human
-      // commands bypass Pi prompt admission, so echo that received command here
-      // without adding it to model history or inventing a model turn.
-      frontend.startCommand(message);
-      const checkpoint = frontend.checkpoint();
-      await commands.dispatchUserCommand({ ...message, session_id: session.sessionId });
-      // A resume command can start a genuine Pi follow-up. Its actual settle
-      // event, not the command handler returning, owns that terminal result.
-      if (session.isIdle) frontend.commandHandled(checkpoint);
+    const commandMessage = { ...message, session_id: session.sessionId };
+    let commandStarted = false;
+    let commandAdmission: ReturnType<typeof reserveAdmission> | undefined;
+    try {
+      const command = options.disableSlashCommands ? null : commands.readUserCommand(commandMessage);
+      if (command) {
+        if (!session.isIdle || frontend.isRunning() || pendingAdmissions > 0) {
+          const operation = command.value.split(/\s+/)[0] || "status";
+          const canRunDuringWork =
+            ["help", "status", "resources", "questions", "mode"].includes(command.name) ||
+            (command.name === "goal" && ["status", "help"].includes(operation)) ||
+            (command.name === "live" && ["", "status", "stop", "capabilities"].includes(command.value.trim()));
+          if (canRunDuringWork) {
+            const response = frontend.commandResponse(message);
+            const inspection = createClaudeCompatCommands({
+              session,
+              humanControls: human,
+              isRunning: () => frontend.isRunning() || !session.isIdle || pendingAdmissions > 0,
+              notify: response.notice,
+            });
+            try {
+              await inspection.dispatchUserCommand(commandMessage);
+            } catch (error) {
+              response.notice(error instanceof Error ? error.message : String(error), "error");
+            } finally {
+              response.complete();
+            }
+            await frontend.flush();
+            return;
+          }
+          if (command.name === "goal" && ["pause", "clear"].includes(operation)) {
+            if (operation === "clear" && command.value.trim() !== "clear") throw new Error("Usage: /goal clear");
+            await controls.interrupt(
+              { type: "control_request", request_id: message.uuid ?? randomUUID(), request: { subtype: "interrupt" } },
+              signal,
+            );
+          } else {
+            throw new Error("Stop the current turn before running this command. For a goal, use /bruv goal pause.");
+          }
+        }
+        // Claim the same admission gate before yielding. An idle command must
+        // finish its own result before a new prompt can take foreground ownership.
+        const commandVersion = interruptVersion;
+        commandAdmission = reserveAdmission();
+        await commandAdmission.previous;
+        checkOpen();
+        signal.throwIfAborted();
+        if (commandVersion !== interruptVersion) throw new Error("Interrupted during command admission");
+        // Human commands own their echo and result; Pi owns any turn they start.
+        frontend.startCommand(message);
+        commandStarted = true;
+        const checkpoint = frontend.checkpoint();
+        await commands.dispatchUserCommand(commandMessage);
+        // A goal command is admitted once its handler finishes; the goal's
+        // ongoing model work retains the native run, not an open command ack.
+        if (!session.isIdle || nativeGoal?.hasPendingContinuation()) frontend.completeCommand();
+        if (session.isIdle) frontend.commandHandled(checkpoint);
+        await frontend.flush();
+        return;
+      }
+    } catch (error) {
+      // Invalid human controls are recoverable. Rejecting onUser makes the
+      // transport close, and must remain reserved for protocol/delivery failures.
+      const reason = error instanceof Error ? error.message : String(error);
+      if (
+        !commandStarted &&
+        (!session.isIdle || frontend.isRunning() || pendingAdmissions > (commandAdmission ? 1 : 0))
+      ) {
+        frontend.commandNotice(message, reason, "error");
+      } else {
+        if (!commandStarted) frontend.startCommand(message);
+        const checkpoint = frontend.checkpoint();
+        frontend.notice(reason, "error");
+        frontend.fail(error);
+        frontend.commandHandled(checkpoint);
+      }
       await frontend.flush();
       return;
+    } finally {
+      commandAdmission?.accepted();
     }
     const { text, images } = parseInput(message.message.content);
     if (signal.aborted) throw signal.reason;
-    // Serialize only Pi admission/preflight, never model turns or a second user queue.
+    // Serialize command ownership and Pi admission/preflight, never model turns.
     const requestVersion = interruptVersion;
-    const previous = admission;
-    let accepted!: () => void;
-    admission = new Promise<void>((resolve) => {
-      accepted = resolve;
-    });
+    const { previous, accepted } = reserveAdmission();
     await previous;
     let run: Promise<unknown>;
     let handled = false;

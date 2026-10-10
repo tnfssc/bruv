@@ -8,6 +8,7 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import type { SessionHost } from "../session/host";
 import { getSessionHost } from "../session/host-access";
+import type { GoalState } from "../goals/types";
 
 export type CompatFrame = { type: string; [key: string]: unknown };
 export interface ClaudeCompatFrontendOptions {
@@ -18,6 +19,10 @@ export interface ClaudeCompatFrontendOptions {
   messageUuid?(message: object): string;
   omitThinking?: boolean;
   model(): string;
+  /** Canonical Bruv state; native goal projection never parses display text. */
+  goal?(): GoalState | undefined;
+  /** Pi has actually queued the next authorized goal turn. */
+  continueGoal?(): boolean;
   /** Auxiliary mode collects actual results without publishing streaming frames. */
   auxiliary?: boolean;
   initialization?(): Record<string, unknown>;
@@ -40,6 +45,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let echoPending = false;
   let consumedHuman = false;
   let consumedTaskNotification = false;
+  let projectedGoal: Pick<GoalState, "id" | "objective" | "status"> | undefined;
   const promptEcho = () =>
     consumedUserUuids.length
       ? { user_message_uuid: consumedUserUuids.at(-1), user_message_uuids: [...consumedUserUuids] }
@@ -60,6 +66,43 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     session_id: options.sessionId(),
     ...(commandUuid ? { user_message_uuid: commandUuid } : {}),
   });
+  const syncGoal = () => {
+    if (options.auxiliary || !options.goal) return;
+    const goal = options.goal();
+    let text: string | undefined;
+    if (!goal && projectedGoal) {
+      text = `Goal cleared: ${projectedGoal.objective}`;
+      projectedGoal = undefined;
+    } else if (goal) {
+      if (
+        goal.status !== "completed" &&
+        (goal.id !== projectedGoal?.id ||
+          goal.objective !== projectedGoal.objective ||
+          projectedGoal.status === "completed")
+      ) {
+        text = `Goal set: ${goal.objective}`;
+      }
+      // Remember restored completed goals without restarting them. A later
+      // explicit resume or clear must update the native host's saved indicator.
+      projectedGoal = { id: goal.id, objective: goal.objective, status: goal.status };
+    }
+    if (text !== undefined)
+      send({
+        type: "assistant",
+        ...base(),
+        parent_tool_use_id: null,
+        message: {
+          id: randomUUID(),
+          type: "message",
+          role: "assistant",
+          model: "<synthetic>",
+          content: [{ type: "text", text }],
+          stop_reason: "end_turn",
+          usage: { input_tokens: 0, output_tokens: 0 },
+        },
+        bruv: { goal_status: true },
+      });
+  };
   const stream = (event: Record<string, unknown>) => {
     if (!options.auxiliary) {
       send({ type: "stream_event", ...base(), ...(echoPending ? promptEcho() : {}), parent_tool_use_id: null, event });
@@ -83,30 +126,41 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     commandUuid = undefined;
     run = new RunResult(Date.now());
   };
-  const result = (structuredOutput?: unknown) => ({
-    type: "result",
-    ...base(),
-    ...promptEcho(),
-    // SDK 0.3.276 has no auto-continuation origin. Attribute real task wakes
-    // only when Pi consumes their custom message, never from a job lifecycle frame.
-    origin: { kind: consumedHuman ? "human" : consumedTaskNotification ? "task-notification" : "unclassified" },
-    ...run.resultFields(),
-    ...(structuredOutput === undefined ? {} : { structured_output: structuredOutput }),
-  });
+  const result = (structuredOutput?: unknown) => {
+    // Snapshot before asynchronous output delivery: another Pi run can change
+    // the goal while this result waits for its MCP leases/history to flush.
+    const goal = options.auxiliary ? undefined : options.goal?.();
+    return {
+      type: "result",
+      ...base(),
+      ...promptEcho(),
+      // SDK 0.3.276 has no auto-continuation origin. Attribute real task wakes
+      // only when Pi consumes their custom message, never from a job lifecycle frame.
+      origin: { kind: consumedHuman ? "human" : consumedTaskNotification ? "task-notification" : "unclassified" },
+      ...run.resultFields(),
+      // The native Claude adapter otherwise interprets any successful turn as
+      // goal completion. Bruv's goal policy must retain unfinished work through
+      // automatic continuations and later chat while the goal is suspended.
+      ...(!run.error && goal && goal.status !== "completed"
+        ? { terminal_reason: goal.status === "active" ? "stop_hook_prevented" : "hook_stopped" }
+        : {}),
+      ...(structuredOutput === undefined ? {} : { structured_output: structuredOutput }),
+    };
+  };
+  const completeCommand = (state = "completed") => {
+    if (commandUuid && !options.auxiliary)
+      send({ type: "command_lifecycle", ...base(), command_uuid: commandUuid, state });
+    commandUuid = undefined;
+  };
   const end = () => {
     if (!active) return;
+    syncGoal();
     active = false;
     results++;
     cumulativeCost += run.cost;
     if (!options.auxiliary) {
       send(result());
-      if (commandUuid)
-        send({
-          type: "command_lifecycle",
-          ...base(),
-          command_uuid: commandUuid,
-          state: run.error === "Interrupted" ? "cancelled" : "completed",
-        });
+      completeCommand(run.error === "Interrupted" ? "cancelled" : "completed");
       // SDK 0.3.276 separates the result from the authoritative turn-over frame.
       // Only Pi agent_settled (or a handled command) ends the actual root run.
       send({ type: "system", subtype: "session_state_changed", ...base(), state: "idle" });
@@ -137,9 +191,13 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
         return;
       case "agent_start":
         begin();
+        syncGoal();
         return;
       case "agent_settled":
-        end();
+        // Claude's result closes the native turn. Keep a continuous goal run
+        // open through Pi's internal turns so the host retains Stop/steering
+        // ownership while the next request starts, including before its first token.
+        if (!options.continueGoal?.()) end();
         return;
       case "message_start":
         if (event.message.role === "custom" && ["task-complete", "task-attention"].includes(event.message.customType)) {
@@ -147,6 +205,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
           consumedTaskNotification = true;
         } else if (event.message.role === "assistant") {
           begin();
+          syncGoal();
           messageId = randomUUID();
           stream({
             type: "message_start",
@@ -167,8 +226,25 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
         streamAssistantUpdate(event.assistantMessageEvent);
         return;
       case "message_end": {
+        syncGoal();
         const m = event.message;
-        if (m.role === "assistant") {
+        if (m.role === "custom" && m.customType === "bruv-goal-status" && typeof m.content === "string") {
+          send({
+            type: "assistant",
+            ...base(),
+            parent_tool_use_id: null,
+            message: {
+              id: randomUUID(),
+              type: "message",
+              role: "assistant",
+              model: "<synthetic>",
+              content: [{ type: "text", text: m.content }],
+              stop_reason: "end_turn",
+              usage: { input_tokens: 0, output_tokens: 0 },
+            },
+            bruv: { goal_status: true },
+          });
+        } else if (m.role === "assistant") {
           run.recordAssistant(m);
           publishAssistant(m);
         } else if (m.role === "toolResult" && !options.auxiliary) {
@@ -286,8 +362,68 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       });
   }
 
+  // Controls can answer during a run without replacing its owner or publishing
+  // a result/idle frame. One command can produce several ordered notices.
+  const commandResponse = (message: { uuid?: string; message: unknown }) => {
+    const metadata = { session_id: options.sessionId(), user_message_uuid: message.uuid };
+    if (message.uuid)
+      send({
+        type: "command_lifecycle",
+        ...metadata,
+        uuid: randomUUID(),
+        command_uuid: message.uuid,
+        state: "started",
+      });
+    send({
+      type: "user",
+      ...metadata,
+      uuid: message.uuid ?? randomUUID(),
+      parent_tool_use_id: null,
+      message: message.message,
+    });
+    const notice = (text: string, level = "info") => {
+      syncGoal();
+      send({
+        type: "assistant",
+        ...metadata,
+        uuid: randomUUID(),
+        parent_tool_use_id: null,
+        message: {
+          id: randomUUID(),
+          type: "message",
+          role: "assistant",
+          model: "<synthetic>",
+          content: [{ type: "text", text }],
+          stop_reason: "end_turn",
+          usage: { input_tokens: 0, output_tokens: 0 },
+        },
+        bruv: { human_command: true, level },
+      });
+    };
+    let completed = false;
+    const complete = () => {
+      if (completed) return;
+      completed = true;
+      if (message.uuid)
+        send({
+          type: "command_lifecycle",
+          ...metadata,
+          uuid: randomUUID(),
+          command_uuid: message.uuid,
+          state: "completed",
+        });
+    };
+    return { notice, complete };
+  };
+
   return {
     factory,
+    commandResponse,
+    commandNotice(message: { uuid?: string; message: unknown }, text: string, level = "info") {
+      const response = commandResponse(message);
+      response.notice(text, level);
+      response.complete();
+    },
     consumeUser(uuid?: string) {
       begin();
       consumedHuman = true;
@@ -298,6 +434,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     },
     notice(text: string, level: "info" | "warning" | "error" = "info") {
       begin();
+      syncGoal();
       run.notice(text);
       send({
         type: "assistant",
@@ -307,7 +444,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
           id: randomUUID(),
           type: "message",
           role: "assistant",
-          model: options.model(),
+          model: "<synthetic>",
           content: [{ type: "text", text }],
           stop_reason: "end_turn",
           usage: { input_tokens: 0, output_tokens: 0 },
@@ -367,9 +504,15 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
         parent_tool_use_id: null,
         message: message.message,
       });
+      // Capture restored state before a command mutates it, including a clear
+      // that is the first command received after the connector restarts.
+      syncGoal();
     },
     checkpoint: () => results,
+    completeCommand,
+    isRunning: () => active,
     commandHandled(checkpoint: number) {
+      if (active && options.continueGoal?.()) return;
       if (active) end();
       else if (results === checkpoint) {
         begin();
@@ -384,6 +527,8 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     interrupt() {
       if (active) run.fail("Interrupted");
     },
+    /** Stop can arrive after Pi settled, with no further lifecycle event. */
+    settle: end,
   };
 }
 

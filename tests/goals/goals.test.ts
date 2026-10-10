@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { inspectDiagnostics } from "../../src/diagnostics";
-import { GoalContinuationController, MAX_NO_PROGRESS_CONTINUATIONS } from "../../src/goals/controller";
+import { GoalContinuationController, REQUIRED_BLOCKED_TURNS } from "../../src/goals/controller";
 import { registerGoalMode } from "../../src/goals/extension";
 import { GOAL_ENTRY_TYPE, GoalStore, latestGoal } from "../../src/goals/store";
 
@@ -101,6 +101,7 @@ describe("goal durable state", () => {
       data: { version: 1, operation: "update", at: "latest", goal: { ...waiting, revision: waiting.revision + 1 } },
     });
     expect(latestGoal(entries)).toBeUndefined();
+    store.clear();
     const replacement = store.set(input);
     const recoveredOwner = {};
     expect(latestGoal(entries, recoveredOwner)).toEqual(replacement);
@@ -171,30 +172,35 @@ describe("goal durable state", () => {
   });
 });
 
-test("no-progress guard counts each run and ignores revision bumps", () => {
+test("a blocker must recur on separate goal turns before it can stop continuation", () => {
   const controller = new GoalContinuationController();
-  let goal: any = { id: "g", status: "active", revision: 1 };
-  expect(controller.settle(goal)).toBe("continue");
-  controller.markAutomaticStart(goal);
-
-  for (let turn = 1; turn <= MAX_NO_PROGRESS_CONTINUATIONS; turn++) {
-    goal = { ...goal, revision: goal.revision + 1 };
-    const expected = turn === MAX_NO_PROGRESS_CONTINUATIONS ? "pause" : "none";
-    expect(controller.endRun(goal)).toBe(expected);
-    expect(controller.settle(goal)).toBe("continue");
+  for (let turn = 1; turn <= REQUIRED_BLOCKED_TURNS; turn++) {
+    controller.beginRun();
+    for (let report = 0; report < 5; report++) {
+      expect(controller.reportBlocker("Credentials unavailable")).toBe(turn === REQUIRED_BLOCKED_TURNS);
+      expect(controller.audit()?.attempts).toBe(turn);
+    }
+    controller.endRun();
   }
 });
 
-test("explicit progress resets the guard once, while repeated evidence does not", () => {
+test("a changed blocker or a turn without that blocker starts a fresh audit", () => {
   const controller = new GoalContinuationController();
-  let goal: any = { id: "g", status: "active", revision: 1, progress: [] };
-  controller.markAutomaticStart(goal);
-  goal = { ...goal, revision: 2, progress: ["verified parser test"] };
-  expect(controller.endRun(goal)).toBe("none");
-  for (let turn = 0; turn < MAX_NO_PROGRESS_CONTINUATIONS; turn++) {
-    goal = { ...goal, revision: goal.revision + 1, progress: ["verified parser test"] };
-    expect(controller.endRun(goal)).toBe(turn === MAX_NO_PROGRESS_CONTINUATIONS - 1 ? "pause" : "none");
+  for (let turn = 0; turn < REQUIRED_BLOCKED_TURNS - 1; turn++) {
+    controller.beginRun();
+    controller.reportBlocker("Credentials unavailable");
+    controller.endRun();
   }
+  controller.beginRun();
+  expect(controller.reportBlocker("Service offline")).toBe(false);
+  expect(controller.audit()).toMatchObject({ blocker: "Service offline", attempts: 1 });
+  controller.endRun();
+  controller.beginRun();
+  controller.endRun();
+  expect(controller.audit()).toBeUndefined();
+  controller.beginRun();
+  expect(controller.reportBlocker("Service offline")).toBe(false);
+  expect(controller.audit()?.attempts).toBe(1);
 });
 
 test("active progress is bounded and duplicate milestones are idempotent", () => {
@@ -219,8 +225,10 @@ function harness(
   const handlers: Record<string, Function[]> = {};
   const commands: Record<string, any> = {};
   const sent: string[] = [];
+  const messages: any[] = [];
   const notices: any[] = [];
   const appended: any[] = [];
+  let aborts = 0;
   let branch = [...entries];
   let leaf = "initial";
   const statuses = new Map<string, "running" | "finished" | "unavailable">([["job_1", "running"]]);
@@ -240,6 +248,9 @@ function harness(
     },
     sendUserMessage(message: string) {
       sent.push(message);
+    },
+    sendMessage(message: any) {
+      messages.push(message);
     },
   };
   const runtime = registerGoalMode(
@@ -261,15 +272,20 @@ function harness(
     ui: { notify: (...args: any[]) => notices.push(args) },
     hasPendingMessages: options.hasPendingMessages ?? (() => false),
     isIdle: () => false,
+    abort: () => aborts++,
   };
   const startSession = () => handlers.session_start[0]({}, ctx);
   if (options.startSession !== false) startSession();
   return {
     sent,
+    messages,
     notices,
     appended,
     runtime,
     statuses,
+    get aborts() {
+      return aborts;
+    },
     advanceLeaf(id: string) {
       leaf = id;
     },
@@ -294,13 +310,19 @@ function harness(
         { toolName: "execute", isError: false, result: { details: { handoff: message } } },
         ctx,
       ),
+    beginRun: () => handlers.agent_start[0]({}, ctx),
+    recordUsage: (usage: { input: number; output: number; cacheRead?: number; cacheWrite?: number }) =>
+      handlers.message_end[0](
+        { message: { role: "assistant", usage: { cacheRead: 0, cacheWrite: 0, ...usage } } },
+        ctx,
+      ),
     endRun: (stopReason: "stop" | "toolUse") =>
       handlers.agent_end[0]({ messages: [{ role: "assistant", stopReason }] }, ctx),
     settle: () => handlers.agent_settled[0]({}, ctx),
   };
 }
 
-test("only active goals continue and waiting interruption pauses", () => {
+test("only active goals continue and user steering preserves waiting work", () => {
   const h = harness();
   h.runtime.handle("goal.set", input);
   expect(() => h.runtime.handle("goal.update", { status: "completed" })).toThrow();
@@ -311,10 +333,11 @@ test("only active goals continue and waiting interruption pauses", () => {
   h.settle();
   expect(h.sent).toHaveLength(1);
   h.receiveInput({ source: "interactive", streamingBehavior: "steer" });
-  expect(h.runtime.get()).toMatchObject({
-    status: "paused",
-    pauseReason: "Paused by user interruption",
-  });
+  expect(h.runtime.get()).toMatchObject({ status: "waiting", pendingJobIds: ["job_1"] });
+  h.finishJob("job_1");
+  h.settle();
+  expect(h.runtime.get()?.status).toBe("active");
+  expect(h.sent).toHaveLength(2);
 });
 
 test("successful execute handoff waits only when owned work is running", () => {
@@ -346,89 +369,242 @@ test("model-facing updates reject runtime-owned waiting bookkeeping", () => {
   expect(h.runtime.get()?.status).toBe("active");
 });
 
-test("helper-created goal bounds repeated direct handoff completion cycles", () => {
-  const h = harness();
-  h.runtime.handle("goal.set", input);
-  const handoffMessage = "Waiting after custom completion";
-
-  // No slash-start or initial reminder occurs before the helper's first
-  // direct handoff. Job completions then trigger custom continuation turns.
-  expect(h.sent).toHaveLength(0);
-  for (let turn = 0; turn < MAX_NO_PROGRESS_CONTINUATIONS; turn++) {
-    h.statuses.set("job_1", "running");
-    h.handoff(handoffMessage);
-    h.endRun("toolUse");
-    h.settle();
-    if (turn < MAX_NO_PROGRESS_CONTINUATIONS - 1) {
-      expect(h.runtime.get()?.status).toBe("waiting");
-      h.finishJob("job_1");
-      expect(h.runtime.get()?.status).toBe("active");
-    }
-  }
-  expect(h.sent).toHaveLength(0);
-  expect(h.runtime.get()).toMatchObject({
-    status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
-  });
-});
-
-test("failed-job waiting and completion turns retain the no-progress bound", () => {
-  const h = harness();
-  h.runtime.handle("goal.set", input);
+function reportBlockerRun(h: ReturnType<typeof harness>, blocker = "Credentials unavailable") {
+  h.beginRun();
+  const result = h.runtime.handle("goal.update", { status: "blocked", blocker });
   h.endRun("stop");
   h.settle();
-  const handoffMessage = "Retrying through owned work";
+  return result;
+}
 
-  for (let turn = 0; turn < MAX_NO_PROGRESS_CONTINUATIONS; turn++) {
-    h.statuses.set("job_1", "running");
-    h.handoff(handoffMessage);
-    h.endRun("toolUse");
-    h.settle();
-    if (turn < MAX_NO_PROGRESS_CONTINUATIONS - 1) {
-      h.finishJob("job_1");
-      expect(h.runtime.get()?.status).toBe("active");
-    }
-  }
-  expect(h.runtime.get()).toMatchObject({
-    status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
-  });
-});
-
-test("distinct explicit milestones sustain repeated waiting completion turns", () => {
+test("ordinary automatic turns continue without milestone keepalives", () => {
   const h = harness();
   h.runtime.handle("goal.set", input);
-  h.endRun("stop");
-  h.settle();
-  const handoffMessage = "Continuing owned work";
+  for (let turn = 0; turn < 8; turn++) {
+    h.beginRun();
+    h.endRun("stop");
+    h.settle();
+    expect(h.runtime.get()?.status).toBe("active");
+  }
+  expect(h.sent).toHaveLength(8);
+  expect(h.runtime.get()?.progress).toBeUndefined();
+});
 
-  for (let turn = 0; turn < MAX_NO_PROGRESS_CONTINUATIONS + 2; turn++) {
-    h.runtime.handle("goal.update", { status: "active", progress: `verified milestone ${turn}` });
+test("helper-created goals keep working across repeated owned-job handoffs", () => {
+  const h = harness();
+  h.runtime.handle("goal.set", input);
+  for (let turn = 0; turn < 7; turn++) {
+    h.beginRun();
     h.statuses.set("job_1", "running");
-    h.handoff(handoffMessage);
+    h.handoff("Waiting for the next useful result");
     h.endRun("toolUse");
     h.settle();
     expect(h.runtime.get()?.status).toBe("waiting");
     h.finishJob("job_1");
+    expect(h.runtime.get()?.status).toBe("active");
   }
-  expect(h.runtime.get()?.status).toBe("active");
+  expect(h.sent).toHaveLength(0);
 });
 
-test("same-status helper revisions cannot evade the automatic-turn bound", () => {
+test("the same external blocker stops a goal only on its third consecutive run", () => {
   const h = harness();
   h.runtime.handle("goal.set", input);
-  h.endRun("stop");
-  h.settle();
-
-  for (let turn = 0; turn < MAX_NO_PROGRESS_CONTINUATIONS; turn++) {
-    h.runtime.handle("goal.update", { status: "active" });
-    h.endRun("toolUse");
-    h.settle();
+  for (let attempt = 1; attempt < REQUIRED_BLOCKED_TURNS; attempt++) {
+    expect(reportBlockerRun(h)).toMatchObject({
+      status: "active",
+      blockerAudit: { blocker: "Credentials unavailable", attempts: attempt, required: REQUIRED_BLOCKED_TURNS },
+    });
   }
-  expect(h.runtime.get()).toMatchObject({
-    status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
+  expect(reportBlockerRun(h)).toMatchObject({ status: "blocked", blocker: "Credentials unavailable" });
+  expect(h.sent).toHaveLength(REQUIRED_BLOCKED_TURNS - 1);
+});
+
+test("repeated blocker reports within one provider run count as one attempt", () => {
+  const h = harness();
+  h.runtime.handle("goal.set", input);
+  h.beginRun();
+  for (let report = 0; report < 10; report++) {
+    expect(h.runtime.handle("goal.update", { status: "blocked", blocker: "Credentials unavailable" })).toMatchObject({
+      status: "active",
+      blockerAudit: { attempts: 1 },
+    });
+  }
+  h.endRun("stop");
+  expect(reportBlockerRun(h)).toMatchObject({ status: "active", blockerAudit: { attempts: 2 } });
+  expect(reportBlockerRun(h)).toMatchObject({ status: "blocked" });
+});
+
+test("a changed blocker starts a fresh audit in the runtime", () => {
+  const h = harness();
+  h.runtime.handle("goal.set", input);
+  reportBlockerRun(h);
+  reportBlockerRun(h);
+  expect(reportBlockerRun(h, "Service offline")).toMatchObject({
+    status: "active",
+    blockerAudit: { blocker: "Service offline", attempts: 1 },
   });
+});
+
+test("checked progress resets the blocker audit while duplicate evidence does not", () => {
+  const h = harness();
+  h.runtime.handle("goal.set", input);
+  reportBlockerRun(h);
+  reportBlockerRun(h);
+  h.runtime.handle("goal.update", { status: "active", progress: "Verified alternate authentication path" });
+  expect(reportBlockerRun(h)).toMatchObject({ status: "active", blockerAudit: { attempts: 1 } });
+  h.runtime.handle("goal.update", { status: "active", progress: "Verified alternate authentication path" });
+  expect(reportBlockerRun(h)).toMatchObject({ status: "active", blockerAudit: { attempts: 2 } });
+  expect(reportBlockerRun(h)).toMatchObject({ status: "blocked" });
+});
+
+test("user steering resets the audit and keeps the goal active", () => {
+  const h = harness();
+  h.runtime.handle("goal.set", input);
+  reportBlockerRun(h);
+  reportBlockerRun(h);
+  h.receiveInput({ source: "interactive", text: "What is the current status?" });
+  expect(h.runtime.get()?.status).toBe("active");
+  expect(reportBlockerRun(h)).toMatchObject({ status: "active", blockerAudit: { attempts: 1 } });
+});
+
+test("resuming a blocked goal starts a fresh three-run audit", async () => {
+  const h = harness();
+  h.runtime.handle("goal.set", input);
+  for (let attempt = 0; attempt < REQUIRED_BLOCKED_TURNS; attempt++) reportBlockerRun(h);
+  expect(h.runtime.get()?.status).toBe("blocked");
+  await h.goalCommand("resume");
+  expect(reportBlockerRun(h)).toMatchObject({ status: "active", blockerAudit: { attempts: 1 } });
+  expect(reportBlockerRun(h)).toMatchObject({ status: "active", blockerAudit: { attempts: 2 } });
+  expect(reportBlockerRun(h)).toMatchObject({ status: "blocked" });
+});
+
+test("inspecting status does not restart the blocker audit", async () => {
+  const h = harness();
+  h.runtime.handle("goal.set", input);
+  reportBlockerRun(h);
+  reportBlockerRun(h);
+  await h.goalCommand("status");
+  expect(h.notices.at(-1)[0]).toContain("Status: active");
+  expect(reportBlockerRun(h)).toMatchObject({ status: "blocked" });
+});
+
+test("short goal commands accept an objective alone or optional flags in any order", async () => {
+  const simple = harness();
+  await simple.goalCommand("Ship the migration");
+  expect(simple.runtime.get()).toMatchObject({
+    objective: "Ship the migration",
+    criteria: ["Ship the migration"],
+    constraints: [],
+    tokensUsed: 0,
+  });
+  expect(simple.runtime.get()?.tokenBudget).toBeUndefined();
+
+  const flagged = harness();
+  await flagged.goalCommand(
+    "Ship the migration --tokens 100 --constraints none --criteria tests pass; deploy verified",
+  );
+  expect(flagged.runtime.get()).toMatchObject({
+    objective: "Ship the migration",
+    criteria: ["tests pass", "deploy verified"],
+    constraints: [],
+    tokenBudget: 100,
+  });
+  expect(flagged.sent).toHaveLength(1);
+});
+
+test("invalid or repeated optional goal flags do not create a goal", async () => {
+  for (const command of [
+    "set --tokens 500",
+    "--tokens 500",
+    "Build --unknown flag",
+    "Build --tokens 0",
+    "Build --tokens -1",
+    "Build --tokens 1.5",
+    "Build --tokens 10 --tokens 20",
+    "Build --criteria one --criteria two",
+    "Build --constraints safe --constraints offline",
+    "Build --criteria",
+    "Build --criteria --tokens 500",
+    "Build --constraints --tokens 500",
+    "Build --tokens --criteria done",
+  ]) {
+    const h = harness();
+    await h.goalCommand(command);
+    expect(h.runtime.get()).toBeUndefined();
+    expect(h.sent).toHaveLength(0);
+    expect(h.notices.at(-1)?.[1]).toBe("warning");
+  }
+});
+
+test("adjacent goal options missing values cannot replace or alter the current goal", async () => {
+  const h = harness();
+  await h.goalCommand("Keep the original objective --tokens 100");
+  const saved = h.runtime.get();
+  const count = h.appended.length;
+  for (const command of [
+    "Build --criteria --tokens 500",
+    "Build --constraints --tokens 500",
+    "Build --tokens --criteria done",
+  ]) {
+    await h.goalCommand(command);
+    expect(h.notices.at(-1)?.[0]).toContain("requires a value");
+    expect(h.notices.at(-1)?.[1]).toBe("warning");
+    expect(h.runtime.get()).toEqual(saved);
+    expect(h.appended).toHaveLength(count);
+  }
+});
+
+test("token budget commands preserve usage and require resume after lifting exhaustion", async () => {
+  const h = harness();
+  await h.goalCommand("Build --tokens 12");
+  h.beginRun();
+  h.recordUsage({ input: 4, output: 3, cacheRead: 3, cacheWrite: 2 });
+  expect(h.runtime.get()).toMatchObject({ status: "budget_exceeded", tokenBudget: 12, tokensUsed: 12 });
+  expect(h.aborts).toBe(1);
+  expect(h.messages.at(-1)).toMatchObject({ customType: "bruv-goal-status", display: true });
+  expect(h.messages.at(-1).content).toContain("Tokens used: 12 / 12");
+  await h.goalCommand("resume");
+  expect(h.runtime.get()?.status).toBe("budget_exceeded");
+  expect(h.notices.at(-1)?.[1]).toBe("warning");
+  await h.goalCommand("budget 20");
+  expect(h.runtime.get()).toMatchObject({ status: "paused", tokenBudget: 20, tokensUsed: 12 });
+  expect(h.sent).toHaveLength(1);
+  await h.goalCommand("resume");
+  expect(h.runtime.get()?.status).toBe("active");
+  expect(h.sent).toHaveLength(2);
+  await h.goalCommand("budget none");
+  expect(h.runtime.get()).toMatchObject({ status: "active", tokensUsed: 12 });
+  expect(h.runtime.get()?.tokenBudget).toBeUndefined();
+});
+
+test("completed goals retain final-response usage but do not count later unrelated chat", () => {
+  const h = harness();
+  h.runtime.handle("goal.set", { objective: "Verify accounting" });
+  h.beginRun();
+  h.recordUsage({ input: 2, output: 1 });
+  h.runtime.handle("goal.update", { status: "completed", evidence: "Accounting verified" });
+  h.recordUsage({ input: 2, output: 2 });
+  h.endRun("stop");
+  expect(h.runtime.get()).toMatchObject({ status: "completed", tokensUsed: 7 });
+  h.beginRun();
+  h.recordUsage({ input: 5, output: 3 });
+  h.endRun("stop");
+  expect(h.runtime.get()).toMatchObject({ status: "completed", tokensUsed: 7 });
+});
+
+test("user pause and clear abort foreground work and invalidate pending reminders", async () => {
+  for (const command of ["pause", "clear"]) {
+    const h = harness();
+    await h.goalCommand("Build");
+    const reminder = h.sent.at(-1)!;
+    await h.goalCommand(command);
+    expect(h.aborts).toBe(1);
+    expect(h.receiveInput({ source: "extension", text: reminder })).toEqual({ action: "handled" });
+    h.settle();
+    expect(h.sent).toHaveLength(1);
+    if (command === "clear") expect(h.runtime.get()).toBeUndefined();
+    else expect(h.runtime.get()?.status).toBe("paused");
+  }
 });
 
 test("notifications do not impersonate queued user input", () => {
@@ -455,13 +631,17 @@ test("goal guidance is conditional and accompanies every persisted status", () =
     h.runtime.handle("goal.set", input);
     if (update === "handoff") {
       h.handoff();
+    } else if (update?.status === "blocked") {
+      for (let attempt = 0; attempt < REQUIRED_BLOCKED_TURNS; attempt++) {
+        reportBlockerRun(h, update.blocker as string);
+      }
     } else if (update) h.runtime.handle("goal.update", update);
     const prior = { role: "user", content: "preserve ordinary context" };
     const result = h.assembleContext([prior]);
     expect(result.messages[0]).toBe(prior);
     expect(result.messages).toHaveLength(2);
     expect(result.messages[1]).toMatchObject({ role: "custom", customType: "bruv-goal-state", display: false });
-    expect(result.messages[1].content).toContain("Goal guidance:\n- Goal API:");
+    expect(result.messages[1].content).toContain("Goal guidance:\n- Keep working");
     expect(result.messages[1].content).toContain("Persistent goal state (authoritative)");
     expect(result.messages[1].content).toContain(`Status: ${status}`);
   }
@@ -638,8 +818,9 @@ test("queued reminder tokens are stripped only from valid extension turns", asyn
   const transformed = h.receiveInput({ source: "extension", text: reminder });
   expect(transformed).toEqual({
     action: "transform",
-    text: "Goal still active. Do next useful step, not another recap.",
+    text: expect.stringContaining("Goal still active. Do next useful step, not another recap."),
   });
+  expect(transformed.text).not.toContain("<!-- bruv-goal-reminder:");
   expect(h.receiveInput({ source: "extension", text: reminder })).toEqual({ action: "handled" });
   expect(h.receiveInput({ source: "interactive", text: reminder })).toBeUndefined();
   expect(h.receiveInput({ source: "extension", text: reminder + " extra" })).toEqual({ action: "handled" });
@@ -650,10 +831,11 @@ test("queued reminder tokens are stripped only from valid extension turns", asyn
   expect(h.receiveInput({ source: "extension", text: stale })).toEqual({ action: "handled" });
 });
 
-test("ordinary leaf advancement preserves reminder authority and automatic-run accounting", async () => {
+test("ordinary leaf advancement preserves reminder authority and goal continuation", async () => {
   const h = harness();
   await h.goalCommand("set Build it --criteria done --constraints safe");
   const reminder = h.sent.at(-1)!;
+  h.beginRun();
   h.endRun("stop");
 
   // An ordinary message advances the journal, without changing the goal.
@@ -661,15 +843,15 @@ test("ordinary leaf advancement preserves reminder authority and automatic-run a
   h.assembleContext();
   expect(h.receiveInput({ source: "extension", text: reminder })).toEqual({
     action: "transform",
-    text: "Goal still active. Do next useful step, not another recap.",
+    text: expect.stringContaining("Goal still active. Do next useful step, not another recap."),
   });
-  for (let turn = 1; turn < MAX_NO_PROGRESS_CONTINUATIONS; turn++) {
+  for (let turn = 0; turn < 5; turn++) {
+    h.beginRun();
     h.endRun("stop");
+    h.settle();
   }
-  expect(h.runtime.get()).toMatchObject({
-    status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
-  });
+  expect(h.runtime.get()?.status).toBe("active");
+  expect(h.sent).toHaveLength(6);
 });
 
 test("branch navigation revokes reminders even when the destination goal is active", async () => {

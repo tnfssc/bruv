@@ -1,29 +1,47 @@
 # Goal mode
 
-Goal mode is opt-in. It keeps one objective and acceptance criteria in active
-session branch. Each model turn gets saved state. It can ask for another turn after
-agent settles. It does not prove objective is right or make provider deterministic.
-Model-written evidence is not independent proof.
+Goal mode is opt-in. It keeps one objective and optional acceptance criteria in the
+active session branch. Each model turn gets saved state. It requests another turn
+while useful work remains. It does not prove the objective is right or make the
+provider deterministic. Model-written evidence is not independent proof.
 
 ## Start and control a goal
 
-In the interactive TUI, set a goal with explicit criteria and constraints:
+In T3 Code or the interactive TUI, start with an objective:
 
 ```text
-/goal set Create the report --criteria report.md exists; links were checked --constraints do not publish; keep source files unchanged
+/goal Create the report
 ```
 
-Semicolons split criteria and constraints. Slash form needs both segments.
-Criteria are required. Use `none` when no constraints. Goal mode starts when goal
-is set through `/goal set` or helper below. Ordinary sessions get no automatic goal
-continuations.
+Use `set` when you want to add criteria, constraints, or a token budget:
+
+```text
+/goal set Create the report --criteria report.md exists; links were checked --constraints do not publish; keep source files unchanged --tokens 50000
+```
+
+Only the objective is required. Semicolons split criteria and constraints; omit
+either when unnecessary. `--tokens` accepts a positive integer and is optional.
+T3 Code also accepts `/bruv goal ...` and `/bruv:goal ...`.
+Goal mode starts through `/goal set` or an explicit user request handled with the
+helper below. Ordinary tasks do not create persistent goals or automatic goal
+continuations. An unfinished goal cannot be silently replaced; clear it first.
 
 | Command | Behavior |
 | --- | --- |
-| `/goal` or `/goal status` | Display the current branch's goal and status. |
-| `/goal pause [reason]` | Persist a paused state and stop automatic continuation. |
-| `/goal resume` | Persist an active state and request a continuation. |
-| `/goal clear` | Append a durable clear marker on the current branch. |
+| `/goal` or `/goal status` | Display the current branch's goal, status, and token usage. |
+| `/goal <objective>` | Start a new persistent goal. |
+| `/goal pause [reason]` | Persist a paused state, interrupt the current agent turn, and stop automatic continuation. |
+| `/goal resume` | Start a fresh blocker audit and request a continuation, preserving token usage. An exhausted budget prevents resume. |
+| `/goal budget <N\|none>` | Set a positive integer budget or remove it without resuming the goal. |
+| `/goal clear` | Interrupt the current agent turn and append a durable clear marker on the current branch. |
+
+In T3, use `/bruv goal status`, `/bruv goal pause`, and `/bruv goal clear` while
+the agent is responding. T3 rejects steering bare `/goal` commands before they
+reach Bruv; the native Stop button also pauses the goal. Bare commands work when
+idle. Clear before replacing a goal, and pause before changing its budget.
+Pausing with the goal command leaves existing jobs running; use job controls to
+stop them. T3's native Stop also closes the connector, which tears down its owned
+work.
 
 Goal records are custom entries in normal session JSONL. They survive process
 restart. They follow Pi's branch semantics. Moving to another branch restores latest
@@ -33,11 +51,11 @@ does not revive old state.
 ## Helpers available to the agent
 
 Goal helpers work only inside `execute`, next to `shell`, `subagent`, and `jobs`.
-Model guidance lives in `src/prompts/goal.md`. It comes with goal state only when goal
-exists, including non-active states. `/goal set` lets user start it without API
-instructions in every normal chat. Start, update, and clear do not change system prompt
-or tool definitions. Only goal context message changes. This keeps system prefix. It
-does not promise provider cache hit.
+The brief API is always discoverable in `src/prompts/execute.md`. Additional guidance
+in `src/prompts/goal.md` comes with saved goal state, including non-active states.
+Start, update, and clear do not change the system prompt or tool definitions. Only
+the goal context message changes. This preserves the system prefix; it does not
+promise a provider cache hit.
 
 Helpers:
 
@@ -47,21 +65,29 @@ await goal.set({
   objective: "Create the report",
   criteria: ["report.md exists", "links were checked"],
   constraints: ["do not publish"],
+  tokenBudget: 50000, // Only when explicitly supplied by the user.
 });
 await goal.update({ status: "active", progress: "Drafted report.md" });
 await goal.update({ status: "blocked", blocker: "Missing source data" });
-await goal.update({ status: "paused", reason: "Needs user review" });
+await goal.update({ status: "paused", reason: "User asked to pause" });
 await goal.update({ status: "completed", evidence: "Read report.md and checked 12 links" });
 await goal.clear();
 ```
 
-`goal.get()` returns current goal or `null`. Runtime-owned `waiting` status and
-`pendingJobIds` stay visible as read-only state. `goal.set()` replaces it with new
-active goal. `goal.update()` needs one model-owned status: `active`, `blocked`,
-`paused`, or `completed`. Completion needs `evidence`. Blocking needs `blocker`.
-Pausing accepts `reason`. Active update may add one `progress` milestone. Runtime
-owns waiting bookkeeping, so manual `waiting` status and `pendingJobIds` inputs fail.
-`goal.clear()` removes active goal by appending clear entry.
+`goal.get()` returns the current goal or `null`. `goal.set()` needs an objective;
+criteria and constraints are optional. Omitted criteria default to the objective;
+omitted constraints default to an empty list. Only an explicit user request authorizes
+creating a persistent goal. An existing unfinished goal must be cleared before
+replacement. `goal.update()` accepts `active`, `blocked`, `paused`, or `completed`.
+Completion needs verified `evidence`. Blocking needs a `blocker` and the three-turn
+audit below. Pause only on an explicit user request; `reason` records why. Active
+updates may add one checked `progress` milestone, but are not required keepalives.
+`goal.clear()` appends a durable clear entry.
+
+`waiting`, `pendingJobIds`, `tokensUsed`, and `budget_exceeded` are runtime-owned
+state. The agent cannot set usage, change a budget through updates, or use an active
+update to bypass a paused, blocked, or exhausted goal. Budget changes and resume
+belong to the user.
 
 Successful explicit `handoff()` with active goal and running jobs saves all owned
 running IDs. Goal changes to `waiting`. This is only automatic path to waiting.
@@ -81,11 +107,53 @@ Goal state is bounded so it cannot become an unbounded evidence store:
 - up to eight distinct progress milestones are retained, each at most 500 characters;
 - the aggregate textual goal payload is at most 12,000 characters.
 
-These limit storage, not promise quality. Completion evidence is short model-written
-claim. Check key acceptance criteria with tests, files, or outside review. Repeated
-automatic turns pause when no new explicit, checked progress milestone. Waiting-state
-changes and revision bumps do not count as milestone evidence. Interrupted turns and
-queued user input pause automatic continuation too.
+These limit storage, not promise quality. Completion evidence is a short model-written
+claim. Check the objective and acceptance criteria with tests, files, or outside
+review before completing it. A partial result or nearly exhausted budget is not
+completion. Turns without a progress milestone continue normally.
+
+A blocker must recur for three consecutive goal turns, including the original turn,
+before the runtime records `blocked`. Earlier reports keep the goal active so the
+agent can try alternatives and finish independent work. Repeated calls in one turn
+do not count as separate turns. A different blocker, checked progress, user steering,
+or `/goal resume` starts a fresh audit. Do not mark work blocked just because it is
+hard, slow, uncertain, or would benefit from clarification.
+
+User steering and questions keep the goal alive. The agent answers a status question
+briefly, then continues the objective. An explicit Stop/abort pauses continuation;
+a provider retry that succeeds does not. Saved foreground questions still defer work
+that requires an answer.
+
+In native T3, the connector sends dedicated synthetic goal messages so the host can
+show its goal indicator. Scheduled automatic turns share one native run, including
+initial command admission and provider startup, so Stop and steering retain their
+owner. The final result aggregates actual model usage across those turns. Pausing,
+waiting, or exhausting a budget settles the run with a non-completion terminal
+reason; unrelated chat while paused cannot complete the saved goal. Only actual
+completion permits the native completed indicator. Human command notices are
+synthetic and do not count as model work or usage.
+
+T3 2702's Claude provider protocol supports a saved-goal indicator and completion,
+but not Codex's structured paused, blocked, or budget fields. An unfinished idle
+goal therefore displays **Goal set**. `/goal status` reports Bruv's precise state
+and usage; `/goal resume` resumes it. The native Clear control clears the durable
+Bruv goal. This limitation cannot be fixed by changing Bruv's wire data alone.
+
+## Token budgets
+
+The default is no token budget. Set one only when the user explicitly supplies it,
+using `--tokens N` at creation or `/goal budget N` later. `goal.get()` exposes
+`tokenBudget` when configured and cumulative `tokensUsed`. Usage includes
+provider-reported input, output, and cache tokens for this agent's turns while the
+goal runs. It does not claim to include delegated work, and missing provider usage
+cannot be counted.
+
+The runtime checks usage after each provider response and records `budget_exceeded`
+when the budget is exhausted. It stops before the next tool or provider request.
+One response can use more than the remaining budget; this is not a hard provider
+token cap. Changing or removing the budget does not silently resume work. Use
+`/goal resume` afterward. Resume preserves cumulative usage and cannot bypass an
+exhausted budget. On completing a budgeted goal, report its recorded usage.
 
 ## Running jobs, attention, and resume
 

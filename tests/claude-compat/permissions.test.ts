@@ -42,6 +42,34 @@ test("dontAsk rejects unapproved calls but allows explicitly approved tools", as
   expect((await unapproved(execute)).behavior).toBe("deny");
   expect((await approved(execute)).behavior).toBe("allow");
 });
+test("default and acceptEdits allow trusted native reads without widening arbitrary execution or MCP", async () => {
+  for (const mode of ["default", "acceptEdits"] as const) {
+    let prompts = 0;
+    const policy = createPermissionPolicy({
+      mode,
+      canUseTool: async () => {
+        prompts++;
+        return { behavior: "deny", message: "Fixture denied" };
+      },
+    });
+    expect((await policy({ ...execute, toolName: "read", effect: "read-only" })).behavior).toBe("allow");
+    expect(prompts).toBe(0);
+    expect((await policy(execute)).behavior).toBe("deny");
+    expect(
+      (await policy({ ...execute, toolName: "mcp__external__read", owner: "external", effect: "mcp" })).behavior,
+    ).toBe("deny");
+    expect(prompts).toBe(2);
+  }
+});
+test("native reads still honor explicit deny rules and dontAsk approval requirements", async () => {
+  const read: PermissionRequest = { ...execute, toolName: "read", effect: "read-only" };
+  for (const mode of ["default", "acceptEdits", "plan"] as const) {
+    const policy = createPermissionPolicy({ mode, allowedTools: ["read"], disallowedTools: ["read"] });
+    expect((await policy(read)).behavior).toBe("deny");
+  }
+  expect((await createPermissionPolicy({ mode: "dontAsk" })(read)).behavior).toBe("deny");
+  expect((await createPermissionPolicy({ mode: "dontAsk", allowedTools: ["read"] })(read)).behavior).toBe("allow");
+});
 test("disallowed tools take precedence over explicitly allowed tools", async () => {
   const policy = createPermissionPolicy({
     mode: "default",

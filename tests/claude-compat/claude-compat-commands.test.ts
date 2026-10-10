@@ -18,6 +18,7 @@ function commandFixture(sessionFile?: string) {
     mode: "rpc",
     hasUI: false,
     isIdle: () => false,
+    abort() {},
     sessionManager: {
       getSessionId: () => "session",
       getSessionFile: () => sessionFile,
@@ -114,8 +115,9 @@ test("namespaced commands call real goal, mode and question handlers with no pha
     const q: any = await runtime.handle(h.ctx, "questions.ask", { text: "Which target?" });
     await h.adapter.dispatchUserCommand(h.message("/bruv questions"));
     expect(h.notices.at(-1)).toContain("Which target?");
-    await h.adapter.dispatchUserCommand(h.message("/bruv:questions answer " + q.id + " Human authored answer"));
-    expect(runtime.service.get(h.ctx, q.id).answer).toBe("Human authored answer");
+    const answer = "Keep  both spaces\n\n    and this indented second paragraph.";
+    await h.adapter.dispatchUserCommand(h.message("/bruv questions answer " + q.id + " " + answer));
+    expect(runtime.service.get(h.ctx, q.id).answer).toBe(answer);
     expect(h.ctx.hasUI).toBe(false);
     expect(h.ctx.mode).toBe("rpc");
     expect(h.originalNotifications()).toBe(0);
@@ -138,12 +140,7 @@ test("status and resources use actual owning session data; no native TUI status 
 
 test("ordinary CLI text is untouched; unknown namespaced input cannot become a model prompt", async () => {
   const h = commandFixture();
-  for (const input of [
-    "/goal status",
-    "/questions answer q_foo yes",
-    "/mode fast",
-    "User discussion of /bruv mode fast",
-  ]) {
+  for (const input of ["/questionsx answer q_foo yes", "/modefast", "/status", "User discussion of /bruv mode fast"]) {
     expect(await h.adapter.dispatchUserCommand(h.message(input))).toBe(false);
   }
   expect(await h.adapter.dispatchUserCommand({ ...h.message("/bruv mode fast"), type: "assistant" } as any)).toBe(
@@ -168,13 +165,31 @@ test("ordinary CLI text is untouched; unknown namespaced input cannot become a m
   await expect(h.adapter.dispatchUserCommand(imageCommand)).rejects.toThrow("text only");
 });
 
+test("goal alias is discoverable and uses the same validated command handler", async () => {
+  const h = commandFixture();
+  const values: string[] = [];
+  h.registered.set("goal", { handler: async (value: string) => values.push(value) });
+  expect(h.adapter.catalog()).toContainEqual({
+    name: "goal",
+    description: "Start or resume a goal; during work use /bruv goal status|pause",
+    argumentHint: "objective|status|pause|resume|budget|clear|help",
+  });
+  for (const command of ["/goal", "/goal status", "/goal Ship it", "/bruv goal Ship it", "/bruv:goal Ship it"]) {
+    expect(await h.adapter.dispatchUserCommand(h.message(command))).toBe(true);
+  }
+  expect(values).toEqual(["", "status", "Ship it", "Ship it", "Ship it"]);
+  await expect(h.adapter.dispatchUserCommand({ ...h.message("/goal pause"), session_id: "foreign" })).rejects.toThrow(
+    "session mismatch",
+  );
+});
+
 test("admission resolves both spellings before dispatch and preserves their argument semantics", async () => {
   const h = commandFixture();
   const values: string[] = [];
   h.registered.set("mode", { handler: async (value: string) => values.push(value) });
   expect(await h.adapter.dispatchUserCommand(h.message("  /bruv mode   fast  now  "))).toBe(true);
   expect(await h.adapter.dispatchUserCommand(h.message("  /bruv:mode   fast  now  "))).toBe(true);
-  expect(values).toEqual(["fast now", "fast  now"]);
+  expect(values).toEqual(["fast  now", "fast  now"]);
   const blocks = h.message("ignored");
   blocks.message.content = [
     { type: "text", text: "/bruv:mode" },
@@ -184,7 +199,7 @@ test("admission resolves both spellings before dispatch and preserves their argu
   expect(values.at(-1)).toBe("fast");
   for (const text of ["/bruv", "/bruv help", "/bruv:help"]) {
     expect(await h.adapter.dispatchUserCommand(h.message(text))).toBe(true);
-    expect(h.notices.at(-1)).toContain("/bruv questions open <id>");
+    expect(h.notices.at(-1)).toContain("/questions open <id>");
   }
   await expect(h.adapter.dispatchUserCommand(h.message("/bruv status extra"))).rejects.toThrow("Usage:");
   await expect(h.adapter.dispatchUserCommand(h.message("/bruv:resources extra"))).rejects.toThrow("Usage:");
@@ -273,4 +288,148 @@ test("questions open uses native human controls, not the extension handler", asy
   await expect(adapter.dispatchUserCommand(h.message("/bruv questions open q_full extra"))).rejects.toThrow("Usage:");
   await expect(h.adapter.dispatchUserCommand(h.message("/bruv questions open q_full"))).rejects.toThrow("unavailable");
   expect(opened).toEqual(["q_full"]);
+});
+
+test.each(["questions", "mode"])("%s alias is discoverable and preserves native ownership validation", async (name) => {
+  const h = commandFixture();
+  const values: string[] = [];
+  h.registered.set(name, { handler: async (value: string) => values.push(value) });
+  expect(h.adapter.catalog().map((command) => command.name)).toContain(name);
+  for (const prefix of ["/" + name, "/bruv " + name, "/bruv:" + name]) {
+    expect(await h.adapter.dispatchUserCommand(h.message(prefix + " argument  with\nnewlines"))).toBe(true);
+  }
+  expect(values).toEqual(Array(3).fill("argument  with\nnewlines"));
+  await expect(h.adapter.dispatchUserCommand({ ...h.message("/" + name), session_id: "foreign" })).rejects.toThrow(
+    "session mismatch",
+  );
+  await expect(
+    h.adapter.dispatchUserCommand({ ...h.message("/" + name), parent_tool_use_id: "child" }),
+  ).rejects.toThrow("root session");
+  h.registered.delete(name);
+  expect(h.adapter.catalog().map((command) => command.name)).not.toContain(name);
+  await expect(h.adapter.dispatchUserCommand(h.message("/" + name))).rejects.toThrow("Unavailable");
+});
+
+test.each([{ type: "text" }, { type: "text", text: 42 }, { type: "text", text: null }])(
+  "malformed native text blocks cannot partially admit a human command: %j",
+  async (malformed) => {
+    const h = commandFixture();
+    let calls = 0;
+    h.registered.set("mode", { handler: () => calls++ });
+    const message = h.message("ignored");
+    message.message.content = [{ type: "text", text: "/mode fast" }, malformed];
+    await expect(h.adapter.dispatchUserCommand(message)).rejects.toThrow("text only");
+    expect(calls).toBe(0);
+    expect(h.notices).toHaveLength(0);
+  },
+);
+
+test("forwarded command context keeps live guarded getters through reload and model changes", async () => {
+  const h = commandFixture();
+  let reads = 0;
+  let currentModel = "initial";
+  let stale = false;
+  let theme = "initial-theme";
+  Object.defineProperty(h.ctx, "model", {
+    enumerable: true,
+    configurable: true,
+    get() {
+      reads++;
+      if (stale) throw new Error("Stale extension context");
+      return currentModel;
+    },
+  });
+  Object.defineProperty(h.ctx.ui, "theme", {
+    enumerable: true,
+    configurable: true,
+    get: () => theme,
+  });
+  h.registered.set("mode", {
+    handler: async (_value: string, context: any) => {
+      expect(reads).toBe(0);
+      expect(context.model).toBe("initial");
+      expect(context.ui.theme).toBe("initial-theme");
+      await Promise.resolve();
+      currentModel = "changed";
+      theme = "changed-theme";
+      expect(context.model).toBe("changed");
+      expect(context.ui.theme).toBe("changed-theme");
+      stale = true;
+      expect(() => context.model).toThrow("Stale extension context");
+    },
+  });
+  await h.adapter.dispatchUserCommand(h.message("/mode"));
+  expect(reads).toBe(3);
+});
+
+test("a failed command waits for its queued notifications before rejecting", async () => {
+  const h = commandFixture();
+  const deliveryStarted = Promise.withResolvers<void>();
+  const releaseDelivery = Promise.withResolvers<void>();
+  const failure = new Error("Command failed after notification");
+  const events: string[] = [];
+  h.registered.set("mode", {
+    handler: async (_value: string, context: any) => {
+      context.ui.notify("Before failure", "warning");
+      throw failure;
+    },
+  });
+  const adapter = createClaudeCompatCommands({
+    session: h.session,
+    async notify(text) {
+      events.push(text + " started");
+      deliveryStarted.resolve();
+      await releaseDelivery.promise;
+      events.push(text + " delivered");
+    },
+  });
+  const completion = adapter.dispatchUserCommand(h.message("/mode")).then(
+    () => {
+      throw new Error("Expected failed command");
+    },
+    (error) => {
+      events.push("command rejected");
+      return error;
+    },
+  );
+  try {
+    await deliveryStarted.promise;
+    expect(events).toEqual(["Before failure started"]);
+    releaseDelivery.resolve();
+    expect(await completion).toBe(failure);
+    expect(events).toEqual(["Before failure started", "Before failure delivered", "command rejected"]);
+  } finally {
+    releaseDelivery.resolve();
+    await completion;
+  }
+});
+
+test("native question dialogs resolve displayed prefixes and reject ambiguity before opening", async () => {
+  const h = commandFixture();
+  h.registered.set("questions", { handler() {} });
+  const opened: string[] = [];
+  let ids = ["q_12345678_first"];
+  const adapter = createClaudeCompatCommands({
+    session: h.session,
+    notify: (text) => {
+      h.notices.push(text);
+    },
+    humanControls: {
+      questions: () => ({
+        handle: async () => ids.map((id) => ({ id })),
+      }),
+      openQuestion: async (id) => {
+        opened.push(id);
+        return { id, status: "pending", text: "Saved question" } as any;
+      },
+    },
+  });
+  await adapter.dispatchUserCommand(h.message("/questions open q_12345678"));
+  expect(opened).toEqual(["q_12345678_first"]);
+  ids = ["q_12345678_first", "q_12345678_second"];
+  await expect(adapter.dispatchUserCommand(h.message("/bruv questions open q_12345678"))).rejects.toThrow("ambiguous");
+  expect(opened).toHaveLength(1);
+  ids.push("q_12345678");
+  await adapter.dispatchUserCommand(h.message("/bruv:questions open q_12345678"));
+  expect(opened.at(-1)).toBe("q_12345678");
 });

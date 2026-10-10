@@ -117,6 +117,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       calls,
       capture: () => audioCallbacks?.capture(Buffer.alloc(640)),
       interrupt: () => voiceCallbacks?.onInterrupted(1),
+      providerError: () => voiceCallbacks?.onError({ code: "fixture_error" }),
       waitClose: () => {
         releaseAudio = () => {};
       },
@@ -153,7 +154,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       mode: "rpc",
       hasUI: false,
       isIdle: () => true,
-      ui: { notify: () => {}, setStatus: () => {}, setWidget: () => {} },
+      ui: { notify: (text: string) => notices.push(text), setStatus: () => {}, setWidget: () => {} },
     } as unknown as ExtensionContext;
     const api = {
       events: {
@@ -229,6 +230,57 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   }
 
   describe("native connector-host Live", () => {
+    test.each(["", "status", "capabilities", "stop", "start browser"])(
+      "%s command replies use the supplied UI without publishing a lifetime notice",
+      async (action) => {
+        const h = harness({ localAudio: undefined });
+        const replies: string[] = [];
+        await h.run(action, { ...h.ctx, ui: { ...h.ctx.ui, notify: (text) => replies.push(text) } });
+        expect(replies.length).toBeGreaterThan(0);
+        expect(h.notices).toEqual([]);
+        expect(h.calls).toEqual([]);
+      },
+    );
+
+    test("nested native picker warnings and failures belong to their command reply", async () => {
+      for (const available of [false, true]) {
+        const h = harness({ humanChoices: available });
+        const replies: string[] = [];
+        h.answer(async () => {
+          throw new Error("PRIVATE-NATIVE-CHOICE-ERROR");
+        });
+        await h.run("model", { ...h.ctx, ui: { ...h.ctx.ui, notify: (text) => replies.push(text) } });
+        expect(replies.join()).toContain(available ? "command failed" : "choices are unavailable");
+        expect(replies.join()).not.toContain("PRIVATE-NATIVE-CHOICE-ERROR");
+        expect(h.notices).toEqual([]);
+        expect(h.calls).not.toContain("audio");
+      }
+    });
+
+    test("retained Live callbacks use lifetime notices after the start command finishes", async () => {
+      const h = harness();
+      const replies: string[] = [];
+      await h.run("start", { ...h.ctx, ui: { ...h.ctx.ui, notify: (text) => replies.push(text) } });
+      expect(replies.join()).toContain("Live listening");
+      expect(h.notices).toEqual([]);
+      const completed = [...replies];
+      h.providerError();
+      await h.frontend.stop(h.ctx);
+      expect(h.notices.join()).toContain("Live stop requested");
+      expect(replies).toEqual(completed);
+    });
+
+    test("stop teardown warnings remain within the stop command's UI", async () => {
+      const h = harness();
+      await h.run("start");
+      h.notices.length = 0;
+      h.failClose();
+      const replies: string[] = [];
+      await h.run("stop", { ...h.ctx, ui: { ...h.ctx.ui, notify: (text) => replies.push(text) } });
+      expect(replies.join()).toContain("Audio close failed");
+      expect(h.notices).toEqual([]);
+    });
+
     test("push-to-talk is refused before device consent; continuous must be chosen explicitly", async () => {
       const h = harness();
       await h.run("input push-to-talk");
@@ -557,6 +609,12 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
           settingsManager: SettingsManager.inMemory({ cacheWarming: "off" }, { projectTrusted: false }),
           extensionFactories: [{ name: "native-live", factory: live.factory }],
           emit: () => {},
+          // This duplicate test registration is invoked directly through Pi,
+          // whose headless command UI reports notifications as diagnostics.
+          diagnostic: (event) => {
+            if (event && typeof event === "object" && "message" in event && typeof event.message === "string")
+              notices.push(event.message);
+          },
         });
         await runtime.controls.initialize!(
           { type: "control_request", request_id: "initialize", request: { subtype: "initialize" } },

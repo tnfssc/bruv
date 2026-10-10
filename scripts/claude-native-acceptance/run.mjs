@@ -1,14 +1,19 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import os from "node:os";
-import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { startModel, modelsConfig, modelSlug, provider, modelId } from "./model.mjs";
+import { modelId, modelSlug, modelsConfig, provider, startModel } from "./model.mjs";
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 
 // Shared by the ordinary CLI and unchanged-official proof; no copied launcher source.
-export async function runAcceptance({ driverPath } = {}) {
+export async function runAcceptance({
+  driverPath,
+  scenario = process.env.ACCEPT_GOAL_CONTROLS === "1" ? "goal-controls" : "default",
+} = {}) {
+  if (!["default", "goal-controls"].includes(scenario)) throw Error(`Unknown native acceptance scenario: ${scenario}`);
   const connector = process.env.BRUV_CONNECTOR_EXECUTABLE;
   if (!connector)
     throw Error("Set BRUV_CONNECTOR_EXECUTABLE to the actual built connector. Synthetic fixture is prohibited.");
@@ -25,7 +30,8 @@ export async function runAcceptance({ driverPath } = {}) {
     agent = path.join(root, "agent"),
     home = path.join(root, "home");
   const worker = path.join(root, "worker.mjs"),
-    pinnedConnector = path.join(root, "actual-connector");
+    pinnedConnector = path.join(root, "actual-connector"),
+    pinnedRuntime = path.join(root, "actual-runtime");
   let model,
     workerModel,
     config,
@@ -40,6 +46,8 @@ export async function runAcceptance({ driverPath } = {}) {
     // Pin the actual artifact, not a synthetic executable, while sibling builds continue.
     await fs.copyFile(connector, pinnedConnector);
     await fs.chmod(pinnedConnector, 0o755);
+    await fs.copyFile(normalBinary, pinnedRuntime);
+    await fs.chmod(pinnedRuntime, 0o755);
     await fs.writeFile(
       path.join(proof, "invocation.json"),
       `${JSON.stringify(
@@ -50,7 +58,7 @@ export async function runAcceptance({ driverPath } = {}) {
             .digest("hex"),
           normalRuntime: path.basename(normalBinary),
           normalRuntimeSha256: createHash("sha256")
-            .update(await fs.readFile(normalBinary))
+            .update(await fs.readFile(pinnedRuntime))
             .digest("hex"),
           testModel: modelSlug,
           credentialEnvironment: "explicit allowlist; no parent environment",
@@ -61,7 +69,10 @@ export async function runAcceptance({ driverPath } = {}) {
     );
     const delegation =
       process.env.ACCEPT_APP_DELEGATION === "1" ? await import("./app-delegation-model.mjs") : undefined;
-    model = await startModel({ worker, state, reply: delegation?.reply });
+    const goals = scenario === "goal-controls" ? await import("./goal-controls-model.mjs") : undefined;
+    if (goals && (delegation || process.env.ACCEPT_HUMAN_CONTROLS === "1"))
+      throw Error("Goal controls require their own isolated native scenario");
+    model = await startModel({ worker, state, reply: goals?.reply ?? delegation?.reply, usage: goals?.usage });
     workerModel = delegation ? await delegation.startWorkerModel({ state }) : undefined;
     await fs.writeFile(path.join(agent, "models.json"), JSON.stringify(modelsConfig(model.port)));
     // Health probes have no --model; configure the fixture default explicitly.
@@ -72,7 +83,9 @@ export async function runAcceptance({ driverPath } = {}) {
     // No real auth file and no parent credentials/environment are inherited by T3.
     config = {
       connector: pinnedConnector,
-      ...(driverPath ? { replayDriver: pathToFileURL(driverPath).href } : {}),
+      ...(driverPath || goals
+        ? { replayDriver: pathToFileURL(driverPath ?? path.join(here, "goal-controls-driver.mjs")).href }
+        : {}),
       connectorArgs: JSON.parse(process.env.BRUV_CONNECTOR_ARGS_JSON ?? "[]"),
       wire: path.join(root, "wire.ndjson"),
       state,
@@ -80,6 +93,7 @@ export async function runAcceptance({ driverPath } = {}) {
       modelSlug,
       workerModelPort: workerModel?.port,
       delegationCases: process.env.ACCEPT_APP_DELEGATION === "1",
+      goalControls: Boolean(goals),
 
       humanControls: process.env.ACCEPT_HUMAN_CONTROLS === "1",
       questionCases: process.env.ACCEPT_SAVED_QUESTION === "1",
@@ -90,7 +104,7 @@ export async function runAcceptance({ driverPath } = {}) {
         BRUV_CODING_AGENT_DIR: agent,
         BRUV_CLAUDE_COMPAT_HOME: agent,
         CLAUDE_CONFIG_DIR: path.join(agent, "native-history"),
-        BRUV_CLAUDE_COMPAT_BRUV_PATH: normalBinary,
+        BRUV_CLAUDE_COMPAT_BRUV_PATH: pinnedRuntime,
         BRUV_ACCEPTANCE_CONFIG: path.join(root, "config.json"),
       },
     };
@@ -116,6 +130,7 @@ export async function runAcceptance({ driverPath } = {}) {
     });
     if (code !== 0) throw Error(`Integrated native replay failed with exit ${code}`);
     verifyModelOutcome(model, workerModel, config);
+    goals?.verifyModelOutcome(model.records);
     passed = true;
   } finally {
     // Proof may fail to write; it must never retain the owned runtime.
@@ -147,12 +162,14 @@ export async function runAcceptance({ driverPath } = {}) {
     if (
       !config.delegationCases &&
       !config.humanControls &&
+      !config.goalControls &&
       model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1
     )
       throw Error("Expected exactly one actual model completion wake, not duplicate continuations");
     if (
       !config.delegationCases &&
       !config.humanControls &&
+      !config.goalControls &&
       model.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length !== 1
     )
       throw Error("Expected exactly one actual cancellation completion wake");
@@ -230,6 +247,8 @@ export async function runAcceptance({ driverPath } = {}) {
         const { projectWire } = await import(config.delegationCases ? "./app-delegation-driver.mjs" : "./driver.mjs");
         const wire = (await fs.readFile(config.wire, "utf8")).trim().split("\n").filter(Boolean).map(JSON.parse);
         if (config?.humanControls) await (await import("./human-driver.mjs")).capture({ records: wire, config, proof });
+        if (config?.goalControls)
+          await (await import("./goal-controls-driver.mjs")).capture({ records: wire, config, proof });
         await fs.writeFile(
           path.join(proof, "wire-projection.ndjson"),
           `${projectWire(wire)
@@ -246,6 +265,7 @@ export async function runAcceptance({ driverPath } = {}) {
             sequence: r.sequence,
             model: r.model,
             error: r.error,
+            aborted: r.aborted,
             tool: r.delta?.tool_calls?.[0]?.function?.name,
             response: r.delta?.content,
             reasoningEffort: r.reasoningEffort,
