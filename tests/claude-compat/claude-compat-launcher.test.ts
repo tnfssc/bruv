@@ -23,16 +23,20 @@ async function fixture(name = "bruv-claude-compat") {
   await chmod(normal, 0o755);
   return { launcher, normal };
 }
-async function run(command: string[], extra: Record<string, string> = {}) {
+async function run(command: string[], extra: Record<string, string> = {}, input?: string) {
   const child = Bun.spawn(command, {
     cwd: home,
     env: { PATH: "/usr/bin:/bin", ...extra },
-    stdin: "pipe",
+    stdin: input === undefined ? "ignore" : "pipe",
     stdout: "pipe",
     stderr: "pipe",
   });
-  child.stdin.write("stdin until EOF\n");
-  child.stdin.end();
+  // Rejection/version probes can exit without reading stdin. Only the explicit
+  // passthrough fixture owns an input write, and it reads until EOF before exit.
+  if (input !== undefined) {
+    child.stdin!.write(input);
+    child.stdin!.end();
+  }
   return {
     code: await child.exited,
     stdout: await new Response(child.stdout).text(),
@@ -44,7 +48,7 @@ test("launcher is tiny executable script; quotes argv and forwards stdin EOF/std
   const { launcher } = await fixture();
   expect((await stat(launcher)).size).toBeLessThan(4096);
   expect((await stat(launcher)).mode & 0o111).toBe(0o111);
-  const result = await run([launcher, "a b", "", "'\"$;*", "--flag"]);
+  const result = await run([launcher, "a b", "", "'\"$;*", "--flag"], {}, "stdin until EOF\n");
   expect(result.code).toBe(17);
   expect(result.stdout).toBe("<claude-compat>\n<a b>\n<>\n<'\"$;*>\n<--flag>\nstdin until EOF\n");
   expect(result.stderr).toBe("fixture stderr\n");

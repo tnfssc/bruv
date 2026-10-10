@@ -295,6 +295,23 @@ test("execute help keeps permission, placement, delivery and data-loss bounds", 
     expect(executeHelp).toContain(fact);
 });
 
+test("execute help owns goal discovery and explicit budget boundaries", () => {
+  for (const fact of [
+    "goal.get()",
+    "goal.set({objective, criteria?, constraints?, tokenBudget?})",
+    "goal.update({status, progress?, evidence?, blocker?, reason?})",
+    "goal.clear()",
+    "only on the user's explicit request",
+    "positive integer tokenBudget only when the user supplies one",
+    "unfinished goal must be cleared before replacement",
+    "Runtime owns tokensUsed, waiting, pendingJobIds and budget_exceeded",
+    "input, output and cache tokens for this agent, not delegated work",
+    "user controls budget changes and resume",
+    "cannot bypass an exhausted budget",
+  ])
+    expect(executeHelp).toContain(fact);
+});
+
 test("root mode and child role read one workspace judgment asset", async () => {
   const workspace = (
     await Bun.file(new URL("../../src/prompts/main-orchestrator.md", import.meta.url)).text()

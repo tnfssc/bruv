@@ -30,6 +30,24 @@ function optionalText(value: unknown, name: string): string | undefined {
   return value === undefined ? undefined : text(value, name);
 }
 
+function tokenCount(value: unknown, name: string, minimum: number): number {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < minimum) {
+    throw new Error(`${name} must be a ${minimum === 0 ? "nonnegative" : "positive"} safe integer`);
+  }
+  return value;
+}
+
+function budgetExhausted(goal: GoalState): boolean {
+  return goal.tokenBudget !== undefined && goal.tokensUsed >= goal.tokenBudget;
+}
+
+function enforceBudget(goal: GoalState): void {
+  if (budgetExhausted(goal) && (goal.status === "active" || goal.status === "waiting")) {
+    goal.status = "budget_exceeded";
+    delete goal.pendingJobIds;
+  }
+}
+
 function aggregateText(goal: GoalState): number {
   return [
     goal.objective,
@@ -70,10 +88,14 @@ function parseGoal(value: unknown): GoalState | undefined {
       criteria: strings(raw.criteria, "criteria", true),
       constraints: strings(raw.constraints, "constraints"),
       status: status as GoalStatus,
+      tokensUsed: raw.tokensUsed === undefined ? 0 : tokenCount(raw.tokensUsed, "tokensUsed", 0),
       createdAt: text(raw.createdAt, "createdAt"),
       updatedAt: text(raw.updatedAt, "updatedAt"),
     };
 
+    if (raw.tokenBudget !== undefined) goal.tokenBudget = tokenCount(raw.tokenBudget, "tokenBudget", 1);
+    if (goal.status === "budget_exceeded" && !budgetExhausted(goal)) return undefined;
+    if ((goal.status === "active" || goal.status === "waiting") && budgetExhausted(goal)) return undefined;
     if (raw.progress !== undefined) {
       goal.progress = strings(raw.progress, "progress").map(progressText);
       if (goal.progress.length > MAX_PROGRESS_ITEMS) return undefined;
@@ -183,18 +205,26 @@ export class GoalStore {
     return this.#goal ? structuredClone(this.#goal) : undefined;
   }
 
-  set(input: { objective: unknown; criteria: unknown; constraints: unknown }): GoalState {
+  set(input: { objective: unknown; criteria?: unknown; constraints?: unknown; tokenBudget?: unknown }): GoalState {
+    if (this.#goal && this.#goal.status !== "completed") {
+      throw new Error(
+        "An unfinished goal already exists; complete it or explicitly clear it before setting a new goal",
+      );
+    }
     const at = this.now();
+    const objective = text(input.objective, "objective");
     const goal: GoalState = {
       id: randomUUID(),
       revision: (this.#goal?.revision ?? 0) + 1,
-      objective: text(input.objective, "objective"),
-      criteria: strings(input.criteria, "criteria", true),
-      constraints: strings(input.constraints, "constraints"),
+      objective,
+      criteria: input.criteria === undefined ? [objective] : strings(input.criteria, "criteria", true),
+      constraints: input.constraints === undefined ? [] : strings(input.constraints, "constraints"),
       status: "active",
+      tokensUsed: 0,
       createdAt: at,
       updatedAt: at,
     };
+    if (input.tokenBudget !== undefined) goal.tokenBudget = tokenCount(input.tokenBudget, "tokenBudget", 1);
     validateAggregate(goal);
     return this.#save("set", goal);
   }
@@ -216,6 +246,10 @@ export class GoalStore {
     }
 
     const status = input.status as GoalStatus;
+    if (status === "budget_exceeded") throw new Error("budget_exceeded status is runtime-managed");
+    if ((status === "active" || status === "waiting") && budgetExhausted(this.#goal)) {
+      throw new Error("Goal token budget is exhausted; increase or remove the budget before resuming");
+    }
     const goal: GoalState = {
       ...this.#goal,
       status,
@@ -246,6 +280,39 @@ export class GoalStore {
       if (!prior.includes(milestone)) goal.progress = [...prior, milestone].slice(-MAX_PROGRESS_ITEMS);
     }
     validateAggregate(goal);
+    return this.#save("update", goal);
+  }
+
+  addUsage(tokens: number): GoalState | undefined {
+    tokenCount(tokens, "tokens", 0);
+    if (!this.#goal || tokens === 0) return this.get();
+    const goal: GoalState = {
+      ...this.#goal,
+      // Saturate rather than lose precision or discard an otherwise valid usage event.
+      tokensUsed: this.#goal.tokensUsed + Math.min(tokens, Number.MAX_SAFE_INTEGER - this.#goal.tokensUsed),
+      revision: this.#goal.revision + 1,
+      updatedAt: this.now(),
+    };
+    enforceBudget(goal);
+    return this.#save("update", goal);
+  }
+
+  /** Changes to an existing budget are reserved for explicit user commands. */
+  setBudget(tokenBudget: number | undefined): GoalState {
+    if (!this.#goal) throw new Error("No goal is set");
+    if (tokenBudget !== undefined) tokenCount(tokenBudget, "tokenBudget", 1);
+    const goal: GoalState = {
+      ...this.#goal,
+      revision: this.#goal.revision + 1,
+      updatedAt: this.now(),
+    };
+    if (tokenBudget === undefined) delete goal.tokenBudget;
+    else goal.tokenBudget = tokenBudget;
+    if (goal.status === "budget_exceeded" && !budgetExhausted(goal)) {
+      goal.status = "paused";
+      goal.pauseReason = "Token budget updated. Resume the goal to continue.";
+    }
+    enforceBudget(goal);
     return this.#save("update", goal);
   }
 

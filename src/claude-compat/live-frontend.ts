@@ -92,7 +92,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       ctx.sessionManager.getLeafId(),
     ]);
   }
-  function ui(ctx: ExtensionContext, controller: AbortController) {
+  function ui(ctx: ExtensionContext, controller: AbortController, notify: ExtensionContext["ui"]["notify"]) {
     const manager = ctx.sessionManager;
     const branch = identity(ctx);
     const valid = () =>
@@ -126,7 +126,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
     }
     const select = async (title: string, labels: string[]): Promise<string | undefined> => {
       if (!humanChoices) {
-        options.notify(
+        notify(
           "Native Live choices are unavailable. Use Live capabilities for model IDs, an explicit Live model <id>, or secure provider setup in the ordinary CLI. Never paste keys into T3.",
           "warning",
         );
@@ -164,7 +164,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       input: unavailable,
       editor: unavailable,
       custom: unavailable,
-      notify: options.notify,
+      notify,
       setStatus: (key: string, value: string | undefined) => options.status?.(key, value),
       // Claude protocol has no Live waveform/widget event. Do not fabricate one.
       setWidget: () => {},
@@ -172,17 +172,32 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
   }
 
   async function dispatch(args: string, ctx: ExtensionContext) {
+    let active = true;
+    const notify: ExtensionContext["ui"]["notify"] = (message, level = "info") => {
+      // The native dispatcher owns this command's reply. A retained Live run
+      // can report later device/provider errors only through its lifetime UI.
+      if (active) ctx.ui.notify(message, level);
+      else options.notify(message, level);
+    };
+    try {
+      await dispatchCommand(args, ctx, notify);
+    } finally {
+      active = false;
+    }
+  }
+
+  async function dispatchCommand(args: string, ctx: ExtensionContext, notify: ExtensionContext["ui"]["notify"]) {
     const action = args.trim() || "status";
     if (action === "stop") {
-      const result = await stop(ctx);
-      options.notify(
+      const result = await stop(ctx, notify);
+      notify(
         result.stopped ? "Live off. Agent jobs unchanged." : `Live stop: ${result.errors.join("; ")}`,
         result.stopped ? "info" : "warning",
       );
       return;
     }
     if (action === "capabilities") {
-      options.notify(JSON.stringify(capabilities()), "info");
+      notify(JSON.stringify(capabilities()), "info");
       return;
     }
     if (
@@ -190,14 +205,14 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
         action,
       )
     ) {
-      options.notify(
+      notify(
         "Native Live supports connector-host devices only. Browser/remote microphone transport is not supplied by Claude protocol. Use live start|stop|status|capabilities|model|provider|input|setup|mic-check|speaker-check.",
         "warning",
       );
       return;
     }
     if (closed || !belongs(ctx) || ctx.mode !== "rpc" || Number(process.env.BRUV_SUBAGENT_DEPTH) > 0) {
-      options.notify(
+      notify(
         "Native Live belongs to the canonical connector root session, not a worker or another frontend.",
         "warning",
       );
@@ -209,24 +224,24 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       file: ctx.sessionManager.getSessionFile(),
     };
     if (pending) {
-      options.notify("Live command is pending; use Live stop first.", "info");
+      notify("Live command is pending; use Live stop first.", "info");
       return;
     }
     const needsDevice = ["start", "setup", "mic-check", "speaker-check"].includes(action);
     if (needsDevice && !capabilities().localHostAudio) {
-      options.notify(capabilities().reason, "warning");
+      notify(capabilities().reason, "warning");
       return;
     }
     const controller = new AbortController();
     pending = controller;
     const branch = identity(ctx);
-    const nativeUI = ui(ctx, controller);
+    const nativeUI = ui(ctx, controller, notify);
     try {
       if (needsDevice) {
         const paid = action === "start" || action === "setup";
         const selection = paid ? await config.load() : undefined;
         if (selection && (selection.inputMode ?? "push-to-talk") === "push-to-talk") {
-          options.notify(
+          notify(
             "Push-to-talk needs the local terminal talk panel. Connector-host Live has no hold/release controls. Use the terminal, or explicitly choose Live input continuous.",
             "warning",
           );
@@ -264,10 +279,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
         await liveHandler("status", nativeContext);
     } catch {
       if (!controller.signal.aborted)
-        options.notify(
-          "Native Live command failed; details withheld. No credentials belong in the T3 transcript.",
-          "warning",
-        );
+        notify("Native Live command failed; details withheld. No credentials belong in the T3 transcript.", "warning");
     } finally {
       if (pending === controller) pending = undefined;
     }
@@ -313,7 +325,10 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
     );
   };
 
-  async function stop(ctx: ExtensionContext): Promise<LiveStopResult> {
+  async function stop(
+    ctx: ExtensionContext,
+    notify: ExtensionContext["ui"]["notify"] = (message, level = "info") => options.notify(message, level),
+  ): Promise<LiveStopResult> {
     if (!belongs(ctx))
       return { stopped: false, errors: ["Native Live belongs to another session owner"], jobsUnchanged: true };
     cancel();
@@ -321,7 +336,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
     // Preserve observed teardown errors from the canonical Live port. Command
     // stop also cancels credential entry and bounded device probes, if any.
     const result = await stopCurrentLive(pi, ctx);
-    const stopUI = ui(ctx, new AbortController());
+    const stopUI = ui(ctx, new AbortController(), notify);
     await handler("stop", {
       ...ctx,
       ui: {
@@ -329,7 +344,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
         notify(message, level) {
           // The command cancels entry/probes but its idle "off" notice is not
           // evidence that the canonical port observed successful teardown.
-          if (message !== "Live off.") options.notify(message, level ?? "info");
+          if (message !== "Live off.") notify(message, level ?? "info");
         },
       },
     });
@@ -338,6 +353,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
   return {
     factory,
     capabilities,
+    cancel,
     stop,
     async close(ctx: ExtensionContext) {
       if (!belongs(ctx))

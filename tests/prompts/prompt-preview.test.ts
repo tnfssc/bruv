@@ -57,6 +57,7 @@ test("offline preview captures production prompt, tool definition, and injected 
     expect(JSON.stringify(preview.messages)).toContain("GOAL_PREVIEW_MARKER");
     for (const call of ["goal.get()", "goal.set({", "goal.update({", "goal.clear()"]) {
       expect(JSON.stringify(preview.messages).split(call)).toHaveLength(2);
+      expect(preview.tools[0]!.description).toContain(call);
     }
   } finally {
     fetch.mockRestore();

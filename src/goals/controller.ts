@@ -1,63 +1,42 @@
-import type { GoalState } from "./types";
+export const REQUIRED_BLOCKED_TURNS = 3;
 
-export const MAX_NO_PROGRESS_CONTINUATIONS = 3;
-
-// Only evidence deliberately recorded through goal.update({ progress }) is a
-// milestone. Lifecycle churn (including waiting job IDs and revisions) is not.
-function milestoneState(goal: GoalState): string {
-  return JSON.stringify({ id: goal.id, progress: goal.progress ?? [] });
-}
-
+/** A blocker must recur on separate goal turns; ordinary work needs no keepalive. */
 export class GoalContinuationController {
-  #automatic = false;
-  #helperActivated = false;
-  #startingMilestones?: string;
-  #noProgress = 0;
+  #blocker?: string;
+  #completedTurns = 0;
+  #reportedThisRun = false;
 
-  markAutomaticStart(goal: GoalState): void {
-    this.#automatic = true;
-    this.#helperActivated = false;
-    this.#startingMilestones = milestoneState(goal);
+  beginRun(): void {
+    this.#reportedThisRun = false;
   }
 
-  markHelperStart(goal: GoalState): void {
-    this.#automatic = true;
-    this.#helperActivated = true;
-    this.#startingMilestones = milestoneState(goal);
-  }
-
-  // AgentSession can run several automatic completion turns before it emits
-  // agent_settled. Account at the boundary that occurs exactly once per model
-  // run so those turns cannot evade the no-progress guard.
-  endRun(goal: GoalState | undefined): "pause" | "none" {
-    if (!goal || !this.#automatic) return "none";
-
-    // A helper can create a goal during a turn that would have run anyway. Do
-    // not charge that turn when it ends normally, but retain automatic
-    // tracking when its first turn hands off into waiting work.
-    if (this.#helperActivated) {
-      this.#helperActivated = false;
-      if (goal.status !== "waiting") return "none";
+  reportBlocker(blocker: string): boolean {
+    if (blocker !== this.#blocker) {
+      this.#blocker = blocker;
+      this.#completedTurns = 0;
     }
-
-    if (goal.status !== "active" && goal.status !== "waiting") return "none";
-    const milestones = milestoneState(goal);
-    const progressed = milestones !== this.#startingMilestones;
-    this.#noProgress = progressed ? 0 : this.#noProgress + 1;
-    this.#startingMilestones = milestones;
-    return this.#noProgress >= MAX_NO_PROGRESS_CONTINUATIONS ? "pause" : "none";
+    this.#reportedThisRun = true;
+    return this.#completedTurns + 1 >= REQUIRED_BLOCKED_TURNS;
   }
 
-  // Reminder scheduling remains at the fully-settled boundary. No accounting
-  // happens here: every completed run was already observed by endRun().
-  settle(goal: GoalState | undefined): "continue" | "none" {
-    return goal?.status === "active" ? "continue" : "none";
+  endRun(): void {
+    if (this.#reportedThisRun) this.#completedTurns++;
+    else this.reset();
+    this.#reportedThisRun = false;
+  }
+
+  audit(): { blocker: string; attempts: number; required: number } | undefined {
+    if (!this.#blocker) return undefined;
+    return {
+      blocker: this.#blocker,
+      attempts: Math.min(this.#completedTurns + Number(this.#reportedThisRun), REQUIRED_BLOCKED_TURNS),
+      required: REQUIRED_BLOCKED_TURNS,
+    };
   }
 
   reset(): void {
-    this.#automatic = false;
-    this.#helperActivated = false;
-    this.#startingMilestones = undefined;
-    this.#noProgress = 0;
+    this.#blocker = undefined;
+    this.#completedTurns = 0;
+    this.#reportedThisRun = false;
   }
 }

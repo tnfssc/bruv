@@ -1,6 +1,7 @@
 // This is a deterministic test model, NOT Claude or a connector implementation.
-import http from "node:http";
+
 import { readFileSync } from "node:fs";
+import http from "node:http";
 export const provider = "bruv-acceptance";
 export const modelId = "local-deterministic-v1";
 export const modelSlug = `${provider}/${modelId}`;
@@ -30,6 +31,14 @@ function text(m) {
   return typeof m.content === "string" ? m.content : JSON.stringify(m.content ?? "");
 }
 
+function nativePermissionContext(message) {
+  const content =
+    typeof message.content === "string"
+      ? message.content
+      : (message.content ?? []).map((block) => (block.type === "text" ? block.text : "")).join("\n");
+  return /^Native permission state: [^.]+\. Available tools: [^\n]+\.$/.test(content);
+}
+
 function isCancellationNotice(user, messages, worker, state) {
   if (!user.includes("asynchronous task completed.") || !user.includes(" killed")) return false;
   // A full command identifies isolated inputs; actual job notices may shorten it.
@@ -53,7 +62,7 @@ function isCancellationNotice(user, messages, worker, state) {
 export function reply(body, { worker, state }) {
   if (body.model !== modelId) throw Error(`Wrong test model identity: ${body.model}`);
   const messages = body.messages ?? [],
-    lastUser = messages.findLastIndex((m) => m.role === "user");
+    lastUser = messages.findLastIndex((m) => m.role === "user" && !nativePermissionContext(m));
   const user = text(messages[lastUser] ?? {}),
     tail = messages.slice(lastUser + 1),
     results = tail
@@ -184,21 +193,16 @@ export async function startModel(options) {
       return;
     }
     let requestSequence;
+    const controller = new AbortController();
+    res.once("close", () => {
+      if (!res.writableEnded) controller.abort();
+    });
     try {
       let input = "";
       for await (const b of req) input += b;
       const body = JSON.parse(input);
       requestSequence = ++sequence;
       body.__sequence = requestSequence;
-      const delta = options.reply ? await options.reply(body, options) : reply(body, options);
-      records.push({
-        sequence: requestSequence,
-        model: body.model,
-        reasoningEffort: body.reasoning_effort,
-        messages: body.messages,
-        delta,
-      });
-      res.writeHead(200, { "content-type": "text/event-stream" });
       const chunk = (d, finish) => ({
         id: `local-acceptance-${requestSequence}`,
         object: "chat.completion.chunk",
@@ -206,17 +210,52 @@ export async function startModel(options) {
         model: body.model,
         choices: [{ index: 0, delta: d, finish_reason: finish }],
       });
+      const emit = (delta) => {
+        controller.signal.throwIfAborted();
+        if (!res.headersSent) res.writeHead(200, { "content-type": "text/event-stream" });
+        res.write(`data: ${JSON.stringify(chunk(delta, null))}\n\n`);
+      };
+      const delta = options.reply
+        ? await options.reply(body, { ...options, signal: controller.signal, emit })
+        : reply(body, options);
+      records.push({
+        sequence: requestSequence,
+        model: body.model,
+        reasoningEffort: body.reasoning_effort,
+        messages: body.messages,
+        delta,
+      });
+      if (!res.headersSent) res.writeHead(200, { "content-type": "text/event-stream" });
       res.end(
-        `${[chunk(delta, null), chunk({}, delta.tool_calls ? "tool_calls" : "stop")]
+        `${[
+          chunk(delta, null),
+          chunk({}, delta.tool_calls ? "tool_calls" : "stop"),
+          ...(options.usage ? [{ ...chunk({}, null), choices: [], usage: options.usage }] : []),
+        ]
           .map((v) => `data: ${JSON.stringify(v)}\n\n`)
           .join("")}data: [DONE]\n\n`,
       );
     } catch (e) {
+      if (controller.signal.aborted) {
+        records.push({ sequence: requestSequence ?? sequence, aborted: true });
+        return;
+      }
       records.push({ sequence: requestSequence ?? sequence, error: e.message });
+      if (res.headersSent) {
+        res.destroy(e);
+        return;
+      }
       res.writeHead(400, { "content-type": "application/json" });
       res.end(JSON.stringify({ error: { message: e.message, type: "acceptance_model_error" } }));
     }
   });
   await new Promise((r) => server.listen(0, "127.0.0.1", r));
-  return { port: server.address().port, records, close: () => new Promise((r) => server.close(r)) };
+  return {
+    port: server.address().port,
+    records,
+    close: () => {
+      server.closeAllConnections();
+      return new Promise((r) => server.close(r));
+    },
+  };
 }

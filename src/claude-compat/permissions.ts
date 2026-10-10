@@ -51,6 +51,12 @@ export function createPermissionPolicy(options: PermissionOptions) {
       policy.allowedTools.some((rule) => matchesToolRule(request.toolName, rule))
     )
       return { behavior: "allow" };
+    if (
+      (policy.mode === "default" || policy.mode === "acceptEdits") &&
+      request.owner === "bruv" &&
+      request.effect === "read-only"
+    )
+      return { behavior: "allow" };
     if (policy.mode === "acceptEdits" && request.effect === "edit") return { behavior: "allow" };
     if (policy.mode === "plan" && request.effect === "read-only") return { behavior: "allow" };
     if (policy.mode === "dontAsk" || !policy.canUseTool) return deny("Tool needs explicit permission");

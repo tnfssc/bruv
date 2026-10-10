@@ -101,6 +101,7 @@ test("real Pi command delivers saved reply in one new turn without a visible met
     expect(contexts).toHaveLength(2);
     expect(contexts[1]).toContain(q.id);
     expect(contexts[1]).toContain("reply_");
+    expect(questions.hasBlockingQuestions()).toBe(false);
     const saved = manager
       .getEntries()
       .filter((entry: any) => entry.type === "custom_message" && entry.customType === "question-answer") as any[];

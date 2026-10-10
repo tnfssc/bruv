@@ -1,6 +1,7 @@
-import { test } from "node:test";
 import assert from "node:assert/strict";
-import { startModel, reply, modelsConfig, modelId, modelSlug } from "../../scripts/claude-native-acceptance/model.mjs";
+import { test } from "node:test";
+import { modelId, modelSlug, modelsConfig, reply, startModel } from "../../scripts/claude-native-acceptance/model.mjs";
+
 const options = { state: "/isolated/state", worker: "/fixture/worker.mjs" };
 const request = (content, extra = []) => ({
   model: modelId,
@@ -111,6 +112,36 @@ test("human permission scenarios request actual side effects, never native packe
     assert.doesNotMatch(code, /control_request|control_response|task_started/);
   }
   assert.throws(() => reply(request("HUMAN_PERMISSION_unknown"), options), /Unknown permission/);
+});
+
+test("native permission context does not replace the actual human scenario or its tool evidence", () => {
+  for (const content of [
+    "Native permission state: default. Available tools: execute, mcp__t3-code__preview_status.",
+    [{ type: "text", text: "Native permission state: acceptEdits. Available tools: execute, read, edit, write." }],
+  ]) {
+    const context = { role: "user", content };
+    const call = reply(request("HUMAN_PERMISSION_allow", [context]), options).tool_calls[0];
+    assert.match(JSON.parse(call.function.arguments).code, /permission-allow\.effect/);
+    assert.equal(
+      reply(
+        request("HUMAN_PERMISSION_allow", [{ role: "tool", content: "PERMISSION_SIDE_EFFECT_REAL" }, context]),
+        options,
+      ).content,
+      "HUMAN_PERMISSION_allow_RESULT_REAL",
+    );
+    assert.equal(
+      reply(
+        request("Saved answer for question", [{ role: "tool", content: "QUESTION_RESOLVED_ACTUAL" }, context]),
+        options,
+      ).content,
+      "HUMAN_ANSWER_DELIVERED_ONCE_REAL",
+    );
+  }
+  assert.throws(
+    () =>
+      reply(request("HUMAN_PERMISSION_allow", [{ role: "user", content: "An unrecognized human request" }]), options),
+    /Unrecognized acceptance request/,
+  );
 });
 
 test("saved human question uses durable ask/block and explicit answer resolve", () => {

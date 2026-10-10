@@ -121,6 +121,14 @@ export default function asynchronousTasksExtension(
     onTaskOwner?: TaskOwnerObserver;
     /** Host adapter binding; only explicit user Fast selection acknowledges billing. */
     onNativeFastMode?: (control: ReturnType<typeof registerNativeFastMode>) => void;
+    /** Host tool/mode selection may temporarily make goal helpers unavailable. */
+    canContinueGoal?: () => boolean;
+    /** Observe the owning goal runtime for native status projection. */
+    onGoalRuntime?: (goal: GoalRuntime) => void;
+    /** Host Stop revokes foreground continuations even between Pi runs. */
+    onForegroundStop?: (stop: (reason?: string) => void) => void;
+    /** Submit through the owning Pi session with host admission cancellation. */
+    sendGoalContinuation?: (message: string) => void;
   } = {},
 ): void {
   registerOperationDiagnostics(pi);
@@ -449,8 +457,18 @@ export default function asynchronousTasksExtension(
         return task.status === "running" ? "running" : "finished";
       },
     },
-    { hasBlockingQuestions: () => questions.hasBlockingQuestions() },
+    {
+      hasBlockingQuestions: () => questions.hasBlockingQuestions(),
+      canContinue: options.canContinueGoal,
+      onHumanStart: (ctx) => questions.acceptHumanWork(ctx),
+      sendContinuation: options.sendGoalContinuation,
+    },
   );
+  options.onGoalRuntime?.(goals);
+  options.onForegroundStop?.((reason) => {
+    questions.pause();
+    goals.interrupt(reason);
+  });
   const history = new HistoryService();
   let service: JobService | undefined;
   const remoteClient = new RemoteClient();

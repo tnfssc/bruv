@@ -17,7 +17,6 @@ import {
   SessionManager,
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
-import { MAX_NO_PROGRESS_CONTINUATIONS } from "../../src/goals/controller";
 import { bruvSystemPrompt } from "../../src/prompts";
 import tasks from "../../src/agent/extension";
 import { installLiveDispatchBudget } from "../live/live-dispatch-budget";
@@ -71,13 +70,15 @@ test("real offline assembly changes only messages across goal set, update, and c
     const contexts: any[] = [];
     const scripts = [
       'await goal.set({objective:"Assemble conditional guidance",criteria:["observe lifecycle"],constraints:["offline"]})',
-      'await goal.update({status:"blocked",blocker:"Need focused fixture"})',
+      'await goal.update({status:"completed",evidence:"Focused fixture verified"})',
       "await goal.clear()",
     ];
     const scripted = (_model: any, context: TranscriptContext) => {
+      const tools = getCurrentTools(context.messages);
       contexts.push({
         systemPrompt: getCurrentSystemPrompt(context.messages),
-        tools: JSON.stringify(getCurrentTools(context.messages)),
+        tools: JSON.stringify(tools),
+        executeDescription: tools.find((tool) => tool.name === "execute")?.description,
         messages: JSON.stringify(context.messages),
       });
       const index = contexts.length - 1;
@@ -126,17 +127,22 @@ test("real offline assembly changes only messages across goal set, update, and c
     expect(systems[0]).toContain(bruvSystemPrompt());
     expect(new Set(systems).size).toBe(1);
     expect(new Set(tools).size).toBe(1);
-    for (const systemPrompt of systems) expect(systemPrompt).not.toContain("Goal API:");
+    for (const { executeDescription } of contexts) {
+      expect(executeDescription).toContain("goal.set({objective");
+      expect(executeDescription).toContain("goal.get()");
+      expect(executeDescription).toContain("goal.update({status");
+      expect(executeDescription).toContain("goal.clear()");
+    }
 
     const messages = contexts.map((context) => context.messages);
     expect(messages[0]).not.toContain("Goal guidance:");
     expect(messages[0]).not.toContain("Saved goal (current state)");
     expect(messages[1]).toContain("Goal guidance:");
-    expect(messages[1]).toContain("Goal API:");
+    expect(messages[1]).toContain("Keep working toward the saved objective");
     expect(messages[1]).toContain("Status: active");
     expect(messages[2]).toContain("Goal guidance:");
-    expect(messages[2]).toContain("Status: blocked");
-    expect(messages[2]).toContain("Need focused fixture");
+    expect(messages[2]).toContain("Status: completed");
+    expect(messages[2]).toContain("Focused fixture verified");
     expect(messages[3]).not.toContain("Goal guidance:");
     expect(messages[3]).not.toContain("Saved goal (current state)");
   } finally {
@@ -305,7 +311,8 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
       .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-goal")
       .map((entry: any) => entry.data.goal?.status)
       .filter(Boolean);
-    expect(goalStatuses.slice(-3)).toEqual(["waiting", "active", "completed"]);
+    const transitions = goalStatuses.filter((status, index) => index === 0 || status !== goalStatuses[index - 1]);
+    expect(transitions.slice(-3)).toEqual(["waiting", "active", "completed"]);
     const completion = entries.find((entry: any) => entry.customType === "task-complete") as any;
     expect(completion?.details?.taskStatusCounts).toMatchObject({ completed: 1, failed: 0 });
     const last = entries
@@ -324,6 +331,8 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
   }
 }, 15_000);
 
+const PRINT_CYCLE_COUNT = 5;
+
 async function runRealPrintCompletionCycles(recordMilestones: boolean) {
   const dir = await mkdtemp(join(tmpdir(), "bruv-goal-print-sdk-"));
   let session: any;
@@ -337,7 +346,6 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
     });
     runtime.hasConfiguredAuth = () => true;
     runtime.getAuth = (async () => ({ auth: { apiKey: "offline" } })) as any;
-    const cycleLimit = MAX_NO_PROGRESS_CONTINUATIONS + 2;
     let calls = 0;
     let ended = 0;
     let settled = 0;
@@ -346,14 +354,14 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
       const serialized = JSON.stringify(context);
       const paused = serialized.includes("Status: paused");
       const completed = serialized.includes("Status: completed");
-      const shouldCycle = !paused && !completed && (!recordMilestones || calls <= cycleLimit);
+      const shouldCycle = !paused && !completed && calls <= PRINT_CYCLE_COUNT;
       let content: any[];
       if (shouldCycle) {
         const releaseJob = join(dir, "release-print-" + calls);
         releaseJobs.push(releaseJob);
         const setup =
           calls === 1
-            ? 'await goal.set({objective:"Bound real print completion cycles",criteria:["stop or complete"],constraints:["offline"]});'
+            ? 'await goal.set({objective:"Finish real print completion cycles",criteria:["complete all cycles"],constraints:["offline"]});'
             : "";
         const progress = recordMilestones
           ? 'await goal.update({status:"active",progress:"verified print milestone ' + calls + '"});'
@@ -377,19 +385,19 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
             },
           },
         ];
-      } else if (recordMilestones && !paused && !completed) {
+      } else if (!paused && !completed) {
         content = [
           {
             type: "toolCall",
             id: "print_complete",
             name: "execute",
             arguments: {
-              code: 'console.log(await goal.update({status:"completed",evidence:"distinct print milestones survived automatic completion runs"}))',
+              code: 'console.log(await goal.update({status:"completed",evidence:"all print completion cycles verified"}))',
             },
           },
         ];
       } else {
-        content = [{ type: "text", text: "Paused goal respected; no more jobs." }];
+        content = [{ type: "text", text: "All print completion cycles finished." }];
       }
       return offlineResponse(model, content, content[0]?.type === "toolCall" ? "toolUse" : "stop");
     };
@@ -448,35 +456,36 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
   }
 }
 
-test("real SDK print completion cycles pause within bounded agent runs", async () => {
+test("real SDK print completion cycles continue without milestone keepalives", async () => {
   const result = await runRealPrintCompletionCycles(false);
   expect(result.settled).toBe(1);
-  expect(result.ended).toBe(result.calls);
-  expect(result.calls).toBeLessThanOrEqual(MAX_NO_PROGRESS_CONTINUATIONS + 1);
+  expect(result.ended).toBe(PRINT_CYCLE_COUNT + 1);
+  expect(result.calls).toBe(PRINT_CYCLE_COUNT + 2);
   const goals: any[] = result.entries.filter(
     (entry: any) => entry.type === "custom" && entry.customType === "bruv-goal",
   );
   expect(goals.at(-1)?.data.goal).toMatchObject({
-    status: "paused",
-    pauseReason: expect.stringContaining("Auto turns stalled"),
+    status: "completed",
+    evidence: "all print completion cycles verified",
   });
+  expect(goals.some((entry: any) => entry.data.goal?.status === "paused")).toBe(false);
   const completions = result.entries.filter((entry: any) => entry.customType === "task-complete");
-  expect(completions).toHaveLength(MAX_NO_PROGRESS_CONTINUATIONS);
+  expect(completions).toHaveLength(PRINT_CYCLE_COUNT);
   expect(JSON.stringify(completions)).toContain('"status":"failed"');
 }, 15_000);
 
 test("real SDK print completion cycles accept distinct explicit milestones", async () => {
   const result = await runRealPrintCompletionCycles(true);
   expect(result.settled).toBe(1);
-  expect(result.ended).toBe(MAX_NO_PROGRESS_CONTINUATIONS + 3);
-  expect(result.calls).toBe(MAX_NO_PROGRESS_CONTINUATIONS + 4);
+  expect(result.ended).toBe(PRINT_CYCLE_COUNT + 1);
+  expect(result.calls).toBe(PRINT_CYCLE_COUNT + 2);
   const goals: any[] = result.entries.filter(
     (entry: any) => entry.type === "custom" && entry.customType === "bruv-goal",
   );
   expect(goals.some((entry: any) => entry.data.goal?.status === "paused")).toBe(false);
   expect(goals.at(-1)?.data.goal).toMatchObject({
     status: "completed",
-    evidence: "distinct print milestones survived automatic completion runs",
+    evidence: "all print completion cycles verified",
   });
 }, 15_000);
 
@@ -596,7 +605,7 @@ test("live goal fixture reaches an intercepted real-runtime provider offline", a
       .at(-1) as any;
     expect(latestGoal.data.goal).toMatchObject({
       status: "paused",
-      pauseReason: expect.stringContaining("interrupted agent turn"),
+      pauseReason: expect.stringContaining("provider retries failed"),
     });
   } finally {
     session?.dispose();

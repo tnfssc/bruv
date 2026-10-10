@@ -4,9 +4,9 @@ The official launcher now calls the actual exported harness functions and select
 its driver through replay config, not launcher-source slicing. See
 [launcher boundary fix and v0.16.20 six-suite proof](../../wisdom/claude-compat/official-proof-launcher-boundary.md).
 
-## Current release contract: unchanged official 2644
+## Pinned release CI contract: unchanged official 2644
 
-The active target is **v0.0.46-nightly.20261004.2644**, not older 2623.
+The pinned release CI target is **v0.0.46-nightly.20261004.2644**, not older 2623.
 Use the [official-2644 proof](../../wisdom/claude-compat/proof/official-2644/README.md)
 for immutable source/archive/executable pins and validated strict replay contract.
 The historical failures below do not override its bounded passing gates; the
@@ -51,17 +51,16 @@ From the repository root (POSIX shell):
 ```sh
 BRUV_CONNECTOR_EXECUTABLE=/absolute/path/to/dist/bruv-claude-compat \
 BRUV_RUNTIME_BINARY=/absolute/path/to/dist/bruv \
+T3_UPSTREAM=/absolute/isolated-upstream-layout \
+BROWSER_PATH=/absolute/chrome-headless-shell \
 PROOF_OUTPUT=.cache/claude-integrated-$(date +%s) \
 node scripts/claude-native-acceptance/run.mjs
 ```
 
-For this handoff, those binaries are respectively:
-- /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_06e50aca/dist/bruv-claude-compat
-- /home/tnfssc/Code/bruv/dist/bruv
-
-Optional: T3_UPSTREAM, BROWSER_PATH, FIXTURE_PORT (default 18783),
-BRUV_CONNECTOR_ARGS_JSON (default []), and PROOF_OUTPUT. The official T3 default
-is /home/tnfssc/Code/bruv/.cache/acp-t3-upstream-experience/platform/t3.
+`T3_UPSTREAM` and `BROWSER_PATH` are required explicit paths. The upstream layout
+must contain `platform/t3` and `runtime/node_modules/playwright/index.mjs`.
+Optional: FIXTURE_PORT (default 18783), BRUV_CONNECTOR_ARGS_JSON (default []),
+and PROOF_OUTPUT.
 PROOF_OUTPUT must be new, not a directory containing an earlier PASS.
 The tap forwards all native args/bytes unchanged; do not strip unsupported T3
 flags or rewrite the connector's version to make readiness appear successful.
@@ -77,7 +76,60 @@ inherited. The local endpoint's fixture-only string is not a real credential.
 
 ## Checks and evidence
 
-The integrated driver requires:
+### Goal and foreground control regression
+
+The separate goal scenario uses the actual connector and native composer with a
+deterministic loopback model. It gates an unfinished automatic turn while issuing
+status, resources, mode, questions and Live inspection commands. It then exercises
+pause, reload, native Stop, resume, completion, clear, a 23-token response budget and frozen
+accounting after completion. The budget model requests a real side effect that
+must never execute after the response exhausts the budget.
+
+```sh
+ACCEPT_GOAL_CONTROLS=1 \
+T3_UPSTREAM=/absolute/isolated-upstream-layout \
+BROWSER_PATH=/absolute/chrome-headless-shell \
+BRUV_CONNECTOR_EXECUTABLE="$PWD/dist/bruv-claude-compat" \
+BRUV_RUNTIME_BINARY="$PWD/dist/bruv" \
+PROOF_OUTPUT=.cache/native-goal-controls-new \
+node scripts/claude-native-acceptance/run.mjs
+```
+
+This focused scenario may target an installed unchanged T3 release without
+claiming the historical 2644 release gate. For a flat installation, create a
+separate temporary layout with `platform` pointing at its existing directory
+(containing `t3` and `client`) and `runtime/node_modules/playwright` pointing at an
+already installed Playwright package. It does not write to the original T3 tree,
+user app state or real provider configuration. The runner hashes the original T3
+executable before and after the replay and records its actual version.
+
+The current Claude adapter renders active and complete goal indicators but has no
+paused or budget status projection. The fixture checks those states against Bruv's
+durable goal and visible command notices, and uses the real `/goal resume` command.
+Native steering can omit a user UUID: in that case the fixture checks the emitted
+control reply and preserved foreground state, without inventing host correlation.
+T3 2702 rejects promoting `/goal` commands to steering before forwarding input
+to the connector. The active-control checks therefore use `/bruv goal status` and
+`/bruv goal pause`; idle start/resume use `/goal` and clear uses the actual native
+button. The test checks second-response streaming bytes and an active native goal
+indicator. T3's Claude adapter projects text from completed assistant snapshots,
+so the proof does not claim display of incomplete second-response text.
+`goal-controls-observations.json` records state and command evidence with hashed
+identifiers. A failing indicator, lifecycle or accounting assertion fails the run.
+
+On 2026-10-10, this focused scenario passed against unchanged
+**v0.0.46-nightly.20261005.2702** with the final actual launcher/runtime pair
+(SHA-256 prefixes `55b58718cdfb8f87` / `f4a95bf5a3f6d9b0`). It verified nine active
+controls, continuous native goal pursuit, pause/reload/native Stop recovery,
+real tool-backed completion, both native Clear actions, budget exhaustion before
+a tool side effect, exhausted-resume rejection, increased-budget completion and
+frozen completed usage. The proof is retained locally at
+`.tmp/native-2702-goal-final-1791617393948`; its invocation/result files contain
+full artifact hashes. No real provider credentials, user app state or T3 files
+were used or changed. This is focused controls evidence, not a rerun of the
+broader task/history release gate above; the host limits described here remain.
+
+The default integrated driver requires:
 - actual execute tool output;
 - a managed shell controlled by fixture gate files, not synthetic native events;
 - priority=now steer admitted while that tool is active;
@@ -234,8 +286,10 @@ idle native composer before reloading or resuming a saved answer. It also checks
 /bruv status and resolved-question open without Stop/reopen recovery. Deliberate
 Stop of pending consent/questions and real reload recovery remain separate tests.
 A command lifecycle completion is not sufficient: official T3 treats these
-frames as admission acknowledgements, not terminal turns. The strict gate still
-fails on zero-model human command settlement; see the retained command-idle proof.
+frames as admission acknowledgements, not terminal turns. Earlier strict runs
+failed on zero-model human command settlement; see the retained command-idle proof.
+Those historical failures are separate from the focused 2702 controls evidence
+above and the pinned composed release gate.
 No model counts/provider calls are invented to make the view settle. The shared
 harness waits for an enabled New thread or actual Start without a project control
 instead of racing native bootstrap hydration.

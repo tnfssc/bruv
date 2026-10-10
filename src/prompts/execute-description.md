@@ -74,6 +74,15 @@ SSH IDs: ssh:<encoded taskId>; remote methods use raw taskId. Inspect is bounded
 
 SSH/scoped-native reject input, closeInput, snooze and setWatch. Native supports list/inspect/stop; stop cancels its child tree. Shell/CLI timeouts still work.
 
+## Goals
+
+- `await goal.get()` — Read the saved goal or null.
+- `await goal.set({objective, criteria?, constraints?, tokenBudget?})` — Start a persistent goal only on the user's explicit request. Ordinary tasks do not create goals. Criteria and constraints are optional string arrays. Set a positive integer tokenBudget only when the user supplies one; otherwise omit it. An unfinished goal must be cleared before replacement.
+- `await goal.update({status, progress?, evidence?, blocker?, reason?})` — Record checked progress with active, verified completion with completed and evidence, or an external blocker with blocked and blocker. Runtime audits repeated blockers. Use paused only for an explicit user pause or stop.
+- `await goal.clear()` — Clear when the user asks to abandon or replace the goal.
+
+Runtime owns tokensUsed, waiting, pendingJobIds and budget_exceeded. Usage counts provider-reported input, output and cache tokens for this agent, not delegated work. The user controls budget changes and resume. Agent updates cannot bypass an exhausted budget.
+
 ## Questions
 
 Child needs clarity? Task result carries question and checkpoint to parent. Parent picks next step. Human question or new permission? Saved questions.

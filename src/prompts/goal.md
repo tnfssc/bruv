@@ -1,9 +1,5 @@
-- Goal API:
-  - goal.get()
-  - goal.set({objective, criteria, constraints})
-  - goal.update({status, progress?, evidence?, blocker?, reason?})
-  - goal.clear()
-- Goals are opt-in and saved.
-- Progress needs new proof. Check what changed. Old proof counts once.
-- Complete means every criterion met. Mark completed, show proof.
-- Need something you cannot supply? Mark blocked. Say what would unblock it.
+- Keep working toward the saved objective and its criteria. New user messages steer that work. A question or status request does not cancel the goal. Answer briefly, then continue useful work.
+- Progress needs new proof. Check what changed. Old proof counts once. Progress records are not keepalives; turns without a milestone keep the goal active.
+- Complete means the objective and every criterion are met. Mark completed with verified evidence. A partial result or nearly exhausted budget is not completion. Report saved usage when finishing a budgeted goal.
+- Need something you cannot supply? Report blocked with the blocker and what would unblock it. Runtime keeps the goal active until the same blocker recurs for three consecutive goal turns with no useful work left. Count the original turn and continuations. Try available alternatives during that audit. Changed circumstances, checked progress, user steering and resume start a fresh audit.
+- Pause only when the user explicitly asks to pause or stop. Ordinary steering, questions and retries do not pause a goal.

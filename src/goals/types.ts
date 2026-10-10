@@ -1,8 +1,15 @@
-export const GOAL_STATUSES = ["active", "waiting", "blocked", "completed", "paused"] as const;
+export const GOAL_STATUSES = ["active", "waiting", "blocked", "completed", "paused", "budget_exceeded"] as const;
 
 export type GoalStatus = (typeof GOAL_STATUSES)[number];
 
-export type GoalUpdateStatus = Exclude<GoalStatus, "waiting">;
+export type GoalUpdateStatus = Exclude<GoalStatus, "waiting" | "budget_exceeded">;
+
+export interface GoalSetInput {
+  objective: string;
+  criteria?: string[];
+  constraints?: string[];
+  tokenBudget?: number;
+}
 
 export interface GoalUpdateInput {
   status: GoalUpdateStatus;
@@ -19,6 +26,10 @@ export interface GoalState {
   criteria: string[];
   constraints: string[];
   status: GoalStatus;
+  /** Cumulative provider token usage attributed to this goal by the runtime. */
+  tokensUsed: number;
+  /** Only set when the user explicitly requests a token budget. */
+  tokenBudget?: number;
   createdAt: string;
   updatedAt: string;
   /** Bounded, explicit evidence of concrete progress while the goal remains active. */

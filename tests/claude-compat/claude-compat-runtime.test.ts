@@ -17,6 +17,8 @@ import { parseClaudeLine, mightCarryUsage, priceUsage } from "./fixtures/t3-usag
 import { permissionBinding } from "../../src/claude-compat/binding";
 import { parseConnectorArguments } from "../../src/claude-compat/arguments";
 import { NativeHistory, readNativeHistory } from "../../src/claude-compat/history";
+import { GoalStore, latestGoal } from "../../src/goals/store";
+import { QuestionService } from "../../src/questions/service";
 import type { CompatFrame } from "../../src/claude-compat/frontend";
 import {
   type ClaudeCompatRuntime,
@@ -79,7 +81,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     stream.push({ type: "done", reason: "stop", message });
     return stream;
   }
-  async function fixture(options: { auxiliary?: boolean; auth?: boolean; customPrompt?: string; extra?: object } = {}) {
+  async function fixture(
+    options: { auxiliary?: boolean; auth?: boolean; persistent?: boolean; customPrompt?: string; extra?: object } = {},
+  ) {
     const dir = await mkdtemp(join(tmpdir(), "bruv-compat-engine-"));
     dirs.push(dir);
     if (options.customPrompt) await writeFile(join(dir, "SYSTEM.md"), options.customPrompt);
@@ -113,7 +117,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       modelRuntime,
       model: "anthropic/claude-sonnet-4-5",
       settingsManager: SettingsManager.inMemory({ cacheWarming: "off" }, { projectTrusted: false }),
-      sessionManager: SessionManager.inMemory(dir),
+      sessionManager: options.persistent
+        ? SessionManager.create(dir, join(dir, "sessions"))
+        : SessionManager.inMemory(dir),
       auxiliary: options.auxiliary,
       permissionMode: "bypassPermissions",
       executablePath: runner,
@@ -1141,7 +1147,12 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       return { behavior: "deny", message: "Human refusal" };
     });
     const { runtime, frames, dir } = await fixture({
-      extra: { permissionMode: "default", authorizeTool: binding.authorize, changePermissionMode: binding.setMode },
+      extra: {
+        permissionMode: "default",
+        tools: ["execute"],
+        authorizeTool: binding.authorize,
+        changePermissionMode: binding.setMode,
+      },
     });
     await init(runtime);
     expect(runtime.session.getActiveToolNames()).toContain("execute");
@@ -1496,4 +1507,1084 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       origin: { kind: "human" },
     });
   });
+
+  const currentGoal = (runtime: ClaudeCompatRuntime) => latestGoal(runtime.session.sessionManager.getBranch());
+  const completeGoal = (id: string) =>
+    assistant("", {
+      content: [
+        {
+          type: "toolCall",
+          id,
+          name: "execute",
+          arguments: {
+            label: "Record verified goal completion",
+            code: 'console.log(await goal.update({ status: "completed", evidence: "Offline acceptance criteria verified" }))',
+          },
+        },
+      ],
+      stopReason: "toolUse",
+    });
+
+  test("admitted goal work keeps its native owner and app lease while before_agent_start is blocked", async () => {
+    const peer = await httpMcpLifecycleFixture();
+    const mcp = await InjectedMcpSession.open(peer.config, {
+      cwd: process.cwd(),
+      appOwnedServers: ["t3-code"],
+      policy: {
+        authorizeServer: async () => true,
+        authorizeTool: async () => ({ behavior: "allow" }),
+        beforeAppOwnedCall: async () => {},
+      },
+    });
+    const gate = Promise.withResolvers<void>();
+    let entered = false;
+    let runtime: ClaudeCompatRuntime | undefined;
+    let command: Promise<void> | undefined;
+    try {
+      const f = await fixture({
+        persistent: true,
+        extra: {
+          mcp,
+          extensionFactories: [
+            { name: "real-mcp", factory: mcpFactory(mcp), hidden: true },
+            {
+              name: "hold-admitted-goal",
+              hidden: true,
+              factory: (pi: ExtensionAPI) => {
+                pi.on("before_agent_start", async () => {
+                  entered = true;
+                  await gate.promise;
+                });
+              },
+            },
+          ],
+        },
+      });
+      runtime = f.runtime;
+      const { frames } = f;
+      await init(runtime);
+      // Keep an actual app connection open through admission. A premature
+      // command result would DELETE this lease before the goal can use it.
+      await mcp.resumeAppOwned();
+      const deletedBefore = peer.requests.filter((request) => request.method === "DELETE").length;
+      expect(peer.activeSessions()).toBe(1);
+      let calls = 0;
+      runtime.session.agent.streamFunction = () => {
+        expect(peer.activeSessions()).toBe(1);
+        expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+        calls++;
+        if (calls > 2) throw new Error("Admitted goal continued after completion");
+        return output(
+          calls === 1 ? completeGoal("admitted-goal-complete") : assistant("Admitted goal completed and verified"),
+        );
+      };
+      command = runtime.onUser(
+        user(runtime, "/goal set Finish the admitted native objective", { uuid: "admitted-goal-owner" }),
+        signal(),
+      );
+      await until(() => entered);
+      await command;
+      expect(runtime.session.isIdle).toBe(true);
+      expect(calls).toBe(0);
+      expect(currentGoal(runtime)?.status).toBe("active");
+      expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+      expect(frames.filter((frame) => frame.type === "system" && frame.state === "idle")).toHaveLength(0);
+      expect(peer.activeSessions()).toBe(1);
+      expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(deletedBefore);
+
+      await runtime.onUser(user(runtime, "/goal status", { uuid: "admission-status-control" }), signal());
+      expect(runtime.session.isIdle).toBe(true);
+      expect(calls).toBe(0);
+      expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+      expect(frames.filter((frame) => frame.type === "system" && frame.state === "idle")).toHaveLength(0);
+      expect(peer.activeSessions()).toBe(1);
+      expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(deletedBefore);
+      expect(
+        frames.filter((frame) => frame.type === "command_lifecycle" && frame.command_uuid === "admitted-goal-owner"),
+      ).toMatchObject([{ state: "started" }, { state: "completed" }]);
+      expect(
+        frames.filter(
+          (frame) => frame.type === "command_lifecycle" && frame.command_uuid === "admission-status-control",
+        ),
+      ).toMatchObject([{ state: "started" }, { state: "completed" }]);
+      expect(
+        frames.some(
+          (frame) =>
+            frame.type === "assistant" &&
+            frame.user_message_uuid === "admission-status-control" &&
+            JSON.stringify(frame.message).includes("Status: active"),
+        ),
+      ).toBe(true);
+
+      await runtime.onUser(user(runtime, "/bruv status", { uuid: "admission-bruv-status" }), signal());
+      const status = frames.find(
+        (frame) => frame.type === "assistant" && frame.user_message_uuid === "admission-bruv-status",
+      )?.message as { content: { text: string }[] };
+      expect(JSON.parse(status.content[0].text).running).toBe(true);
+      expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+
+      gate.resolve();
+      await runtime.session.waitForIdle();
+      await until(() => frames.some((frame) => frame.type === "result"));
+      expect(calls).toBe(2);
+      expect(currentGoal(runtime)).toMatchObject({ status: "completed", tokensUsed: 46 });
+      expect(frames.filter((frame) => frame.type === "result")).toMatchObject([
+        {
+          user_message_uuid: "admitted-goal-owner",
+          result: "Admitted goal completed and verified",
+          is_error: false,
+          num_turns: 2,
+          total_cost_usd: 0.02,
+          usage: { input_tokens: 22, output_tokens: 14, cache_read_input_tokens: 6, cache_creation_input_tokens: 4 },
+        },
+      ]);
+      expect(frames.filter((frame) => frame.type === "system" && frame.subtype === "init")).toHaveLength(1);
+      expect(frames.filter((frame) => frame.type === "system" && frame.state === "running")).toHaveLength(1);
+      expect(frames.filter((frame) => frame.type === "system" && frame.state === "idle")).toHaveLength(1);
+      expect(peer.activeSessions()).toBe(0);
+      expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(deletedBefore + 1);
+    } finally {
+      gate.resolve();
+      await command?.catch(() => {});
+      await runtime?.session.waitForIdle();
+      await runtime?.close();
+      await mcp.close();
+      await peer.stopHost();
+    }
+  }, 15_000);
+
+  test("native goal retains one outward turn through automatic Pi turns until completed", async () => {
+    const { runtime, frames } = await fixture({ persistent: true });
+    await init(runtime);
+    const contexts: Context[] = [];
+    let calls = 0;
+    runtime.session.agent.streamFunction = (_model, context) => {
+      contexts.push(structuredClone(context));
+      calls++;
+      expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+      if (calls > 7) throw new Error("Completed goal kept scheduling provider requests");
+      return output(
+        calls <= 5
+          ? assistant("Completed useful step " + calls)
+          : calls === 6
+            ? completeGoal("native-goal-complete")
+            : assistant("Goal completed and verified"),
+      );
+    };
+    await runtime.onUser(
+      user(runtime, "/bruv goal set Finish the offline native acceptance task", { uuid: "set-native-goal" }),
+      signal(),
+    );
+    await runtime.session.waitForIdle();
+    await until(
+      () => frames.filter((frame) => frame.type === "result").at(-1)?.result === "Goal completed and verified",
+    );
+    expect(calls).toBe(7);
+    expect(currentGoal(runtime)).toMatchObject({
+      objective: "Finish the offline native acceptance task",
+      status: "completed",
+      evidence: "Offline acceptance criteria verified",
+    });
+    for (const context of contexts.slice(0, 6)) {
+      expect(JSON.stringify(context)).toContain("Finish the offline native acceptance task");
+      expect(JSON.stringify(context)).toContain("Status: active");
+      expect(JSON.stringify(context)).not.toContain("bruv-goal-reminder:");
+    }
+    const results = frames.filter((frame) => frame.type === "result");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject({
+      user_message_uuid: "set-native-goal",
+      is_error: false,
+      num_turns: 7,
+      usage: { input_tokens: 77, output_tokens: 49, cache_read_input_tokens: 21, cache_creation_input_tokens: 14 },
+    });
+    expect(results.every((frame) => frame.is_error === false)).toBe(true);
+    expect(frames.filter((frame) => frame.type === "command_lifecycle")).toMatchObject([
+      { command_uuid: "set-native-goal", state: "started" },
+      { command_uuid: "set-native-goal", state: "completed" },
+    ]);
+    expect(
+      frames.filter(
+        (frame) => frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle",
+      ),
+    ).toHaveLength(results.length);
+  }, 15_000);
+
+  test.each(["steer", "followUp"] as const)(
+    "native %s input preserves an active goal and the next automatic continuation",
+    async (delivery) => {
+      const { runtime, frames } = await fixture({ persistent: true });
+      await init(runtime);
+      let calls = 0;
+      let firstStream: ReturnType<typeof createAssistantMessageEventStream> | undefined;
+      const contexts: Context[] = [];
+      runtime.session.agent.streamFunction = (_model, context, options) => {
+        contexts.push(structuredClone(context));
+        calls++;
+        if (calls === 1) {
+          firstStream = createAssistantMessageEventStream();
+          options?.signal?.addEventListener(
+            "abort",
+            () =>
+              firstStream?.push({ type: "error", reason: "aborted", error: assistant("", { stopReason: "aborted" }) }),
+            { once: true },
+          );
+          return firstStream;
+        }
+        if (calls > 4) throw new Error("Goal continuation did not finish");
+        return output(
+          calls === 2
+            ? assistant("Applied the additional user constraint")
+            : calls === 3
+              ? completeGoal("steered-goal-complete")
+              : assistant("Steered goal completed"),
+        );
+      };
+      await runtime.onUser(
+        user(
+          runtime,
+          "/bruv goal set Preserve the original objective while accepting updates --criteria Offline criteria verified --constraints none",
+        ),
+        signal(),
+      );
+      expect(currentGoal(runtime), JSON.stringify(frames)).toMatchObject({ status: "active" });
+      await until(() => firstStream !== undefined);
+      const originalId = currentGoal(runtime)?.id;
+      expect(originalId).toBeDefined();
+      await runtime.onUser(
+        user(runtime, "ADDITIONAL_GOAL_CONSTRAINT: preserve the existing file", {
+          uuid: "goal-steering-message",
+          ...(delivery === "steer" ? { priority: "now" } : {}),
+        }),
+        signal(),
+      );
+      expect(currentGoal(runtime)).toMatchObject({
+        id: originalId,
+        status: "active",
+        objective: "Preserve the original objective while accepting updates",
+      });
+      firstStream!.push({ type: "done", reason: "stop", message: assistant("First step completed") });
+      await runtime.session.waitForIdle();
+      await until(() => frames.filter((frame) => frame.type === "result").at(-1)?.result === "Steered goal completed");
+      expect(calls).toBe(4);
+      expect(JSON.stringify(contexts[1])).toContain("ADDITIONAL_GOAL_CONSTRAINT");
+      expect(JSON.stringify(contexts[2])).toContain("Status: active");
+      expect(currentGoal(runtime)).toMatchObject({ id: originalId, status: "completed" });
+      expect(
+        runtime.session.sessionManager
+          .getBranch()
+          .filter((entry) => entry.type === "custom" && entry.customType === "bruv-goal")
+          .some((entry) => (entry as { data: { goal?: { status: string } } }).data.goal?.status === "paused"),
+      ).toBe(false);
+    },
+    15_000,
+  );
+
+  test("native stop pauses goal work, and explicit pause/resume preserves the objective and starts a fresh continuation", async () => {
+    const { runtime, frames } = await fixture({ persistent: true });
+    await init(runtime);
+    let calls = 0;
+    let started = false;
+    runtime.session.agent.streamFunction = (_model, _context, options) => {
+      calls++;
+      const stream = createAssistantMessageEventStream();
+      started = true;
+      options?.signal?.addEventListener(
+        "abort",
+        () => stream.push({ type: "error", reason: "aborted", error: assistant("", { stopReason: "aborted" }) }),
+        { once: true },
+      );
+      return stream;
+    };
+    await runtime.onUser(
+      user(
+        runtime,
+        "/bruv goal set Finish after the user resumes --criteria Offline criteria verified --constraints none",
+      ),
+      signal(),
+    );
+    await until(() => started);
+    const originalId = currentGoal(runtime)?.id;
+    await runtime.controls.interrupt!(control("interrupt"), signal());
+    await runtime.session.waitForIdle();
+    expect(currentGoal(runtime)).toMatchObject({ id: originalId, status: "paused" });
+    expect(calls).toBe(1);
+    expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({ is_error: true });
+    await runtime.onUser(user(runtime, "/bruv goal pause Paused explicitly by the user"), signal());
+    expect(currentGoal(runtime)).toMatchObject({
+      status: "paused",
+      pauseReason: "Paused explicitly by the user",
+    });
+    runtime.session.agent.streamFunction = () => {
+      calls++;
+      if (calls > 3) throw new Error("Resumed goal kept running after completion");
+      return output(calls === 2 ? completeGoal("resumed-goal-complete") : assistant("Resumed goal completed"));
+    };
+    await runtime.onUser(user(runtime, "/bruv goal resume", { uuid: "resume-native-goal" }), signal());
+    await runtime.session.waitForIdle();
+    await until(() => frames.filter((frame) => frame.type === "result").at(-1)?.result === "Resumed goal completed");
+    expect(currentGoal(runtime)).toMatchObject({
+      id: originalId,
+      objective: "Finish after the user resumes",
+      status: "completed",
+    });
+    expect(calls).toBe(3);
+    expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({
+      user_message_uuid: "resume-native-goal",
+      is_error: false,
+    });
+  }, 15_000);
+
+  test("idle native RPC input keeps a restored goal active despite the followUp delivery option", async () => {
+    const { runtime } = await fixture({ persistent: true });
+    await init(runtime);
+    const manager = runtime.session.sessionManager;
+    const restored = new GoalStore((type, entry) => manager.appendCustomEntry(type, entry)).set({
+      objective: "Complete the restored native goal",
+      criteria: ["Offline criteria verified"],
+      constraints: [],
+    });
+    const contexts: Context[] = [];
+    let calls = 0;
+    runtime.session.agent.streamFunction = (_model, context) => {
+      contexts.push(structuredClone(context));
+      calls++;
+      if (calls > 2) throw new Error("Restored goal kept running after completion");
+      return output(calls === 1 ? completeGoal("restored-goal-complete") : assistant("Restored goal completed"));
+    };
+    await runtime.onUser(user(runtime, "Continue with the restored objective"), signal());
+    await runtime.session.waitForIdle();
+    expect(JSON.stringify(contexts[0])).toContain("Status: active");
+    expect(currentGoal(runtime)).toMatchObject({ id: restored.id, status: "completed" });
+    expect(calls).toBe(2);
+  }, 15_000);
+
+  test("busy native /goal status reports state without ending or stealing the running goal turn", async () => {
+    const { runtime, frames } = await fixture({ persistent: true });
+    const initialized = await init(runtime);
+    expect(JSON.stringify(initialized)).toContain('"goal"');
+    let calls = 0;
+    let interrupted = false;
+    let held: ReturnType<typeof createAssistantMessageEventStream> | undefined;
+    runtime.session.agent.streamFunction = (_model, _context, options) => {
+      calls++;
+      if (calls === 1) {
+        held = createAssistantMessageEventStream();
+        options?.signal?.addEventListener(
+          "abort",
+          () => {
+            interrupted = true;
+            held?.push({ type: "error", reason: "aborted", error: assistant("", { stopReason: "aborted" }) });
+          },
+          { once: true },
+        );
+        return held;
+      }
+      if (calls > 2) throw new Error("Status read started an extra model run");
+      return output(assistant("Original goal turn completed"));
+    };
+    await runtime.onUser(
+      user(runtime, "/goal set Finish the original status-check objective", { uuid: "owning-goal-turn" }),
+      signal(),
+    );
+    await until(() => held !== undefined);
+    const resultCount = frames.filter((frame) => frame.type === "result").length;
+    await runtime.onUser(user(runtime, "/goal status", { uuid: "goal-status-control" }), signal());
+    expect(interrupted).toBe(false);
+    expect(calls).toBe(1);
+    expect(runtime.session.isStreaming).toBe(true);
+    expect(currentGoal(runtime)).toMatchObject({
+      status: "active",
+      objective: "Finish the original status-check objective",
+    });
+    expect(
+      frames.some(
+        (frame) =>
+          frame.type === "assistant" &&
+          frame.user_message_uuid === "goal-status-control" &&
+          JSON.stringify(frame.message).includes("Status: active"),
+      ),
+    ).toBe(true);
+    expect(
+      frames.filter((frame) => frame.type === "result" && frame.user_message_uuid === "owning-goal-turn"),
+    ).toHaveLength(0);
+    expect(
+      frames.filter(
+        (frame) => frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle",
+      ),
+    ).toHaveLength(0);
+    held!.push({ type: "done", reason: "toolUse", message: completeGoal("busy-status-goal-complete") });
+    await runtime.session.waitForIdle();
+    await until(() =>
+      frames.some((frame) => frame.type === "result" && frame.result === "Original goal turn completed"),
+    );
+    expect(currentGoal(runtime)?.status).toBe("completed");
+    expect(
+      frames.filter((frame) => frame.type === "result" && frame.result === "Original goal turn completed"),
+    ).toEqual([expect.objectContaining({ user_message_uuid: "owning-goal-turn", is_error: false })]);
+    expect(frames.filter((frame) => frame.type === "result").length).toBeGreaterThan(resultCount);
+  }, 15_000);
+
+  test.each(["pause", "clear"] as const)(
+    "busy native /goal %s stops the owned foreground run and reports the real state",
+    async (action) => {
+      const { runtime, frames } = await fixture({ persistent: true });
+      await init(runtime);
+      let calls = 0;
+      let cancellations = 0;
+      runtime.session.agent.streamFunction = (_model, _context, options) => {
+        calls++;
+        const stream = createAssistantMessageEventStream();
+        options?.signal?.addEventListener(
+          "abort",
+          () => {
+            cancellations++;
+            stream.push({ type: "error", reason: "aborted", error: assistant("", { stopReason: "aborted" }) });
+          },
+          { once: true },
+        );
+        return stream;
+      };
+      await runtime.onUser(
+        user(runtime, "/goal set Finish the controlled native task", { uuid: "controlled-goal-turn" }),
+        signal(),
+      );
+      await until(() => calls === 1);
+      const originalId = currentGoal(runtime)?.id;
+      await runtime.onUser(
+        user(runtime, action === "pause" ? "/goal pause Paused with native controls" : "/goal clear", {
+          uuid: "goal-state-control",
+        }),
+        signal(),
+      );
+      await runtime.session.waitForIdle();
+      expect(calls).toBe(1);
+      expect(cancellations).toBe(1);
+      expect(runtime.session.isIdle).toBe(true);
+      expect(
+        frames.filter((frame) => frame.type === "result" && frame.user_message_uuid === "controlled-goal-turn"),
+      ).toEqual([expect.objectContaining({ is_error: true })]);
+      expect(
+        frames.filter((frame) => frame.type === "result" && frame.user_message_uuid === "goal-state-control"),
+      ).toEqual([expect.objectContaining({ is_error: false, num_turns: 0 })]);
+      if (action === "clear") {
+        expect(currentGoal(runtime)).toBeUndefined();
+        return;
+      }
+      expect(currentGoal(runtime)).toMatchObject({
+        id: originalId,
+        status: "paused",
+        pauseReason: "Paused with native controls",
+      });
+      runtime.session.agent.streamFunction = () =>
+        output(
+          ++calls === 2
+            ? completeGoal("controlled-resume-complete")
+            : assistant("Controlled goal resumed and completed"),
+        );
+      await runtime.onUser(user(runtime, "/goal resume", { uuid: "controlled-resume" }), signal());
+      await runtime.session.waitForIdle();
+      await until(() =>
+        frames.some((frame) => frame.type === "result" && frame.result === "Controlled goal resumed and completed"),
+      );
+      expect(calls).toBe(3);
+      expect(currentGoal(runtime)).toMatchObject({ id: originalId, status: "completed" });
+      expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({
+        user_message_uuid: "controlled-resume",
+        is_error: false,
+      });
+    },
+    15_000,
+  );
+
+  test("native goal survives a provider retry and continues automatically after successful recovery", async () => {
+    const { runtime, frames } = await fixture({
+      persistent: true,
+      extra: {
+        settingsManager: SettingsManager.inMemory(
+          { cacheWarming: "off", retry: { enabled: true, maxRetries: 1, baseDelayMs: 1 } },
+          { projectTrusted: false },
+        ),
+      },
+    });
+    await init(runtime);
+    let calls = 0;
+    const contexts: Context[] = [];
+    runtime.session.agent.streamFunction = (_model, context) => {
+      contexts.push(structuredClone(context));
+      calls++;
+      if (calls === 1) {
+        const stream = createAssistantMessageEventStream();
+        stream.push({
+          type: "error",
+          reason: "error",
+          error: assistant("", { stopReason: "error", errorMessage: "503 overloaded" }),
+        });
+        return stream;
+      }
+      if (calls > 4) throw new Error("Recovered goal failed to finish");
+      return output(
+        calls === 2
+          ? assistant("Provider recovered; goal still has work remaining")
+          : calls === 3
+            ? completeGoal("recovered-goal-complete")
+            : assistant("Recovered goal completed"),
+      );
+    };
+    await runtime.onUser(user(runtime, "/bruv goal set Complete work after the provider recovers"), signal());
+    await runtime.session.waitForIdle();
+    await until(() => frames.some((frame) => frame.type === "result" && frame.result === "Recovered goal completed"));
+    expect(calls).toBe(4);
+    expect(JSON.stringify(contexts[2])).toContain("Status: active");
+    expect(currentGoal(runtime)?.status).toBe("completed");
+    expect(frames.filter((frame) => frame.type === "result").every((frame) => frame.is_error === false)).toBe(true);
+  }, 15_000);
+
+  test("native goal budget stops before tool execution, requires an explicit increase to resume, and freezes after completion", async () => {
+    const { runtime, frames, dir } = await fixture({ persistent: true });
+    await init(runtime);
+    const forbiddenArtifact = join(dir, "must-not-execute-after-goal-budget");
+    let calls = 0;
+    runtime.session.agent.streamFunction = (_model, _context, options) => {
+      // Pi drains a cancelled tool batch through the provider with its already
+      // aborted signal. Match a provider that refuses that dispatch before any
+      // request or token usage, rather than pretending it is another paid call.
+      if (options?.signal?.aborted) {
+        const stream = createAssistantMessageEventStream();
+        stream.push({
+          type: "error",
+          reason: "aborted",
+          error: assistant("", {
+            stopReason: "aborted",
+            usage: {
+              input: 0,
+              output: 0,
+              cacheRead: 0,
+              cacheWrite: 0,
+              totalTokens: 0,
+              cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+            },
+          }),
+        });
+        return stream;
+      }
+      calls++;
+      if (calls > 1) throw new Error("Exhausted budget started another provider request");
+      return output(
+        assistant("", {
+          content: [
+            {
+              type: "toolCall",
+              id: "must-not-execute-after-budget",
+              name: "execute",
+              arguments: {
+                label: "Tool must not execute after budget exhaustion",
+                code: "await Bun.write(" + JSON.stringify(forbiddenArtifact) + ', "unexpected execution")',
+              },
+            },
+          ],
+          stopReason: "toolUse",
+        }),
+      );
+    };
+    await runtime.onUser(
+      user(runtime, "/goal set Complete the bounded native task --tokens 23", { uuid: "budget-goal-start" }),
+      signal(),
+    );
+    await runtime.session.waitForIdle();
+    await until(() => frames.some((frame) => frame.type === "result"));
+    const exhausted = currentGoal(runtime);
+    expect(exhausted).toMatchObject({
+      objective: "Complete the bounded native task",
+      status: "budget_exceeded",
+      tokenBudget: 23,
+      tokensUsed: 23,
+    });
+    await expect(readFile(forbiddenArtifact, "utf8")).rejects.toMatchObject({ code: "ENOENT" });
+    expect(calls).toBe(1);
+    expect(runtime.session.isIdle).toBe(true);
+    expect(
+      frames.some(
+        (frame) =>
+          frame.type === "assistant" &&
+          (frame.bruv as { goal_status?: boolean } | undefined)?.goal_status === true &&
+          JSON.stringify(frame.message).includes("Status: budget_exceeded"),
+      ),
+    ).toBe(true);
+
+    await runtime.onUser(user(runtime, "/goal resume", { uuid: "exhausted-goal-resume" }), signal());
+    expect(calls).toBe(1);
+    expect(runtime.session.isIdle).toBe(true);
+    expect(currentGoal(runtime)).toMatchObject({ id: exhausted?.id, status: "budget_exceeded", tokensUsed: 23 });
+    expect(
+      frames.some(
+        (frame) =>
+          frame.type === "assistant" &&
+          frame.user_message_uuid === "exhausted-goal-resume" &&
+          JSON.stringify(frame.message).includes("Goal token budget is exhausted"),
+      ),
+    ).toBe(true);
+
+    await runtime.onUser(user(runtime, "/goal budget 100", { uuid: "increase-goal-budget" }), signal());
+    expect(currentGoal(runtime)).toMatchObject({
+      id: exhausted?.id,
+      status: "paused",
+      tokenBudget: 100,
+      tokensUsed: 23,
+    });
+    expect(calls).toBe(1);
+    expect(runtime.session.isIdle).toBe(true);
+    runtime.session.agent.streamFunction = () => {
+      calls++;
+      if (calls > 3) throw new Error("Completed budgeted goal started another provider request");
+      return output(calls === 2 ? completeGoal("budgeted-goal-complete") : assistant("Budgeted goal completed"));
+    };
+    await runtime.onUser(user(runtime, "/goal resume", { uuid: "increased-goal-resume" }), signal());
+    await runtime.session.waitForIdle();
+    await until(() => frames.some((frame) => frame.type === "result" && frame.result === "Budgeted goal completed"));
+    const completed = currentGoal(runtime);
+    expect(completed).toMatchObject({
+      id: exhausted?.id,
+      status: "completed",
+      tokenBudget: 100,
+      tokensUsed: 69,
+    });
+    expect(calls).toBe(3);
+    runtime.session.agent.streamFunction = () => {
+      calls++;
+      return output(assistant("Unrelated follow-up answered"));
+    };
+    await runtime.onUser(user(runtime, "Answer an unrelated follow-up", { uuid: "unrelated-after-goal" }), signal());
+    await runtime.session.waitForIdle();
+    expect(calls).toBe(4);
+    expect(currentGoal(runtime)).toEqual(completed);
+    expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({
+      result: "Unrelated follow-up answered",
+      user_message_uuid: "unrelated-after-goal",
+      is_error: false,
+    });
+  }, 15_000);
+
+  test("native controls and saved answers stay usable during work without taking ownership of the foreground turn", async () => {
+    const oldDepth = process.env.BRUV_SUBAGENT_DEPTH;
+    process.env.BRUV_SUBAGENT_DEPTH = "0";
+    try {
+      const { runtime, frames } = await fixture({
+        persistent: true,
+        extra: { request: async () => ({ behavior: "deny", message: "Keep pending for an explicit text answer" }) },
+      });
+      await init(runtime);
+      let calls = 0;
+      let interrupted = false;
+      let held: ReturnType<typeof createAssistantMessageEventStream> | undefined;
+      const contexts: Context[] = [];
+      runtime.session.agent.streamFunction = (_model, context, options) => {
+        calls++;
+        contexts.push(structuredClone(context));
+        if (calls === 1) {
+          return output(
+            assistant("", {
+              stopReason: "toolUse",
+              content: [
+                {
+                  type: "toolCall",
+                  id: "busy-saved-question",
+                  name: "execute",
+                  arguments: {
+                    label: "Save question while doing independent work",
+                    code: 'console.log(await questions.ask({text: "Which target should the next step use?"}))',
+                  },
+                },
+              ],
+            }),
+          );
+        }
+        if (calls === 2) {
+          held = createAssistantMessageEventStream();
+          options?.signal?.addEventListener(
+            "abort",
+            () => {
+              interrupted = true;
+              held?.push({ type: "error", reason: "aborted", error: assistant("", { stopReason: "aborted" }) });
+            },
+            { once: true },
+          );
+          return held;
+        }
+        if (calls > 3) throw new Error("Saved answer was delivered more than once");
+        return output(assistant("Saved answer consumed exactly once"));
+      };
+      const foreground = runtime.onUser(
+        user(runtime, "Begin the foreground task", { uuid: "foreground-control-owner" }),
+        signal(),
+      );
+      await until(() => held !== undefined);
+      const ledger = new QuestionService();
+      const context = runtime.session.extensionRunner.createCommandContext();
+      const question = ledger.list(context).find((item) => item.text === "Which target should the next step use?");
+      expect(question?.status).toBe("pending");
+      const shortId = question!.id.slice(0, 10);
+      const answer = "HUMAN_TARGET: first  choice\n    preserve this indentation";
+      const controlsDuringWork = [
+        { text: "/bruv help", expected: "/questions open" },
+        { text: "/bruv status", expected: '"running": true' },
+        { text: "/bruv resources", expected: '"commands"' },
+        { text: "/bruv live status", expected: "Live off" },
+        { text: "/bruv live capabilities", expected: '"browserAudio":false' },
+        { text: "/bruv live stop", expected: "No Live voice session belongs to this agent session" },
+        { text: "/mode fast", expected: "Main-agent mode: fast" },
+        { text: "/questions list", expected: question!.text },
+        { text: "/questions detail " + shortId, expected: question!.text },
+        { text: "/questions open " + shortId, expected: question!.text },
+        { text: "/questions answer " + shortId + " " + answer, expected: "Answer saved" },
+      ];
+      for (const [index, command] of controlsDuringWork.entries()) {
+        const uuid = "busy-human-control-" + index;
+        await runtime.onUser(user(runtime, command.text, { uuid }), signal());
+        expect(runtime.session.isStreaming).toBe(true);
+        expect(interrupted).toBe(false);
+        expect(calls).toBe(2);
+        expect(
+          frames.some(
+            (frame) =>
+              frame.type === "assistant" &&
+              frame.user_message_uuid === uuid &&
+              ((frame.message as { content: Array<{ text?: string }> }).content[0]?.text ?? "").includes(
+                command.expected,
+              ),
+          ),
+          command.text +
+            ": " +
+            JSON.stringify(frames.filter((frame) => frame.type === "assistant" && frame.user_message_uuid === uuid)),
+        ).toBe(true);
+        expect(
+          frames
+            .filter((frame) => frame.type === "command_lifecycle" && frame.command_uuid === uuid)
+            .map((frame) => frame.state),
+        ).toEqual(["started", "completed"]);
+        expect(frames.filter((frame) => frame.type === "user" && frame.uuid === uuid)).toHaveLength(1);
+        expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+        expect(
+          frames.filter(
+            (frame) => frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle",
+          ),
+        ).toHaveLength(0);
+      }
+      expect(ledger.get(context, question!.id)).toMatchObject({ status: "answered", answer, delivery: "queued" });
+      expect(
+        runtime.session.sessionManager
+          .getBranch()
+          .some(
+            (entry) =>
+              entry.type === "custom" &&
+              entry.customType === "bruv-instruction-mode" &&
+              (entry.data as { mode?: string }).mode === "fast",
+          ),
+      ).toBe(true);
+      held!.push({ type: "done", reason: "stop", message: assistant("Foreground task finished") });
+      await foreground;
+      await until(
+        () =>
+          calls === 3 &&
+          runtime.session.isIdle &&
+          frames.some((frame) => frame.type === "result" && frame.result === "Saved answer consumed exactly once"),
+      );
+      const results = frames.filter((frame) => frame.type === "result");
+      expect(results).toHaveLength(2);
+      expect(results[0]).toMatchObject({
+        user_message_uuid: "foreground-control-owner",
+        result: "Foreground task finished",
+        is_error: false,
+      });
+      expect(results[1]).toMatchObject({ result: "Saved answer consumed exactly once", is_error: false });
+      expect(results[1]).not.toHaveProperty("user_message_uuid");
+      expect(JSON.stringify(contexts[2])).toContain("HUMAN_TARGET");
+      const deliveries = runtime.session.messages.filter(
+        (message) => message.role === "custom" && message.customType === "question-answer",
+      );
+      expect(deliveries).toHaveLength(1);
+      expect(ledger.get(context, question!.id).delivery).toBe("delivered");
+      expect(interrupted).toBe(false);
+      expect(calls).toBe(3);
+    } finally {
+      if (oldDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+      else process.env.BRUV_SUBAGENT_DEPTH = oldDepth;
+    }
+  }, 15_000);
+
+  test.each([
+    { name: "unknown command", content: "/bruv unknown-control", expected: "Unavailable Bruv command" },
+    { name: "invalid syntax", content: "/bruv:goal123", expected: "Invalid Bruv command syntax" },
+    {
+      name: "malformed text block",
+      content: [
+        { type: "text", text: "/bruv status" },
+        { type: "text", text: 42 },
+      ],
+      expected: "text only",
+    },
+  ])("idle native control error is visible and leaves the next prompt usable: $name", async ({ content, expected }) => {
+    const { runtime, frames } = await fixture();
+    await init(runtime);
+    let calls = 0;
+    runtime.session.agent.streamFunction = () => {
+      calls++;
+      return output(assistant("Ordinary prompt still works"));
+    };
+    const invalid = user(runtime, "ignored", { uuid: "invalid-idle-control" });
+    invalid.message.content = typeof content === "string" ? content : [...content];
+    await runtime.onUser(invalid, signal());
+    expect(calls).toBe(0);
+    expect(runtime.session.isIdle).toBe(true);
+    expect(frames.filter((frame) => frame.type === "result")).toEqual([
+      expect.objectContaining({
+        user_message_uuid: "invalid-idle-control",
+        is_error: true,
+        num_turns: 0,
+        errors: [expect.stringContaining(expected)],
+      }),
+    ]);
+    expect(
+      frames.some(
+        (frame) =>
+          frame.type === "assistant" &&
+          frame.user_message_uuid === "invalid-idle-control" &&
+          JSON.stringify(frame.message).includes(expected),
+      ),
+    ).toBe(true);
+    await runtime.onUser(user(runtime, "Continue ordinary work", { uuid: "after-invalid-control" }), signal());
+    expect(calls).toBe(1);
+    expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({
+      user_message_uuid: "after-invalid-control",
+      is_error: false,
+      result: "Ordinary prompt still works",
+    });
+  });
+
+  test("busy invalid or unavailable controls report isolated errors while the original goal keeps running", async () => {
+    const { runtime, frames } = await fixture({ persistent: true });
+    await init(runtime);
+    let calls = 0;
+    let interrupted = false;
+    let held: ReturnType<typeof createAssistantMessageEventStream> | undefined;
+    runtime.session.agent.streamFunction = (_model, _context, options) => {
+      calls++;
+      if (calls === 1) {
+        held = createAssistantMessageEventStream();
+        options?.signal?.addEventListener(
+          "abort",
+          () => {
+            interrupted = true;
+            held?.push({ type: "error", reason: "aborted", error: assistant("", { stopReason: "aborted" }) });
+          },
+          { once: true },
+        );
+        return held;
+      }
+      if (calls > 2) throw new Error("Invalid command changed the running goal");
+      return output(assistant("Original goal survived invalid controls"));
+    };
+    await runtime.onUser(
+      user(runtime, "/goal set Preserve running work through invalid controls", { uuid: "busy-error-owner" }),
+      signal(),
+    );
+    await until(() => held !== undefined);
+    const originalGoal = currentGoal(runtime);
+    for (const [index, command] of [
+      "/bruv nope",
+      "/bruv live start",
+      "/bruv live model",
+      "/bruv live status extra",
+      "/bruv live stop extra",
+      "/bruv live capabilities extra",
+      "/goal clear extra",
+      "/bruv:goal123",
+    ].entries()) {
+      const uuid = "invalid-busy-control-" + index;
+      await runtime.onUser(user(runtime, command, { uuid }), signal());
+      expect(interrupted).toBe(false);
+      expect(calls).toBe(1);
+      expect(runtime.session.isStreaming).toBe(true);
+      expect(currentGoal(runtime)).toEqual(originalGoal);
+      expect(
+        frames.some(
+          (frame) =>
+            frame.type === "assistant" &&
+            frame.user_message_uuid === uuid &&
+            (frame.bruv as { level?: string } | undefined)?.level === "error",
+        ),
+      ).toBe(true);
+      expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+      expect(
+        frames.filter(
+          (frame) => frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle",
+        ),
+      ).toHaveLength(0);
+    }
+    held!.push({ type: "done", reason: "toolUse", message: completeGoal("busy-invalid-goal-complete") });
+    await runtime.session.waitForIdle();
+    await until(() => frames.some((frame) => frame.type === "result"));
+    expect(frames.filter((frame) => frame.type === "result")).toEqual([
+      expect.objectContaining({
+        user_message_uuid: "busy-error-owner",
+        result: "Original goal survived invalid controls",
+        is_error: false,
+      }),
+    ]);
+    expect(currentGoal(runtime)?.status).toBe("completed");
+    expect(calls).toBe(2);
+  }, 15_000);
+
+  test.each([
+    { order: "prompt first", command: "/bruv status" },
+    { order: "command first", command: "/bruv resources" },
+  ])(
+    "concurrent native admission keeps command and model ownership separate: $order",
+    async ({ order, command }) => {
+      const outputBlocked = Promise.withResolvers<void>();
+      const releaseOutput = Promise.withResolvers<void>();
+      const frames: CompatFrame[] = [];
+      const { runtime } = await fixture({
+        extra: {
+          emit: async (frame: CompatFrame) => {
+            frames.push(frame);
+            if (
+              order === "command first" &&
+              frame.type === "assistant" &&
+              frame.user_message_uuid === "concurrent-control"
+            ) {
+              outputBlocked.resolve();
+              await releaseOutput.promise;
+            }
+          },
+        },
+      });
+      await init(runtime);
+      let calls = 0;
+      runtime.session.agent.streamFunction = () => {
+        calls++;
+        return output(assistant("Independent model answer"));
+      };
+      let mainRun: Promise<void> | undefined;
+      let commandRun: Promise<void> | undefined;
+      try {
+        if (order === "prompt first") {
+          mainRun = runtime.onUser(
+            user(runtime, "Do the independently owned work", { uuid: "concurrent-main" }),
+            signal(),
+          );
+          commandRun = runtime.onUser(user(runtime, command, { uuid: "concurrent-control" }), signal());
+        } else {
+          commandRun = runtime.onUser(user(runtime, command, { uuid: "concurrent-control" }), signal());
+          await outputBlocked.promise;
+          mainRun = runtime.onUser(
+            user(runtime, "Do the independently owned work", { uuid: "concurrent-main" }),
+            signal(),
+          );
+          // Keep the idle command's asynchronous output pending while the next
+          // submitted prompt gets a chance to enter the shared admission seam.
+          await new Promise<void>((resolve) => setImmediate(resolve));
+          releaseOutput.resolve();
+        }
+        await Promise.all([mainRun, commandRun]);
+        expect(calls).toBe(1);
+        const modelResults = frames.filter(
+          (frame) => frame.type === "result" && frame.result === "Independent model answer",
+        );
+        expect(modelResults).toEqual([
+          expect.objectContaining({
+            user_message_uuid: "concurrent-main",
+            user_message_uuids: ["concurrent-main"],
+            num_turns: 1,
+            is_error: false,
+          }),
+        ]);
+        expect(
+          frames.filter(
+            (frame) =>
+              frame.type === "assistant" &&
+              (frame.message as { content: Array<{ text?: string }> }).content[0]?.text === "Independent model answer",
+          ),
+        ).toEqual([expect.objectContaining({ user_message_uuid: "concurrent-main" })]);
+        expect(frames.filter((frame) => frame.type === "user" && frame.uuid === "concurrent-control")).toHaveLength(1);
+        expect(
+          frames
+            .filter((frame) => frame.type === "command_lifecycle" && frame.command_uuid === "concurrent-control")
+            .map((frame) => frame.state),
+        ).toEqual(["started", "completed"]);
+        for (const result of frames.filter(
+          (frame) => frame.type === "result" && frame.user_message_uuid === "concurrent-control",
+        )) {
+          expect(result).toMatchObject({ num_turns: 0, user_message_uuids: ["concurrent-control"] });
+        }
+        expect(runtime.session.isIdle).toBe(true);
+      } finally {
+        releaseOutput.resolve();
+        await Promise.allSettled([mainRun, commandRun].filter((run): run is Promise<void> => !!run));
+      }
+    },
+    15_000,
+  );
+
+  test.each(["interrupt", "close"] as const)(
+    "native %s cancels an idle Live picker before waiting for command admission",
+    async (operation) => {
+      const oldDepth = process.env.BRUV_SUBAGENT_DEPTH;
+      process.env.BRUV_SUBAGENT_DEPTH = "0";
+      const dialogStarted = Promise.withResolvers<void>();
+      let dialogAborted = false;
+      try {
+        const { runtime, frames } = await fixture({
+          persistent: true,
+          extra: {
+            request: async (request: Record<string, unknown>, options?: { signal?: AbortSignal }) => {
+              expect(request.tool_name).toBe("AskUserQuestion");
+              expect(String(request.tool_use_id)).toStartWith("bruv-live:");
+              expect(options?.signal).toBeDefined();
+              dialogStarted.resolve();
+              return await new Promise<never>((_resolve, reject) => {
+                const abort = () => {
+                  dialogAborted = true;
+                  reject(options?.signal?.reason ?? new Error("Native Live picker cancelled"));
+                };
+                if (options?.signal?.aborted) abort();
+                else options?.signal?.addEventListener("abort", abort, { once: true });
+              });
+            },
+          },
+        });
+        await init(runtime);
+        let calls = 0;
+        runtime.session.agent.streamFunction = () => {
+          calls++;
+          return output(assistant("Work continues after cancelling the picker"));
+        };
+        const picker = runtime.onUser(user(runtime, "/bruv live model", { uuid: "pending-live-picker" }), signal());
+        await dialogStarted.promise;
+        expect(calls).toBe(0);
+        const cancellation =
+          operation === "interrupt" ? runtime.controls.interrupt!(control("interrupt"), signal()) : runtime.close();
+        await Promise.all([picker, cancellation]);
+        expect(dialogAborted).toBe(true);
+        expect(calls).toBe(0);
+        if (operation === "close") {
+          await expect(runtime.onUser(user(runtime, "Closed session cannot run"), signal())).rejects.toThrow("closed");
+          return;
+        }
+        expect(runtime.session.isIdle).toBe(true);
+        await runtime.onUser(user(runtime, "Continue ordinary work", { uuid: "after-live-picker" }), signal());
+        expect(calls).toBe(1);
+        expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({
+          user_message_uuid: "after-live-picker",
+          user_message_uuids: ["after-live-picker"],
+          result: "Work continues after cancelling the picker",
+          is_error: false,
+        });
+      } finally {
+        if (oldDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+        else process.env.BRUV_SUBAGENT_DEPTH = oldDepth;
+      }
+    },
+    15_000,
+  );
 }
