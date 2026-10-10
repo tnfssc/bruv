@@ -10,6 +10,8 @@ import { sdk } from "./sdk";
 mkdirSync(".tmp", { recursive: true });
 const dir = mkdtempSync(resolve(".tmp/tests-"));
 const previousDir = process.env.PI_CODING_AGENT_DIR;
+const previousCodex = process.env.CODEX_HOME;
+process.env.CODEX_HOME = join(dir, "codex");
 process.env.PI_CODING_AGENT_DIR = dir;
 const app = await sdk([bruv], undefined, dir, "rpc", [
   { path: join(dir, "AGENTS.md"), content: "fixture-context-781" },
@@ -18,6 +20,8 @@ const { session, faux, resourceLoader } = app;
 afterAll(async () => {
   await app.close();
   rmSync(dir, { recursive: true, force: true });
+  if (previousCodex === undefined) delete process.env.CODEX_HOME;
+  else process.env.CODEX_HOME = previousCodex;
   if (previousDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
   else process.env.PI_CODING_AGENT_DIR = previousDir;
 });

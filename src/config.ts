@@ -9,6 +9,7 @@ interface Profile {
 }
 
 export interface Config {
+  codexImportOffered?: boolean;
   fast?: boolean;
   fastConfirmed?: boolean;
   profiles?: Partial<Record<"fast" | "normal", Profile>>;

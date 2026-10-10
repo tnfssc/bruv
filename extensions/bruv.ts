@@ -2,6 +2,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerAgents } from "../src/agents";
 import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
+import { registerCodexImport } from "../src/codex-import";
 import { registerFast } from "../src/fast";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
@@ -32,4 +33,5 @@ export default function bruv(pi: ExtensionAPI): void {
   registerGoal(pi);
   registerPrompt(pi);
   registerCodemode(pi);
+  registerCodexImport(pi);
 }

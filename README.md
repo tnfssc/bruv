@@ -49,6 +49,12 @@ Parallel agents use more quota too.
 
 **Using T3 Code?** Enable its Pi provider and set the binary to `pi`. No launch arguments needed.
 
+## Commands
+
+`/goal` · `/race` · `/import-codex` · `/usage` · `/fast` · `/bruv-setup`
+
+Coming from Codex? `/import-codex` previews your model, MCP servers, skills, prompts and trusted projects, then asks before importing. Sign in to Pi with `/login`; Codex sign-in tokens stay separate.
+
 ## Reference
 
 [Commands and examples](docs/USAGE.md#commands) ·

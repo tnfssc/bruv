@@ -211,6 +211,7 @@ bruv/
     fast.ts               /fast priority tier (~100)
     usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
+    codex-import.ts       confirmed Codex settings import (~200)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
     status.ts             shared footer parts (~30)
@@ -236,7 +237,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 2,300 lines. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 2,500 lines, including Codex import. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -517,6 +518,26 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
   reset times, limit and credit status, rounded credits, and session tokens and cost.
 - Warn once per session for each window at 90% and once when a limit is reached.
 - Other models show session usage and explain that plan limits require a ChatGPT plan model.
+
+### 3.10.2 `/import-codex` (`src/codex-import.ts`)
+
+- Parse `CODEX_HOME/config.toml` (default `~/.codex`) with `smol-toml`, a runtime dependency.
+  Show a list of changes and skipped fields with `ctx.ui.confirm` before writing.
+- Import known `openai-codex` models into `defaultProvider` and `defaultModel`; map minimal,
+  low, medium, high and xhigh to `defaultThinkingLevel`. Report unknown models and levels.
+- A `fast` or `priority` service tier saves `fast: true` and `fastConfirmed: true` in bruv.json.
+- Merge MCP servers into Pi's `mcp.json` under `mcpServers`; skip existing names, including
+  trusted project entries and Pi's equivalent hyphen/underscore names. Copy command, args,
+  env, cwd, url, headers (`http_headers` in Codex), and enabled state.
+- Add the Codex skills directory to settings `skills`. Copy direct Markdown files from its
+  prompts directory into Pi's prompts directory, skipping existing files and symlinks.
+- Save trusted projects through Pi's exported `ProjectTrustStore`; keep other decisions.
+- Preserve unrelated settings, MCP fields and bruv config. Never read or copy `auth.json`.
+  Call `ctx.reload()` after writing, or tell the user to `/reload` when unavailable.
+- On session start with UI, offer `/import-codex` once if config.toml exists, saving
+  `codexImportOffered: true` in bruv.json. Child agents do not offer the import.
+- Tests use fake Codex and Pi directories under `.tmp/`, check cancel and merge behavior,
+  and reject attempts to read sign-in tokens. No servers or models are contacted.
 
 ### 3.11 Codex native compaction (`src/codex-compaction.ts`)
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `/import-codex` with a preview for models, thinking, fast mode, MCP servers, skills, prompts and trusted projects. Keep existing settings and leave sign-in tokens alone.
+
 - Show each pending script call once and update its row when it finishes.
 
 - Recheck the user's tree after a race pick; start checks in the terminal and queue them for the next turn in T3/RPC.

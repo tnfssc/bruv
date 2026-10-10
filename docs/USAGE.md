@@ -11,6 +11,7 @@ Disable the old "bruv (not Claude)" provider.
 
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
 - `/race <task>` starts three agents from your current changes, each in its own worktree. Use `--n 2` through `--n 5` to change the count. `/race` shows results; pick in the dialog or with `/race pick a2`. `/race pick none` discards the race.
+- `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
 - `/bruv-setup` turns on scripting for all tool calls; run `/reload` afterward.
@@ -28,6 +29,23 @@ Goal examples:
 
 Budgets count tokens; `k` means thousand and `m` means million. The model must record evidence to finish a goal.
 A goal also stops at its budget, after the same blocker in three consecutive rounds, or when you stop the run.
+
+## Bring your Codex setup
+
+Run `/import-codex`. bruv reads `CODEX_HOME/config.toml`, or `~/.codex/config.toml` when `CODEX_HOME` is unset.
+It shows a preview before changing anything:
+
+- Set Pi's default model to `openai-codex/<model>` if Pi knows it, and copy minimal, low, medium, high or xhigh thinking. Unknown models and levels are skipped and listed.
+- Turn on confirmed fast mode for Codex's `fast` or `priority` service tier. This uses more quota.
+- Add MCP servers to Pi's `mcp.json`, keeping existing names. Commands, arguments, environment, URLs and headers carry over; disabled servers stay disabled.
+- Add the Codex skills directory to Pi's skill paths.
+- Copy Markdown prompts to Pi's `prompts/`, keeping existing files.
+- Save trusted projects with Pi's trust store, keeping other decisions.
+
+Existing settings and bruv profiles stay in place. Pi reloads after import; if the host has no reload action, run `/reload`.
+Settings go to `~/.pi/agent`, or `PI_CODING_AGENT_DIR` when set.
+bruv never reads or copies Codex's `auth.json`. Use `/login` in Pi so Codex keeps its own sign-in.
+A notice offers the import once when Codex settings are found.
 
 ## What the model can call from scripts
 
