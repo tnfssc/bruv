@@ -22,7 +22,7 @@ export function registerSettle(pi: ExtensionAPI, jobs: Jobs) {
   let reminded = false;
   const flush = (idle = true) => {
     for (const item of jobs.items.values()) {
-      if (item.status === "running" || item.seen || (!idle && !item.detached)) continue;
+      if (item.status === "running" || item.seen || !idle) continue;
       item.seen = true;
       pi.sendMessage(report(jobs.result(item)), { deliverAs: "nextTurn" });
     }

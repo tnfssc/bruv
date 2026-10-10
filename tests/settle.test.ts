@@ -111,11 +111,11 @@ test.each([false, true])("running work gets at most one reminder and delivers la
   }
 });
 
-test("codemode wait returns the finished job without another result report", async () => {
+test.each([false, true])("codemode wait reports the finished job once (detach=%s)", async (detach) => {
   const app = await setup();
   try {
     app.faux.setResponses([
-      start(),
+      start(detach),
       script('return await tools.wait({ids: ["j1"]});'),
       (context) => {
         const result = [...context.messages].reverse().find((message) => message.role === "toolResult");
@@ -130,6 +130,8 @@ test("codemode wait returns the finished job without another result report", asy
     await app.waiting;
     app.release();
     await run;
+    expect(app.reports()).toHaveLength(0);
+    await app.nextPrompt();
     expect(app.reports()).toHaveLength(0);
   } finally {
     await app.close();
