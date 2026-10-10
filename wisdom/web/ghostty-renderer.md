@@ -25,7 +25,9 @@ The patch exists for these regressions:
 - Accumulate small alternate wheel deltas against measured glyph height; cancel fractions with the gesture. Small moves must not vanish merely because each is less than a row.
 - Remove the bundled default base64 WASM and require explicit load/init paths. The diff is large because upstream bundles contain minified and embedded-WASM lines, not a spare VT implementation.
 
-UTF-8 1005, urxvt 1015 and pixel-SGR 1016 mouse encodings emit nothing, not fallback arrows. Legacy coordinates cap at 223. DOM buttons 0–2 are covered; extended buttons, pen mapping and window-only focus changes are not.
+UTF-8 1005, urxvt 1015 and pixel-SGR 1016 mouse encodings emit nothing, not fallback arrows. Legacy events beyond cell 223 are dropped. A pending drag release uses its last reported cell; SGR retains full coordinates. DOM buttons 0–2 are covered; extended buttons, pen mapping and window-only focus changes are not.
+
+Native clipboard input goes through `Terminal.paste()`: 0.4.0's input-handler paste listener bypasses bracketed-paste mode. The browser captures that event before the handler. Human input is framed below the server byte limit without splitting surrogate pairs; binary mouse bytes stay binary. Normal-buffer swipes use wheel input when `hasMouseTracking()` is true, otherwise they scroll history.
 
 ## Assets and updates
 

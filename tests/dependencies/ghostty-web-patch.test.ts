@@ -194,16 +194,16 @@ async function ptyBytes(term: any, send: () => void) {
   let output = "";
   const proc = Bun.spawn(
     [
-      "python3",
-      "-c",
-      "import os, tty\ntty.setraw(0)\nos.write(1, b'ready')\ndata = b''\nwhile not data.endswith(b'\\0'):\n data += os.read(0, 4096)\nos.write(1, b'hex:' + data[:-1].hex().encode() + b'\\n')",
+      process.execPath,
+      "-e",
+      'process.stdin.setRawMode(true); let data = Buffer.alloc(0); process.stdin.on("data", chunk => { data = Buffer.concat([data, chunk]); if (data.at(-1) === 0) { process.stdout.write("hex:" + data.subarray(0, -1).toString("hex") + "\\n"); process.exit(0); } }); process.stdout.write("ready");',
     ],
     {
       terminal: {
         data(_terminal, bytes) {
           output += Buffer.from(bytes).toString();
           if (output.includes("ready")) ready.resolve();
-          const match = output.match(/hex:([a-f0-9]*)\n/);
+          const match = output.match(/hex:([a-f0-9]*)\r?\n/);
           if (match) receipt.resolve(match[1]);
         },
       },

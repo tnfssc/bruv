@@ -559,6 +559,21 @@ function render() {
 function send(session: Session, message: object) {
   if (session.ready && session.socket?.readyState === WebSocket.OPEN) session.socket.send(JSON.stringify(message));
 }
+function sendInput(session: Session, data: string, binary = false) {
+  // Each frame stays below the server's 64 KiB input bound, including UTF-8.
+  for (let start = 0; start < data.length; ) {
+    let end = Math.min(start + 16_384, data.length);
+    const last = data.charCodeAt(end - 1);
+    if (!binary && end < data.length && last >= 0xd800 && last <= 0xdbff) end--;
+    const chunk = data.slice(start, end);
+    send(session, {
+      type: "input",
+      data: binary ? btoa(chunk) : chunk,
+      ...(binary ? { encoding: "base64" } : {}),
+    });
+    start = end;
+  }
+}
 function hideSession(session: Session) {
   session.touch.cancel();
   session.term.blur();
@@ -702,7 +717,7 @@ async function requestVoice(session: Session, request: string) {
 }
 
 function connect(session: Session) {
-  if (session.halted || unloading) return;
+  if (session.halted || unloading || accessRequired) return;
   if (voice?.tabId === session.id) void releaseVoice();
   session.ready = false;
   session.viewport = undefined;
@@ -810,7 +825,7 @@ function attach(tab: Tab) {
     fontFamily: '"JetBrainsMono Nerd Font Mono", ui-monospace, monospace',
     scrollback: 5000,
     disableStdin: true,
-    // Vesper sources and the pure-black override: wisdom/web/vesper-theme.md.
+    // Vesper sources and the pure-black override: wisdom/web/surface-rethink.md.
     theme: {
       background: "#000000",
       foreground: "#ffffff",
@@ -843,6 +858,18 @@ function attach(tab: Tab) {
   renderer.className = "terminal-renderer";
   element.append(renderer);
   term.open(renderer);
+  // Ghostty 0.4.0's native input handler skips bracketed paste; its public API does not.
+  renderer.addEventListener(
+    "paste",
+    (event) => {
+      const text = event.clipboardData?.getData("text/plain");
+      if (text === undefined) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      term.paste(text);
+    },
+    { capture: true },
+  );
   const touch = installTerminalTouch(element, term);
   const accessibility = installTerminalAccessibility(element, term);
   const session: Session = {
@@ -858,8 +885,8 @@ function attach(tab: Tab) {
     status: "Connecting…",
   };
   sessions.set(tab.id, session);
-  term.onData((data) => send(session, { type: "input", data }));
-  term.onBinary((data) => send(session, { type: "input", data: btoa(data), encoding: "base64" }));
+  term.onData((data) => sendInput(session, data));
+  term.onBinary((data) => sendInput(session, data, true));
   connect(session);
 }
 function applyState(next: WorkspaceState) {
@@ -913,6 +940,11 @@ async function request(path: string, method = "GET", body?: object): Promise<Wor
       syncStatus.textContent = "";
       clearTimeout(eventsReconnect);
       eventsSocket?.close();
+      for (const session of sessions.values()) {
+        clearTimeout(session.reconnect);
+        halt(session, "Access required");
+      }
+      render();
     }
     throw new RequestError(detail || "Request failed (" + response.status + ").", response.status);
   }
@@ -1093,15 +1125,21 @@ function connectEvents() {
       syncStatus.textContent = "";
     }
   };
-  socket.onclose = (event) => {
+  socket.onclose = () => {
     if (eventsSocket !== socket || unloading) return;
-    if (event.code === 1008) {
-      void change("/api/workspaces");
-      return;
-    }
     if (accessRequired) return;
     syncStatus.textContent = "Workspace list may be out of date · retrying…";
-    eventsReconnect = setTimeout(connectEvents, 1000);
+    eventsReconnect = setTimeout(async () => {
+      // Browsers hide a rejected WebSocket upgrade's HTTP status. Check it here.
+      try {
+        const next = await request("/api/workspaces");
+        if (eventsSocket !== socket || unloading || accessRequired) return;
+        applyState(next);
+      } catch {
+        // A network failure still retries; request() stops on confirmed lost access.
+      }
+      if (eventsSocket === socket && !unloading && !accessRequired) connectEvents();
+    }, 1000);
   };
 }
 let ghostty: Ghostty;

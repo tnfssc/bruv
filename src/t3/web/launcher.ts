@@ -110,8 +110,3 @@ export function externalT3Guide(binary = process.execPath, home = homedir()): st
     "",
   ].join("\n");
 }
-
-/** Compatibility export; the terminal implementation lives outside T3. */
-export async function runWeb(args: string[]): Promise<number> {
-  return (await import("../../web/launcher")).runWeb(args);
-}

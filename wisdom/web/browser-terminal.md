@@ -14,7 +14,7 @@ Output replay is bounded to 2 MiB and private to the joining view. An expired cu
 
 ## Access and voice
 
-The token is shared shell authority, not participant identity. Bind loopback. Check exact Host, Origin and token before API dispatch. WebSocket upgrades and mutations require Origin; authenticated GET may omit it. The initial token lives in the URL fragment, then sessionStorage; requests use Bearer auth or a WebSocket subprotocol. Remote use needs a matching SSH tunnel, not public HTTP or an unreviewed proxy mount.
+The token is shared shell authority, not participant identity. Bind loopback. Check exact Host, Origin and token before API dispatch. WebSocket upgrades and mutations require Origin; authenticated GET may omit it. The initial token lives in the URL fragment, then sessionStorage; requests use Bearer auth or a WebSocket subprotocol. Remote use needs a matching SSH tunnel, not public HTTP or an unreviewed proxy mount. Failed state reconnects recheck authenticated HTTP state, because browser WebSocket errors hide upgrade status. Confirmed 401/403 stops input and retries and shows access guidance; network loss still retries.
 
 The [input owner](../../src/web/input-ownership.ts) issues a bounded one-use ticket at Enter and inserts a private OSC marker into PTY input. The root Live extension consumes it before the editor. Capture the ticket when `/live` is invoked, before async settings or dialogs; later keystrokes cannot retarget it. Mixed authorship rejects voice rather than guessing an owner. Ctrl-C resets authorship; focus/resize and bracketed-paste newlines are not submissions.
 

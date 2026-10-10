@@ -1,5 +1,6 @@
 import { expect, spyOn, test } from "bun:test";
-import { externalT3Guide, runWeb } from "../../src/t3/web/launcher";
+import { externalT3Guide } from "../../src/t3/web/launcher";
+import { runWeb } from "../../src/web/launcher";
 
 test("terminal guide follows install-to-chat steps with absolute isolated paths", () => {
   const guide = externalT3Guide("/opt/bruv/bin/bruv", "/home/alice");
