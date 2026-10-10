@@ -2,14 +2,12 @@
 
 **Codex models. Less babysitting.**
 
-![Three agents race on one task; bruv shows a scoreboard and applies the best result](site/assets/race.gif)
 
 Give it a goal, let agents work in parallel, and come back to results—not another request to continue.
 bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, not a plugin for it.
 
 - **Keep working without “continue.”** `/goal` keeps the agent on the task and requires it to report evidence before marking the job done.
 - **Don't wait on one thing at a time.** Run tests in the background while agents investigate bugs or build separate parts in their own copies of your repo.
-- **Try three solutions. Keep the best.** `/race` gives the same task to three agents. Compare their changes and reported checks, then pick one—or none.
 - **Do more per turn.** The model can read files, make edits, and run checks in one script, filtering long logs before they fill the conversation.
 
 ## Get started
@@ -34,15 +32,6 @@ The agent keeps going between turns instead of waiting for another prompt.
 You can set a token budget, pause it, or stop it at any time. It also stops if it repeatedly hits the same blocker.
 Completion evidence is the agent's report, not a substitute for reviewing the code.
 
-### Don't settle for the first approach
-
-```text
-/race Fix the flaky checkout tests
-```
-
-Three agents start from your current code, including uncommitted changes, in separate Git worktrees.
-When they're done, choose a result. bruv applies that agent's changes to your working copy without committing them there.
-
 ### Stay in the loop, not in the way
 
 Watch live jobs and agent progress in the terminal. Send a message to steer the work, or press Esc to stop it.
@@ -53,7 +42,7 @@ Parallel agents use more quota too.
 
 ## Commands
 
-`/goal` · `/race` · `/review` · `/import-codex` · `/usage` · `/fast` · `/bruv-setup`
+`/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/bruv-setup`
 
 Coming from Codex? `/import-codex` previews your model, MCP servers, skills, prompts and trusted projects, then asks before importing. Sign in to Pi with `/login`; Codex sign-in tokens stay separate.
 

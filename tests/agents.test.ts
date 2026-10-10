@@ -4,7 +4,6 @@ import { resolve } from "node:path";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
 import { registerAgents, resolveProfile } from "../src/agents";
 import { Jobs, registerJobs } from "../src/jobs";
-import { registerRace } from "../src/race";
 import { sdk } from "./sdk";
 
 setDefaultTimeout(15000);
@@ -81,19 +80,18 @@ test.each([false, true])("codemode starts a job, waits, and parses fake child ag
   }
 });
 
-test("child sessions do not register agent or race", async () => {
+test("child sessions do not register agent", async () => {
   const previous = process.env.BRUV_DEPTH;
   process.env.BRUV_DEPTH = "1";
   const app = await sdk([
     (pi) => {
       const jobs = new Jobs();
-      registerRace(pi, jobs, registerAgents(pi, jobs));
+      registerAgents(pi, jobs);
     },
   ]);
   try {
     const names = app.session.getAllTools().map((tool) => tool.name);
     expect(names).not.toContain("agent");
-    expect(names).not.toContain("race");
   } finally {
     await app.close();
     if (previous === undefined) delete process.env.BRUV_DEPTH;

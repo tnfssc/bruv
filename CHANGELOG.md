@@ -2,21 +2,21 @@
 
 ## Unreleased
 
+- Removed `/race`.
+
 - Add `/review` for uncommitted changes, branch diffs and commits, with bug-focused guidance and no file edits unless asked.
 
 - Add `/import-codex` with a preview for models, thinking, fast mode, MCP servers, skills, prompts and trusted projects. Keep existing settings and leave sign-in tokens alone.
 
 - Show each pending script call once and update its row when it finishes.
 
-- Recheck the user's tree after a race pick; start checks in the terminal and queue them for the next turn in T3/RPC.
 
 - Separate footer parts with dots in a fixed order: usage, fast, goal, then agent cost.
-- Give race agents task titles and put the result comparison on the first report line.
 - Fix worktree diff totals when `.tmp/` is ignored; count once at completion and keep totals visible beside long titles.
 - Shorten bash call rows to the first command line and 60 columns.
 - Clear inherited agent settings before tests so the suite also runs inside bruv agents.
 
-- Notify when long runs, races, and goals finish; show a working title and pending wait IDs in the terminal. Keep terminal escapes out of RPC, JSON, and print modes.
+- Notify when long runs and goals finish; show a working title and pending wait IDs in the terminal. Keep terminal escapes out of RPC, JSON, and print modes.
 
 - Add a dim turn summary with tool and agent counts, elapsed time, and weekly plan use changes.
 
@@ -24,7 +24,6 @@
 
 - Show running jobs and agents on a live board with tools, tokens, elapsed time, and finished worktree changes.
 
-- Add `/race` and the `race` tool: compare agents in separate worktrees, pick a result, and bring its changes back uncommitted.
 - Save `/fast` globally for future sessions and agents, with a one-time cost confirmation.
 - Add `/usage` for ChatGPT plan limits, credits, and session usage, with footer status and limit warnings.
 

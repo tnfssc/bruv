@@ -10,7 +10,6 @@ Disable the old "bruv (not Claude)" provider.
 ## Commands
 
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
-- `/race <task>` starts three agents from your current changes, each in its own worktree. Use `--n 2` through `--n 5` to change the count. `/race` shows results; pick in the dialog or with `/race pick a2`. `/race pick none` discards the race.
 - `/review` picks uncommitted changes, a branch diff, or a commit; `/review <branch or commit>` starts directly.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
@@ -69,7 +68,6 @@ The model calls these through `tools.<name>(...)` in Pi's scripting tool.
 | `wait` | Wait for one or all jobs or agents, or until you send a message. |
 | `jobs` | List the jobs and agents started in this session. |
 | `job_stop` | Stop a job or agent and its child processes. |
-| `race` | Start competing agents from your current changes; return a race ID and agent IDs to use with `wait`. You choose the result. |
 | `agent` | Start one or several agents, with optional git worktrees. |
 | `goal_update` | Record progress, a blocker, or completion with evidence. |
 | `ask` | Ask you a question while work continues; your answer arrives as a message. |
@@ -88,15 +86,13 @@ The terminal board shows each job and agent, its elapsed time, and live agent to
 Finished rows show the result and worktree change totals (`+85 −3 · 4 files`), and stay until your next prompt.
 Totals are counted once against the starting commit, including committed and uncommitted edits and new files.
 Titles shorten to leave room for totals and elapsed time.
-Race titles include the race ID, entry number, and the start of the task.
-The collapsed race report compares each agent's result, added/deleted lines, check report, and time; expand for the full report.
 The footer shows usage, fast mode, goal, then agent cost, separated by ` · `. Only active parts appear.
 Script results list the tool calls and show plain output. Bash call rows show the first command line, cut to 60 columns.
 Expand a result to see the full script and output.
 A dim line after each run with tools totals scripts, calls, agents, elapsed time, and any increase in weekly plan use.
 While working, the terminal title spins; waiting shows which agents or jobs are pending.
 In supported terminals, a desktop notification and bell announce runs longer than 30 seconds,
-races ready to pick, and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and print modes.
+and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and print modes.
 
 ## Configuration
 
@@ -113,9 +109,3 @@ Set agent profiles in `~/.pi/agent/bruv.json`:
 
 Missing fields use the parent model and thinking level. The model can override either for a single agent.
 Ordinary agent worktrees and branches stay on disk after the agent finishes.
-A race includes your uncommitted and untracked files. Picking a result applies only that agent's changes to your current worktree, without committing or changing your staging choices.
-After a successful pick, the terminal starts a turn to run your project checks and fix failures.
-In T3/RPC, that request arrives with your next message.
-Successful picks and "Keep none" remove all race worktrees and branches. On a conflict,
-the worktrees stay available and Git leaves conflict markers for you to resolve.
-
