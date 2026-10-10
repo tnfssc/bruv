@@ -1,1 +1,0 @@
-{"result":"PASS","gate":{"gate":"blocked-response","requestBytes":377,"upstreamResponseBytes":393,"downstreamResponseBytes":0},"accepted":1,"modelTurns":1,"outcomes":{"unknown":1,"done":0},"oldEpoch":1,"newEpoch":2,"beforeEvents":7,"afterEvents":8}

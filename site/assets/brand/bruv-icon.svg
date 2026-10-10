@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="180" viewBox="0 0 160 180" role="img" aria-labelledby="title desc">
-  <title id="title">bruv icon</title>
-  <desc id="desc">Forward-leaning lowercase b with cut corners.</desc>
-  <style>path { fill: #171717; } @media (prefers-color-scheme: dark) { path { fill: #fafafa; } }</style>
-  <g transform="matrix(1 0 -.15 1 27 -2)">
-    <path d="M20 20H52V68H106L134 94V138L106 164H20Z M52 96V136H92L102 126V106L92 96Z" fill-rule="evenodd"/>
-  </g>
-</svg>
