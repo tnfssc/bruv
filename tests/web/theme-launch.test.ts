@@ -1,12 +1,15 @@
 import { expect, test } from "bun:test";
 import { mkdtemp, mkdir, readFile, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import WebSocket from "ws";
 import bruvPackage from "../../package.json";
 
 test("compiled web selects Vesper for this run, preserves settings and removes its theme file", async () => {
-  const root = await mkdtemp(join(tmpdir(), "bruv-web-theme-test-"));
+  const scratch = resolve(import.meta.dir, "../../.tmp");
+  await mkdir(scratch, { recursive: true });
+  const root = await mkdtemp(join(scratch, "bruv-web-theme-test-"));
+  const project = join(root, "project");
+  await mkdir(project);
   const agent = join(root, "agent");
   await mkdir(agent);
   const settings = join(agent, "settings.json");
@@ -20,13 +23,14 @@ test("compiled web selects Vesper for this run, preserves settings and removes i
       "0",
       "--",
       "--offline",
+      "--approve",
       "--provider",
       "openai",
       "--model",
       "gpt-4o",
     ],
     {
-      cwd: root,
+      cwd: project,
       env: {
         PATH: process.env.PATH,
         TMPDIR: root,

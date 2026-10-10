@@ -57,13 +57,13 @@ bun run check
 bun run build
 bun test tests/web tests/live/browser-audio.test.ts tests/live/browser-audio-tui.test.ts tests/dependencies/ghostty-web-patch.test.ts tests/t3/web-launcher.test.ts tests/t3/web-launcher-process.test.ts tests/packaging/prepare-assets.test.ts
 # Use installed test tools; Playwright is not a production dependency.
-CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-smoke.mjs
-CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-multiplayer-smoke.mjs
-CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-ui.mjs
-bun scripts/web/browser-transport.mjs
-CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-audio-probe.ts
+export CHROMIUM_BIN=/path/to/chrome
+export RELEASE_BOOT_PLAYWRIGHT=/path/to/playwright-core/index.mjs
+bash scripts/ci/browser.sh
+# Separate device-lifecycle probe with fake media/provider fixtures:
+PLAYWRIGHT_CORE="$RELEASE_BOOT_PLAYWRIGHT" bun scripts/web/browser-audio-probe.ts
 ```
 
-The smoke checks compiled CLI input, reconnect, refresh, narrow layout and device release. Multiplayer checks shared PID/input/output, local selection, shared size and voice handoff. The audio probe checks capture, playback, interruption, stop and reconnect. Fake media/provider checks do not prove audible speech or paid-provider acceptance.
+The browser gate runs once on Linux CI. It checks real-page controls, raw PTY bytes/replies, compiled CLI startup and shared voice ownership. Its fixtures own their scratch folders, browser and CLI processes, including failed launches. Readiness means the CLI reached its session boundary, not merely that a socket connected. Fake media/provider checks do not prove audible speech or paid-provider acceptance.
 
 See [server and voice ownership](../../wisdom/web/browser-terminal.md), [renderer updates and limits](../../wisdom/web/ghostty-renderer.md) and [surface decisions](../../wisdom/web/surface-rethink.md). Inspect populated desktop and phone views, not just passing assertions. Physical microphone, phone keyboard/IME, Safari/iOS and real screen-reader use still need human checks.

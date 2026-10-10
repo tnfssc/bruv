@@ -1,13 +1,16 @@
 import { expect, test } from "bun:test";
-import { mkdtemp, mkdir } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdtemp, mkdir, rm } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import WebSocket from "ws";
 import { startWebServer } from "../../src/web/server";
 import { loadWebAssets } from "../../src/web/assets";
 
 test("compiled Bruv starts its actual TUI through authenticated PTY and shuts down", async () => {
-  const root = await mkdtemp(join(tmpdir(), "bruv-web-tui-"));
+  const scratch = resolve(import.meta.dir, "../../.tmp");
+  await mkdir(scratch, { recursive: true });
+  const root = await mkdtemp(join(scratch, "bruv-web-tui-"));
+  const project = join(root, "project");
+  await mkdir(project);
   const agent = join(root, "agent");
   await mkdir(agent, { recursive: true });
   const executable = resolve(import.meta.dir, "../../dist/bruv");
@@ -15,8 +18,8 @@ test("compiled Bruv starts its actual TUI through authenticated PTY and shuts do
   const app = startWebServer({
     port: 0,
     assets: await loadWebAssets(),
-    cwd: root,
-    command: [executable, "--offline", "--provider", "openai", "--model", "gpt-4o"],
+    cwd: project,
+    command: [executable, "--offline", "--approve", "--provider", "openai", "--model", "gpt-4o"],
     env: {
       PATH: process.env.PATH,
       HOME: root,
@@ -59,5 +62,6 @@ test("compiled Bruv starts its actual TUI through authenticated PTY and shuts do
   } finally {
     socket.terminate();
     await app.stop();
+    await rm(root, { recursive: true, force: true });
   }
 }, 15000);

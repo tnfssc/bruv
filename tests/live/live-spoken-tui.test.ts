@@ -4,7 +4,7 @@ import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { run } from "../helpers/helpers";
 import { capturePane, shellQuote as quote, tmuxRunner } from "../helpers/tui-helpers";
-import { waitForLiveTuiStartup } from "./live-tui-startup";
+import { liveTuiFailureDetails, waitForLiveTuiStartup } from "./live-tui-startup";
 
 test("real tmux Pi renderer shows a delegated spoken user turn without transport dump", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-spoken-tui-"));
@@ -67,6 +67,9 @@ test("real tmux Pi renderer shows a delegated spoken user turn without transport
     expect(screen).not.toContain("hostContext");
     expect(screen).not.toContain("MISSING_REQUEST");
     expect(screen).not.toContain("gpt_live_provisional");
+  } catch (error) {
+    console.error(await liveTuiFailureDetails(tmux, "spoken"));
+    throw error;
   } finally {
     await tmux("kill-server");
     await rm(home, { recursive: true, force: true });

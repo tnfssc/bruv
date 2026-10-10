@@ -387,7 +387,7 @@ test("compiled browser gate reuses the pinned harness once after the Linux build
   expect(job.steps.indexOf(browser)).toBeGreaterThan(job.steps.indexOf(setup));
   const script = readFileSync(new URL("../../scripts/ci/browser.sh", import.meta.url), "utf8");
   expect(script).toContain("RELEASE_BOOT_PLAYWRIGHT");
-  expect(script).toContain("browser-ui browser-workspaces-smoke browser-multiplayer-smoke");
+  expect(script).toContain("browser-ui browser-transport browser-workspaces-smoke browser-multiplayer-smoke");
   expect(script).toContain("--voice-only");
   expect(script).toContain("set -euo pipefail");
   expect(script).not.toContain("install chromium");

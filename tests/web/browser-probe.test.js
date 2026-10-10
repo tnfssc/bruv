@@ -3,13 +3,45 @@ import { test, expect } from "bun:test";
 import { access, writeFile, readFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { withBrowserProbe, hasFixtureMarker, waitForFixture } from "../../scripts/web/browser-probe.mjs";
+import { withBrowserProbe, hasFixtureMarker, waitForFixture, within } from "../../scripts/web/browser-probe.mjs";
 import { watchRenderer, paintedTerminal } from "../../scripts/web/browser-renderer-proof.mjs";
 
 const project = resolve(import.meta.dir, "../..");
 const browserTest = process.env.PLAYWRIGHT_CORE ? test : test.skip;
 async function chromium() {
   return (await import(pathToFileURL(process.env.PLAYWRIGHT_CORE).href)).chromium;
+}
+
+async function serverUrl(stream, timeout = 10000) {
+  const reader = stream.getReader();
+  try {
+    return await within(
+      (async () => {
+        let output = "";
+        while (!/http:\/\/\S+#token=\S+\r?\n/.test(output)) {
+          const { value, done } = await reader.read();
+          if (done) throw Error("Compiled web exited without a URL");
+          output += new TextDecoder().decode(value);
+        }
+        return output;
+      })(),
+      timeout,
+      "Startup URL timed out",
+    );
+  } finally {
+    void reader.cancel().catch(() => {});
+  }
+}
+
+async function socketOpen(ws, timeout = 5000) {
+  await within(
+    new Promise((resolve, reject) => {
+      ws.once("open", resolve);
+      ws.on("error", reject);
+    }),
+    timeout,
+    "Startup socket timed out",
+  );
 }
 
 test("session_start marker spans PTY frames, not transport ready", () => {
@@ -36,7 +68,7 @@ for (const fail of [true, false])
         const extension = join(root, "ready.ts");
         await writeFile(
           extension,
-          'export default function(pi) { pi.on("session_start", async () => { await Bun.sleep(100); process.stdout.write("\\x1b]BROWSER_FIXTURE_READY\\x07"); }); }',
+          'process.on("SIGTERM", () => {}); export default function(pi) { pi.on("session_start", async () => { await Bun.sleep(100); process.stdout.write("\\x1b]BROWSER_FIXTURE_READY\\x07"); }); }',
         );
         proc = Bun.spawn(
           [join(project, "dist/bruv"), "web", "--port", "0", "--", "--offline", "--approve", "--extension", extension],
@@ -52,13 +84,8 @@ for (const fail of [true, false])
             stderr: "pipe",
           },
         );
-        const reader = proc.stdout.getReader();
-        let output = "";
-        while (!/http:\/\/\S+#token=\S+\r?\n/.test(output)) {
-          const { value, done } = await reader.read();
-          if (done) throw Error("Compiled web exited without a URL");
-          output += new TextDecoder().decode(value);
-        }
+        owned.proc = proc;
+        const output = await serverUrl(proc.stdout);
         url = output.match(/http:\/\/\S+/)[0];
         await writeFile(evidence, output);
         const parsed = new URL(url),
@@ -69,23 +96,31 @@ for (const fail of [true, false])
           ["bruv", "bruv-token." + token],
           { headers: { Origin: parsed.origin } },
         );
-        await new Promise((resolve, reject) => {
-          ws.onopen = resolve;
-          ws.onerror = reject;
+        const messages = [];
+        const ready = new Promise((resolve) => {
+          ws.on("message", (data) => {
+            messages.push(JSON.parse(String(data)));
+            if (hasFixtureMarker(messages)) resolve();
+          });
         });
-        owned.proc = proc;
-        const state = await (
-          await fetch(parsed.origin + "/api/workspaces", { headers: { Authorization: "Bearer " + token } })
-        ).json();
-        pid = state.workspaces[0].tabs[0].pid;
-        expect(pid).toBeGreaterThan(0);
         try {
+          await socketOpen(ws);
+          await within(ready, 10000, "CLI session_start timed out");
+          const state = await (
+            await fetch(parsed.origin + "/api/workspaces", {
+              headers: { Authorization: "Bearer " + token },
+              signal: AbortSignal.timeout(5000),
+            })
+          ).json();
+          pid = state.workspaces[0].tabs[0].pid;
+          expect(pid).toBeGreaterThan(0);
           owned.browser = await launcher.launch({
             executablePath: fail ? join(root, "missing-chromium") : process.env.CHROMIUM_BIN,
             headless: true,
             args: ["--no-sandbox"],
           });
           const page = await owned.browser.newPage();
+          page.setDefaultTimeout(10000);
           await page.addInitScript(() => {
             window.testSockets = new Map();
             window.testMessages = new Map();
@@ -117,7 +152,7 @@ for (const fail of [true, false])
               ?.textContent?.includes("FIRST_command-after-session-start"),
           );
         } finally {
-          ws.close();
+          ws.terminate();
         }
       });
       if (fail) await expect(run).rejects.toThrow(/executable.*exist/i);
@@ -199,3 +234,83 @@ browserTest(
   },
   30000,
 );
+
+// This child acknowledges its signal handler before cleanup starts.
+test("startup URL timeout force-stops a process that ignores SIGTERM", async () => {
+  let proc, root;
+  const started = Date.now();
+  await expect(
+    withBrowserProbe("startup-timeout", async (owned) => {
+      root = owned.root;
+      proc = owned.proc = Bun.spawn(
+        [process.execPath, "-e", 'process.on("SIGTERM", () => {}); console.log("READY"); setInterval(() => {}, 1000);'],
+        { stdout: "pipe", stderr: "pipe" },
+      );
+      const reader = proc.stdout.getReader();
+      expect(new TextDecoder().decode((await within(reader.read(), 5000, "Child ready timed out")).value)).toContain(
+        "READY",
+      );
+      reader.releaseLock();
+      await serverUrl(proc.stdout, 100);
+    }),
+  ).rejects.toThrow("Startup URL timed out");
+  expect(Date.now() - started).toBeLessThan(6000);
+  expect(proc.signalCode).toBe("SIGKILL");
+  expect(() => process.kill(proc.pid, 0)).toThrow();
+  await expect(access(root)).rejects.toThrow();
+}, 10000);
+
+browserTest(
+  "hung browser close force-stops owned Chromium",
+  async () => {
+    let browser, pid, root;
+    const started = Date.now();
+    await withBrowserProbe("browser-force-stop", async (owned) => {
+      root = owned.root;
+      browser = owned.browser = await (await chromium()).launch({
+        executablePath: process.env.CHROMIUM_BIN,
+        headless: true,
+        args: ["--no-sandbox"],
+      });
+      const cdp = await browser.newBrowserCDPSession();
+      const info = await cdp.send("SystemInfo.getProcessInfo");
+      pid = info.processInfo.find((p) => p.type === "browser").id;
+      await cdp.detach();
+      browser.close = () => new Promise(() => {});
+    });
+    expect(Date.now() - started).toBeLessThan(6000);
+    expect(browser.isConnected()).toBe(false);
+    expect(() => process.kill(pid, 0)).toThrow();
+    await expect(access(root)).rejects.toThrow();
+  },
+  10000,
+);
+
+test("startup socket timeout still cleans its owned process and server", async () => {
+  let proc, root, server;
+  await expect(
+    withBrowserProbe("socket-timeout", async (owned) => {
+      root = owned.root;
+      proc = owned.proc = Bun.spawn([process.execPath, "-e", 'console.log("READY"); setInterval(() => {}, 1000);'], {
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+      const reader = proc.stdout.getReader();
+      await within(reader.read(), 5000, "Child ready timed out");
+      reader.releaseLock();
+      // Accept TCP, but never finish the WebSocket upgrade.
+      server = Bun.serve({ port: 0, fetch: () => new Promise(() => {}) });
+      owned.servers.push(server);
+      const ws = new WebSocket(server.url.toString().replace("http", "ws"));
+      try {
+        await socketOpen(ws, 100);
+      } finally {
+        ws.terminate();
+      }
+    }),
+  ).rejects.toThrow("Startup socket timed out");
+  await within(proc.exited, 100, "Cleanup did not reap process");
+  expect(() => process.kill(proc.pid, 0)).toThrow();
+  await expect(fetch(server.url)).rejects.toThrow();
+  await expect(access(root)).rejects.toThrow();
+}, 10000);

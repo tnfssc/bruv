@@ -5,7 +5,7 @@ cd "$(dirname "$0")/../.."
 : "${RELEASE_BOOT_PLAYWRIGHT:?Run scripts/release/setup-release-browser.sh first}"
 export PLAYWRIGHT_CORE="$RELEASE_BOOT_PLAYWRIGHT"
 mkdir -p artifacts/ci/browser
-for probe in browser-ui browser-workspaces-smoke browser-multiplayer-smoke; do
+for probe in browser-ui browser-transport browser-workspaces-smoke browser-multiplayer-smoke; do
   args=()
   # The UI probe owns dialogs and multi-view edits. Keep this run on PTY/voice.
   if [[ "$probe" == browser-multiplayer-smoke ]]; then args+=(--voice-only); fi

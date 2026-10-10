@@ -5,6 +5,7 @@ import { basename, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { startWebServer } from "../../src/web/server.ts";
 import { loadWebAssets } from "../../src/web/assets.ts";
+import { closeProbeBrowser, within } from "./browser-probe.mjs";
 
 const project = resolve(import.meta.dir, "../..");
 const tmp = join(project, ".tmp");
@@ -130,7 +131,33 @@ try {
   assert.equal(await replyCount(), 1, "reconnect answered historical query");
   assert.equal((await state()).workspaces[0].tabs[0].pid, pid);
   for (const context of contexts.splice(0)) await context.close();
-  await appendFile(output, "OFFLINE\r\n\x1b[6n");
+  // Observe the production terminal after it buffers output, not the fixture's write.
+  await until(() => app.terminal.clients.size === 0, "viewers did not detach");
+  const terminal = app.terminal,
+    send = terminal.send;
+  let offlineBytes = "";
+  const offlineReceipt = new Promise((resolve) => {
+    terminal.send = function (message) {
+      send.call(this, message);
+      if (message.type !== "output") return;
+      assert.equal(this.clients.size, 0, "offline output had an attached viewer");
+      offlineBytes += Buffer.from(message.data, "base64").toString("latin1");
+      // biome-ignore lint/suspicious/noControlCharactersInRegex: PTY cursor query, with ONLCR newlines.
+      if (/OFFLINE\r+\n\x1b\[6n/.test(offlineBytes)) resolve(message.seq);
+    };
+  });
+  let offlineSequence;
+  try {
+    await appendFile(output, "OFFLINE\r\n\x1b[6n");
+    offlineSequence = await within(offlineReceipt, 15000, "Server did not consume offline query");
+    assert(
+      terminal.chunks.some((chunk) => chunk.seq === offlineSequence),
+      "offline receipt was not buffered",
+    );
+    assert.equal(await replyCount(), 1, "offline query was answered before resume");
+  } finally {
+    terminal.send = send;
+  }
   const resumed = await viewer();
   await barrier(resumed, "s");
   await until(async () => (await replyCount()) === 2, "offline query did not complete exactly once");
@@ -169,14 +196,21 @@ try {
       pass: true,
       pasteBytes: expected.length,
       sharedReplies: "once",
-      offlineQuery: "answered",
+      offlineQuery: "buffered with zero viewers, then answered once",
+      offlineSequence,
       reconnect: "same PID",
       expiredAccess: "stopped",
       scope: "raw PTY; no providers or audio devices",
     }),
   );
 } finally {
-  await browser?.close();
-  await app?.stop();
-  await rm(scratch, { recursive: true, force: true });
+  try {
+    await closeProbeBrowser(browser);
+  } finally {
+    try {
+      if (app) await within(app.stop(), 5000, "Server cleanup timed out");
+    } finally {
+      await rm(scratch, { recursive: true, force: true });
+    }
+  }
 }

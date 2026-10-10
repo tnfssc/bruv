@@ -1,6 +1,44 @@
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { resolve, join } from "node:path";
 
+// A deadline does not stop work. Cleanup below also kills and waits for exit.
+export async function within(promise, ms, why) {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(Error(why)), ms);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function closeProbeBrowser(browser) {
+  if (!browser) return;
+  try {
+    await within(browser.close(), 1500, "Browser close timed out");
+  } catch {
+    // Playwright's local-browser test hook kills its owned process and reaps it.
+    if (browser.isConnected()) await within(browser._channel.killForTests({}), 5000, "Browser force-stop timed out");
+  }
+  if (browser.isConnected()) throw Error("Browser survived cleanup");
+}
+
+async function stopProbeProcess(proc) {
+  if (!proc) return;
+  proc.kill("SIGTERM");
+  try {
+    // The web server gives its PTY children 1500 ms before SIGKILL.
+    await within(proc.exited, 3000, "Process close timed out");
+  } catch {
+    proc.kill("SIGKILL");
+    await within(proc.exited, 1500, "Process force-stop timed out");
+  }
+}
+
 // Only resources acquired by this probe belong here. Evidence lives outside root.
 export async function withBrowserProbe(name, run) {
   const scratch = resolve(import.meta.dir, "../../.tmp");
@@ -12,13 +50,10 @@ export async function withBrowserProbe(name, run) {
     owned.browser = undefined;
     owned.proc = undefined;
     try {
-      await browser?.close();
+      await closeProbeBrowser(browser);
     } finally {
       try {
-        if (proc) {
-          proc.kill("SIGTERM");
-          await proc.exited;
-        }
+        await stopProbeProcess(proc);
       } finally {
         for (const server of owned.servers.splice(0)) await server.stop(true);
       }
