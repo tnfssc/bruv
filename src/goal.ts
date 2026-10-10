@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { toolResult } from "./jobs";
+import { notify } from "./notify";
 
 const guidance = readFileSync(new URL("../prompts/goal.md", import.meta.url), "utf8").trim();
 const continuation = readFileSync(new URL("../prompts/goal-continue.md", import.meta.url), "utf8").trim();
@@ -67,6 +68,7 @@ const tokenStatus = (goal: Goal) =>
 
 export function registerGoal(pi: ExtensionAPI): void {
   let goal: Goal | undefined;
+  let savedStatus: Goal["status"] | undefined;
   let blocker: string | undefined;
   let repeated = 0;
   let reported: string | undefined;
@@ -86,6 +88,9 @@ export function registerGoal(pi: ExtensionAPI): void {
   };
   const save = (ctx: ExtensionContext) => {
     pi.appendEntry("bruv-goal", goal ? structuredClone(goal) : null);
+    if (savedStatus === "active" && goal?.status !== "active")
+      notify(ctx, goal?.status === "completed" ? "Goal done" : "Goal stopped");
+    savedStatus = goal?.status;
     status(ctx);
   };
   const budgetReached = (ctx: ExtensionContext) => {
@@ -100,6 +105,7 @@ export function registerGoal(pi: ExtensionAPI): void {
       .reverse()
       .find((e) => e.type === "custom" && e.customType === "bruv-goal");
     goal = entry?.type === "custom" ? (structuredClone(entry.data as Goal | null) ?? undefined) : undefined;
+    savedStatus = goal?.status;
     reset();
     status(ctx);
   };

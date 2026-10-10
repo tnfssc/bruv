@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, spyOn, test } from "bun:test";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -57,6 +57,7 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
         },
       },
       dir,
+      mode === "dialog" ? "tui" : "rpc",
     );
     const errors: string[] = [];
     app.session.extensionRunner.onError((error) => {
@@ -71,6 +72,9 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
         cleaned.resolve();
     });
     process.env.PI_CODING_AGENT_DIR = app.dir;
+    const tty = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");
+    const output = mode === "dialog" ? spyOn(process.stdout, "write").mockReturnValue(true) : undefined;
+    if (output) Object.defineProperty(process.stdout, "isTTY", { configurable: true, value: true });
     const index = readFileSync(join(dir, ".git/index"));
     const head = git("rev-parse", "HEAD");
     try {
@@ -91,9 +95,15 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
         await app.session.prompt("race the task");
       } else await app.session.prompt(`/race --n 2 ${editTask}`);
       const options = await dialog.promise;
+      if (output) expect(output.mock.calls).toHaveLength(1);
       const items = [...jobs.items.values()];
       expect(items).toHaveLength(mode === "tool" ? 3 : 2);
-      expect(items.map((item) => item.status)).toEqual(items.map(() => "done"));
+      expect(
+        items.map((item) => ({
+          status: item.status,
+          error: item.status === "failed" ? jobs.result(item).output : undefined,
+        })),
+      ).toEqual(items.map(() => ({ status: "done", error: undefined })));
       expect(options).toHaveLength(items.length + 1);
       expect(options[0]).toMatch(/a1 · \+3 −2 · 4 files · checks pass · \d+m\d+s/);
       const paths = items.map((item) => item.worktree?.path as string);
@@ -144,6 +154,9 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
     } finally {
       selection.resolve(undefined);
       await app.close();
+      output?.mockRestore();
+      if (tty) Object.defineProperty(process.stdout, "isTTY", tty);
+      else Reflect.deleteProperty(process.stdout, "isTTY");
       rmSync(dir, { recursive: true, force: true });
       if (previousCommand === undefined) delete process.env.BRUV_PI_COMMAND;
       else process.env.BRUV_PI_COMMAND = previousCommand;
@@ -196,6 +209,13 @@ test("closing the session removes an unpicked race", async () => {
   try {
     await app.session.prompt(`/race --n 2 ${editTask}`);
     await Promise.all([...jobs.items.values()].map((item) => item.completion));
+    const items = [...jobs.items.values()];
+    expect(
+      items.map((item) => ({
+        status: item.status,
+        error: item.status === "failed" ? jobs.result(item).output : undefined,
+      })),
+    ).toEqual(items.map(() => ({ status: "done", error: undefined })));
     expect(git("worktree", "list").split("\n")).toHaveLength(3);
   } finally {
     await app.close();

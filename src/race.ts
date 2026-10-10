@@ -7,6 +7,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { Type } from "typebox";
 import type { StartAgents } from "./agents";
 import { type Jobs, toolResult, type Work } from "./jobs";
+import { notify } from "./notify";
 
 const exec = promisify(execFile);
 const git = async (cwd: string, args: string[], env = process.env) =>
@@ -183,6 +184,7 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
           race.rows = await scoreboard(race);
           if (!active || current !== race) return;
           tell(`${report(race, race.rows)}\nPick with /race pick <agent id>, or /race pick none.`);
+          notify(ctx, `Race ${race.id} is ready to pick`);
           await choose(race, ctx);
         })
         .catch((error: unknown) => ctx.ui.notify(String(error), "error"));

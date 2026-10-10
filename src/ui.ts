@@ -88,12 +88,35 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
       [...jobs.items.values()].some((item) => item.kind === "agent") ? `agents $${cost.toFixed(2)}` : undefined,
     );
   };
+  const waiting = new Map<string, string[]>();
+  const working = (context: ExtensionContext) => {
+    if (!context.hasUI || context.mode !== "tui") return;
+    const ids = [...new Set([...waiting.values()].flat())];
+    context.ui.setWorkingMessage(waiting.size ? `Waiting for ${ids.join(", ")}…` : undefined);
+  };
+  pi.on("tool_execution_start", (event, context) => {
+    if (event.toolName !== "wait") return;
+    waiting.set(
+      event.toolCallId,
+      event.args.ids ??
+        jobs
+          .list()
+          .filter((item) => item.status === "running")
+          .map((item) => item.id),
+    );
+    working(context);
+  });
+  pi.on("tool_execution_end", (event, context) => {
+    if (!waiting.delete(event.toolCallId)) return;
+    working(context);
+  });
   jobs.listeners.add(update);
   pi.on("session_start", (_event, context) => {
     board?.dispose();
     board = undefined;
     ctx = context;
     hidden.clear();
+    waiting.clear();
     if (!ctx.hasUI || ctx.mode !== "tui") return;
     if (!renderers) {
       renderers = true;
@@ -149,9 +172,11 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
     update();
   });
   pi.on("session_shutdown", () => {
+    waiting.clear();
+    if (ctx) working(ctx);
     board?.dispose();
     board = undefined;
-    if (ctx?.hasUI) {
+    if (ctx?.hasUI && ctx.mode === "tui") {
       ctx.ui.setWidget("bruv", undefined);
       ctx.ui.setStatus("bruv-agents", undefined);
     }

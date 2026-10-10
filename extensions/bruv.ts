@@ -5,6 +5,7 @@ import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerFast } from "../src/fast";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
+import { registerNotifications } from "../src/notify";
 import { registerPrompt } from "../src/prompt";
 import { registerQuestions } from "../src/questions";
 import { registerRace } from "../src/race";
@@ -18,6 +19,7 @@ export default function bruv(pi: ExtensionAPI): void {
   const jobs = new Jobs();
   registerUI(pi, jobs);
   registerRender(pi);
+  registerNotifications(pi);
   registerSettle(pi, jobs);
   registerJobs(pi, jobs);
   const isFast = registerFast(pi);

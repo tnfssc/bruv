@@ -29,7 +29,7 @@ test("codemode lists real nested calls, expands output and script, and restores 
     },
   ]);
   const code =
-    'text(await tools.bash({command:"printf \'first\\nsecond\\n\'"})); const j = await tools.job_start({command:"true"}); text(await tools.wait({ids:[j.id],all:true}));';
+    'text(await tools.bash({command:"printf \'first\\nsecond\\n\'"})); text(await tools.bash({command:"exit 1"})); const j = await tools.job_start({command:"true"}); text(await tools.wait({ids:[j.id],all:true}));';
   try {
     app.faux.setResponses([
       fauxAssistantMessage(fauxToolCall("codemode", { code }), { stopReason: "toolUse" }),
@@ -54,6 +54,8 @@ test("codemode lists real nested calls, expands output and script, and restores 
         .map(stripVTControlCharacters) ?? [];
     const rows = render(false);
     expect(rows.filter((row) => row.startsWith("✓"))).toHaveLength(3);
+    expect(rows.filter((row) => row.startsWith("✗"))).toHaveLength(1);
+    expect(rows.some((row) => /✗ bash .* · exit 1/.test(row))).toBe(true);
     expect(rows).toContain("first");
     expect(rows).toContain("second");
     expect(rows.some((row) => row.includes("j1"))).toBe(true);

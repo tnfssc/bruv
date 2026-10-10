@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Notify when long runs, races, and goals finish; show a working title and pending wait IDs in the terminal. Keep terminal escapes out of RPC, JSON, and print modes.
+
 - Add a dim turn summary with tool and agent counts, elapsed time, and weekly plan use changes.
 
 - Render script calls and bash/wait output as readable lines, with full script and output on expansion.

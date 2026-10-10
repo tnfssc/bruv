@@ -215,6 +215,7 @@ bruv/
     ui.ts                 widget, status, tool renderers (~200)
     render.ts             readable codemode calls and output (~200)
     turn.ts               turn counts and non-context summary (~100)
+    notify.ts             desktop alerts and terminal title (~100)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
   prompts/
     system.md
@@ -531,9 +532,9 @@ Port the essential behavior of `src/agent/native-compaction.ts` (read it with
 - If the endpoint fails, cancel that compaction attempt, keep history, notify the user, and let Pi's
   default compaction run next time. No hidden retries.
 
-### 3.12 UI (`src/ui.ts`)
+### 3.12 UI (`src/ui.ts`, `src/render.ts`, `src/turn.ts`, `src/notify.ts`)
 
-Only when `ctx.hasUI`.
+Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved in every mode.
 
 - Only in TUI mode, widget `bruv` above the editor uses a component with one row per job or agent.
   Running rows show a spinner, ID, title, agent tool and tokens, and elapsed time. Finished rows
@@ -554,6 +555,14 @@ Only when `ctx.hasUI`.
   single-line renderer shows scripts, calls, agents started, and elapsed time, plus weekly plan
   use gained during the run when both readings cover the same window. Automatic continuations
   belong to the same run. This entry never enters model context.
+- In interactive TUI mode on a real stdout TTY, notify with OSC 777 or Kitty OSC 99 plus BEL
+  after non-aborted runs longer than 30 seconds settle, when a race is ready to pick, and when
+  an active goal completes or stops. Use `bruv` as the title and one short body line. Strip terminal
+  controls from notification text. Never write escapes in RPC, JSON, or print modes, even with UI.
+- Animate the terminal title while a run is active, keep it through continuations, and restore
+  the project folder name at settle or shutdown. Stop the title timer when idle.
+- While `wait` blocks in the TUI, set the working message to the pending IDs. Parallel waits share
+  the message; completing or failing one wait leaves the other waits visible.
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,
   bounded, seam, authority).
 

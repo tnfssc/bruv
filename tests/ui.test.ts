@@ -14,6 +14,7 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
   let board: (Component & { dispose?: () => void }) | undefined;
   let renders = 0;
   let widgets = 0;
+  const working: (string | undefined)[] = [];
   const timers = spyOn(globalThis, "setInterval");
   const cleared = spyOn(globalThis, "clearInterval");
   const app = await sdk(
@@ -24,6 +25,9 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
       },
     ],
     {
+      setWorkingMessage: (message) => {
+        working.push(message);
+      },
       setWidget: (_key, content) => {
         widgets++;
         board =
@@ -36,6 +40,22 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
     mode,
   );
   try {
+    const runner = app.session.extensionRunner;
+    await runner.emit({
+      type: "tool_execution_start",
+      toolName: "wait",
+      toolCallId: "w1",
+      args: { ids: ["a1", "a2"] },
+    });
+    await runner.emit({ type: "tool_execution_start", toolName: "wait", toolCallId: "w2", args: { ids: ["j1"] } });
+    await runner.emit({ type: "tool_execution_end", toolName: "wait", toolCallId: "w1", result: {}, isError: true });
+    if (mode === "tui") {
+      expect(working[0]?.match(/a[12]/g)).toHaveLength(2);
+      expect(working.at(-1)?.match(/j1/g)).toHaveLength(1);
+    }
+    await runner.emit({ type: "tool_execution_end", toolName: "wait", toolCallId: "w2", result: {}, isError: false });
+    if (mode === "tui") expect(working.at(-1)).toBeUndefined();
+    else expect(working).toEqual([]);
     const before = timers.mock.calls.length;
     const item = jobs.create("agent", "界".repeat(100), app.dir);
     const parser = agentParser(jobs, item);

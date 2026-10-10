@@ -71,6 +71,9 @@ The terminal board shows each job and agent, its elapsed time, and live agent to
 Finished rows show the result and worktree change totals, and stay until your next prompt.
 Script results list the tool calls and show plain output. Expand a result to see the full script and output.
 A dim line after each run with tools totals scripts, calls, agents, elapsed time, and any increase in weekly plan use.
+While working, the terminal title spins; waiting shows which agents or jobs are pending.
+In supported terminals, a desktop notification and bell announce runs longer than 30 seconds,
+races ready to pick, and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and print modes.
 
 ## Configuration
 
