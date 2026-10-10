@@ -11,7 +11,11 @@ import { sdk } from "./sdk";
 
 test("summary renders only positive counts and durations of at least one second", async () => {
   initTheme("dark", false);
-  const app = await sdk([(pi) => registerTurn(pi, new Jobs(), () => undefined)]);
+  const app = await sdk([
+    (pi) => {
+      registerTurn(pi, new Jobs(), () => undefined);
+    },
+  ]);
   try {
     const runner = app.session.extensionRunner;
     const renderer = runner.getEntryRenderer("bruv-turn");

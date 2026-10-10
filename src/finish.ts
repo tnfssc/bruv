@@ -1,15 +1,42 @@
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
-import { Type } from "typebox";
+import { type Static, Type } from "typebox";
 import type { Checker } from "./check";
 import { type Config, readConfig, saveConfig } from "./config";
 import { toolResult } from "./jobs";
+import type { TurnSummary } from "./turn";
 
 const parameters = Type.Object({
   status: Type.Union([Type.Literal("done"), Type.Literal("need_you"), Type.Literal("blocked")]),
   note: Type.Optional(Type.String()),
 });
 
-export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check?: Checker, hasGoal = () => false) {
+const output = Type.Object({
+  ...parameters.properties,
+  gaps: Type.Optional(Type.Array(Type.String())),
+  receipt: Type.Optional(
+    Type.Object({
+      asked: Type.String(),
+      checked: Type.Array(Type.String()),
+      gaps: Type.Array(Type.String()),
+      failed: Type.Boolean(),
+      changes: Type.Optional(Type.Object({ files: Type.Number(), added: Type.Number(), removed: Type.Number() })),
+      scripts: Type.Number(),
+      calls: Type.Number(),
+      agents: Type.Number(),
+      elapsedSeconds: Type.Number(),
+      weekPercent: Type.Optional(Type.Number()),
+    }),
+  ),
+});
+export type FinishResult = Static<typeof output>;
+
+export function registerFinish(
+  pi: ExtensionAPI,
+  agentDir = getAgentDir(),
+  check?: Checker,
+  hasGoal = () => false,
+  summary?: (ctx: ExtensionContext) => TurnSummary | undefined,
+) {
   let mode: NonNullable<Config["keepGoing"]> = "auto";
   let active = false;
   let goalRun = false;
@@ -34,15 +61,21 @@ export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check
         "End the run after writing your reply in the same message. Use done when work is done and checked, need_you for a user choice, or blocked when you cannot go on. Call this tool alone after other tools have finished; every tool in a batch must agree to end the run.",
       exposure: active ? "model-only" : "hidden",
       parameters,
-      outputSchema: parameters,
+      outputSchema: output,
       async execute(_id, args, signal, _update, ctx) {
         if (active && args.status === "done") {
           const retry = await check?.run(ctx, signal);
-          if (retry) return toolResult({ status: args.status, note: retry });
+          if (retry) return toolResult({ status: args.status, ...retry });
         }
         signal?.throwIfAborted();
         finished = true;
-        return { ...toolResult(args), terminate: true };
+        const report = args.status === "done" ? check?.report() : undefined;
+        const counts = summary?.(ctx);
+        const data: FinishResult = {
+          ...args,
+          ...(report && counts ? { receipt: { ...structuredClone(report), ...counts } } : {}),
+        };
+        return { ...toolResult(args), details: data, structuredContent: data, terminate: true };
       },
     });
   };

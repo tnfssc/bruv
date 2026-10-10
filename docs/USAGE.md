@@ -120,10 +120,13 @@ Titles shorten to leave room for totals and elapsed time.
 The footer shows usage, fast mode, goal, then agent cost, separated by ` · `. Only active parts appear.
 Script results list the tool calls and show plain output. Bash call rows show the first command line, cut to 60 columns.
 Expand a result to see the full script and output.
-After a checked finish, a framed receipt shows your request, up to five things the fresh agent
+When a check finds gaps, the finish result shows a red count and every gap, wrapped to fit,
+then “Fixing, then checking again.” Waiting for your choice and blocked finishes show their note.
+Expand a finish result to see its raw note too.
+An accepted checked finish shows a framed receipt in its tool result with your request, up to five things the fresh agent
 actually checked, any remaining gaps, changed files and line totals, elapsed time, calls, agents,
 and any increase in weekly plan use. Failed checks say “Check didn't complete.” The receipt
-stays out of model context. T3/RPC has no visible receipt yet.
+appears once, with no separate after-run entry. T3/RPC has no visible receipt yet.
 Other runs with tools get a dim summary line with counts, elapsed time and weekly plan use.
 While working, the terminal title spins; waiting shows which agents or jobs are pending.
 In supported terminals, a desktop notification and bell announce runs longer than 30 seconds,

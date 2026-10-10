@@ -159,7 +159,9 @@ export function registerCheck(
       const changed = () => request !== revision;
       const retry = async () => {
         await capture;
-        return "The user sent another message. Read it and finish the updated request before calling finish again.";
+        return {
+          note: "The user sent another message. Read it and finish the updated request before calling finish again.",
+        };
       };
       try {
         if (snapshotError) throw snapshotError;
@@ -212,7 +214,10 @@ export function registerCheck(
           report.gaps = result.gaps;
           goal?.checked(result, ctx);
           if (result.verdict === "gaps")
-            return `A fresh check found gaps:\n${result.gaps.map((gap) => `- ${gap}`).join("\n")}\nFix them, then call finish again.`;
+            return {
+              gaps: result.gaps,
+              note: `A fresh check found gaps:\n${result.gaps.map((gap) => `- ${gap}`).join("\n")}\nFix them, then call finish again.`,
+            };
         } finally {
           signal?.removeEventListener("abort", abort);
           child = undefined;

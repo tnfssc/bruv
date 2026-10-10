@@ -2,9 +2,11 @@
 
 ## Unreleased
 
+- Render finish gaps as a red count and wrapped list. Show the receipt in the accepted finish result once, and show notes for waiting and blocked results.
+
 - Complete goals through a passing fresh check and save its checked items as evidence. Keep gaps as next steps, remove completion from `goal_update`, and preserve budget, blocker and abort stops.
 
-- Show a framed terminal receipt after checked finishes: the request, what was tried, remaining gaps, file totals, time and usage. Keep receipts out of model context; RPC display is deferred.
+- Show a framed terminal receipt after checked finishes: the request, what was tried, remaining gaps, file totals, time and usage. RPC display is deferred.
 
 - Check changed work with a fresh agent before accepting `finish(done)`. Retry gaps twice, stop checks on abort, and add `/check on|off`.
 

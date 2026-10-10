@@ -1,17 +1,14 @@
 import { expect, test } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { initTheme } from "@earendil-works/pi-coding-agent";
+import { initTheme, type ToolRenderers } from "@earendil-works/pi-coding-agent";
 import { visibleWidth } from "@earendil-works/pi-tui";
-import { type Receipt, registerReceipt } from "../src/receipt";
+import { registerFinishRender } from "../src/finish-render";
+import type { Receipt } from "../src/receipt";
 import { sdk } from "./sdk";
 
 test("receipt frames counts, five checks and every gap within terminal width", async () => {
   initTheme("dark", false);
-  const app = await sdk([
-    (pi) => {
-      registerReceipt(pi, () => undefined);
-    },
-  ]);
+  const app = await sdk([registerFinishRender]);
   try {
     const runner = app.session.extensionRunner;
     const theme = runner.createContext().ui.theme;
@@ -29,10 +26,14 @@ test("receipt frames counts, five checks and every gap within terminal width", a
     };
     const render = (width: number) =>
       runner
-        .getEntryRenderer("bruv-receipt")?.(
-          { type: "custom", customType: "bruv-receipt", id: "receipt", parentId: null, timestamp: "", data },
-          { expanded: false },
+        .resolveToolRenderers("finish", () => undefined)
+        ?.renderResult?.(
+          { content: [], details: { status: "done", receipt: data } },
+          { expanded: false, isPartial: false },
           theme,
+          { args: {}, toolCallId: "receipt", expanded: false } as Parameters<
+            NonNullable<ToolRenderers["renderResult"]>
+          >[3],
         )
         ?.render(width) ?? [];
     const rows = render(100);
@@ -50,6 +51,39 @@ test("receipt frames counts, five checks and every gap within terminal width", a
     data.checked = ["\x1b]2;bad-title\x07wide 界 and\nnew line"];
     expect(render(30).some((line) => line.includes("\x1b]2;"))).toBe(false);
     expect(render(30).every((line) => visibleWidth(line) <= 30)).toBe(true);
+  } finally {
+    await app.close();
+  }
+});
+
+test("finish wraps every gap, colors the count, and expands the raw note", async () => {
+  initTheme("dark", false);
+  const app = await sdk([registerFinishRender]);
+  try {
+    const runner = app.session.extensionRunner;
+    const theme = runner.createContext().ui.theme;
+    const gaps = [`case-781 ${"repeat ".repeat(20)}tail-781`, "case-782\nsecond-782"];
+    const note = "raw-783";
+    const render = (status: string, expanded = false, items = gaps) =>
+      runner
+        .resolveToolRenderers("finish", () => undefined)
+        ?.renderResult?.(
+          { content: [], details: { status, gaps: items, note } },
+          { expanded, isPartial: false },
+          theme,
+          { args: {}, toolCallId: "finish", expanded } as Parameters<NonNullable<ToolRenderers["renderResult"]>>[3],
+        )
+        .render(40) ?? [];
+    const rows = render("done");
+    expect(rows[0]).toContain(theme.fg("error", stripVTControlCharacters(rows[0])));
+    expect(stripVTControlCharacters(rows[0]).match(/\d+/g)).toEqual(["2"]);
+    expect(stripVTControlCharacters(render("done", false, [gaps[0]])[0]).match(/\d+/g)).toEqual(["1"]);
+    expect(rows.every((row) => visibleWidth(row) <= 40)).toBe(true);
+    for (const value of ["case-781", "tail-781", "case-782", "second-782"]) expect(rows.join("\n")).toContain(value);
+    expect(rows.join("\n")).not.toContain(note);
+    expect(render("done", true).join("\n")).toContain(note);
+    for (const status of ["need_you", "blocked"]) expect(render(status, false, []).join("\n")).toContain(note);
+    expect(render("need_you", false, [])[0]).not.toBe(render("blocked", false, [])[0]);
   } finally {
     await app.close();
   }

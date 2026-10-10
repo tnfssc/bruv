@@ -12,12 +12,7 @@ export type TurnSummary = {
 };
 const week = (usage?: PlanUsage) =>
   [usage?.rate_limits.primary, usage?.rate_limits.secondary].find((w) => w?.window_minutes === 10080);
-export function registerTurn(
-  pi: ExtensionAPI,
-  jobs: Jobs,
-  usage: (ctx: ExtensionContext) => PlanUsage | undefined,
-  receipt: (summary: TurnSummary) => boolean = () => false,
-) {
+export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: ExtensionContext) => PlanUsage | undefined) {
   let run:
     | { start: number; scripts: number; calls: number; agents: Set<string>; week: ReturnType<typeof week> }
     | undefined;
@@ -35,7 +30,9 @@ export function registerTurn(
       return [truncateToWidth(theme.fg("dim", parts.join(" · ")), width)];
     },
   }));
+  let hasReceipt = false;
   const reset = () => {
+    hasReceipt = false;
     run = undefined;
   };
   pi.on("session_start", reset);
@@ -54,22 +51,30 @@ export function registerTurn(
     if (event.toolName === "codemode") run.scripts++;
     else run.calls++;
   });
-  pi.on("agent_settled", (event, ctx) => {
+  pi.on("tool_execution_end", (event) => {
+    if (event.toolName === "finish" && event.result.details?.receipt) hasReceipt = true;
+  });
+  const summary = (ctx: ExtensionContext): TurnSummary | undefined => {
     const finished = run;
-    reset();
-    if (!finished || event.aborted || finished.scripts + finished.calls === 0) return;
+    if (!finished) return;
     const latest = week(usage(ctx));
     const delta =
       latest && finished.week && latest.reset_at === finished.week.reset_at
         ? Math.round(latest.used_percent - finished.week.used_percent)
         : 0;
-    const summary: TurnSummary = {
+    return {
       scripts: finished.scripts,
       calls: finished.calls,
       agents: [...jobs.items.values()].filter((item) => item.kind === "agent" && !finished.agents.has(item.id)).length,
       elapsedSeconds: Math.floor((Date.now() - finished.start) / 1000),
       ...(delta > 0 ? { weekPercent: delta } : {}),
     };
-    if (!receipt(summary)) pi.appendEntry<TurnSummary>("bruv-turn", summary);
+  };
+  pi.on("agent_settled", (event, ctx) => {
+    const data = summary(ctx);
+    if (data && !event.aborted && !hasReceipt && data.scripts + data.calls > 0)
+      pi.appendEntry<TurnSummary>("bruv-turn", data);
+    reset();
   });
+  return summary;
 }

@@ -6,10 +6,11 @@ import { fauxAssistantMessage, fauxText, fauxToolCall } from "@earendil-works/pi
 import { registerAgents } from "../src/agents";
 import { type Checker, registerCheck } from "../src/check";
 import { readConfig, saveConfig } from "../src/config";
+import type { FinishResult } from "../src/finish";
 import { registerFinish } from "../src/finish";
 import { type Goal, registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
-import { type Receipt, registerReceipt } from "../src/receipt";
+import type { Receipt } from "../src/receipt";
 import { registerSettle } from "../src/settle";
 import { registerTurn } from "../src/turn";
 import { sdk } from "./sdk";
@@ -46,8 +47,8 @@ async function setup(repo = true) {
         registerJobs(pi, jobs);
         const goal = registerGoal(pi, () => hasFinished());
         check = registerCheck(pi, jobs, registerAgents(pi, jobs), dir, goal);
-        const hasFinished = registerFinish(pi, dir, check, () => !!goal.active());
-        registerTurn(pi, jobs, () => undefined, registerReceipt(pi, check.report));
+        const summary = registerTurn(pi, jobs, () => undefined);
+        const hasFinished = registerFinish(pi, dir, check, () => !!goal.active(), summary);
       },
     ],
     undefined,
@@ -79,7 +80,11 @@ async function setup(repo = true) {
       app.session.sessionManager
         .getBranch()
         .flatMap((entry) =>
-          entry.type === "custom" && entry.customType === "bruv-receipt" ? [entry.data as Receipt] : [],
+          entry.type === "message" &&
+          entry.message.role === "toolResult" &&
+          (entry.message.details as FinishResult)?.receipt
+            ? [(entry.message.details as FinishResult).receipt as Receipt]
+            : [],
         ),
     goal: () => {
       const entry = app.session.sessionManager
@@ -291,7 +296,7 @@ test("abort during the check stops its child and does not accept finish", async 
   }
 });
 
-test("accepted checks replace the turn entry without reaching model context", async () => {
+test("accepted checks appear once in finish results and replace the turn entry", async () => {
   const app = await setup();
   try {
     app.faux.setResponses([
@@ -313,13 +318,12 @@ test("accepted checks replace the turn entry without reaching model context", as
         .getBranch()
         .some((entry) => entry.type === "custom" && entry.customType === "bruv-turn"),
     ).toBe(false);
-    app.faux.setResponses([
-      (context) => {
-        expect(JSON.stringify(context.messages)).not.toContain("used-781");
-        expect(JSON.stringify(context.messages)).not.toContain("bruv-receipt");
-        return finish();
-      },
-    ]);
+    expect(
+      app.session.sessionManager
+        .getBranch()
+        .some((entry) => entry.type === "custom" && entry.customType === "bruv-receipt"),
+    ).toBe(false);
+    app.faux.setResponses([finish()]);
     await app.session.prompt("next");
     expect(app.receipts()).toHaveLength(1);
     expect(
