@@ -137,7 +137,7 @@ async function prepareCurrentConversation(
     tools,
     thinkingBudget: anthropicThinkingBudget(ctx.model, ctx.thinkingLevel, agent.thinkingBudgets),
     complete: async (request, maxTokens, onPayload) => {
-      if (!ctx.model) throw new Error("Compaction requires a model");
+      if (!ctx.model) throw new Error("Compaction needs a model");
       const stream = await agent.streamFunction(ctx.model, normalizeContext({ messages: request.messages }), {
         reasoning: ctx.thinkingLevel === "off" ? undefined : ctx.thinkingLevel,
         sessionId: ctx.sessionManager.getSessionId(),
@@ -217,7 +217,7 @@ function prepareCacheAffineRequest(
   const { preparation } = event;
   const history = current.messages;
   if (!history.some((message) => message.role !== "system")) return { reason: "the prepared conversation is empty" };
-  const custom = customInstructions?.trim() ? `Additional user focus: ${customInstructions.trim()}` : "";
+  const custom = customInstructions?.trim() ? `User focus: ${customInstructions.trim()}` : "";
   // Use a replacement callback so dollar sequences and template-like text in
   // the user-provided focus remain literal data rather than another pass.
   const prompt = promptTemplate.replace("{{customInstructions}}", () => custom).trimEnd();
@@ -424,7 +424,7 @@ async function attemptCacheAffineSummary(
           cancellation: "safety",
         },
         notice: {
-          message: `Cache-affine compaction rejected before inference: ${dispatch.reason}. Compaction cancelled; conversation preserved.`,
+          message: `Cache-affine compaction stopped before model call: ${dispatch.reason}. Conversation kept.`,
           severity: "warning",
         },
       };
@@ -440,7 +440,7 @@ async function attemptCacheAffineSummary(
           ...(response.stopReason === "aborted" ? { cancellation: "provider" as const } : {}),
         },
         notice: {
-          message: "Cache-affine summary was unusable; compaction was cancelled to avoid duplicate inference.",
+          message: "Cache-affine summary unusable. Compaction cancelled; no second model call.",
           severity: "error",
         },
       };
@@ -484,7 +484,7 @@ async function attemptCacheAffineSummary(
         },
         notice: {
           message:
-            "Cache-affine compaction rejected before inference: provider output ceiling exceeds the context window. Compaction cancelled; conversation preserved.",
+            "Cache-affine compaction stopped before model call: output limit exceeds context. Conversation kept.",
           severity: "warning",
         },
       };
@@ -502,13 +502,11 @@ async function attemptCacheAffineSummary(
         ? undefined
         : dispatch.status === "accepted"
           ? {
-              message:
-                "Cache-affine compaction failed after inference began. Compaction was cancelled to avoid duplicate inference.",
+              message: "Cache-affine compaction failed after model call began. Cancelled; no second model call.",
               severity: "error",
             }
           : {
-              message:
-                "Cache-affine compaction rejected before inference. Compaction cancelled; conversation preserved.",
+              message: "Cache-affine compaction stopped before model call. Conversation kept.",
               severity: "warning",
             },
     };
@@ -536,7 +534,7 @@ function recordCancelledUsage(
       operationId,
       dispatch: "response",
     });
-    bestEffortCompactionNotice(ctx, "Compaction usage checkpoint could not be written; compaction cancelled.", "error");
+    bestEffortCompactionNotice(ctx, "Usage checkpoint write failed. Compaction cancelled.", "error");
   }
 }
 
@@ -618,7 +616,7 @@ export function registerCacheAffineCompaction(
         cancellation: "safety",
       });
       ctx.ui?.notify?.(
-        "Cache-affine compaction unavailable: model, thinking, or session identity changed. Compaction cancelled; conversation preserved.",
+        "Model, thinking or session changed. Cache-affine compaction cancelled. Conversation kept.",
         "warning",
       );
       return { cancel: true };
@@ -646,10 +644,7 @@ export function registerCacheAffineCompaction(
         dispatch: "none",
         cancellation: "safety",
       });
-      ctx.ui?.notify?.(
-        "Cache-affine compaction unavailable: current context preparation failed. Compaction cancelled; conversation preserved.",
-        "warning",
-      );
+      ctx.ui?.notify?.("Context setup failed. Cache-affine compaction cancelled. Conversation kept.", "warning");
       return { cancel: true };
     }
     if (event.signal.aborted) {
@@ -673,10 +668,7 @@ export function registerCacheAffineCompaction(
         dispatch: "none",
         cancellation: "safety",
       });
-      ctx.ui?.notify?.(
-        `Cache-affine compaction unavailable: ${reason}. Compaction cancelled; conversation preserved.`,
-        "warning",
-      );
+      ctx.ui?.notify?.(`No cache-affine compaction: ${reason}. Cancelled; conversation kept.`, "warning");
       return { cancel: true };
     }
     const prepared = prepareCacheAffineRequest(captured, event, current);
@@ -689,10 +681,7 @@ export function registerCacheAffineCompaction(
         dispatch: "none",
         cancellation: "safety",
       });
-      ctx.ui?.notify?.(
-        `Cache-affine compaction unavailable: ${prepared.reason}. Compaction cancelled; conversation preserved.`,
-        "warning",
-      );
+      ctx.ui?.notify?.(`No cache-affine compaction: ${prepared.reason}. Cancelled; conversation kept.`, "warning");
       return { cancel: true };
     }
     const request = prepared.request;
@@ -713,7 +702,7 @@ export function registerCacheAffineCompaction(
         cancellation: "safety",
       });
       ctx.ui?.notify?.(
-        "Cache-affine compaction unavailable: insufficient space for unchanged thinking and summary output. Compaction cancelled; conversation preserved.",
+        "No room for unchanged thinking and summary. Cache-affine compaction cancelled. Conversation kept.",
         "warning",
       );
       return { cancel: true };

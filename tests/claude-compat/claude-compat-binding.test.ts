@@ -82,7 +82,7 @@ test("fresh import and reopened import branch through the same durable checkpoin
   const canonicalFile = imported.manager.getSessionFile()!;
   const leafBefore = SessionManager.open(canonicalFile).getLeafId();
   await expect(nativeStorage(args("--resume", sessionId, "--resume-session-at", invalid), options)).rejects.toThrow(
-    "incomplete tool exchange",
+    "Incomplete tool exchange",
   );
   expect(SessionManager.open(canonicalFile).getLeafId()).toBe(leafBefore);
   expect(imported.manager.getLeafId()).toBe(user.id);

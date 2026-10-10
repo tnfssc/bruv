@@ -42,7 +42,7 @@ export async function loadAppWorkerPolicy(agentDir: string, path = profilesPath(
       normal.model !== policy.worker.target.model ||
       normal.thinking !== policy.worker.thinking
     )
-      throw new Error("App delegation requires the explicit normal model/thinking from CLI subagents.json");
+      throw new Error("App delegation needs normal model/thinking from CLI subagents.json");
     // Claude-protocol providers compile this option to --effort. Pin it rather
     // than accidentally inheriting parent reasoning (or merely documenting it).
     if (
@@ -52,15 +52,14 @@ export async function loadAppWorkerPolicy(agentDir: string, path = profilesPath(
       policy.worker.target.options[0]?.id !== "effort" ||
       policy.worker.target.options[0]?.value !== policy.worker.thinking
     )
-      throw new Error("App normal worker requires an exact effort option matching CLI thinking");
+      throw new Error("App normal effort must match CLI thinking exactly");
   }
   return policy;
 }
 
 export async function loadNormalAppWorkerProfile(path = profilesPath()) {
   const normal = (await loadProfiles(path)).normal;
-  if (!normal.model || !normal.thinking)
-    throw new Error("Native normal worker requires an explicit CLI subagents.json model/thinking");
+  if (!normal.model || !normal.thinking) throw new Error("Native normal needs model/thinking from CLI subagents.json");
   return { model: normal.model, thinking: normal.thinking };
 }
 
@@ -83,8 +82,8 @@ export function prepareAppWorkerCall(policy: AppWorkerPolicy | undefined, call: 
   const tool = call.toolName.split("__").pop() ?? call.toolName;
   if (!launches.has(tool)) return call;
   if (policy?.role !== "orchestrator" || policy.depth !== 0)
-    throw new Error("App delegation requires an explicit root orchestrator; normal workers cannot delegate");
-  if (tool !== "delegate_task") throw new Error("App delegation uses delegate_task, not top-level thread launches");
+    throw new Error("App delegation needs root orchestrator. Normal workers cannot delegate.");
+  if (tool !== "delegate_task") throw new Error("App delegation: delegate_task, not top-level threads");
   if (call.input.type === "orchestrator" || call.input.profile === "orchestrator")
     throw new Error("Native app delegation only permits normal workers");
   return {
@@ -107,5 +106,5 @@ export function assertAppWorkerCall(policy: AppWorkerPolicy | undefined, call: P
       call.input.runtimeMode !== admitted.input.runtimeMode ||
       call.input.interactionMode !== admitted.input.interactionMode)
   )
-    throw new Error("Human-updated app delegation must retain the configured normal worker profile");
+    throw new Error("Human-updated delegation keeps configured normal profile");
 }

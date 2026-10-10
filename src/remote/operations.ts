@@ -16,7 +16,7 @@ export const summarizeRemoteTask = (task: RemoteTask) => ({
   events: undefined,
   cached: true,
   observation: task.lastError
-    ? `Remote status unavailable; cached observation only: ${task.lastError}`
+    ? `Remote status unavailable. Cached view only: ${task.lastError}`
     : "Last synced state, not live status",
   eventCount: task.events.length,
 });
@@ -58,7 +58,7 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
       case "launchRepository":
       case "launch":
         throw new Error(
-          "Remote tasks use subagent({ target: <authorized name>, ... }). Role/depth limits still apply; legacy remote launch helpers give no bypass.",
+          "Use subagent({ target: <authorized name>, ... }). Role/depth limits apply. Old remote launch helpers cannot bypass them.",
         );
       case "requestCapability":
         return requestLocalCapability(args, signal);

@@ -836,7 +836,7 @@ describe("Live voice", () => {
     t.voice.onAudio?.(Buffer.alloc(2_880_002).toString("base64"), 0);
     expect(t.status.at(-1)).toBeUndefined();
     expect(t.notices.at(-1)).toBe(
-      "Live stop requested: Local playback queue exceeds pending budget (2880000 bytes); audio incomplete. No agent work was cancelled.",
+      "Live stop requested: Playback queue over 2880000 bytes. Audio incomplete. No agent work was cancelled.",
     );
     expect(t.notices.join(" ")).not.toContain("Provider invalid_audio");
   });
@@ -1703,7 +1703,7 @@ test("voice failures render truthful warnings without stopping agent work", asyn
     const reason =
       source === "provider"
         ? "Provider invalid_audio: Invalid output audio chunk"
-        : "Local playback queue exceeds pending budget (2880000 bytes); audio incomplete";
+        : "Playback queue over 2880000 bytes. Audio incomplete";
     expect(rendered).toContain("Warning: Live stop requested: " + reason + ". No agent work was cancelled.");
     expect(cancelled).toBe(0);
     expect(closed).toBe(1);

@@ -191,13 +191,13 @@ export function createRemoteJobsAdapter(
           ? "Waiting for human source approval through /questions"
           : record.state === "cancelled"
             ? "Source handoff cancelled before dispatch"
-            : "Pinned source approval saved; dispatch unconfirmed. Retry the same task ID."),
+            : "Source approval saved. Dispatch unknown. Retry same task ID."),
       background: true,
       sourceApproval: {
         taskId: record.intent.taskId,
         questionId: record.questionId,
         state: record.state,
-        retry: `Retry the same subagent intent with source.retryTaskId=${record.intent.taskId}`,
+        retry: `Retry same subagent request with source.retryTaskId=${record.intent.taskId}`,
         ...(record.omissionReason ? { omissionReason: record.omissionReason } : {}),
       },
       provenance: {
@@ -236,16 +236,15 @@ export function createRemoteJobsAdapter(
       placement: { workspace },
     } = ownedRequest;
     if (source && workspace.kind === "worktree" && workspace.baseRef !== undefined)
-      throw Error("Untracked inclusion requires current-source snapshot, not an explicit baseRef");
+      throw Error("Untracked files need current source, not explicit baseRef");
     const existing = tasks[ownedRequest.taskId];
     if (existing) assertLaunchOwner(existing, ownedRequest, connection);
     if (!source && !saved) return { request: ownedRequest };
-    if (!source || !approvalContext)
-      throw Error("Source approval retry needs the same source selection and parent question context");
-    if (source.retryTaskId && !saved) throw Error("Unknown source approval retry task ID in this parent session");
+    if (!source || !approvalContext) throw Error("Source retry needs same source and parent question context");
+    if (source.retryTaskId && !saved) throw Error("Unknown source retry task ID in this parent session");
     if (source.retryTaskId && source.retryTaskId !== ownedRequest.taskId)
       throw Error("Source approval retry task ID conflict");
-    if (existing && !saved) throw Error("Cannot add source inclusion to an already dispatched task");
+    if (existing && !saved) throw Error("Task already sent. Cannot add source files.");
     const preparation = await approvals.prepare(
       {
         taskId: ownedRequest.taskId,
@@ -291,15 +290,15 @@ export function createRemoteJobsAdapter(
       if (!canDelegate(parentDepth, parentType)) throw new Error("Only orchestrator agents can delegate");
       if (!SUBAGENT_TYPES.includes(profile)) throw new Error("Invalid subagent profile");
       if (parentDepth > 0 && profile === "orchestrator")
-        throw new Error("Spawned orchestrators may only delegate to fast/normal workers");
+        throw new Error("Spawned orchestrators get fast/normal workers only");
       if (!request.jobSessionFile) throw new Error("SSH jobs require a durable parent session");
       sshJobId(request.taskId); // Validate before filesystem or transport work.
       const state = await client.read();
       const connection = state.connection;
-      if (!connection) throw new Error("SSH placement requires an already human-pinned /remote connection");
+      if (!connection) throw new Error("SSH needs user-pinned /remote connection");
       const authorizedTarget = connection.host === "local" ? "ssh:local" : connection.host;
       if (request.target !== authorizedTarget)
-        throw new Error(`SSH target must match the already human-pinned connection.host: ${authorizedTarget}`);
+        throw new Error(`SSH target needs exact user-pinned connection.host: ${authorizedTarget}`);
       const { request: launchRequest, preparation } = await prepareLaunchRequest(
         request,
         connection,

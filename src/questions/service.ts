@@ -257,18 +257,16 @@ export class QuestionService {
     // Use the same conversation-tip rules as mutation ownership: execute
     // diagnostics are observations, but real descendants (even below a
     // diagnostic chain) still make ancestor navigation read-only.
-    if (!this.owns(ctx, { owner }))
-      throw new Error("Questions need a current branch tip. Start a new turn before asking on this branch.");
+    if (!this.owns(ctx, { owner })) throw new Error("No current branch tip. Start a turn before asking.");
     let created = false;
     const saved = await this.change(path(ctx), (records) => {
       activeOwner(ctx, owner.branchId); // navigation may have changed while waiting for the lock
       if (ctx.sessionManager.getLeafId() !== owner.branchId) throw new Error("Session navigation changed");
-      if (!this.owns(ctx, { owner }))
-        throw new Error("Questions need a current branch tip. Start a new turn before asking on this branch.");
+      if (!this.owns(ctx, { owner })) throw new Error("No current branch tip. Start a turn before asking.");
       if (key) {
         const existing = records.find((q) => q.dedupKey === key && this.owns(ctx, q));
         if (existing) {
-          if (existing.remote) throw new Error("The remote ledger owns this human question; dedupKey cannot claim it");
+          if (existing.remote) throw new Error("Remote ledger owns this question. dedupKey cannot claim it.");
           if (
             JSON.stringify([
               existing.text,
@@ -284,11 +282,9 @@ export class QuestionService {
         }
       }
       if (records.filter((q) => q.status === "pending").length >= maxPending)
-        throw new Error(
-          "20 questions are active. One needs a human answer or cancellation before another can be saved.",
-        );
+        throw new Error("20 active questions. One needs an answer or cancellation first.");
       if (records.length >= maxPending + maxHistory)
-        throw new Error("Question ledger full (220). Start a new session; existing questions were kept.");
+        throw new Error("Question ledger full (220). Start new session. Old questions kept.");
       const now = new Date().toISOString();
       const result: Question = {
         id: `q_${randomUUID()}`,
@@ -541,8 +537,7 @@ function check(q: Question, version: number): void {
 }
 
 function remoteOwned(q: Question): void {
-  if (q.remote)
-    throw new Error("The remote ledger owns this human question. Agents cannot resolve, cancel, block or dispatch it");
+  if (q.remote) throw new Error("Remote ledger owns this question. No agent resolve, cancel, block or dispatch.");
 }
 
 // A remote observation can advance without retargeting a saved human reply.

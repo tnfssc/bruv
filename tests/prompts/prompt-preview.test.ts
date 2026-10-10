@@ -53,7 +53,7 @@ test("offline preview captures production prompt, tool definition, and injected 
       (await Bun.file(new URL("../../src/prompts/execute-description.md", import.meta.url)).text()).trimEnd(),
     );
     expect(JSON.stringify(preview.messages)).toContain("USER_PREVIEW_MARKER");
-    expect(JSON.stringify(preview.messages)).toContain("Persistent goal state (authoritative)");
+    expect(JSON.stringify(preview.messages)).toContain("Saved goal state (source of truth)");
     expect(JSON.stringify(preview.messages)).toContain("GOAL_PREVIEW_MARKER");
     for (const call of ["goal.get()", "goal.set({", "goal.update({", "goal.clear()"]) {
       expect(JSON.stringify(preview.messages).split(call)).toHaveLength(2);

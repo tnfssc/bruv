@@ -45,7 +45,7 @@ export function createPermissionPolicy(options: PermissionOptions) {
     if (policy.disallowedTools.some((rule) => matchesToolRule(request.toolName, rule)))
       return deny("Tool is disallowed");
     if (policy.mode === "plan" && request.effect !== "read-only")
-      return deny("Plan mode needs an enforced read-only tool. Arbitrary TypeScript and MCP are not read-only");
+      return deny("Plan mode needs enforced read-only tools. TypeScript and MCP can write.");
     if (
       policy.mode === "bypassPermissions" ||
       policy.allowedTools.some((rule) => matchesToolRule(request.toolName, rule))

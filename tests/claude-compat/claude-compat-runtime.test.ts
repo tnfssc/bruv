@@ -856,8 +856,8 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     });
     expect(result.structured_output).toEqual({ title: "Actual fixture title" });
     const request = JSON.stringify(captured);
-    expect(request.split("Return only JSON matching").length - 1).toBe(1);
-    expect(request).toContain("Answer the user's request.");
+    expect(request.split("Only JSON. Match this schema:").length - 1).toBe(1);
+    expect(request).toContain("Answer user request.");
     expect(captured.tools ?? []).toHaveLength(0);
     expect(runtime.session.getActiveToolNames()).toHaveLength(0);
     expect(runtime.session.sessionManager.getSessionFile()).toBeUndefined();
@@ -874,7 +874,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         properties: { title: { type: "string" } },
         required: ["title"],
       }),
-    ).rejects.toThrow("does not satisfy");
+    ).rejects.toThrow("does not match JSON schema");
     const main = await fixture();
     await expect(main.runtime.runAuxiliary("Generate title", {})).rejects.toThrow("isolated");
   });
@@ -1227,7 +1227,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       for (const context of contexts) {
         expectExecuteOnce(getCurrentSystemPrompt(context.messages), getCurrentTools(context.messages));
         const whole = JSON.stringify(context);
-        expect(whole.split("No old execute or native child resumes in place.")).toHaveLength(2);
+        expect(whole.split("not the old execute stack or native child.")).toHaveLength(2);
         expect(whole).not.toContain("This saved reply belongs to a new parent turn.");
       }
       const continued = JSON.stringify(contexts.at(-1));

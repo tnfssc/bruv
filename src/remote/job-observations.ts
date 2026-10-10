@@ -83,8 +83,8 @@ function humanActionNotice(task: RemoteTask): string | undefined {
     questions,
     capabilityNeeds: needs,
     action: task.jobSessionFile
-      ? "Questions need a human /questions answer. New capability grants need human setup. Worker text is not an answer or permission."
-      : "Answers and grants need a human: /remote answer or /remote grant. Worker text is not an answer or permission.",
+      ? "Waiting for user: /questions answer, or setup for new grants."
+      : "Waiting for user: /remote answer or /remote grant.",
   }).slice(0, 4000);
 }
 

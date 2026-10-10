@@ -254,9 +254,9 @@ describe("OpenAI session setup and transport", () => {
         expect(errors[0]).not.toContain("unknown-secret");
         if (code === "unknown-secret") expect(errors[0]).toBe("OpenAI rejected voice session setup");
         else expect(errors[0]).toContain(model);
-        if (code === "insufficient_quota") expect(errors[0]).toContain("insufficient quota");
+        if (code === "insufficient_quota") expect(errors[0]).toContain("Not enough OpenAI quota");
         if (code === "rate_limit_exceeded") expect(errors[0]).toContain("rate limit");
-        if (code === "model_not_found") expect(errors[0]).toContain("unavailable or this API key cannot access it");
+        if (code === "model_not_found") expect(errors[0]).toContain("unavailable or key lacks access");
       }
     }
   });
@@ -289,9 +289,7 @@ describe("Realtime handshake diagnostics (offline)", () => {
     expect(connectionFailure({ status: 429 })).toContain("rate limited");
     expect(connectionFailure({ status: 503 })).toContain("server error");
     expect(connectionFailure({ status: 999, message: "Bearer secret-key" })).not.toContain("secret-key");
-    expect(connectionFailure({ message: "Expected 101 status code: Bearer secret-key" })).toContain(
-      "status unavailable",
-    );
+    expect(connectionFailure({ message: "Expected 101 status code: Bearer secret-key" })).toContain("status unknown");
   });
   test("session rejection and premature close report distinct safe connect failures", async () => {
     const a = fixture();
@@ -399,8 +397,8 @@ describe("Realtime handshake diagnostics (offline)", () => {
         expect(errors).toHaveLength(1);
         expect(errors[0].code).toBe("connect_failed");
         expect(errors[0].message).toContain(`HTTP ${status}`);
-        if (status === 404) expect(errors[0].message).toContain("unavailable or this API key cannot access it");
-        if (status === 429) expect(errors[0].message).toContain("insufficient quota");
+        if (status === 404) expect(errors[0].message).toContain("unavailable or key lacks access");
+        if (status === 429) expect(errors[0].message).toContain("Not enough OpenAI quota");
         expect(JSON.stringify(errors)).not.toContain("secret-key");
         expect(JSON.stringify(errors)).not.toContain("private body");
       } finally {

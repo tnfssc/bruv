@@ -121,7 +121,7 @@ export async function executeIsolated(
     options.outputByteLimit !== undefined &&
     (!Number.isSafeInteger(options.outputByteLimit) || options.outputByteLimit < 0)
   )
-    throw new RangeError("outputByteLimit must be a non-negative safe integer");
+    throw new RangeError("outputByteLimit needs a safe integer >=0");
   if (signal?.aborted) {
     const result: ExecutionResult = {
       stdout: "",
@@ -169,7 +169,7 @@ export async function executeIsolated(
   });
 
   const { stdin, stdout, stderr } = child;
-  if (!stdin || !stdout || !stderr) throw new Error("TypeScript runner requires piped streams");
+  if (!stdin || !stdout || !stderr) throw new Error("TypeScript runner needs piped streams");
   const output = new ExecuteOutputCapture({
     sessionFile: options.sessionFile,
     outputByteLimit: options.outputByteLimit,
@@ -208,7 +208,7 @@ export async function executeIsolated(
     if (imageError) return;
     imageOutput.append(chunk);
     if (imageOutput.baseOffset > 0) {
-      imageError = "Image output channel exceeded its byte limit";
+      imageError = "Image output channel over byte limit";
       signalProcessGroup(child, "SIGKILL");
     }
   });
@@ -262,7 +262,7 @@ export async function executeIsolated(
         if (resize) {
           const scale = resize.originalWidth / resize.width;
           imageResizeNotes.push(
-            `[Image ${index + 1}: original ${resize.originalWidth}x${resize.originalHeight}, displayed at ${resize.width}x${resize.height}. Multiply coordinates by ${scale.toFixed(2)} to map to the original image.]`,
+            `[Image ${index + 1}: original ${resize.originalWidth}x${resize.originalHeight}, shown ${resize.width}x${resize.height}. Original coordinates = shown coordinates × ${scale.toFixed(2)}.]`,
           );
         }
         return image;
@@ -332,7 +332,7 @@ export function formatResult(result: ExecutionResult): string {
   if (result.stderr) sections.push(`${streamLabel("stderr")}:\n${result.stderr}`);
   if (result.outputTruncated)
     sections.push(
-      `Output capture limit reached: retained ${result.capturedOutputBytes} of ${result.outputBytes} stdout/stderr bytes (limit ${result.outputByteLimit}).`,
+      `Output limit hit: kept ${result.capturedOutputBytes}/${result.outputBytes} stdout/stderr bytes (limit ${result.outputByteLimit}).`,
     );
   if (result.outputArtifactErrors) {
     for (const [scope, message] of Object.entries(result.outputArtifactErrors))

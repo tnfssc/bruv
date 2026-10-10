@@ -152,7 +152,7 @@ if (process.env.BRUV_TEST_NATIVE_REQUEST_HISTORY_CHILD !== "1") {
       h.hooks.get("before_provider_request")({ payload: { input: [details.item] } }, h.ctx);
       expect(tracking.reads).toEqual(Array(2).fill({ id: checkpoint, type: "compaction" }));
       expect(() => h.hooks.get("before_provider_request")({ payload: { input: [] } }, h.ctx)).toThrow(
-        "lost during provider serialization",
+        "serialization lost native Codex checkpoint",
       );
       expect(tracking.reads.every((read) => read.id === checkpoint)).toBe(true);
       expect(h.aborted).toBe(1);
@@ -176,7 +176,7 @@ if (process.env.BRUV_TEST_NATIVE_REQUEST_HISTORY_CHILD !== "1") {
         expect(h.aborted).toBe(1);
         expect(tracking.reads).toEqual([{ id: checkpoint, type: "compaction" }]);
         expect(() => h.hooks.get("before_provider_request")({ payload: { input: [] } }, h.ctx)).toThrow(
-          record === details ? "selected API/provider" : "Unsupported or damaged",
+          record === details ? "needs its own API/provider" : "damaged or unsupported",
         );
         expect(tracking.reads).toHaveLength(1);
       } finally {

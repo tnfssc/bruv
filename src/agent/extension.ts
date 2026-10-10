@@ -370,7 +370,7 @@ export default function asynchronousTasksExtension(
         },
       );
       const ownedManager = manager;
-      if (options.onTaskOwner && !ctx) throw new Error("Native task owner requires a session context");
+      if (options.onTaskOwner && !ctx) throw new Error("Native task owner needs session context");
       taskOwnerBinding =
         ctx &&
         options.onTaskOwner?.({
@@ -583,7 +583,7 @@ export default function asynchronousTasksExtension(
       );
       sessionHost?.observe({
         type: "stopping",
-        text: `Current-session stop-work result (pending jobs may still be running): ${JSON.stringify(result)}`,
+        text: `Session stop-work result (pending jobs may still run): ${JSON.stringify(result)}`,
       });
       return {
         ...(result as object),
@@ -623,13 +623,13 @@ export default function asynchronousTasksExtension(
     if (!owner) return;
     if (event.source === "extension") return;
     if (event.images?.length) {
-      ctx.ui.notify("Live typed input cannot forward images; try again without images.", "warning");
+      ctx.ui.notify("Live typed input has no images. Retry without them.", "warning");
       return { action: "handled" };
     }
     try {
       await owner.typedInput(event.text);
     } catch {
-      ctx.ui.notify("Live could not prepare this turn. Continue in text.", "warning");
+      ctx.ui.notify("Live turn setup failed. Use text.", "warning");
     }
     return { action: "handled" };
   });
@@ -1039,8 +1039,7 @@ function createJobNotifications(
     waitForNextResult,
     isNativeSession: () => t3NativeSession,
     requireLocalDelivery: () => {
-      if (t3NativeSession && !t3LocalDelivery)
-        throw new Error("T3 local jobs require an available durable notification outbox");
+      if (t3NativeSession && !t3LocalDelivery) throw new Error("T3 local jobs need a saved notification outbox");
     },
     assertLaunchCapacity: (runningTasks: number) => {
       if (t3NativeSession && t3LocalDelivery) t3LocalDelivery.outbox.assertLaunchCapacity(runningTasks);

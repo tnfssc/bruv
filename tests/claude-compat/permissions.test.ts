@@ -33,7 +33,7 @@ test("plan rejects arbitrary execute even with explicit allow or human callback"
   });
   expect(await policy(execute)).toEqual({
     behavior: "deny",
-    message: "Plan mode needs an enforced read-only tool. Arbitrary TypeScript and MCP are not read-only",
+    message: "Plan mode needs enforced read-only tools. TypeScript and MCP can write.",
   });
   expect(prompts).toBe(0);
   expect((await policy({ ...execute, toolName: "read", effect: "read-only" })).behavior).toBe("allow");

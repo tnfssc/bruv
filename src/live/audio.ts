@@ -266,7 +266,7 @@ export class LiveAudio {
         const info = await stat(path).catch(() => undefined);
         aborted();
         if (!info?.isFile() || !(info.mode & 0o111))
-          throw new Error("Audio helper is missing or not executable; build the local helper first");
+          throw new Error("Audio helper missing or not executable. Build local helper first.");
         worker = spawn(path, [], { stdio: ["pipe", "pipe", "pipe"], env: audioEnvironment() });
       } catch (error) {
         if (extracted) await extracted.cleanup();
@@ -481,7 +481,7 @@ export class LiveAudio {
     if (this.state !== "running") return Promise.reject(new Error("Audio helper not running"));
     generation(gen);
     if (gen !== this.currentGeneration)
-      return Promise.reject(new Error("Stale audio generation; flush before changing generation"));
+      return Promise.reject(new Error("Stale audio generation. Flush before new generation."));
     if (!Buffer.isBuffer(pcm16) || !pcm16.length || pcm16.length > MAX_PLAY || pcm16.length % 2)
       return Promise.reject(new Error("Invalid playback frame"));
     return this.input.send({ type: "play", data: pcm16.toString("base64"), generation: gen });

@@ -268,7 +268,7 @@ test("agent ask/get/resolve/cancel/block cannot acquire remote human answer auth
           { ...h.mutation(q), reason: "guess", checkpoint: "guess", foreground: true },
           h.ctx,
         ),
-      ).rejects.toThrow("The remote ledger owns this human question");
+      ).rejects.toThrow("Remote ledger owns this question");
     }
     expect(() => h.service.handle("questions.answer", { ...h.mutation(q), text: "Yes" }, h.ctx)).toThrow(
       "UI reply only",
@@ -317,7 +317,7 @@ test("restart/offline uncertainty never creates another answer; authoritative re
     let q = h.service.list(h.ctx)[0]!;
     q = await h.service.answer(h.ctx, { ...h.mutation(q), text: "No" });
     h.lost();
-    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("uncertain");
+    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("unknown");
     const fresh = new RemoteQuestionBridge(new QuestionService(), h.client);
     const result = await fresh.dispatch(h.ctx, q.id);
     expect(result.replyId).toBe(q.replyId);
@@ -335,9 +335,9 @@ test("unknown without receipt remains uncertain across restart and explicit resu
     let q = h.service.list(h.ctx)[0]!;
     q = await h.service.answer(h.ctx, { ...h.mutation(q), text: "Yes" });
     h.fail();
-    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("uncertain");
+    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("unknown");
     const fresh = new RemoteQuestionBridge(new QuestionService(), h.client);
-    await expect(fresh.dispatch(h.ctx, q.id)).rejects.toThrow("No duplicate answer");
+    await expect(fresh.dispatch(h.ctx, q.id)).rejects.toThrow("No duplicate sent");
     expect(h.calls).toHaveLength(1);
     expect(h.service.get(h.ctx, q.id).remote!.replyState).toBe("uncertain");
   } finally {
@@ -356,7 +356,7 @@ test("remote version changes invalidate stale modal and never retarget a saved h
     let q = h.service.get(h.ctx, old.id);
     q = await h.service.answer(h.ctx, { ...h.mutation(q), text: "Yes" });
     h.native.version++;
-    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("not retargeted");
+    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("not moved");
     expect(h.service.get(h.ctx, q.id).remote!.version).toBe(4);
     expect(h.calls).toHaveLength(0);
   } finally {
@@ -471,9 +471,9 @@ test("explicit human retry keeps identical immutable reply identity and intent",
     let q = h.service.list(h.ctx)[0]!;
     q = await h.service.answer(h.ctx, { ...h.mutation(q), text: "Yes" });
     h.fail();
-    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("uncertain");
+    await expect(h.bridge.dispatch(h.ctx, q.id)).rejects.toThrow("unknown");
     // No automatic retry; only the trusted /questions resume route can request this.
-    await expect(h.bridge.dispatch(h.ctx, q.id, { retry: true })).rejects.toThrow("uncertain");
+    await expect(h.bridge.dispatch(h.ctx, q.id, { retry: true })).rejects.toThrow("unknown");
     expect(h.calls).toHaveLength(2);
     expect(h.calls[1]).toEqual(h.calls[0]);
     expect(h.service.get(h.ctx, q.id).replyId).toBe(q.replyId);
@@ -547,9 +547,9 @@ test("pinned real client control reconciles explicit same-ID retry against owner
     await bridge.sync(h.ctx);
     let q = h.service.list(h.ctx)[0]!;
     q = await h.service.answer(h.ctx, { ...h.mutation(q), text: "Yes" });
-    await expect(bridge.dispatch(h.ctx, q.id)).rejects.toThrow("uncertain");
+    await expect(bridge.dispatch(h.ctx, q.id)).rejects.toThrow("unknown");
     const restarted = new RemoteQuestionBridge(new QuestionService(), new RemoteClient(file, client.transport));
-    await expect(restarted.dispatch(h.ctx, q.id)).rejects.toThrow("No duplicate answer");
+    await expect(restarted.dispatch(h.ctx, q.id)).rejects.toThrow("No duplicate sent");
     const result = await restarted.dispatch(h.ctx, q.id, { retry: true });
     expect(result.remote!.replyState).toBe("delivered");
     expect(result.replyId).toBe(q.replyId);

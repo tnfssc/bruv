@@ -364,7 +364,7 @@ describe("Retained evidence and loss settlement", () => {
     expect(await first).toEqual({ kind: "stale", id: "first" });
     expect(await bridge.handleCreated({ id: "still-pending", target: "client", offsetMs: 300 })).toMatchObject({
       kind: "clarification",
-      commentary: "Still checking if your earlier request was accepted. Try again in a moment.",
+      commentary: "Earlier request still being checked. Try again soon.",
     });
     secondAdmission.reject(new Error("Not admitted"));
     expect(await second).toEqual({ kind: "stale", id: "second" });

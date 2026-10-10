@@ -81,7 +81,7 @@ export async function sshControl<T>(
       try {
         resolve(JSON.parse(out));
       } catch {
-        reject(new Error("Remote bruv returned no protocol JSON; use a compatible remote-enabled Linux build"));
+        reject(new Error("Remote bruv sent no protocol JSON. Needs compatible remote-enabled Linux build."));
       }
     });
     child.stdin.on("error", () => {});

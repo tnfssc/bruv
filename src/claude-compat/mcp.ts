@@ -141,10 +141,7 @@ export class InjectedMcpSession {
       try {
         await session.close();
       } catch {
-        throw new McpOperationError(
-          "teardown-failed",
-          "MCP discovery failed and connection teardown was not fully confirmed",
-        );
+        throw new McpOperationError("teardown-failed", "MCP discovery failed. Connection close not confirmed.");
       }
       // SDK/transport errors can include credential-bearing config; never forward their prose/cause.
       throw new McpOperationError("connection-failed", "Injected MCP discovery failed or was denied");
@@ -307,10 +304,7 @@ export class InjectedMcpSession {
       signal.throwIfAborted();
       return errorResult ?? (result as CallToolResult);
     } catch {
-      throw new McpOperationError(
-        "call-failed",
-        "MCP call failed; the remote mutation may have happened. It was not retried.",
-      );
+      throw new McpOperationError("call-failed", "MCP call failed. Remote change may have happened. No retry.");
     }
   }
 
@@ -358,7 +352,7 @@ export class InjectedMcpSession {
       if (fast.length > 1 || (fast.length === 1 && typeof fast[0]?.value !== "boolean")) throw new Error();
       return fast[0]?.value === true;
     } catch {
-      throw new Error("T3 Fast configuration is unavailable or does not match the owning model");
+      throw new Error("T3 Fast config missing or mismatched with owning model");
     }
   }
 

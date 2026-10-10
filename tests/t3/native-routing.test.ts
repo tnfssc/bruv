@@ -272,10 +272,10 @@ test("scoped native affordances reject waiting and stream controls while local s
     const launched = (await service.handle("subagent", { prompt: "x", waitSeconds: 0 }, ctx, signal)) as any;
     expect(launched).toMatchObject({ background: true, id: "native-task-1" });
     await expect(service.handle("subagent", { prompt: "x", waitSeconds: 1 }, ctx, signal)).rejects.toThrow(
-      "Positive waitSeconds is unsupported",
+      "Scoped native returns at once",
     );
     await expect(service.handle("subagent", { prompt: "x", timeoutSeconds: 1 }, ctx, signal)).rejects.toThrow(
-      "timeoutSeconds is unsupported",
+      "No scoped native timeoutSeconds",
     );
     for (const [method, input] of [
       ["jobs.input", { id: "native-task-1", data: "x" }],
@@ -283,7 +283,7 @@ test("scoped native affordances reject waiting and stream controls while local s
       ["jobs.snooze", { id: "native-task-1", minutes: 1 }],
       ["jobs.setWatch", { id: "native-task-1", enabled: false }],
     ] as const)
-      await expect(service.handle(method, input, ctx, signal)).rejects.toThrow("unsupported");
+      await expect(service.handle(method, input, ctx, signal)).rejects.toThrow("for scoped native tasks");
 
     const shell = (await service.handle("shell", { command: "printf local", waitSeconds: 1 }, ctx, signal)) as any;
     expect(shell.output).toBe("local");

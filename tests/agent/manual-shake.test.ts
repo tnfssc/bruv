@@ -269,9 +269,7 @@ describe("manual shake marker validation and bounds", () => {
     const valid = buildShakePlan(manager.buildContextEntries(), manager.getSessionId()).record;
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, valid);
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, { ...valid, version: 99 });
-    expect(() => latestShakeRecord(manager.buildContextEntries(), manager.getSessionId())).toThrow(
-      "unsupported version",
-    );
+    expect(() => latestShakeRecord(manager.buildContextEntries(), manager.getSessionId())).toThrow("unsupported");
     expect(isShakeRecord({ ...valid, assistantEntryIds: ["x", "x"] })).toBe(false);
     expect(isShakeRecord({ ...valid, shakenAt: Number.POSITIVE_INFINITY })).toBe(false);
     expect(isShakeRecord({ ...valid, extra: true })).toBe(false);
@@ -438,7 +436,7 @@ describe("manual command safeguards", () => {
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, { ...record, assistantEntryIds: ["duplicate", "duplicate"] });
     const h = harness(manager);
     expect(() => h.handlers.get("context")?.[0]?.({ messages: manager.buildSessionContext().messages }, h.ctx)).toThrow(
-      "Unprojected context stays hidden.",
+      "Hidden context stays hidden.",
     );
   });
 

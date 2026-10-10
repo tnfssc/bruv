@@ -34,7 +34,7 @@ export function imageMimeType(bytes: Uint8Array): string {
   if (b.length >= 4 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "image/jpeg";
   if (b.length >= 20 && b.toString("ascii", 0, 4) === "RIFF" && b.toString("ascii", 8, 12) === "WEBP")
     return "image/webp";
-  throw new Error("showImage needs PNG, JPEG, or WebP bytes with a valid image header");
+  throw new Error("showImage needs PNG/JPEG/WebP bytes and valid header");
 }
 
 function checkOutputSize(size: number): void {
@@ -62,7 +62,7 @@ async function imageBytes(input: ImageInput): Promise<Buffer> {
     checkInputSize(input.byteLength);
     return input instanceof ArrayBuffer ? Buffer.from(new Uint8Array(input)) : Buffer.from(input);
   }
-  throw new Error("showImage expects a file path, Uint8Array/Buffer, ArrayBuffer, or Blob");
+  throw new Error("showImage takes file path, Uint8Array/Buffer, ArrayBuffer or Blob");
 }
 
 async function withEmbeddedPhotonWasm<T>(operation: () => Promise<T>): Promise<T> {
@@ -103,8 +103,7 @@ async function resizeOversizedImage(
   const resizedBytes = Buffer.from(result.data, "base64");
   checkOutputSize(resizedBytes.length);
   const detectedMimeType = imageMimeType(resizedBytes);
-  if (detectedMimeType !== result.mimeType)
-    throw new Error("showImage resized image MIME type did not match its bytes");
+  if (detectedMimeType !== result.mimeType) throw new Error("Resized image MIME type does not match bytes");
   if (!result.wasResized) throw new Error(`showImage could not shrink image below ${MAX_IMAGE_BYTES} bytes`);
   return {
     bytes: resizedBytes,
@@ -127,8 +126,8 @@ export function createImageHelper(channelEnabled: boolean) {
   return {
     showImage(input: ImageInput): Promise<void> {
       const operation = queue.then(async () => {
-        if (!channelEnabled) throw new Error("showImage is available only through the execute tool");
-        if (count >= MAX_IMAGES) throw new Error(`showImage allows at most ${MAX_IMAGES} images per execution`);
+        if (!channelEnabled) throw new Error("showImage needs execute");
+        if (count >= MAX_IMAGES) throw new Error(`showImage: max ${MAX_IMAGES} images per call`);
         let bytes = await imageBytes(input);
         let mimeType = imageMimeType(bytes);
         let resize: ImageResizeMetadata | undefined;
@@ -210,7 +209,7 @@ function decodeImageRecord(record: string): { image: ChannelImageContent; byteLe
 
 /** Validate on the parent. The helper is convenient, not a trust boundary. */
 export function decodeImageChannel(buffer: Buffer): ChannelImageContent[] {
-  if (buffer.length > MAX_IMAGE_CHANNEL_BYTES) throw new Error("Image output channel exceeded its byte limit");
+  if (buffer.length > MAX_IMAGE_CHANNEL_BYTES) throw new Error("Image output channel over byte limit");
   if (buffer.length === 0) return [];
   if (buffer[buffer.length - 1] !== 10) throw new Error("Incomplete image output record");
   const records = buffer.toString("utf8").slice(0, -1).split("\n");
@@ -220,7 +219,7 @@ export function decodeImageChannel(buffer: Buffer): ChannelImageContent[] {
   for (const record of records) {
     const { image, byteLength } = decodeImageRecord(record);
     total += byteLength;
-    if (total > MAX_TOTAL_IMAGE_BYTES) throw new Error("Image output exceeded its total byte limit");
+    if (total > MAX_TOTAL_IMAGE_BYTES) throw new Error("Image output over total byte limit");
     images.push(image);
   }
   return images;

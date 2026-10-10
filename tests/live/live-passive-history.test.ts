@@ -124,7 +124,7 @@ test("legacy missing speech and repeated delegations never manufacture a user re
   expect(missing[0]).toMatchObject({
     role: "custom",
     display: false,
-    content: "Past voice request incomplete; no actionable request retained.",
+    content: "Past voice request incomplete. No request to act on.",
   });
   const repeated = withoutPassiveLiveHistory([message(0), message(0)]);
   expect(repeated.filter((m) => m.role === "user")).toHaveLength(1);

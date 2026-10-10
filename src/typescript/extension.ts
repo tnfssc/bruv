@@ -117,9 +117,9 @@ export function registerExecuteTool(
                 owner?.getSessionId?.() !== ownerSessionId ||
                 owner?.getLeafId?.() !== ownerLeafId
               )
-                throw new Error("Live stop request belongs to an inactive session");
+                throw new Error("Live stop request from inactive session");
               if (params && (typeof params !== "object" || Array.isArray(params) || Object.keys(params).length))
-                throw new Error("live.stop accepts no options; stop jobs explicitly with jobs.stop(exactId)");
+                throw new Error("live.stop takes no options. Jobs: jobs.stop(exactId).");
               return stopCurrentLive(pi, ctx);
             }
             if (!jobHandler) throw new Error("Session job helpers are unavailable");

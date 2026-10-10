@@ -100,7 +100,7 @@ ownedProcessSuite(import.meta.path, () => {
     scheduler.setWatch(task.id, true);
     clock.advance(5 * 60_000);
     expect(batches).toHaveLength(2);
-    expect(() => scheduler.snooze(task.id, 55.01)).toThrow("at most 55");
+    expect(() => scheduler.snooze(task.id, 55.01)).toThrow(">0 to 55");
     scheduler.dispose();
   });
 
@@ -190,8 +190,8 @@ ownedProcessSuite(import.meta.path, () => {
       Array.from({ length: 100 }, (_, index) => ({ ...sample, id: `job_${index}` })),
     );
     expect(text.length).toBeLessThanOrEqual(5000);
-    expect(text).toContain("Jobs still run");
-    expect(text).toContain("additional attention checkpoints omitted. IDs:");
+    expect(text).toContain("Still running");
+    expect(text).toContain("more checkpoints not shown. IDs:");
     expect(text).toMatch(/IDs: job_\d+/);
     expect(text).not.toContain("Inspect before deciding");
     expect(text).not.toContain("You may provide/close input");

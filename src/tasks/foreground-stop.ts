@@ -19,13 +19,13 @@ export function requestForegroundStop(
   if (!supportsJobResponseAcknowledgement(signal))
     return {
       outcome: "error",
-      detail: "Foreground cancellation needs an execute bridge that acknowledges the response",
+      detail: "Foreground stop needs execute to acknowledge its result",
     };
   const delivery = getJobResponseDeliverySignal(signal);
   if (!delivery)
     return {
       outcome: "error",
-      detail: "Foreground cancellation needs an execute bridge that acknowledges the response",
+      detail: "Foreground stop needs execute to acknowledge its result",
     };
   const session = ctx.sessionManager.getSessionId();
   const leaf = ctx.sessionManager.getLeafId();
@@ -40,18 +40,18 @@ export function requestForegroundStop(
         ? !isCurrent()
         : ctx.sessionManager.getSessionId() !== session || ctx.sessionManager.getLeafId() !== leaf
     ) {
-      observe({ outcome: "error", detail: "Session or branch changed before foreground cancellation" });
+      observe({ outcome: "error", detail: "Session or branch changed before stop" });
       return;
     }
     try {
       ctx.abort();
       observe({ outcome: ctx.isIdle() ? "idle" : "pending" });
     } catch {
-      observe({ outcome: "error", detail: "Foreground cancellation failed" });
+      observe({ outcome: "error", detail: "Foreground stop failed" });
     }
   };
   if (signal.aborted) return { outcome: "error", detail: "Execute caller already cancelled" };
   delivery.addEventListener(JOB_RESPONSE_ACK_EVENT, stop, { once: true });
   signal.addEventListener("abort", cleanup, { once: true });
-  return { outcome: "pending", detail: "Foreground cancellation will be requested after result delivery" };
+  return { outcome: "pending", detail: "Foreground stop follows result delivery" };
 }

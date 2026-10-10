@@ -116,7 +116,7 @@ describe("Admission and microphone transport", () => {
     socket.fire("open");
     socket.event({ type: "error", error: { message: "SECRET key", code: "invalid_api_key" } });
     await start;
-    expect(errors).toEqual(["OpenAI rejected the API key for gpt-live-1. Use /login to configure an OpenAI API key."]);
+    expect(errors).toEqual(["OpenAI key rejected for gpt-live-1. Set API key with /login."]);
     expect(closed).toEqual([{ finalized: false, usage: undefined }]);
   });
 

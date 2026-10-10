@@ -81,7 +81,7 @@ export class T3LocalNotificationOutbox {
     // Reserve one terminal record per live job before any child is spawned.
     // 64 worst-case JSON-escaped records fit beneath the 4 MiB file bound.
     if (runningTasks >= 50 || this.list().length + runningTasks >= MAX_RECORDS)
-      throw new Error("T3 local job delivery is full; wait for pending delivery");
+      throw new Error("T3 local delivery full. Wait for pending notices.");
   }
 
   add(input: { taskId: string; kind: T3LocalNotificationKind; text: string }): T3LocalNotification {

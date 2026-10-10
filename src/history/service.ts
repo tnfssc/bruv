@@ -48,7 +48,7 @@ function record(value: unknown): value is Record<string, unknown> {
 function integer(value: unknown, fallback: number, min: number, max: number, name: string): number {
   if (value === undefined) return fallback;
   if (!Number.isInteger(value) || (value as number) < min || (value as number) > max)
-    throw new Error(`${name} must be an integer from ${min} to ${max}`);
+    throw new Error(`${name} needs a whole number, ${min} to ${max}`);
   return value as number;
 }
 function cursorEncode(value: Cursor): string {
@@ -84,9 +84,9 @@ async function openReadonlySession(path: string): Promise<Manager> {
   const handle = await open(sessionFile, constants.O_RDONLY | constants.O_NONBLOCK);
   try {
     const stat = await handle.stat();
-    if (!stat.isFile() || stat.size <= 0) throw new Error("Cross-session history requires a non-empty regular file");
+    if (!stat.isFile() || stat.size <= 0) throw new Error("Cross-session history needs a nonempty regular file");
     if (stat.size > MAX_SESSION_FILE_BYTES)
-      throw new Error(`Cross-session file exceeds the ${MAX_SESSION_FILE_BYTES}-byte history limit`);
+      throw new Error(`Cross-session file over ${MAX_SESSION_FILE_BYTES}-byte limit`);
     const bytes = Buffer.alloc(stat.size);
     let offset = 0;
     while (offset < bytes.length) {
@@ -98,7 +98,7 @@ async function openReadonlySession(path: string): Promise<Manager> {
     for (const line of bytes.subarray(0, offset).toString("utf8").split("\n")) {
       if (!line.trim()) continue;
       if (Buffer.byteLength(line) > MAX_SESSION_ENTRY_BYTES)
-        throw new Error(`Cross-session entry exceeds the ${MAX_SESSION_ENTRY_BYTES}-byte history limit`);
+        throw new Error(`Cross-session entry over ${MAX_SESSION_ENTRY_BYTES}-byte limit`);
       let value: unknown;
       try {
         value = JSON.parse(line);
@@ -108,7 +108,7 @@ async function openReadonlySession(path: string): Promise<Manager> {
       if (!record(value)) throw new Error("Cross-session file contains an invalid entry");
       parsed.push(value);
       if (parsed.length > MAX_SESSION_ENTRIES)
-        throw new Error(`Cross-session file exceeds the ${MAX_SESSION_ENTRIES}-entry history limit`);
+        throw new Error(`Cross-session file over ${MAX_SESSION_ENTRIES}-entry limit`);
     }
     const header = parsed[0];
     if (
@@ -119,7 +119,7 @@ async function openReadonlySession(path: string): Promise<Manager> {
     )
       throw new Error("Cross-session file is not a valid session");
     if (!Number.isInteger(header.version) || (header.version as number) < 2)
-      throw new Error("Cross-session history requires a version 2 or newer session; migrate a copy first");
+      throw new Error("Cross-session history needs version 2+. Migrate a copy first.");
     if (typeof header.cwd === "string" && header.cwd.length > MAX_SESSION_PATH_CHARS)
       throw new Error("Cross-session cwd exceeds the history limit");
     const byId = new Map<string, SessionEntry>();
@@ -138,7 +138,7 @@ async function openReadonlySession(path: string): Promise<Manager> {
         typeof value.timestamp !== "string" ||
         value.timestamp.length > 128
       )
-        throw new Error("Cross-session file contains an invalid or duplicate entry id");
+        throw new Error("Cross-session entry id invalid or repeated");
       byId.set(value.id, value as unknown as SessionEntry);
       leafId = value.id;
     }
@@ -179,7 +179,7 @@ function boundedBranch(manager: Manager, fromId?: string, includeId?: string | n
   const select = (entry: { type: string; id: string; customType?: string }) => {
     if (retrievalCandidate(entry)) {
       if (++candidates > MAX_ACTIVE_BRANCH_ENTRIES)
-        throw new Error(`Active history branch exceeds the ${MAX_ACTIVE_BRANCH_ENTRIES}-entry limit`);
+        throw new Error(`Active history branch over ${MAX_ACTIVE_BRANCH_ENTRIES}-entry limit`);
       return true;
     }
     return entry.id === includeId;
@@ -205,8 +205,7 @@ function retrievalExcludedResults(manager: Manager, entries: readonly SessionEnt
     // result the transcript explicitly removed.
     if (!isShakeRecord(entry.data)) throw new InvalidShakeRecordError();
     work += entry.data.toolResultEntryIds.length;
-    if (work > MAX_EXCLUDED_ENTRY_IDS)
-      throw new Error(`History exclusions exceed the ${MAX_EXCLUDED_ENTRY_IDS}-id limit`);
+    if (work > MAX_EXCLUDED_ENTRY_IDS) throw new Error(`History exclusions over ${MAX_EXCLUDED_ENTRY_IDS}-id limit`);
     for (const id of entry.data.toolResultEntryIds) excluded.add(id);
   }
   return excluded;
@@ -215,8 +214,7 @@ function retrievalExcludedResults(manager: Manager, entries: readonly SessionEnt
 function textParts(content: unknown): Array<{ part: number; text: string }> {
   if (typeof content === "string") return [{ part: 0, text: content }];
   if (!Array.isArray(content)) return [];
-  if (content.length > MAX_INDEXED_PARTS)
-    throw new Error(`History message exceeds the ${MAX_INDEXED_PARTS}-part limit`);
+  if (content.length > MAX_INDEXED_PARTS) throw new Error(`History message over ${MAX_INDEXED_PARTS}-part limit`);
   const result: Array<{ part: number; text: string }> = [];
   for (let index = 0; index < content.length; index++) {
     const part = content[index];
@@ -245,7 +243,7 @@ function ref(sessionId: string, entryId: string, part: number): string {
   return `${REF_PREFIX}:${sessionId}:${entryId}:${part}`;
 }
 function parseRef(value: unknown): { sessionId: string; entryId: string; part: number } {
-  if (typeof value !== "string") throw new Error("History ref must be a string");
+  if (typeof value !== "string") throw new Error("History ref needs a string");
   if (value.length > 300) throw new Error("Invalid history ref");
   const match = /^bruv-history-v1:([^:]{1,128}):([^:]{1,128}):(\d+)$/.exec(value);
   if (!match?.[1] || !match[2]) throw new Error("Invalid history ref");
@@ -274,10 +272,10 @@ export class HistoryService {
   }
 
   async search(params: unknown, ctx: Context): Promise<HistorySearchResult> {
-    if (!record(params)) throw new Error("History search parameters must be an object");
+    if (!record(params)) throw new Error("History search needs an object");
     const query = params.query;
     if (typeof query !== "string" || !query.trim() || query.length > MAX_QUERY_CHARS)
-      throw new Error(`History query must contain 1 to ${MAX_QUERY_CHARS} characters`);
+      throw new Error(`History query needs 1–${MAX_QUERY_CHARS} characters`);
     const limit = integer(params.limit, DEFAULT_SEARCH_RESULTS, 1, MAX_SEARCH_RESULTS, "limit");
     const excerptChars = integer(params.excerptChars, DEFAULT_EXCERPT_CHARS, 40, MAX_EXCERPT_CHARS, "excerptChars");
     const { manager, scope } = await this.#scope(params, ctx);
@@ -326,12 +324,11 @@ export class HistoryService {
   }
 
   async read(params: unknown, ctx: Context): Promise<HistoryReadResult> {
-    if (!record(params)) throw new Error("History read parameters must be an object");
+    if (!record(params)) throw new Error("History read needs an object");
     const parsed = parseRef(params.ref);
     const maxChars = integer(params.maxChars, DEFAULT_READ_CHARS, 1, MAX_READ_CHARS, "maxChars");
     const { manager, scope } = await this.#scope(params, ctx);
-    if (parsed.sessionId !== manager.getSessionId())
-      throw new Error("History ref does not belong to the selected session");
+    if (parsed.sessionId !== manager.getSessionId()) throw new Error("History ref from another session");
     const key = String(params.ref);
     const cursor = cursorDecode(params.cursor, "read");
     const items = this.#retrievalScan(manager, scope, cursor, key);
@@ -342,10 +339,9 @@ export class HistoryService {
       if (candidate.provenance.entryId === parsed.entryId && candidate.provenance.part === parsed.part)
         item = candidate;
     }
-    if (!item)
-      throw new Error("History ref is unavailable on the selected active branch or is excluded from retrieval");
+    if (!item) throw new Error("History ref absent from active branch or excluded");
     const start = cursor?.offset ?? 0;
-    if (start > item.text.length) throw new Error("History cursor is past the end of the referenced text");
+    if (start > item.text.length) throw new Error("History cursor past end of text");
     const end = Math.min(item.text.length, start + maxChars);
     const next =
       end < item.text.length
@@ -366,7 +362,7 @@ export class HistoryService {
   ): Promise<{ manager: Manager; scope: HistoryProvenance["scope"] }> {
     const input = params as ScopeInput;
     if (input.sessionFile === undefined) {
-      if (input.allowCrossSession === true) throw new Error("allowCrossSession requires an explicit sessionFile");
+      if (input.allowCrossSession === true) throw new Error("allowCrossSession needs sessionFile");
       return { manager: ctx.sessionManager, scope: "active-session-branch" };
     }
     if (
@@ -374,8 +370,8 @@ export class HistoryService {
       !input.sessionFile ||
       input.sessionFile.length > MAX_SESSION_PATH_CHARS
     )
-      throw new Error(`sessionFile must be a non-empty string of at most ${MAX_SESSION_PATH_CHARS} characters`);
-    if (input.allowCrossSession !== true) throw new Error("Cross-session history requires allowCrossSession: true");
+      throw new Error(`sessionFile needs 1–${MAX_SESSION_PATH_CHARS} characters`);
+    if (input.allowCrossSession !== true) throw new Error("Cross-session history needs allowCrossSession: true");
     return { manager: await openReadonlySession(input.sessionFile), scope: "cross-session-branch" };
   }
 
@@ -386,10 +382,10 @@ export class HistoryService {
     key: string,
   ): { leafId: string | null; values: Iterable<TextItem>; scannedEntries: number; scanLimited: boolean } {
     if (cursor && (cursor.sessionId !== manager.getSessionId() || cursor.key !== key))
-      throw new Error("History cursor does not match this query, reference, session, or active branch");
+      throw new Error("History cursor mismatch: query, ref, session or active branch");
     const activeBranch = boundedBranch(manager, undefined, cursor?.leafId);
     if (cursor?.leafId != null && !activeBranch.some((entry) => entry.id === cursor.leafId))
-      throw new Error("History cursor does not match this query, reference, session, or active branch");
+      throw new Error("History cursor mismatch: query, ref, session or active branch");
 
     // The text snapshot can predate appends, but exclusions always come from
     // the live active branch: a later shake must also hide earlier cursor pages.
@@ -421,15 +417,13 @@ export class HistoryService {
           ].filter((part): part is { part: number; text: string } => !!part);
         } else continue;
         indexedParts += Array.isArray(message.content) ? message.content.length : parts.length;
-        if (indexedParts > MAX_INDEXED_PARTS)
-          throw new Error(`History scan exceeds the ${MAX_INDEXED_PARTS}-part limit`);
+        if (indexedParts > MAX_INDEXED_PARTS) throw new Error(`History scan over ${MAX_INDEXED_PARTS}-part limit`);
         for (const part of parts) {
           const bytes = Buffer.byteLength(part.text);
-          if (bytes > MAX_TEXT_PART_BYTES)
-            throw new Error(`History text part exceeds the ${MAX_TEXT_PART_BYTES}-byte limit`);
+          if (bytes > MAX_TEXT_PART_BYTES) throw new Error(`History text part over ${MAX_TEXT_PART_BYTES}-byte limit`);
           indexedBytes += bytes;
           if (indexedBytes > MAX_INDEXED_TEXT_BYTES)
-            throw new Error(`History scan exceeds the ${MAX_INDEXED_TEXT_BYTES}-byte text limit`);
+            throw new Error(`History scan over ${MAX_INDEXED_TEXT_BYTES}-byte text limit`);
           const provenance: HistoryProvenance = {
             source: "original-transcript",
             scope,

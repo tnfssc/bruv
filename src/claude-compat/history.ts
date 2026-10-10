@@ -199,7 +199,7 @@ export class NativeHistory {
             !importedIds.has(entry.uuid) &&
             (!selected || selected.has(entry.uuid)))
         )
-          throw new Error("Transcript is not this Pi session's derived view; import SDK forks into a fresh Pi session");
+          throw new Error("Transcript not from this Pi session. Import SDK forks into fresh Pi session.");
         this.lastMessageUuid = entry.uuid;
         if (entry.bruv?.sourceSessionId === this.options.sourceSessionId)
           this.sourceUuids.set(entry.bruv.sourceMessageId, entry.uuid);
@@ -383,7 +383,7 @@ export function nativeHistoryToPi(
   const pending = new Set<string>();
   for (const item of chain) {
     if ((item.type !== "user" && item.type !== "assistant") || item.isMeta || item.isCompactSummary)
-      throw new Error("Unsupported transcript context; cannot silently discard it");
+      throw new Error("Unsupported transcript context. Cannot drop it.");
     const message = object(item.message);
     if (message.role !== item.type) throw new Error("Transcript role/type mismatch");
     const timestamp = Date.parse(text(item.timestamp));
@@ -485,8 +485,7 @@ export function nativeHistoryToPi(
       flush();
     }
   }
-  if (pending.size)
-    throw new Error("Cannot import an incomplete tool exchange: imported tools must never be reexecuted");
+  if (pending.size) throw new Error("Incomplete tool exchange. Cannot import; imported tools cannot run again.");
   return {
     messages: converted.map((entry) => entry.message),
     nativeUuids: converted.map((entry) => entry.nativeUuid),

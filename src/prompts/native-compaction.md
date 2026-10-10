@@ -1,1 +1,1 @@
-**Opaque Codex checkpoint:** The saved conversation is encrypted. Replay needs the same Codex API/provider; changing only the Codex model does not break it. The stored model shows where it came from, not a replay lock. Other APIs/providers and branch summaries cannot carry this state.
+**Opaque Codex checkpoint:** Saved conversation is encrypted. Replay needs same Codex API/provider, not same model. Stored model shows source, not replay lock. Other APIs/providers and branch summaries cannot carry this state.

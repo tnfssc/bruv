@@ -307,7 +307,7 @@ test("cancellation/close cannot adopt a late result or retry an ambiguous call",
   const pending = session.callTool("mcp__t3-code__slow", {}, { toolUseId: "slow", signal: controller.signal });
   await f.slowCall.started;
   controller.abort();
-  await expect(pending).rejects.toThrow("MCP call failed; the remote mutation may have happened. It was not retried.");
+  await expect(pending).rejects.toThrow("MCP call failed. Remote change may have happened. No retry.");
   f.slowCall.release();
   await f.slowCall.finished;
   expect(f.calls).toEqual(["slow"]);
@@ -376,7 +376,7 @@ test("committed app launch with lost response is unknown, not retried or acknowl
     .callTool("mcp__t3-code__delegate_task", { clientRequestId: "ambiguous" }, { toolUseId: "ambiguous" })
     .catch((error) => error);
   expect(error.code).toBe("call-failed");
-  expect(error.message).toBe("MCP call failed; the remote mutation may have happened. It was not retried.");
+  expect(error.message).toBe("MCP call failed. Remote change may have happened. No retry.");
   expect(String(error)).not.toContain("SECRET_SCOPE");
   expect(f.calls).toEqual(["delegate_task"]);
 });

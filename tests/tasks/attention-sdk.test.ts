@@ -145,7 +145,7 @@ test("real SDK print session keeps repeated attention boundaries subscription-bo
     await session.prompt("start one background job");
     expect(Date.now() - started).toBeGreaterThanOrEqual(10);
     expect(calls).toBeGreaterThanOrEqual(8);
-    expect(JSON.stringify(session.messages)).toContain("attention checkpoint");
+    expect(JSON.stringify(session.messages)).toContain("need attention");
     const { subscriptionCalls, maxSubscriptions, activeSubscriptions, waitCalls } = observation.counts;
     // Permanent scheduler and lifecycle-index subscriptions, plus one disposable agent_end wait.
     expect(subscriptionCalls).toBeGreaterThanOrEqual(6);

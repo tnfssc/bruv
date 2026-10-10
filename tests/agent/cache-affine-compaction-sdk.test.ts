@@ -244,7 +244,7 @@ for (const [provider, , api] of [
       }
       const conversation = provider === "openai-codex" ? last.input : last.messages;
       const summaryInstruction = JSON.stringify(conversation.at(-1));
-      expect(summaryInstruction).toContain("Summarize the whole conversation above.");
+      expect(summaryInstruction).toContain("Summarize whole conversation above.");
       expect(summaryInstruction).not.toContain("retained tail");
       expect(summaryInstruction).not.toContain("### Scope");
       expect(JSON.stringify(conversation)).toContain("Old task fixture.");

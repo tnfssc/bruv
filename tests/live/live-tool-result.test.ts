@@ -32,7 +32,7 @@ test("small image still identifies visual modality loss and retains data in arti
   const mapped = await voiceToolResult(value, directory);
   expect(mapped.imageNotVisuallyRendered).toBe(true);
   expect(mapped.note).toBe(
-    "Full JSON result: artifactPath. Read with execute. Preview may end mid-value. Image bytes stay in the file; JSON output does not show images.",
+    "Full JSON: artifactPath, via execute. Preview may cut a value. Image bytes in file, not shown here.",
   );
   expect(mapped.truncated).toBe(false);
   expect(JSON.parse(await readFile(mapped.artifactPath as string, "utf8"))).toEqual({ output: value });

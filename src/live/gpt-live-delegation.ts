@@ -221,7 +221,7 @@ export class GptLiveDelegationBridge {
         kind: "clarification",
         id,
         revision,
-        commentary: "Still checking if your earlier request was accepted. Try again in a moment.",
+        commentary: "Earlier request still being checked. Try again soon.",
       };
     if (prepared.kind === "future-loss") return { kind: "unavailable", id };
     if (prepared.kind === "incomplete")

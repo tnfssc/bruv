@@ -784,7 +784,7 @@ describe("fail-closed checkpoint lifecycle", () => {
       expect(result.messages[0]).toMatchObject({ role: "assistant", model: "other" });
       expect(() =>
         h.handlers.get("before_provider_request")!({ payload: { ...payload, model: "other", input } }, h.ctx),
-      ).toThrow("lost during provider serialization");
+      ).toThrow("serialization lost native Codex checkpoint");
       expect(h.aborted).toBe(1);
     }
   });
@@ -806,7 +806,9 @@ describe("fail-closed checkpoint lifecycle", () => {
       const messages = buildSessionContext(h.ctx.sessionManager.getEntries()).messages;
       h.handlers.get("context")!({ messages }, h.ctx);
       expect(h.aborted).toBe(1);
-      expect(() => h.handlers.get("before_provider_request")!({ payload: {} }, h.ctx)).toThrow("cannot be sent");
+      expect(() => h.handlers.get("before_provider_request")!({ payload: {} }, h.ctx)).toThrow(
+        "needs its own API/provider",
+      );
       expect(h.notifications[0]).toContain("Switch back");
     }
   });
@@ -885,7 +887,7 @@ describe("fail-closed checkpoint lifecycle", () => {
       );
       expect(result).toEqual({ cancel: true });
       expect(appends).toBe(1);
-      expect(h.notifications.some((message) => message.includes("usage checkpoint could not be written"))).toBe(true);
+      expect(h.notifications.some((message) => message.includes("Usage checkpoint write failed"))).toBe(true);
       expect(JSON.stringify(h.notifications)).not.toContain("private append failure");
       expect(inspectDiagnostics(manager).records.map((record) => record.code)).toContain("state_write_failed");
     } finally {
@@ -1136,13 +1138,15 @@ describe("fail-closed checkpoint lifecycle", () => {
     const manager = checkpointManager(),
       h = harness(manager, model);
     h.handlers.get("context")!({ messages: manager.buildSessionContext().messages }, h.ctx);
-    expect(() => h.handlers.get("before_provider_request")!({ payload: { input: [] } }, h.ctx)).toThrow("lost during");
+    expect(() => h.handlers.get("before_provider_request")!({ payload: { input: [] } }, h.ctx)).toThrow(
+      "serialization lost",
+    );
     expect(h.aborted).toBe(1);
     const entry = manager.getEntries().find((e) => e.type === "compaction") as any;
     entry.details.version = 99;
     h.handlers.get("context")!({ messages: manager.buildSessionContext().messages }, h.ctx);
     expect(h.aborted).toBe(2);
-    expect(h.notifications.at(-1)).toContain("Unsupported or damaged");
+    expect(h.notifications.at(-1)).toContain("damaged or unsupported");
   });
   test("notice edits preserve replay and deterministic job facts", () => {
     const manager = checkpointManager();

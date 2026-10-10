@@ -33,7 +33,7 @@ export async function voiceToolResult(result: unknown, artifactDirectory?: strin
       bytes,
       preview: serialized.slice(0, 8192),
       artifactPath: path,
-      note: "Full JSON result: artifactPath. Read with execute. Preview may end mid-value. Image bytes stay in the file; JSON output does not show images.",
+      note: "Full JSON: artifactPath, via execute. Preview may cut a value. Image bytes in file, not shown here.",
     };
   } catch {
     return { error: "Could not deliver or save tool result.", bytes };

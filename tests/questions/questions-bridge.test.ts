@@ -96,9 +96,7 @@ ownedProcessSuite(import.meta.path, () => {
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("ANSWER_HELPER undefined");
     expect(result.stdout).toContain("STALE Stale question version: current 2");
-    expect(result.stdout).toContain(
-      "CAP 20 questions are active. One needs a human answer or cancellation before another can be saved.",
-    );
+    expect(result.stdout).toContain("CAP 20 active questions. One needs an answer or cancellation first.");
     expect(result.stdout).toContain("CANCEL");
     expect(result.stdout).toContain("LIST");
   });

@@ -138,7 +138,7 @@ describe("cache-affine compaction request", () => {
     expect((request.messages[1] as any).content[0].text).toBe("HOOKED-old-user");
     expect((request.messages[3] as any).content[0].text).toBe("tail-user");
     expect((request.messages[4] as any).content[0].text).toBe("tail-assistant");
-    expect((request.messages.at(-1) as any).content[0].text).toContain("Summarize the whole conversation above.");
+    expect((request.messages.at(-1) as any).content[0].text).toContain("Summarize whole conversation above.");
   });
 
   test("counts the transcript system/tool frame once in the compaction input budget", async () => {
@@ -165,7 +165,7 @@ describe("cache-affine compaction request", () => {
       }),
     );
     const prompt = (request.messages.at(-1) as any).content[0].text;
-    expect(prompt).toContain("Summarize the whole conversation above.");
+    expect(prompt).toContain("Summarize whole conversation above.");
     expect(prompt).not.toContain("retained tail");
     expect(request).not.toHaveProperty("summaryEnd");
     expect(request).not.toHaveProperty("tailStart");
@@ -493,17 +493,17 @@ test("absent or blank custom focus adds no footer", async () => {
   for (const focus of [undefined, "", "   "]) {
     const request = await currentRequest(event({ customInstructions: focus }));
     const prompt = (request.messages.at(-1) as any).content[0].text;
-    expect(prompt).not.toContain("Additional user focus:");
+    expect(prompt).not.toContain("User focus:");
     expect(prompt).not.toContain("No additional focus was requested");
     expect(prompt).not.toContain("{{customInstructions}}");
-    expect(prompt).toEndWith("Do not call tools and do not continue the task.");
+    expect(prompt).toEndWith("Summary only. No tools or task work.");
   }
 });
 
 test("summary focus is literal data without boundary disclaimers", async () => {
   const request = await currentRequest(event({ customInstructions: "Preserve $& and {{tailAnchor}} literally" }));
   const prompt = (request.messages.at(-1) as any).content[0].text;
-  expect(prompt).toContain("Additional user focus: Preserve $& and {{tailAnchor}} literally");
+  expect(prompt).toContain("User focus: Preserve $& and {{tailAnchor}} literally");
   expect(prompt).not.toContain("durable checkpoint boundary");
   expect(prompt).not.toContain("{{customInstructions}}");
 });
@@ -605,7 +605,7 @@ describe("cancelled summary attempts", () => {
     });
     expect(await harness.compact()).toEqual({ cancel: true });
     expect(harness.requests()).toBe(1);
-    expect(harness.notices[0]).toContain("avoid duplicate inference");
+    expect(harness.notices[0]).toContain("no second model call");
     expect(harness.attempts).toEqual([
       { type: "bruv-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "length", usage } },
     ]);
@@ -629,8 +629,8 @@ describe("cancelled summary attempts", () => {
     expect(await harness.compact()).toEqual({ cancel: true });
     expect(harness.requests()).toBe(1);
     expect(appendCalls).toBe(1);
-    expect(harness.notices.some((message) => message.includes("usage checkpoint could not be written"))).toBe(true);
-    expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+    expect(harness.notices.some((message) => message.includes("Usage checkpoint write failed"))).toBe(true);
+    expect(harness.notices.at(-1)).toContain("no second model call");
     expect(JSON.stringify(harness.notices)).not.toContain("private disk failure");
   });
 
@@ -675,7 +675,7 @@ describe("cancelled summary attempts", () => {
         dispatch: "none",
         outcome: "blocked",
       });
-      expect(harness.notices.at(-1)).toContain("rejected before inference");
+      expect(harness.notices.at(-1)).toContain("stopped before model call");
     },
   );
 
@@ -689,7 +689,7 @@ describe("cancelled summary attempts", () => {
     expect(harness.requests()).toBe(1);
     expect(harness.attempts).toEqual([]);
     expect(harness.diagnostics().at(-1)).toMatchObject({ code: "provider_failed", dispatch: "unknown" });
-    expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+    expect(harness.notices.at(-1)).toContain("no second model call");
   });
 
   test("failure to project a paid summary checkpoints usage once without another inference", async () => {
@@ -708,7 +708,7 @@ describe("cancelled summary attempts", () => {
       { type: "bruv-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "stop", usage } },
     ]);
     expect(harness.diagnostics().at(-1)).toMatchObject({ code: "provider_failed", dispatch: "response" });
-    expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+    expect(harness.notices.at(-1)).toContain("no second model call");
   });
 
   test("failed notifications do not erase paid-attempt cancellation or retry its usage write", async () => {

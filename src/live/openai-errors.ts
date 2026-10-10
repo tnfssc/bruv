@@ -3,13 +3,13 @@ export function providerFailure(error: unknown, model: string, fallback: string)
   const code = error && typeof error === "object" ? (error as { code?: unknown }).code : undefined;
   switch (code) {
     case "insufficient_quota":
-      return `OpenAI reports insufficient quota for ${model}. Check API billing and limits; no model was substituted.`;
+      return `Not enough OpenAI quota for ${model}. Check billing and limits. Model not changed.`;
     case "rate_limit_exceeded":
-      return `OpenAI reports a rate limit for ${model}. Retry later; no model was substituted.`;
+      return `OpenAI rate limit for ${model}. Retry later. Model not changed.`;
     case "model_not_found":
-      return `OpenAI says ${model} is unavailable or this API key cannot access it; no model was substituted.`;
+      return `OpenAI ${model} unavailable or key lacks access. Model not changed.`;
     case "invalid_api_key":
-      return `OpenAI rejected the API key for ${model}. Use /login to configure an OpenAI API key.`;
+      return `OpenAI key rejected for ${model}. Set API key with /login.`;
     default:
       return fallback;
   }

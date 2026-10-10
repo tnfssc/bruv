@@ -37,7 +37,7 @@ export function expectExecuteOnce<T extends { name?: string; description?: strin
     "source.retryTaskId",
     "questions.ask({",
     "questions.block({",
-    "No old execute or native child resumes in place.",
+    "not the old execute stack or native child.",
     "history.search({",
     "/live model",
     "live.stop()",

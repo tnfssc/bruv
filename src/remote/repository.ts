@@ -179,7 +179,7 @@ export function captureRepository(
     git(root, ["rev-parse", "--verify", "--end-of-options", `${options.baseRef ?? "HEAD"}^{commit}`]),
   );
   if (options.baseRef !== undefined && approvedUntracked.length)
-    throw Error("Explicit baseRef snapshots cannot include current untracked files");
+    throw Error("Explicit baseRef cannot include current untracked files");
   const entries = names(git(root, ["ls-tree", "-rlz", sourceCommit]));
   for (const row of options.baseRef === undefined ? [] : entries) {
     if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]))
@@ -198,12 +198,9 @@ export function captureRepository(
   const available = untracked(root);
   const selected = [...approvedUntracked];
   const sensitive = [...names(git(root, ["ls-files", "-z"])), ...selected].filter(sensitiveRepoPath);
-  if (sensitive.length)
-    throw Error(
-      `Repository contains credential/config paths that are not automatically transferred: ${sensitive.join(", ")}`,
-    );
+  if (sensitive.length) throw Error(`Credential/config paths stay out of automatic transfer: ${sensitive.join(", ")}`);
   if (new Set(selected).size !== selected.length || selected.some((p) => !available.includes(p) || !regular(root, p)))
-    throw Error("ask before transferring untracked files; approval must name exact regular paths");
+    throw Error("Untracked transfer needs user approval for exact regular file paths");
   if (selected.length > 256 || selected.reduce((n, p) => n + statSync(join(root, p)).size, 0) > MAX)
     throw Error("Selected untracked files exceed capture limit");
   const hashes = selected.map((p) => hash(snapshotFile(root, p)));
@@ -341,17 +338,16 @@ export function integrateRepositoryResult(
   });
   if (result.snapshot !== manifest.snapshot || hash(patch) !== result.sha256)
     return review("result identity or patch digest mismatch");
-  if (result.untracked.length)
-    return review("remote untracked files are preserved in the review patch; manual review required");
+  if (result.untracked.length) return review("Remote untracked files kept in review patch. Needs manual review.");
   try {
     if (fingerprint(root) !== manifest.base || text(git(root, ["rev-parse", "HEAD"])) !== manifest.head)
       return review("local HEAD, index or tracked work changed since capture");
   } catch {
-    return review("local repository state unsupported or unreadable; inspect before return");
+    return review("Local repo state unsupported or unreadable. Inspect before return.");
   }
   if (!patch.length) return { status: "no_changes", artifact: result.patch };
   if (manifest.source?.matchesCurrent === false)
-    return review("requested source commit differs from captured local tracked state; manual integration required");
+    return review("Source commit differs from captured local tracked state. Needs manual merge.");
   const summary = text(git(root, ["apply", "--summary", "-"], patch, true));
   if (summary) return review("creation, deletion or mode change requires review");
   const stats = git(root, ["apply", "--numstat", "-z", "-"], patch, true);

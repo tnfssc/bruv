@@ -449,7 +449,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     noThemes: true,
     noContextFiles: options.auxiliary,
     systemPrompt: options.auxiliary
-      ? "Answer the user's request."
+      ? "Answer user request."
       : withBruvSystemPrompt([], {
           cwd: options.cwd,
           agentDir: options.agentDir,
@@ -831,12 +831,12 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   let auxiliaryUsed = false;
   async function runAuxiliary(text: string, schema: Record<string, unknown>) {
     checkOpen();
-    if (!options.auxiliary) throw new Error("Auxiliary requests require an isolated auxiliary runtime");
+    if (!options.auxiliary) throw new Error("Auxiliary requests need isolated runtime");
     if (auxiliaryUsed) throw new Error("Auxiliary runtime is single-use");
     auxiliaryUsed = true;
     readiness();
     const validator = Compile(schema as TSchema);
-    await session.prompt(`${text}\n\nReturn only JSON matching this JSON Schema:\n${JSON.stringify(schema)}`, {
+    await session.prompt(`${text}\n\nOnly JSON. Match this schema:\n${JSON.stringify(schema)}`, {
       expandPromptTemplates: false,
       source: "rpc",
     });
@@ -844,7 +844,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     const output = JSON.parse(frontend.text());
     if (!validator.Check(output))
       throw new Error(
-        "Model output does not satisfy the requested JSON schema: " +
+        "Model output does not match JSON schema: " +
           validator
             .Errors(output)
             .map((e) => e.message)

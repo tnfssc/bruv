@@ -3,7 +3,7 @@
   - goal.set({objective, criteria, constraints})
   - goal.update({status, progress?, evidence?, blocker?, reason?})
   - goal.clear()
-- Goals are opt-in and durable.
-- Progress needs new evidence. Check what changed; old proof counts once.
-- Complete means every criterion met. Mark completed and show proof.
-- Missing something you cannot supply? Mark blocked. Say what would unblock it.
+- Goals are opt-in and saved.
+- Progress needs new proof. Check what changed. Old proof counts once.
+- Complete means every criterion met. Mark completed, show proof.
+- Need something you cannot supply? Mark blocked. Say what would unblock it.

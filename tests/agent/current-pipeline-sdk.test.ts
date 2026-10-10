@@ -338,7 +338,7 @@ for (const scenario of [
       expect(wire).not.toContain("Old task noted.");
       expect(JSON.stringify(last.system)).toContain("CURRENT_PIPELINE_FRAME");
       expect(JSON.stringify(last.system)).not.toContain("operating inside pi,");
-      expect(wire).toContain("Summarize the whole conversation above.");
+      expect(wire).toContain("Summarize whole conversation above.");
       expect(last.metadata).toEqual({ user_id: "pipeline-fixture" });
       if (scenario === "changed-prefix") expect(wire).toContain("CURRENT_REWRITTEN_PREFIX");
       expect(last.tools.some((t: any) => t.name === "execute")).toBe(true);

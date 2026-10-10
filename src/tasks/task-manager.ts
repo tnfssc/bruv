@@ -195,7 +195,7 @@ export class TaskManager {
     this.#shutdownWatchdogMs = hooks.shutdownWatchdogMs ?? DEFAULT_SHUTDOWN_WATCHDOG_MS;
     const completedBudget = hooks.completedOutputBudgetBytes ?? DEFAULT_COMPLETED_OUTPUT_BUDGET_BYTES;
     if (!Number.isSafeInteger(completedBudget) || completedBudget < 0)
-      throw new Error("completedOutputBudgetBytes must be a non-negative safe integer");
+      throw new Error("completedOutputBudgetBytes needs a safe integer >=0");
     this.#completedOutputBudgetBytes = completedBudget;
   }
 

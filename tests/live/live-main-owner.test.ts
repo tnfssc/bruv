@@ -340,7 +340,7 @@ describe("direct Live tool turns", () => {
     const f = fixture();
     f.busy();
     expect(f.ctx.isIdle()).toBe(false);
-    await expect(acquireMainOwner({} as any, f.ctx)).rejects.toThrow("Cannot acquire");
+    await expect(acquireMainOwner({} as any, f.ctx)).rejects.toThrow("Live needs idle text agent");
     f.session._isAgentRunActive = false;
     expect(f.ctx.isIdle()).toBe(true);
     const owner = await acquireMainOwner({} as any, f.ctx);

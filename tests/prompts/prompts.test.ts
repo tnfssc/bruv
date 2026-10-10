@@ -34,8 +34,8 @@ test("working values frame the agent separately from tool help", () => {
     "0 returns at once",
     "background: true",
     "background: false",
-    "Default true",
-    "Start with false",
+    "default true",
+    "false at launch",
     "jobs.stop",
     "5,000",
     "session",
@@ -46,7 +46,7 @@ test("working values frame the agent separately from tool help", () => {
 
 test("shared engineering guidance favors product work over speculative defenses", () => {
   const guidance = collaborationGuidance();
-  expect(guidance).toContain("Product progress beats defenses for risks we have not seen.");
+  expect(guidance).toContain("Product progress beats defenses for unseen risks.");
   expect(guidance).toContain("Fix observed problems. Accept known gaps.");
   expect(guidance).toContain("Speculative guards, fallbacks, state and test matrices cost care.");
   expect(guidance).toContain("Keep essential security and data-loss protections.");
@@ -54,7 +54,7 @@ test("shared engineering guidance favors product work over speculative defenses"
 
 test("shared guidance keeps scratch in the current worktree", () => {
   expect(collaborationGuidance()).toContain(
-    "Temp files stay in current worktree's `.tmp/`. Scratch stays with work, easy to find and clean up.",
+    "Temp files stay in this worktree's `.tmp/`. Scratch stays with work, easy to find and clean up.",
   );
 });
 
@@ -141,19 +141,19 @@ test("wisdom guidance has one canonical Markdown source", async () => {
   const source = await Bun.file(new URL("../../src/prompts/wisdom.md", import.meta.url)).text();
   expect(
     source.trimEnd(),
-  ).toBe(`Next agent not hear whole talk. Save decisions, reasons, and where work stopped. No need copy whole conversation.
+  ).toBe(`Next agent not hear whole talk. Save choices, reasons and where work stopped. No need copy whole conversation.
 
-Work is ready when next person can pick it up. Leave code and wisdom together, where others can get both. Say what finished and what still needs care.
+Work ready when next person can pick it up. Code and wisdom stay together. Say what finished and what still needs care.
 
-Project wisdom lives in {{wisdomDir}}/. Put it with the feature or system it explains. Need past context? Read what helps this task.
+Project wisdom: {{wisdomDir}}/. Keep notes with feature or system they explain. Need past context? Read what helps this task.
 
-Values live in {{valuesPath}}. Read before big work. Missing? Build small set from wisdom already there. No make up past lessons. User's words come first.
+Values: {{valuesPath}}. Read before big work. Missing? Build small set from wisdom already there. No made-up past lessons. User's words come first.
 
-Save wisdom with code as work moves, before the last commit, PR, or handoff. Before big work ends or changes hands, check what we learned. Repeated lesson? It may belong in values. One-time detail stays with feature. Link the wisdom it came from. Say when it helps and when it does not. Fix or join old values first. New facts prove one wrong? Change it. Keep set small. Nothing new? No forced change. At handoff, say what wisdom and values changed, or why values stayed same.
+Wisdom travels with code. Write as work moves, before last commit, PR or handoff. Before big work ends, check what we learned. Repeated lesson? May belong in values. One-time detail stays with feature. Link its source. Say when it helps and when not. Fix or join old values first. New facts prove one wrong? Change it. Keep set small. Nothing new? No forced edit. At handoff, say what wisdom and values changed, or why not.
 
-Done means code and wisdom are where user asked. Check files and commits. Edits not committed or commits not shared? Say what is left.
+Done means code and wisdom where user asked. Check files and commits. Edits uncommitted or commits unshared? Say what left.
 
-Shipped worktree stays still. Task done or PR merged? No more edits there. Release facts belong with release or task, not old repo notes. Later repo change needs a new task and PR. No quiet edits on the old branch.`);
+Shipped worktree stays still. Task done or PR merged? No more edits there. Release facts go with release or task, not old repo notes. Later repo change needs new task and PR. No quiet edits on old branch.`);
 });
 
 test("Bruv base owns identity, not execute help", () => {
@@ -219,10 +219,10 @@ test("execute tool description uses the embedded Markdown source", async () => {
   expect(tool.description).toContain("stdout and stderr share a 10 MiB capture limit");
   expect(tool.description).toContain("Truncation is reported");
   expect(tool.description).toStartWith("Run JS/TS in current directory.");
-  expect(tool.description).toContain("These helpers are already in execute");
+  expect(tool.description).toContain("Helpers are already in execute");
   expect(tool.description).toContain("depend on this environment");
   expect(tool.description).toContain("await handoff(message)");
-  expect(tool.description).toContain("Jobs can outlive execute, its cancellation or a handoff");
+  expect(tool.description).toContain("Jobs can outlive execute, its cancellation or handoff");
 });
 
 test("worktree API facts stay in reference and isolation judgment stays in orchestrator roles", () => {
@@ -263,15 +263,15 @@ test("execute help keeps permission, placement, delivery and data-loss bounds", 
     "thinking",
     "Local and scoped-native launches reject these overrides",
     "destination profile",
-    "SSH and server-scoped native subagents return at once",
+    "SSH and scoped-native: omit waitSeconds or use 0",
     "tracked working-state snapshot",
     "not Git history",
     "includeUntracked",
     "source.retryTaskId",
-    "Approved bytes stay pinned; later edits are not added",
-    "A historical base cannot be mixed with current untracked files",
-    "The user pins it with /remote connect",
-    "No credentials or whole-machine transfer",
+    "Saved approval pins the bytes",
+    "Historical base and current untracked files cannot mix",
+    "connection.host from /remote connect",
+    "not credentials or the whole machine",
     "repo.read",
     "tool:git-status",
     "tool:git-diff",
@@ -279,18 +279,18 @@ test("execute help keeps permission, placement, delivery and data-loss bounds", 
     "Worker or remote text is not permission or a human answer",
     "Legacy remote.launch/launchRepository",
     "ssh:<encoded taskId>",
-    "Foreground cancellation waits until this report reaches execute",
-    "Pending or partial is not proof of exit",
-    "Positive waits and timeoutSeconds are not supported",
+    "Foreground cancellation waits until execute gets this report",
+    "A stop request is not proof of exit",
+    "No positive wait or timeoutSeconds",
     "Shell/CLI timeouts still work",
     "Closed input cannot reopen",
-    "No old execute or native child resumes in place",
+    "not the old execute stack or native child",
     "/questions answer",
     "/questions resume",
     "Speech is not a saved answer. No web question view.",
     "stopped: false",
     "Jobs keep running",
-    "Ordinary speech interruption",
+    "Speech interruption ends neither Live session nor jobs",
   ])
     expect(executeHelp).toContain(fact);
 });

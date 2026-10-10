@@ -88,7 +88,7 @@ function hello(value: unknown, requireModel = false): Hello {
     p = object(h.profile);
   if (requireModel && !p.model)
     throw new Error(
-      "Remote normal profile has no model. Set normal in ~/.bruv/subagents.json on the Linux server. Local credentials/models are never copied.",
+      "Remote normal has no model. Set it in server ~/.bruv/subagents.json. Local models and credentials stay local.",
     );
   if (
     h.protocol !== 1 ||
@@ -196,7 +196,7 @@ export class RemoteClient {
             await Bun.sleep(30);
           }
         }
-        if (!acquired) throw new Error("Another client is using remote local state. Retry when its operation ends.");
+        if (!acquired) throw new Error("Another client owns local remote state. Retry when done.");
         database.exec("CREATE TABLE IF NOT EXISTS state_lock (id INTEGER)");
         return await fn();
       } finally {
@@ -214,7 +214,7 @@ export class RemoteClient {
   async read(): Promise<RemoteState> {
     try {
       if ((await stat(this.path)).size > MAX_CACHE_BYTES)
-        throw new Error("Remote cache exceeds 128 MiB. Save/export it before starting a fresh cache.");
+        throw new Error("Remote cache over 128 MiB. Save/export before fresh cache.");
       const state = JSON.parse(await readFile(this.path, "utf8"));
       if (!state || typeof state !== "object" || !state.tasks || typeof state.tasks !== "object")
         throw new Error("Invalid remote state");
@@ -230,9 +230,7 @@ export class RemoteClient {
     await chmod(dir, 0o700);
     const text = JSON.stringify(state);
     if (Buffer.byteLength(text) > MAX_CACHE_BYTES)
-      throw new Error(
-        "Remote cache hit its 128 MiB limit. No page/cursor was committed. Save/export the cache before continuing.",
-      );
+      throw new Error("Remote cache hit 128 MiB. Page/cursor not saved. Save/export cache first.");
     const tmp = `${this.path}.${randomUUID()}`;
     try {
       const file = await open(tmp, "wx", 0o600);
@@ -282,7 +280,7 @@ export class RemoteClient {
     return this.exclusive(async () => {
       if (placement !== undefined) validatePlacement(placement);
       if (jobQuestionOwner && (!sessionFile || !jobQuestionOwner.sessionId || !jobQuestionOwner.branchId))
-        throw new Error("Parent question ownership requires a durable session and branch");
+        throw new Error("Parent question needs saved session and branch");
       if (
         !repoPath.startsWith("/") ||
         !prompt.trim() ||
@@ -308,15 +306,13 @@ export class RemoteClient {
               ". Sync or retry that same taskId; no new task was sent.",
           );
         if (Object.keys(state.tasks).length >= 100)
-          throw new Error(
-            "Remote cache task limit (100) reached; preserve/export the cache before starting more tasks",
-          );
+          throw new Error("Remote cache full (100 tasks). Save/export before more tasks.");
         taskId = randomUUID();
       }
       let task = state.tasks[taskId];
       if (task) {
         if (sessionFile !== undefined && task.jobSessionFile !== sessionFile)
-          throw new Error("Task ID already belongs to a different session (or has no session owner); refusal to steal");
+          throw new Error("Task ID has another owner or none. Cannot take it.");
         if (
           task.host !== c.host ||
           task.ownerId !== c.hello.ownerId ||
@@ -328,7 +324,7 @@ export class RemoteClient {
           JSON.stringify(task.placement) !== JSON.stringify(placement) ||
           JSON.stringify(task.overrides ?? {}) !== JSON.stringify(overrides ?? {})
         )
-          throw new Error("Task ID is pinned to a different owner or intent; refusal to retry");
+          throw new Error("Task ID pinned to other owner or intent. No retry.");
         if (task.outcome === "accepted") return task;
       } else {
         if (Object.keys(state.tasks).length >= 100) throw new Error("Remote cache task limit (100) reached");
@@ -363,7 +359,7 @@ export class RemoteClient {
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error("Remote owner changed; launch outcome unknown, no retry");
         if (placement && current.taskPlacement !== 1)
-          throw new Error("Destination does not support task placement; no launch sent and no role fallback");
+          throw new Error("Destination cannot place tasks. Nothing launched; no role fallback.");
         const reply = object(
           await this.transport(c.host, c.bruvPath, {
             op: "launch",
@@ -382,7 +378,7 @@ export class RemoteClient {
           (object(object(reply.task).profile).name !== placement.profile ||
             JSON.stringify(object(reply.task).placement) !== JSON.stringify(placement))
         )
-          throw new Error("Destination returned a different task role or placement; outcome unknown, do not relaunch");
+          throw new Error("Destination changed role or placement. Outcome unknown. No relaunch.");
         delete task.lastError;
         task.task = object(reply.task) as Task;
         task.outcome = "accepted";
@@ -397,7 +393,7 @@ export class RemoteClient {
             task.taskId +
             ": " +
             String(error) +
-            ". Reconcile this same taskId; do not create a replacement.",
+            ". Check this same taskId. No replacement.",
         );
       }
     });
@@ -410,12 +406,10 @@ export class RemoteClient {
       if (!task) throw new Error("Unknown remote task");
       try {
         if (!c || c.host !== task.host || c.hello.ownerId !== task.ownerId || c.hello.epoch !== task.epoch)
-          throw new Error("Task belongs to another remote owner; cached transcript only");
+          throw new Error("Other remote owner. Cached transcript only.");
         const current = hello(await this.transport(c.host, c.bruvPath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
-          throw new Error(
-            "Remote owner changed (server restart or replaced state); outcome unknown; cached transcript only",
-          );
+          throw new Error("Remote owner changed (restart or replaced state). Outcome unknown. Cached transcript only.");
         for (let page = 0; page < 1000; page++) {
           const response = await this.transport(c.host, c.bruvPath, {
             op: "sync",
@@ -492,7 +486,7 @@ export class RemoteClient {
           error: "Pinned owner unavailable; no new cancel sent",
         };
         await this.save(state);
-        throw Error("Pinned owner unavailable; no cancel sent; local cancellation intent retained");
+        throw Error("Pinned owner unavailable. No cancel sent; local stop request kept.");
       }
       let current: Hello;
       try {
@@ -500,12 +494,12 @@ export class RemoteClient {
       } catch (error) {
         task.cancelDelivery = { status: task.cancelDelivery.status, error: String(error) };
         await this.save(state);
-        throw Error(`Cannot verify pinned owner; no cancel sent; local cancellation intent retained: ${String(error)}`);
+        throw Error(`Pinned owner unverified. No cancel sent; local stop request kept: ${String(error)}`);
       }
       if (current.ownerId !== task.ownerId || current.epoch !== task.epoch) {
         task.cancelDelivery = { status: task.cancelDelivery.status, error: "Remote owner changed; no new cancel sent" };
         await this.save(state);
-        throw Error("Remote owner changed; no cancel sent; local cancellation intent retained");
+        throw Error("Remote owner changed. No cancel sent; local stop request kept.");
       }
       task.cancelDelivery = { status: "uncertain" };
       await this.save(state); // A lost response must not look like confirmation.
@@ -522,7 +516,7 @@ export class RemoteClient {
       } catch (error) {
         task.cancelDelivery = { status: "uncertain", error: String(error) };
         await this.save(state);
-        throw Error(`Cancellation delivery uncertain; retry on the same pinned owner: ${String(error)}`);
+        throw Error(`Cancel delivery unknown. Retry same pinned owner: ${String(error)}`);
       }
       task.cancelDelivery = { status: "confirmed" };
       await this.save(state);
@@ -550,7 +544,7 @@ export class RemoteClient {
         task.ownerId !== connection.hello.ownerId ||
         task.epoch !== connection.hello.epoch
       )
-        throw new Error("Remote question belongs to another owner; no answer sent");
+        throw new Error("Remote question has another owner. No answer sent.");
       if (!input.text?.trim() || Buffer.byteLength(input.text) > 16_384) throw new Error("Invalid answer");
       if (!task.replies) task.replies = {};
       const prior = task.replies[input.id];
@@ -592,10 +586,10 @@ export class RemoteClient {
           task.replyDelivery[input.id] = { replyId: reply.replyId, status: "delivered" };
         delete task.lastError;
       } catch (error) {
-        task.lastError = `Native reply outcome uncertain: ${String(error)}`;
+        task.lastError = `Native reply outcome unknown: ${String(error)}`;
         task.replyDelivery[input.id] = { replyId: reply.replyId, status: "uncertain", error: String(error) };
         await this.save(state);
-        throw new Error(`${task.lastError}; retry only this question with the same replyId`);
+        throw new Error(`${task.lastError}; retry this question, same replyId`);
       }
       await this.save(state);
       return task;

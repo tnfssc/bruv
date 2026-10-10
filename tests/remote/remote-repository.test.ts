@@ -117,7 +117,7 @@ test("remote untracked bytes are exported for review, not applied locally", () =
     expect(patch).toContain("+bytes");
     expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toEqual({
       status: "review",
-      reason: "remote untracked files are preserved in the review patch; manual review required",
+      reason: "Remote untracked files kept in review patch. Needs manual review.",
       artifact: result.patch,
     });
     expect(readFileSync(join(root, "file"), "utf8")).toBe("base\n");
@@ -157,7 +157,7 @@ test("untracked capture requires exact approval and leaves the selected source f
   try {
     writeFileSync(join(root, "approved"), "selected");
     expect(() => captureRepository(root, join(dir, "refused"), ["other-not-approved"])).toThrow(
-      "approval must name exact regular paths",
+      "user approval for exact regular file paths",
     );
     const manifest = captureRepository(root, join(dir, "artifacts"), ["approved"]);
     const checkout = join(dir, "artifacts", "snapshot-checkout");
@@ -181,7 +181,7 @@ test("hidden tracked index flags block return rather than trusting an unreadable
     git(root, "update-index", "--assume-unchanged", "file");
     expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toEqual({
       status: "review",
-      reason: "local repository state unsupported or unreadable; inspect before return",
+      reason: "Local repo state unsupported or unreadable. Inspect before return.",
       artifact: result.patch,
     });
     expect(readFileSync(join(root, "file"), "utf8")).toBe("base\n");
@@ -215,7 +215,7 @@ test("explicit baseRef pins that commit, not current edits; return cannot overwr
     const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "patch"));
     expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toMatchObject({
       status: "review",
-      reason: expect.stringContaining("source commit"),
+      reason: expect.stringContaining("Source commit"),
     });
     expect(readFileSync(join(root, "file"), "utf8")).toBe("current edits\n");
     writeFileSync(join(root, "untracked"), "private");

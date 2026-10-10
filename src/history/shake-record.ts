@@ -50,7 +50,7 @@ export function isShakeRecord(value: unknown): value is ShakeRecord {
 export class InvalidShakeRecordError extends Error {
   constructor() {
     super(
-      "Latest manual-shake checkpoint is malformed or uses an unsupported version. Unprojected context stays hidden. Branch before it or repair/remove the invalid JSONL entry.",
+      "Latest manual-shake checkpoint damaged or unsupported. Hidden context stays hidden. Branch before it, or repair/remove bad JSONL entry.",
     );
     this.name = "InvalidShakeRecordError";
   }

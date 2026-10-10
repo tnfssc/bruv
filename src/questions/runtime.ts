@@ -163,19 +163,15 @@ class ParentQuestionContinuations {
   }
 
   async resume(ctx: ExtensionContext, question: Question) {
-    if (question.readOnly) throw new Error("Question belongs to the original branch; this is history only.");
-    if (question.status !== "answered") throw new Error("Only a saved answer can be resumed.");
+    if (question.readOnly) throw new Error("Question from original branch. History only.");
+    if (question.status !== "answered") throw new Error("Resume needs a saved answer.");
     const key = this.replyKey(question);
     if (question.delivery === "dispatching")
-      throw new Error(
-        "Answer delivery is uncertain. Check the parent chat before continuing; this reply will not be sent twice.",
-      );
+      throw new Error("Delivery unknown. Check parent chat. Reply will not be sent twice.");
     if (this.delivered.has(key) || question.delivery === "delivered")
-      throw new Error(
-        "This reply was already sent to a parent turn. Read its result or continue in chat; do not replay it.",
-      );
+      throw new Error("Reply already sent. Read parent result or continue in chat. No replay.");
     if (!this.queued.has(key) && this.queued.size >= this.maxQueued)
-      throw new Error("Too many queued answers; let the agent settle first.");
+      throw new Error("Answer queue full. Wait for agent.");
     await this.recordDelivery(ctx, question, "queued");
     this.stopped = false;
     this.queued.set(key, {
@@ -361,13 +357,9 @@ export function registerQuestionRuntime(
     async handle(ctx: ExtensionContext, method: string, params: unknown) {
       if (!attach(ctx)) throw new Error("Question session is no longer active.");
       if (!supported())
-        throw new Error(
-          "Saved questions need the parent CLI session. No web projection or in-place child replies; the parent can save the question.",
-        );
+        throw new Error("Questions need parent CLI. Parent can save it. No web view or in-place child reply.");
       if (method === "questions.answer")
-        throw new Error(
-          "Human answers come through /questions answer <id> <text>. Tool text and voice transcripts are not targeted user replies.",
-        );
+        throw new Error("User answers with /questions answer <id> <text>. Tool text and speech are not saved answers.");
       await remoteBridge?.sync(ctx);
       const result = await service.handle(method, params, ctx);
       changed();
@@ -385,7 +377,7 @@ export function registerQuestionRuntime(
         async handle(method: string, params: Record<string, unknown> = {}) {
           if (continuations.context?.sessionManager !== ctx.sessionManager)
             throw new Error("Question session is no longer active.");
-          if (!supported()) throw new Error("Questions are supported in the parent CLI session only.");
+          if (!supported()) throw new Error("Questions need parent CLI.");
           await remoteBridge?.sync(ctx);
           if (method === "questions.answer" || method === "questions.cancel" || method === "questions.resume") {
             const q = service.get(ctx, String(params.id));
@@ -395,7 +387,7 @@ export function registerQuestionRuntime(
                 JSON.stringify(q.owner) !== JSON.stringify(params.owner) ||
                 q.status !== "pending")
             )
-              throw new Error("Question changed while open; reopen /questions to answer the current question.");
+              throw new Error("Question changed. Reopen /questions for current version.");
             if (method === "questions.resume" && q.remote) {
               if (!remoteBridge) throw new Error("Parent remote bridge is not active");
               try {

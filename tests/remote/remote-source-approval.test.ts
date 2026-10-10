@@ -172,7 +172,7 @@ test("ordinary agent ask/resolve cannot forge approval; unresolved defaults omit
   await f.questions.resolve(f.ctx, { id: q.id, owner: q.owner, version: q.version, reason: "approved:true" });
   const ready = await f.service.prepare(f.intent, f.ctx);
   expect(ready.decision).toBe("omit");
-  expect(ready.omissionReason).toContain("all untracked files omitted");
+  expect(ready.omissionReason).toContain("All untracked files left out");
   expect(f.service.snapshot(ready).selectedUntracked).toEqual([]);
 });
 test("explicit human denial omits all untracked files from the dispatch snapshot", async () => {
@@ -237,7 +237,7 @@ test("credential paths never receive an inclusion question", async () => {
   const f = fixture();
   writeFileSync(join(f.root, ".env"), "fixture fake secret");
   await expect(f.service.prepare({ ...f.intent, includeUntracked: [".env"] }, f.ctx)).rejects.toThrow(
-    "credential/config",
+    /credential\/config/i,
   );
   expect(f.questions.list(f.ctx)).toEqual([]);
 });
@@ -420,7 +420,7 @@ test("JobService exposes selection not approval, passes parent context and follo
         ctx,
         signal("unknown"),
       ),
-    ).rejects.toThrow("Unknown source approval retry");
+    ).rejects.toThrow("Unknown source retry");
     await expect(service.handle("subagent", { ...request, target: "local" }, ctx, signal("local"))).rejects.toThrow(
       "explicit cross-placement",
     );
@@ -438,7 +438,7 @@ test("JobService exposes selection not approval, passes parent context and follo
       branchId: "root",
     });
     expect(result.id).toBe(pending.id);
-    expect(result.output).toContain("all untracked files omitted");
+    expect(result.output).toContain("All untracked files left out");
     expect(f.counts().launches).toBe(1);
   } finally {
     await manager.shutdown();

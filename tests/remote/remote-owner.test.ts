@@ -104,7 +104,7 @@ test.skipIf(process.platform !== "linux")(
         cursor: 0,
       });
       expect(sync).toMatchObject({
-        task: { state: "unknown", error: "Owner exited without durable completion; task will not be relaunched" },
+        task: { state: "unknown", error: "Owner exited with no saved completion. No relaunch." },
       });
       expect(await handleRemoteRequest(request)).toMatchObject({ task: { state: "unknown" } });
       const override = { ...request, taskId: "explicit_profile", model: "example/override", thinking: "high" };
@@ -300,7 +300,7 @@ test.skipIf(process.platform !== "linux")(
           "aborted",
         ],
         ["rpc_oversize", "x".repeat(600_000), "RPC line limit exceeded"],
-        ["model_mismatch", '{"type":"agent_settled"}\n', "different or unavailable model"],
+        ["model_mismatch", '{"type":"agent_settled"}\n', "model/thinking changed or unavailable"],
       ] as const) {
         const req = { ...request, taskId: id, prompt: id };
         await handleRemoteRequest(req, "/bin/true");

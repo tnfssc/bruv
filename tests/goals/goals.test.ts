@@ -163,7 +163,9 @@ describe("goal durable state", () => {
   test("waiting accepts only currently owned running jobs", () => {
     const store = new GoalStore(() => {});
     store.set(input);
-    expect(() => store.update({ status: "waiting", pendingJobIds: ["foreign"] }, new Set(["mine"]))).toThrow("owned");
+    expect(() => store.update({ status: "waiting", pendingJobIds: ["foreign"] }, new Set(["mine"]))).toThrow(
+      "your running jobs",
+    );
     expect(store.update({ status: "waiting", pendingJobIds: ["mine"] }, new Set(["mine"]))).toMatchObject({
       status: "waiting",
       pendingJobIds: ["mine"],
@@ -339,9 +341,9 @@ test("model-facing updates reject runtime-owned waiting bookkeeping", () => {
   const h = harness();
   h.runtime.handle("goal.set", input);
 
-  expect(() => h.runtime.handle("goal.update", { status: "waiting" })).toThrow("goal.update cannot set waiting");
+  expect(() => h.runtime.handle("goal.update", { status: "waiting" })).toThrow("Runtime owns waiting status");
   expect(() => h.runtime.handle("goal.update", { status: "active", pendingJobIds: ["job_1"] })).toThrow(
-    "goal.update cannot set pendingJobIds",
+    "Runtime owns pendingJobIds",
   );
   expect(h.runtime.get()?.status).toBe("active");
 });
@@ -368,7 +370,7 @@ test("helper-created goal bounds repeated direct handoff completion cycles", () 
   expect(h.sent).toHaveLength(0);
   expect(h.runtime.get()).toMatchObject({
     status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
+    pauseReason: expect.stringContaining("Auto turns stalled"),
   });
 });
 
@@ -391,7 +393,7 @@ test("failed-job waiting and completion turns retain the no-progress bound", () 
   }
   expect(h.runtime.get()).toMatchObject({
     status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
+    pauseReason: expect.stringContaining("Auto turns stalled"),
   });
 });
 
@@ -427,7 +429,7 @@ test("same-status helper revisions cannot evade the automatic-turn bound", () =>
   }
   expect(h.runtime.get()).toMatchObject({
     status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
+    pauseReason: expect.stringContaining("Auto turns stalled"),
   });
 });
 
@@ -462,7 +464,7 @@ test("goal guidance is conditional and accompanies every persisted status", () =
     expect(result.messages).toHaveLength(2);
     expect(result.messages[1]).toMatchObject({ role: "custom", customType: "bruv-goal-state", display: false });
     expect(result.messages[1].content).toContain("Goal guidance:\n- Goal API:");
-    expect(result.messages[1].content).toContain("Persistent goal state (authoritative)");
+    expect(result.messages[1].content).toContain("Saved goal state (source of truth)");
     expect(result.messages[1].content).toContain(`Status: ${status}`);
   }
 });
@@ -475,7 +477,7 @@ test("waiting job completion reactivates at the next turn boundary", () => {
 
   expect(h.runtime.get()?.status).toBe("active");
   const result = h.assembleContext([]);
-  expect(result.messages.at(-1).content).toContain("Persistent goal state");
+  expect(result.messages.at(-1).content).toContain("Saved goal state");
   expect(result.messages.at(-1).content).toContain("Status: active");
 });
 
@@ -532,7 +534,7 @@ test("resumed waiting work that is no longer owned pauses visibly", () => {
   resumed.assembleContext([]);
   expect(resumed.runtime.get()).toMatchObject({
     status: "paused",
-    pauseReason: expect.stringContaining("unavailable"),
+    pauseReason: expect.stringContaining("jobs not here"),
   });
 });
 
@@ -668,7 +670,7 @@ test("ordinary leaf advancement preserves reminder authority and automatic-run a
   }
   expect(h.runtime.get()).toMatchObject({
     status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
+    pauseReason: expect.stringContaining("Auto turns stalled"),
   });
 });
 

@@ -412,10 +412,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
   sendContext(text: string, options?: { triggerResponse?: boolean }): void {
     if (this.stateValue !== "ready" || !text) return;
     if (Buffer.byteLength(text) > 1_048_576) {
-      this.fail(
-        "invalid_input",
-        "Main context exceeds the 1 MiB voice wire budget; resume in text to inspect the full branch",
-      );
+      this.fail("invalid_input", "Context over 1 MiB voice limit. Text mode has full branch.");
       return;
     }
     this.send({
