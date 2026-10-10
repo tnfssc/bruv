@@ -9,9 +9,10 @@ const parameters = Type.Object({
   note: Type.Optional(Type.String()),
 });
 
-export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check?: Checker) {
+export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check?: Checker, hasGoal = () => false) {
   let mode: NonNullable<Config["keepGoing"]> = "auto";
   let active = false;
+  let goalRun = false;
   let finished = false;
   let continued = false;
   let empty = 0;
@@ -22,6 +23,7 @@ export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check
   };
   const select = (ctx: ExtensionContext) => {
     active =
+      hasGoal() ||
       mode === "on" ||
       (mode === "auto" && (ctx.model?.api === "openai-codex-responses" || ctx.model?.api === "openai-responses"));
     // Model-only tools stay declared when codemode hides its callable tools.
@@ -51,9 +53,16 @@ export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check
   };
   pi.on("session_start", restore);
   pi.on("session_tree", restore);
+  pi.on("before_agent_start", (_event, ctx) => {
+    goalRun = hasGoal();
+    select(ctx);
+  });
   pi.on("model_select", (_event, ctx) => select(ctx));
-  pi.on("message_start", (event) => {
-    if (event.message.role === "user") reset();
+  pi.on("message_start", (event, ctx) => {
+    if (event.message.role !== "user") return;
+    reset();
+    goalRun ||= hasGoal();
+    select(ctx);
   });
   pi.on("tool_call", () => {
     continued = false;
@@ -74,6 +83,7 @@ export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check
     },
   });
   pi.on("agent_before_settle", (event) => {
+    if (goalRun && !hasGoal()) return {};
     if (!active || event.outcome === "aborted" || event.continue || event.entries.length || finished) return {};
     if (continued) empty++;
     if (empty >= 2) return {};

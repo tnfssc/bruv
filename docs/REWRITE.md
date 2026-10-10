@@ -374,14 +374,14 @@ so scripts get objects, not text.
 
 | Tool | Exposure | Input | Output |
 |---|---|---|---|
-| `finish` | model-only while keep-going is active; hidden otherwise | `{ status: "done" \| "need_you" \| "blocked", note?: string }` | Same fields; `terminate: true` on the tool result |
+| `finish` | model-only while keep-going or a goal is active; hidden otherwise | `{ status: "done" \| "need_you" \| "blocked", note?: string }` | Same fields; gaps return a note to keep working, accepted finishes return `terminate: true` |
 | `job_start` | codemode | `{ command: string, cwd?: string, title?: string, waitSeconds?: number = 3, timeoutSeconds?: number, detach?: boolean }` | `{ id, status: "running" \| "done" \| "failed" \| "stopped", exitCode?, output, outputPath }` |
 | `agent` | codemode | `{ prompt?: string, prompts?: string[], profile?: "fast" \| "normal" = "normal", model?: string, thinking?: string, worktree?: boolean \| { branch?: string, baseRef?: string }, title?: string }` | `{ ids: string[] }` |
 | `wait` | codemode | `{ ids?: string[], all?: boolean = false, timeoutSeconds?: number = 600 }` | `{ done: Result[], running: Summary[], userMessagePending: boolean }` |
 | `jobs` | codemode | `{}` | `{ items: Summary[] }` |
 | `job_stop` | codemode | `{ id: string }` | `{ id, status }` |
 | `ask` | deferred, namespace `bruv_questions` | `{ question: string, choices?: string[] }` | `{ id }` |
-| `goal_update` | codemode | `{ status: "active" \| "blocked" \| "completed", progress?: string, evidence?: string, blocker?: string }` | `{ goal }` |
+| `goal_update` | codemode | `{ status: "active" \| "blocked", progress?: string, blocker?: string }` | `{ goal }` |
 
 `Summary`: `{ id, kind: "job" \| "agent", title, status, startedAt, elapsedSeconds, outputPath, worktree? }`.
 `Result`: `Summary` plus `exitCode?`, `output` (last 4,000 chars), and for agents `answer` (final
@@ -443,23 +443,30 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - `/goal <objective>` sets a goal. Optional flags: `--criteria "a; b"`, `--budget 2m` (tokens, accepts
   `k`/`m`). `/goal` shows status. `/goal pause`, `/goal resume`, `/goal clear`.
 - State: `{ objective, criteria[], status: "active" | "paused" | "blocked" | "completed" |
-  "budget_exceeded", tokensUsed, tokenBudget?, progress[], evidence?, blocker? }`. Save with
+  "budget_exceeded", tokensUsed, tokenBudget?, progress[], evidence?: string[], gaps?: string[], blocker? }`. Save with
   `pi.appendEntry("bruv-goal", state)` when setting or clearing a goal, when its status changes,
   on `goal_update`, and once on `agent_settled`. Restore from the branch on `session_start` and
   `session_tree`.
 - Count token use from assistant message usage while the goal is active. Update it in memory on
   `message_end`, refresh the status display, and save immediately only if the budget is reached.
-- Setting or resuming an active goal sends `goal.md` plus the objective, criteria, and budget as
-  plain lines through `pi.sendUserMessage`. This starts work directly from the command. If a run
-  is already active, the message steers it. Resuming a spent budget does not start work.
+- Setting or resuming an active goal queues `goal.md` plus objective, criteria and budget as a
+  hidden custom message, then sends the user's `/goal` command through `pi.sendUserMessage`.
+  This starts work directly or steers an active run. Keeping guidance separate preserves the
+  user's text for the checker. Resuming a spent budget does not start work.
 - While the goal is active, its `agent_before_settle` handler continues after the earlier handlers
   have no entries or continuation to add. It sends a hidden `bruv-goal` custom message containing
   `goal-continue.md` and one status line: objective, tokens used / budget, and last progress.
 - Stop continuing when: status is not active; budget reached (set `budget_exceeded`, tell the user);
   the model reports `blocked` with the same blocker three continuations in a row; or the run was
   aborted (pause the goal, tell the user `/goal resume` continues).
-- The model calls `goal_update` to record progress, block, or complete. `completed` requires
-  `evidence`.
+- `goal_update` records progress or a blocker; it cannot complete the goal. `finish(done)` runs
+  the fresh checker with the objective and criteria even without file changes. A pass completes
+  the goal and saves the checked list as evidence. Gaps stay on the active goal as next steps.
+  If checking is off, fails, or reaches the two-round limit, accepted finish ends the run but
+  leaves the goal active. A later user message can resume work and get a fresh check.
+- Active goals enable finish for every model. When a goal run stops at its budget or blocker
+  limit, keep-going must not restart it. Abort during a tool can reach `agent_settled` without
+  an aborted settle boundary, so that event also pauses an active goal.
 - Goal instructions and changing state stay in conversation messages, preserving the system
   prompt and its cache. `/goal` shows plain lines for objective, status and token use, plus criteria,
   last progress, and blocker when present.
@@ -469,12 +476,13 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - `keepGoing` in `bruv.json` is `"auto"` by default, or `"on"` or `"off"`. Auto enables it for
   `openai-codex-responses` and `openai-responses`. `/keep-going` shows it; an argument saves it
   globally while preserving the other settings. Children read the same file.
-- Recheck on `session_start`, `session_tree` and `model_select`. Register `finish` with
-  `exposure: "model-only"` when active, and `"hidden"` otherwise. Pi cannot unregister tools.
+- Recheck on session start/tree, model changes, run start and user messages. Register `finish` with
+  `exposure: "model-only"` when keep-going or a goal is active, and `"hidden"` otherwise. Pi cannot unregister tools.
   Codemode's `prepareLoadout` hides callable direct tools, so finish remains declared even in
   `codemode.mode: "only"`. It is called directly, outside scripts.
 - `finish({ status: "done" | "need_you" | "blocked", note? })` records that the model finished
-  since the latest user message and returns `terminate: true`. Write the user reply in the same
+  since the latest user message. For done, it first runs the fresh check when needed; only an accepted
+  finish returns `terminate: true`. Write the user reply in the same
   message. Call finish alone after other tools return: every tool in a batch must agree to stop.
 - Register `agent_before_settle` handlers in this order: job reports and reminders, goal,
   keep-going. Each yields if `event.continue` is true or `event.entries` is nonempty.
@@ -492,14 +500,16 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 
 ### 3.8.2 Fresh check (`src/check.ts`)
 
-- With keep-going active, `finish(done)` checks work if HEAD or tracked/untracked content changed
+- With keep-going or a goal active, `finish(done)` checks work if a goal is active or HEAD or tracked/untracked content changed
   since the latest user message. No Git repo means no change detection. Scratch under `.tmp/`
-  is excluded. Snapshots use a separate index, preserving staging and pre-existing changes.
+  is excluded. Capture raw user text and the snapshot at the input event, before prompt expansion.
+  Snapshots use a separate index, preserving staging and pre-existing changes. New input during
+  a check stops that child and discards its result so the updated request is checked.
 - `checkWork` defaults to true in bruv.json. `/check on|off` saves the setting.
 - Finish waits for one child launched through `agents.ts`, using the parent model and thinking.
   Its board title is `check · <first request line>`. Abort stops the child.
 - The child gets checker.md as its system prompt and a JSON payload: verbatim user messages
-  for this run, final reply text, and diff stat plus patch since the snapshot, capped at 40,000
+  for this run, active goal objective and criteria when present, final reply text, and diff stat plus patch since the snapshot, capped at 40,000
   characters. It starts a fresh session without extensions, skills, context files, prompt
   templates or MCP servers. Built-in read, bash, grep, find and ls tools let it try the result.
 - Parse its final fenced JSON verdict and checked/gaps lists. Pass accepts finish. Gaps return

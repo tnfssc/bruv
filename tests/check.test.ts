@@ -7,6 +7,7 @@ import { registerAgents } from "../src/agents";
 import { type Checker, registerCheck } from "../src/check";
 import { readConfig, saveConfig } from "../src/config";
 import { registerFinish } from "../src/finish";
+import { type Goal, registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
 import { type Receipt, registerReceipt } from "../src/receipt";
 import { registerSettle } from "../src/settle";
@@ -43,8 +44,9 @@ async function setup(repo = true) {
       (pi) => {
         registerSettle(pi, jobs, () => hasFinished());
         registerJobs(pi, jobs);
-        check = registerCheck(pi, jobs, registerAgents(pi, jobs), dir);
-        const hasFinished = registerFinish(pi, dir, check);
+        const goal = registerGoal(pi, () => hasFinished());
+        check = registerCheck(pi, jobs, registerAgents(pi, jobs), dir, goal);
+        const hasFinished = registerFinish(pi, dir, check, () => !!goal.active());
         registerTurn(pi, jobs, () => undefined, registerReceipt(pi, check.report));
       },
     ],
@@ -79,6 +81,25 @@ async function setup(repo = true) {
         .flatMap((entry) =>
           entry.type === "custom" && entry.customType === "bruv-receipt" ? [entry.data as Receipt] : [],
         ),
+    goal: () => {
+      const entry = app.session.sessionManager
+        .getBranch()
+        .reverse()
+        .find((e) => e.type === "custom" && e.customType === "bruv-goal");
+      return entry?.type === "custom" ? (entry.data as Goal) : undefined;
+    },
+    async command(command: string) {
+      const settled = Promise.withResolvers<void>();
+      const unsubscribe = app.session.subscribe((event) => {
+        if (event.type === "agent_settled") settled.resolve();
+      });
+      try {
+        await app.session.prompt(command);
+        await settled.promise;
+      } finally {
+        unsubscribe();
+      }
+    },
     configDir: dir,
   };
 }
@@ -306,6 +327,159 @@ test("accepted checks replace the turn entry without reaching model context", as
         .getBranch()
         .filter((entry) => entry.type === "custom" && entry.customType === "bruv-turn"),
     ).toHaveLength(1);
+  } finally {
+    await app.close();
+  }
+});
+
+test("a goal with no file changes enables finish and completes only on a passing check", async () => {
+  const app = await setup();
+  try {
+    await app.session.prompt("/keep-going off");
+    app.faux.setResponses([finish()]);
+    await app.command('/goal objective-781 --criteria "case-a; case-b"');
+    expect(app.children()).toHaveLength(1);
+    expect(JSON.parse(app.args().at(-1) as string).messages).toEqual([
+      '/goal objective-781 --criteria "case-a; case-b"',
+    ]);
+    expect(app.goal()).toMatchObject({ status: "completed", evidence: ["used-781"] });
+    expect(JSON.parse(app.args().at(-1) as string).goal).toEqual({
+      objective: "objective-781",
+      criteria: ["case-a", "case-b"],
+    });
+    expect(app.receipts()).toHaveLength(1);
+  } finally {
+    await app.close();
+  }
+});
+
+test.each(["pass", "limit", "fail"])("goal gaps stay active until %s", async (next) => {
+  const app = await setup();
+  try {
+    app.fixture({ answer: answer(["missing-781"]) });
+    app.faux.setResponses([
+      finish(),
+      () => {
+        expect(app.goal()).toMatchObject({ status: "active", gaps: ["missing-781"] });
+        expect(app.goal()?.evidence).toBeUndefined();
+        if (next === "pass") app.fixture({ answer: answer() });
+        if (next === "fail") app.fixture({ fail: true });
+        return finish();
+      },
+      finish(),
+    ]);
+    await app.command("/goal objective-781");
+    expect(app.children()).toHaveLength(2);
+    expect(app.goal()?.status).toBe(next === "pass" ? "completed" : "active");
+    expect(app.goal()?.evidence).toEqual(next === "pass" ? ["used-781"] : undefined);
+    expect(app.receipts()[0]).toMatchObject({ gaps: next === "pass" ? [] : ["missing-781"], failed: next === "fail" });
+    expect(app.faux.state.callCount).toBe(next === "limit" ? 3 : 2);
+  } finally {
+    await app.close();
+  }
+});
+
+test("aborting a goal check pauses the goal without evidence", async () => {
+  const app = await setup();
+  try {
+    app.fixture({ hang: true });
+    const started = Promise.withResolvers<void>();
+    app.jobs.listeners.add(() => {
+      if (app.children().length) started.resolve();
+    });
+    app.faux.setResponses([finish()]);
+    const run = app.command("/goal objective-781");
+    await started.promise;
+    await app.session.abort();
+    await run;
+    expect(app.goal()).toMatchObject({ status: "paused" });
+    expect(app.goal()?.evidence).toBeUndefined();
+    expect(app.children()[0].status).toBe("stopped");
+    expect(app.receipts()).toHaveLength(0);
+  } finally {
+    await app.close();
+  }
+});
+
+test("goal budget and repeated blockers stop without keep-going restarting the run", async () => {
+  const app = await setup();
+  try {
+    app.faux.setResponses([fauxAssistantMessage("step")]);
+    await app.command("/goal budget-781 --budget 1");
+    expect(app.goal()?.status).toBe("budget_exceeded");
+    expect(app.faux.state.callCount).toBe(1);
+    expect(app.children()).toHaveLength(0);
+    await app.session.prompt("/goal clear");
+    const blocked = fauxAssistantMessage(
+      fauxToolCall("codemode", {
+        code: 'return await tools.goal_update({status:"blocked",blocker:"missing-781"});',
+      }),
+      { stopReason: "toolUse" },
+    );
+    app.faux.setResponses(Array.from({ length: 3 }, () => [blocked, fauxAssistantMessage("step")]).flat());
+    await app.command("/goal blocker-781");
+    expect(app.goal()?.status).toBe("blocked");
+    expect(app.faux.state.callCount).toBe(7);
+    expect(app.children()).toHaveLength(0);
+  } finally {
+    await app.close();
+  }
+});
+
+test("steering keeps both user messages and refreshes the snapshot", async () => {
+  const app = await setup();
+  try {
+    const requests = ["first-781\n  whitespace", "steer-781\n  more whitespace"];
+    app.faux.setResponses([
+      async () => {
+        app.change();
+        await app.session.steer(requests[1]);
+        return fauxAssistantMessage("private-781");
+      },
+      () => {
+        writeFileSync(join(app.cwd, "new.txt"), "steered-781\n");
+        return finish();
+      },
+    ]);
+    await app.session.prompt(requests[0]);
+    const prompt = JSON.parse(app.args().at(-1) as string);
+    expect(prompt.messages).toEqual(requests);
+    expect(prompt.diff).toContain("+steered-781");
+    expect(prompt.diff).not.toContain("+after-781");
+    expect(app.receipts()[0].asked).toBe("first-781");
+  } finally {
+    await app.close();
+  }
+});
+
+test("a message arriving during a check stops it and checks the updated request", async () => {
+  const app = await setup();
+  try {
+    app.fixture({ hang: true });
+    const started = Promise.withResolvers<void>();
+    app.jobs.listeners.add(() => {
+      if (app.children().length) started.resolve();
+    });
+    app.faux.setResponses([
+      () => {
+        app.change();
+        return finish();
+      },
+      () => {
+        writeFileSync(join(app.cwd, "new.txt"), "steered-781\n");
+        return finish();
+      },
+    ]);
+    const run = app.session.prompt("first-781");
+    await started.promise;
+    app.fixture({ answer: answer() });
+    await app.session.steer("second-781");
+    await run;
+    expect(app.children().map((child) => child.status)).toEqual(["stopped", "done"]);
+    const args = JSON.parse(readFileSync(app.children()[1].sessionPath as string, "utf8")).args;
+    expect(JSON.parse(args.at(-1)).messages).toEqual(["first-781", "second-781"]);
+    expect(app.receipts()).toHaveLength(1);
+    expect(app.receipts()[0].failed).toBe(false);
   } finally {
     await app.close();
   }

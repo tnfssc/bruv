@@ -31,7 +31,12 @@ Goal examples:
 /goal clear
 ```
 
-Budgets count tokens; `k` means thousand and `m` means million. The model must record evidence to finish a goal.
+Budgets count tokens; `k` means thousand and `m` means million. The model calls `finish(done)`
+to complete a goal. A fresh agent checks the objective and criteria even when no files changed;
+only a pass completes the goal, saving its checked items as evidence. Gaps stay on the goal as
+next steps. `goal_update` records progress and blockers; it cannot complete the goal.
+If checks are off, fail, or reach the two-round limit with gaps, finish can end the run while the
+goal stays active.
 A goal also stops at its budget, after the same blocker in three consecutive rounds, or when you stop the run.
 
 ## Finish the work
@@ -45,14 +50,15 @@ when every tool in a batch agrees to end the run.
 Before accepting `done`, bruv checks work that changed files since your latest message, including
 committed edits and new files. A fresh agent gets your messages, the final reply and the diff,
 then tries the result. It uses your model and thinking level, so checks use extra quota.
+A new message during a check stops that check and updates the request.
 Gaps send the model back to work. After two checks, the next finish is accepted with any remaining
 gaps recorded. A failed checker does not hold up the run. Plain answers without file changes skip
 this check. `/check off` disables it.
 
-`finish` stays a top-level tool even in codemode-only mode. It is hidden when keep-going is off.
+`finish` stays a top-level tool even in codemode-only mode. An active goal also enables it, even when keep-going is off.
 Job reports and reminders come first, then goal continuation, then keep-going. Each settle adds
-at most one continuation. An explicit finish also stops job and goal continuations; the saved
-goal stays available and unseen results arrive with your next message. Two keep-going continuations with no tool calls stop the loop. Any
+at most one continuation. An explicit finish also stops job and goal continuations; a goal without a passing check
+stays available and unseen results arrive with your next message. Two keep-going continuations with no tool calls stop the loop. Any
 tool call or new user message resets that count. Esc or T3 Stop ends the run and its jobs at once.
 
 ## Review changes
@@ -85,7 +91,7 @@ A notice offers the import once when Codex settings are found.
 
 ## What the model can call from scripts
 
-`finish` is called directly when keep-going is active. The model calls the following through `tools.<name>(...)` in Pi's scripting tool.
+`finish` is called directly when keep-going or a goal is active. The model calls the following through `tools.<name>(...)` in Pi's scripting tool.
 
 | Tool | What it does |
 |---|---|
@@ -94,7 +100,7 @@ A notice offers the import once when Codex settings are found.
 | `jobs` | List the jobs and agents started in this session. |
 | `job_stop` | Stop a job or agent and its child processes. |
 | `agent` | Start one or several agents, with optional git worktrees. |
-| `goal_update` | Record progress, a blocker, or completion with evidence. |
+| `goal_update` | Record goal progress or a blocker. |
 | `ask` | Ask you a question while work continues; your answer arrives as a message. |
 
 ## How background work behaves

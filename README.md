@@ -9,7 +9,7 @@ When files changed, a fresh check tries the result before accepting done. Plain 
 Give it a goal, let agents work in parallel, and come back to results—not another request to continue.
 bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, not a plugin for it.
 
-- **Keep working without “continue.”** GPT runs keep going by default. `/keep-going on|off|auto` changes this; `/goal` adds an objective, evidence and an optional token budget.
+- **Keep working without “continue.”** GPT runs keep going by default. `/keep-going on|off|auto` changes this; `/goal` adds an objective, criteria and an optional token budget.
 - **See what was checked.** The terminal receipt lists the request, checks, remaining gaps, changed files, time and usage. `/check on|off` controls the fresh check.
 - **Don't wait on one thing at a time.** Run tests in the background while agents investigate bugs or build separate parts in their own copies of your repo.
 - **Do more per turn.** The model can read files, make edits, and run checks in one script, filtering long logs before they fill the conversation.
@@ -34,7 +34,7 @@ Run `/bruv-setup`, confirm, then `/reload`. You're ready to work.
 
 The agent keeps going between turns instead of waiting for another prompt.
 You can set a token budget, pause it, or stop it at any time. It also stops if it repeatedly hits the same blocker.
-Completion evidence is the agent's report, not a substitute for reviewing the code.
+Only a passing fresh check completes the goal, with its checked items saved as evidence.
 
 ### Stay in the loop, not in the way
 

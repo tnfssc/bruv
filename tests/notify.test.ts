@@ -1,6 +1,6 @@
 import { expect, spyOn, test } from "bun:test";
 import { basename } from "node:path";
-import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
+import { fauxAssistantMessage } from "@earendil-works/pi-ai";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { registerGoal } from "../src/goal";
 import { notify, registerNotifications } from "../src/notify";
@@ -105,7 +105,17 @@ test.each([false, true])("notifications use the terminal protocol and a bell (ki
 });
 
 test.each(["completed", "paused", "budget"])("goal changes notify once (%s)", async (status) => {
-  const app = await sdk([registerGoal], {}, undefined, "tui");
+  let goal: ReturnType<typeof registerGoal>;
+  const app = await sdk(
+    [
+      (pi) => {
+        goal = registerGoal(pi);
+      },
+    ],
+    {},
+    undefined,
+    "tui",
+  );
   const descriptor = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");
   Object.defineProperty(process.stdout, "isTTY", { configurable: true, value: true });
   const output = spyOn(process.stdout, "write").mockReturnValue(true);
@@ -124,19 +134,16 @@ test.each(["completed", "paused", "budget"])("goal changes notify once (%s)", as
     else {
       const final = fauxAssistantMessage("done");
       if (status === "budget") final.usage.totalTokens = 1;
-      app.faux.setResponses(
-        status === "completed"
-          ? [
-              fauxAssistantMessage(
-                fauxToolCall("codemode", {
-                  code: 'return await tools.goal_update({status:"completed", evidence:"fixture"});',
-                }),
-                { stopReason: "toolUse" },
-              ),
-              final,
-            ]
-          : [final],
-      );
+      app.faux.setResponses([
+        () => {
+          if (status === "completed")
+            goal.checked(
+              { verdict: "pass", checked: ["fixture"], gaps: [] },
+              app.session.extensionRunner.createContext(),
+            );
+          return final;
+        },
+      ]);
       await app.session.prompt("go");
     }
     expect(output.mock.calls).toHaveLength(1);

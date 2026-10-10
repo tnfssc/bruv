@@ -201,7 +201,7 @@ test.each([false, true])("job and goal settle order respects finish (finish=%s)"
         return early ? finish("need_you") : fauxAssistantMessage("next step");
       },
       fauxAssistantMessage("next step"),
-      script('return await tools.goal_update({status: "completed", evidence: "checked-781"});'),
+      script('return await tools.goal_update({status: "active", progress: "checked-781"});'),
       fauxAssistantMessage("next step"),
       finish(),
     ]);
@@ -212,7 +212,7 @@ test.each([false, true])("job and goal settle order respects finish (finish=%s)"
     await app.session.prompt("/goal task");
     await settled.promise;
     expect(app.faux.state.callCount).toBe(early ? 1 : 5);
-    expect(app.rounds).toEqual(early ? [[]] : [["bruv-report"], ["bruv-goal"], ["bruv-keep-going"], []]);
+    expect(app.rounds).toEqual(early ? [[]] : [["bruv-report"], ["bruv-goal"], ["bruv-goal"], []]);
   } finally {
     release.resolve();
     await app.close();

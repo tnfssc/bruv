@@ -28,13 +28,13 @@ export default function bruv(pi: ExtensionAPI): void {
   registerJobs(pi, jobs);
   const isFast = registerFast(pi);
   const startAgents = registerAgents(pi, jobs, isFast);
-  const check = registerCheck(pi, jobs, startAgents);
+  const goal = registerGoal(pi, () => hasFinished());
+  const check = registerCheck(pi, jobs, startAgents, undefined, goal);
   const usage = registerUsage(pi);
   registerTurn(pi, jobs, usage, registerReceipt(pi, check.report));
   registerCodexCompaction(pi);
   registerQuestions(pi);
-  registerGoal(pi, () => hasFinished());
-  const hasFinished = registerFinish(pi, undefined, check);
+  const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active());
   registerPrompt(pi);
   registerCodemode(pi);
   registerCodexImport(pi);

@@ -6,6 +6,7 @@ import { promisify } from "node:util";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
 import type { StartAgents } from "./agents";
 import { readConfig, saveConfig } from "./config";
+import type { GoalControl } from "./goal";
 import type { Jobs } from "./jobs";
 
 const exec = promisify(execFile);
@@ -67,7 +68,13 @@ function verdict(answer: string): Verdict {
   return value;
 }
 
-export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, agentDir = getAgentDir()) {
+export function registerCheck(
+  pi: ExtensionAPI,
+  jobs: Jobs,
+  start: StartAgents,
+  agentDir = getAgentDir(),
+  goal?: GoalControl,
+) {
   let enabled = true;
   let running = false;
   let messages: string[] = [];
@@ -75,30 +82,35 @@ export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, 
   let base: Snapshot | undefined;
   let snapshotError: unknown;
   let rounds = 0;
+  let revision = 0;
+  let child: string | undefined;
+  let capture = Promise.resolve();
   let report: CheckReport | undefined;
   let accepted = false;
   const restore = () => {
     enabled = readConfig(agentDir).checkWork ?? true;
     running = false;
+    messages = [];
+    reply = "";
+    base = undefined;
+    snapshotError = undefined;
+    rounds = 0;
+    revision++;
+    capture = Promise.resolve();
     report = undefined;
+    accepted = false;
   };
   pi.on("session_start", restore);
   pi.on("session_tree", restore);
   pi.on("agent_settled", () => {
     running = false;
   });
-  pi.on("message_start", async (event, ctx) => {
-    if (event.message.role !== "user") return;
+  pi.on("input", (event, ctx) => {
+    const received = ++revision;
+    if (child) jobs.stop(child);
     if (!running) messages = [];
     running = true;
-    messages.push(
-      typeof event.message.content === "string"
-        ? event.message.content
-        : event.message.content
-            .filter((block) => block.type === "text")
-            .map((block) => block.text)
-            .join("\n"),
-    );
+    messages.push(event.text);
     reply = "";
     rounds = 0;
     report = undefined;
@@ -106,12 +118,17 @@ export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, 
     base = undefined;
     snapshotError = undefined;
     if (!enabled) return;
-    try {
-      base = await snapshot(ctx.cwd);
-    } catch (error) {
-      snapshotError = error;
-      ctx.ui.notify(`Could not snapshot work: ${String(error)}`, "warning");
-    }
+    capture = snapshot(ctx.cwd).then(
+      (value) => {
+        if (received === revision) base = value;
+      },
+      (error) => {
+        if (received !== revision) return;
+        snapshotError = error;
+        ctx.ui.notify(`Could not snapshot work: ${String(error)}`, "warning");
+      },
+    );
+    return capture;
   });
   pi.on("message_end", (event) => {
     if (event.message.role === "assistant")
@@ -136,11 +153,21 @@ export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, 
     report: () => (accepted ? report : undefined),
     async run(ctx: ExtensionContext, signal?: AbortSignal) {
       if (!enabled) return;
+      await capture;
       signal?.throwIfAborted();
+      const request = revision;
+      const changed = () => request !== revision;
+      const retry = async () => {
+        await capture;
+        return "The user sent another message. Read it and finish the updated request before calling finish again.";
+      };
       try {
         if (snapshotError) throw snapshotError;
         const current = base && (await snapshot(ctx.cwd, signal));
-        if (!report && (!base || !current || (base.head === current.head && base.tree === current.tree))) return;
+        if (changed()) return retry();
+        const objective = goal?.active();
+        if (!objective && !report && (!base || !current || (base.head === current.head && base.tree === current.tree)))
+          return;
         report ??= { asked: messages[0]?.split(/\r?\n/)[0].slice(0, 70) ?? "", checked: [], gaps: [], failed: false };
         let diff = "";
         if (base && current) {
@@ -153,6 +180,7 @@ export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, 
           };
           diff = (await git(base.cwd, [...args, "--stat", "--patch"], signal)).slice(0, 40000);
         }
+        if (changed()) return retry();
         if (rounds >= 2) {
           accepted = true;
           return;
@@ -160,7 +188,7 @@ export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, 
         rounds++;
         const [id] = start(
           {
-            prompt: JSON.stringify({ messages, reply, diff }, null, 2),
+            prompt: JSON.stringify({ messages, ...(objective ? { goal: objective } : {}), reply, diff }, null, 2),
             model: ctx.model && `${ctx.model.provider}/${ctx.model.id}`,
             thinking: pi.getThinkingLevel(),
             title: `check · ${report.asked}`,
@@ -168,6 +196,7 @@ export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, 
           ctx,
           true,
         );
+        child = id;
         const item = jobs.get(id);
         item.seen = true;
         const abort = () => jobs.stop(id);
@@ -176,17 +205,21 @@ export function registerCheck(pi: ExtensionAPI, jobs: Jobs, start: StartAgents, 
           if (signal?.aborted) abort();
           await item.completion;
           signal?.throwIfAborted();
+          if (changed()) return retry();
           if (item.status !== "done") throw new Error(`Checker ${item.status}: ${jobs.result(item).output}`);
           const result = verdict(item.answer ?? "");
           report.checked = result.checked;
           report.gaps = result.gaps;
+          goal?.checked(result, ctx);
           if (result.verdict === "gaps")
             return `A fresh check found gaps:\n${result.gaps.map((gap) => `- ${gap}`).join("\n")}\nFix them, then call finish again.`;
         } finally {
           signal?.removeEventListener("abort", abort);
+          child = undefined;
         }
       } catch (error) {
         signal?.throwIfAborted();
+        if (changed()) return retry();
         report ??= { asked: messages[0]?.split(/\r?\n/)[0].slice(0, 70) ?? "", checked: [], gaps: [], failed: false };
         report.failed = true;
         ctx.ui.notify(`Check didn't complete: ${String(error)}`, "warning");

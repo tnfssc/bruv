@@ -101,17 +101,17 @@ test("three blocker rounds stop the goal and resume starts a fresh count", async
     expect(app.faux.state.callCount).toBe(9);
     app.faux.setResponses([
       ...round,
-      update({ status: "completed", evidence: "verified-781" }),
-      fauxAssistantMessage("done"),
+      update({ status: "active", progress: "verified-781" }),
+      fauxAssistantMessage("stop", { stopReason: "aborted" }),
     ]);
     await app.run("/goal resume");
-    expect(app.state()).toMatchObject({ status: "completed", evidence: "verified-781" });
+    expect(app.state()).toMatchObject({ status: "paused", progress: ["verified-781"] });
   } finally {
     await app.close();
   }
 });
 
-test("abort pauses the goal and completion requires evidence", async () => {
+test("abort pauses the goal and goal_update cannot complete it", async () => {
   const app = await setup();
   try {
     const message = fauxAssistantMessage("stopped", { stopReason: "aborted" });
@@ -120,7 +120,7 @@ test("abort pauses the goal and completion requires evidence", async () => {
     expect(app.state()?.status).toBe("paused");
     expect(app.faux.state.callCount).toBe(1);
     app.faux.setResponses([
-      update({ status: "completed" }),
+      update({ status: "completed", evidence: "claimed-781" }),
       (context) => {
         expect(app.state()?.status).toBe("active");
         expect(context.messages.some((m) => m.role === "toolResult" && m.isError)).toBe(true);
