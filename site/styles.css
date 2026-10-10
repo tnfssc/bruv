@@ -175,16 +175,16 @@ h1 {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.term.video,
+.video,
 .still {
   margin: 0;
 }
-.term.video video {
+.video video {
   display: block;
   width: 100%;
   height: auto;
 }
-.term.video figcaption,
+.video figcaption,
 .still figcaption {
   padding: 10px 16px;
   border-top: 1px solid var(--line);

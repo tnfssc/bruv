@@ -40,6 +40,11 @@ function color256(n) {
   const g = 8 + (n - 232) * 10;
   return `rgb(${g},${g},${g})`;
 }
+// Terminal escape codes: color changes (SGR) and anything else, which is dropped.
+const ESC = String.fromCharCode(27);
+const SPLIT = new RegExp(`(${ESC}\\[[0-9;:]*m)`);
+const COLOR = new RegExp(`^${ESC}\\[([0-9;:]*)m$`);
+const OTHER = new RegExp(`${ESC}\\[[^a-zA-Z]*[a-zA-Z]`, "g");
 const esc = (text) => text.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
 
 // Convert one line of SGR-colored text into HTML spans.
@@ -57,10 +62,10 @@ function line(text) {
     ]
       .filter(Boolean)
       .join(";");
-  for (const part of text.split(/(\x1b\[[0-9;:]*m)/)) {
-    const sgr = /^\x1b\[([0-9;:]*)m$/.exec(part);
+  for (const part of text.split(SPLIT)) {
+    const sgr = COLOR.exec(part);
     if (!sgr) {
-      if (part) out += esc(part.replace(/\x1b\[[^a-zA-Z]*[a-zA-Z]/g, ""));
+      if (part) out += esc(part.replace(OTHER, ""));
       continue;
     }
     const codes = sgr[1].split(/[;:]/).map(Number);
