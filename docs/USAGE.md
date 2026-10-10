@@ -11,6 +11,7 @@ Disable the old "bruv (not Claude)" provider.
 
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
 - `/race <task>` starts three agents from your current changes, each in its own worktree. Use `--n 2` through `--n 5` to change the count. `/race` shows results; pick in the dialog or with `/race pick a2`. `/race pick none` discards the race.
+- `/review` picks uncommitted changes, a branch diff, or a commit; `/review <branch or commit>` starts directly.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
@@ -29,6 +30,17 @@ Goal examples:
 
 Budgets count tokens; `k` means thousand and `m` means million. The model must record evidence to finish a goal.
 A goal also stops at its budget, after the same blocker in three consecutive rounds, or when you stop the run.
+
+## Review changes
+
+Run `/review` to choose uncommitted changes, a local branch, or one of the last 20 commits.
+The branch picker puts the remote's default branch first when it exists locally, then falls back to main or master.
+Use `/review develop` or `/review HEAD~1` to skip the picker.
+
+Uncommitted reviews cover staged, unstaged and untracked files. Branch reviews compare your current work
+with the merge base of the chosen branch. Commit reviews cover just that commit's changes.
+The review starts one turn, including in T3/RPC. It asks for real bugs with file:line, impact and a fix,
+then at most a few useful simplifications. It skips style nits and leaves files alone unless you ask for changes.
 
 ## Bring your Codex setup
 

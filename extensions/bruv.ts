@@ -11,6 +11,7 @@ import { registerPrompt } from "../src/prompt";
 import { registerQuestions } from "../src/questions";
 import { registerRace } from "../src/race";
 import { registerRender } from "../src/render";
+import { registerReview } from "../src/review";
 import { registerSettle } from "../src/settle";
 import { registerTurn } from "../src/turn";
 import { registerUI } from "../src/ui";
@@ -34,4 +35,5 @@ export default function bruv(pi: ExtensionAPI): void {
   registerPrompt(pi);
   registerCodemode(pi);
   registerCodexImport(pi);
+  registerReview(pi);
 }

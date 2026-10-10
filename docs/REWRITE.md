@@ -212,6 +212,7 @@ bruv/
     usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
     codex-import.ts       confirmed Codex settings import (~200)
+    review.ts             diff review command and pickers (~100)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
     status.ts             shared footer parts (~30)
@@ -226,6 +227,7 @@ bruv/
     agent-normal.md
     goal.md
     goal-continue.md
+    review.md             review guidance, under 150 words
   tests/
   docs/
     REWRITE.md            this file
@@ -237,7 +239,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 2,500 lines, including Codex import. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 2,600 lines, including Codex import and review. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -539,6 +541,22 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - Tests use fake Codex and Pi directories under `.tmp/`, check cancel and merge behavior,
   and reject attempts to read sign-in tokens. No servers or models are contacted.
 
+### 3.10.3 `/review` (`src/review.ts`)
+
+- Without arguments, choose uncommitted changes, a local branch, or one of the last 20 commits.
+  Put the remote default branch first when it exists locally, preferring origin; fall back to
+  main or master. Cancellation does nothing.
+- `/review <branch or commit>` skips pickers. Resolve the ref to a commit before sending it.
+  Git uses argument arrays with end-of-options for user refs; never run a shell or fetch.
+- Send `prompts/review.md` plus the target through `pi.sendUserMessage` exactly once. This
+  starts a turn in TUI and RPC because the user explicitly requested it.
+- Uncommitted reviews include staged, unstaged and untracked files. Branch reviews compare
+  the current tree with the merge base. Commit reviews examine just that commit's changes.
+- Guidance stays under 150 words: real bugs first, each with file:line, impact and a fix;
+  at most a few important simplifications, no style nits, no file changes unless asked.
+- SDK tests use a local Git repo and the faux provider to cover pickers, refs, cancellation,
+  invalid refs, and exactly one RPC run, with no network or paid model calls.
+
 ### 3.11 Codex native compaction (`src/codex-compaction.ts`)
 
 Port the essential behavior of `src/agent/native-compaction.ts` (read it with
@@ -705,7 +723,7 @@ Each phase ends with a commit on `rewrite/pi-package` and green `bunx biome ci .
    pass.
 4. **Finish.** README (install, commands, tools, config, migration), `CHANGELOG.md` with one entry
    for 1.0.0, `t3.json` updated (setup script: `bun install --frozen-lockfile`), final size check
-   against budgets. Acceptance: total source no more than ~10% above 2,300 lines; smaller is fine.
+   against budgets. Acceptance: total source stays within the section 3.1 budget; smaller is fine.
    One real smoke run in T3 is done by the reviewer.
 
 ### 4.3 Risks
