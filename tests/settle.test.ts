@@ -1,94 +1,69 @@
 import { expect, test } from "bun:test";
-import { fauxAssistantMessage } from "@earendil-works/pi-ai";
-import { sdk } from "./sdk";
-
-test("Pi abort waits for the pending settle handler", async () => {
-  const entered = Promise.withResolvers<void>();
-  const release = Promise.withResolvers<void>();
-  let pending = false;
-  let abortedWhilePending = false;
-  let settledAborted = false;
-  const app = await sdk([
-    (pi) => {
-      pi.on("agent_before_settle", async () => {
-        pending = true;
-        entered.resolve();
-        await release.promise;
-        pending = false;
-      });
-      pi.on("agent_settled", (event) => {
-        abortedWhilePending = event.aborted && pending;
-        settledAborted = event.aborted;
-      });
-    },
-  ]);
-  try {
-    app.faux.setResponses([fauxAssistantMessage("ready")]);
-    const run = app.session.prompt("go");
-    await entered.promise;
-    const start = performance.now();
-    let ended = false;
-    const abort = app.session.abort().then(() => {
-      ended = true;
-    });
-    for (let i = 0; i < 5; i++) await Bun.sleep(100);
-    expect(abortedWhilePending).toBe(false);
-    expect(settledAborted).toBe(false);
-    expect(ended).toBe(false);
-    expect(pending).toBe(true);
-    console.log(
-      `abort: elapsed=${Math.round(performance.now() - start)}ms settledAbortedWhilePending=${abortedWhilePending} runEnded=${ended} handlerPending=${pending}`,
-    );
-    release.resolve();
-    await abort;
-    await run;
-    expect(settledAborted).toBe(true);
-  } finally {
-    release.resolve();
-    await app.close();
-  }
-});
-
-import { fauxToolCall } from "@earendil-works/pi-ai";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
 import bruv from "../extensions/bruv";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerPrompt } from "../src/prompt";
 import { registerSettle, report } from "../src/settle";
+import { sdk } from "./sdk";
 
-async function held(waitSeconds = 30, command = "sleep 0.2; echo done", detach = false) {
+const script = (code: string) => fauxAssistantMessage(fauxToolCall("codemode", { code }), { stopReason: "toolUse" });
+const start = (detach = false) =>
+  script(
+    `return await tools.job_start(${JSON.stringify({
+      command: "sh -c 'while [ ! -f release ]; do sleep 0.01; done; echo done'",
+      waitSeconds: 0,
+      detach,
+    })});`,
+  );
+async function setup() {
   const jobs = new Jobs();
-  const entered = Promise.withResolvers<void>();
+  const waiting = Promise.withResolvers<void>();
   const app = await sdk([
     (pi) => {
-      pi.on("agent_before_settle", () => {
-        entered.resolve();
-      });
-      registerSettle(pi, jobs, waitSeconds);
+      registerSettle(pi, jobs);
       registerJobs(pi, jobs);
       registerPrompt(pi);
+      pi.on("tool_execution_start", (event) => {
+        if (event.toolName === "wait") waiting.resolve();
+      });
     },
   ]);
-  const responses = [
-    fauxAssistantMessage(
-      fauxToolCall("codemode", {
-        code: `return await tools.job_start(${JSON.stringify({ command, waitSeconds: 0, detach })});`,
-      }),
-      { stopReason: "toolUse" },
-    ),
-    fauxAssistantMessage("working"),
-  ];
-  return { ...app, jobs, entered: entered.promise, responses };
+  const release = () => writeFileSync(join(app.dir, "release"), "");
+  const reports = () =>
+    app.session.sessionManager
+      .getEntries()
+      .filter((entry) => entry.type === "custom_message" && entry.customType === "bruv-report");
+  return {
+    ...app,
+    jobs,
+    waiting: waiting.promise,
+    release,
+    reports,
+    async close() {
+      release();
+      await Promise.all([...jobs.items.values()].map((item) => item.completion));
+      await app.close();
+    },
+  };
 }
 
-test("settle continues with a real report and keeps prompt guidance", async () => {
-  const app = await held();
+test("finished unseen work continues with its result and keeps prompt guidance", async () => {
+  const app = await setup();
   try {
     app.faux.setResponses([
-      ...app.responses,
+      start(),
+      async () => {
+        app.release();
+        await app.jobs.get("j1").completion;
+        expect(app.jobs.get("j1").exitCode).toBe(0);
+        expect(app.jobs.get("j1").seen).toBe(false);
+        return fauxAssistantMessage("ready");
+      },
       (context) => {
-        expect(app.jobs.get("j1").status).toBe("done");
         expect(
-          context.messages.some((message) => message.role === "user" && JSON.stringify(message).includes("j1")),
+          context.messages.some((message) => JSON.stringify(message).includes(app.jobs.get("j1").outputPath)),
         ).toBe(true);
         expect(context.messages.find((message) => message.role === "system")?.sections?.bruv?.length).toBeGreaterThan(
           0,
@@ -98,46 +73,28 @@ test("settle continues with a real report and keeps prompt guidance", async () =
     ]);
     await app.session.prompt("go");
     expect(app.faux.state.callCount).toBe(3);
-    expect(app.session.getLastAssistantText()).toBe("finished");
-    expect(app.session.sessionManager.getEntries().filter((entry) => entry.type === "custom_message").length).toBe(1);
-    expect(app.jobs.get("j1").reported).toBe(true);
+    expect(app.reports()).toHaveLength(1);
+    expect(app.jobs.get("j1").seen).toBe(true);
   } finally {
     await app.close();
   }
 });
 
-test("a queued user message releases the hold, then the next settle holds again", async () => {
-  const app = await held(30, "sleep 0.6; echo done");
+test.each([false, true])("running work gets at most one reminder and delivers later (detach=%s)", async (detach) => {
+  const app = await setup();
   try {
     app.faux.setResponses([
-      ...app.responses,
-      (context) => {
-        expect(app.jobs.get("j1").status).toBe("running");
-        expect(context.messages.some((message) => JSON.stringify(message).includes("user-781"))).toBe(true);
-        return fauxAssistantMessage("still working");
-      },
-      fauxAssistantMessage("finished"),
+      start(detach),
+      fauxAssistantMessage("ready"),
+      ...(detach ? [] : [fauxAssistantMessage("leave running")]),
     ]);
-    const run = app.session.prompt("go");
-    await app.entered;
-    await app.session.steer("user-781");
-    await run;
-    expect(app.session.getLastAssistantText()).toBe("finished");
-    expect(app.faux.state.callCount).toBe(4);
-    expect(app.jobs.get("j1").status).toBe("done");
-  } finally {
-    await app.close();
-  }
-});
-
-test.each([false, true])("quiet slices and detached jobs deliver on the next turn (detach=%s)", async (detach) => {
-  const app = await held(0.02, "sleep 0.2; echo done", detach);
-  try {
-    app.faux.setResponses(app.responses);
     await app.session.prompt("go");
+    expect(app.faux.state.callCount).toBe(detach ? 2 : 3);
+    expect(app.reports()).toHaveLength(detach ? 0 : 1);
     expect(app.jobs.get("j1").status).toBe("running");
+    app.release();
     await app.jobs.get("j1").completion;
-    expect(app.faux.state.callCount).toBe(2);
+    expect(app.faux.state.callCount).toBe(detach ? 2 : 3);
     app.faux.setResponses([
       (context) => {
         expect(
@@ -147,88 +104,148 @@ test.each([false, true])("quiet slices and detached jobs deliver on the next tur
       },
     ]);
     await app.session.prompt("next");
-    expect(app.session.getLastAssistantText()).toBe("received");
-    expect(app.faux.state.callCount).toBe(3);
+    expect(app.reports()).toHaveLength(detach ? 1 : 2);
   } finally {
     await app.close();
   }
 });
 
-test.each([0.02, 30])("abort keeps jobs running and delivers results next turn (slice=%s)", async (slice) => {
-  const app = await held(slice);
+test("codemode wait returns the finished job without another result report", async () => {
+  const app = await setup();
   try {
-    app.faux.setResponses(app.responses);
+    app.faux.setResponses([
+      start(),
+      script('return await tools.wait({ids: ["j1"]});'),
+      (context) => {
+        const result = [...context.messages].reverse().find((message) => message.role === "toolResult");
+        expect(result?.role === "toolResult" && result.isError).toBe(false);
+        expect(JSON.stringify(result)).toContain(app.jobs.get("j1").outputPath);
+        expect(app.jobs.get("j1").status).toBe("done");
+        expect(app.jobs.get("j1").seen).toBe(true);
+        return fauxAssistantMessage("finished");
+      },
+    ]);
     const run = app.session.prompt("go");
-    await app.entered;
+    await app.waiting;
+    app.release();
+    await run;
+    expect(app.reports()).toHaveLength(0);
+  } finally {
+    await app.close();
+  }
+});
+
+test("a steer message promptly releases codemode wait", async () => {
+  const app = await setup();
+  try {
+    app.faux.setResponses([
+      start(),
+      script(
+        'const result = await tools.wait(); if (!result.userMessagePending || result.running.length !== 1) throw new Error("wait failed"); return result;',
+      ),
+      (context) => {
+        const result = [...context.messages].reverse().find((message) => message.role === "toolResult");
+        expect(result?.role === "toolResult" && result.isError).toBe(false);
+        expect(context.messages.some((message) => JSON.stringify(message).includes("steer-781"))).toBe(true);
+        expect(app.jobs.get("j1").status).toBe("running");
+        return fauxAssistantMessage("ready");
+      },
+      fauxAssistantMessage("leave running"),
+    ]);
+    const run = app.session.prompt("go");
+    await app.waiting;
+    await Bun.sleep(10);
+    const began = performance.now();
+    await app.session.steer("steer-781");
+    await run;
+    expect(performance.now() - began).toBeLessThan(1000);
+  } finally {
+    await app.close();
+  }
+});
+
+test("abort ends codemode wait within one second and delivers the job next prompt", async () => {
+  const app = await setup();
+  try {
+    app.faux.setResponses([start(), script("return await tools.wait();")]);
+    const run = app.session.prompt("go");
+    await app.waiting;
+    await Bun.sleep(10);
+    const began = performance.now();
     await app.session.abort();
     await run;
-    if (slice < 1) expect(app.jobs.get("j1").status).toBe("running");
-    expect(app.jobs.get("j1").stopped).toBe(false);
-    await app.jobs.get("j1").completion;
-    expect(app.jobs.get("j1").status).toBe("done");
+    expect(performance.now() - began).toBeLessThan(1000);
+    const item = app.jobs.get("j1");
+    expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("running");
+    expect(item.stopped).toBe(false);
+    expect(app.reports()).toHaveLength(0);
+    app.release();
+    await item.completion;
+    expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("done");
     expect(app.faux.state.callCount).toBe(2);
     app.faux.setResponses([
       (context) => {
-        expect(
-          context.messages.some((message) => JSON.stringify(message).includes(app.jobs.get("j1").outputPath)),
-        ).toBe(true);
+        expect(context.messages.some((message) => JSON.stringify(message).includes(item.outputPath))).toBe(true);
         return fauxAssistantMessage("received");
       },
     ]);
     await app.session.prompt("next");
-    expect(app.session.getLastAssistantText()).toBe("received");
-    expect(app.faux.state.callCount).toBe(3);
+    expect(app.reports()).toHaveLength(1);
+  } finally {
+    await app.close();
+  }
+});
+
+test("a nested wait resets the reminder", async () => {
+  const app = await setup();
+  try {
+    app.faux.setResponses([
+      start(),
+      fauxAssistantMessage("ready"),
+      script("return await tools.wait({timeoutSeconds: 0});"),
+      fauxAssistantMessage("ready"),
+      fauxAssistantMessage("leave running"),
+    ]);
+    await app.session.prompt("go");
+    expect(app.faux.state.callCount).toBe(5);
+    expect(app.reports()).toHaveLength(2);
   } finally {
     await app.close();
   }
 });
 
 test("reports cap content and preserve output and session paths", () => {
-  const item = {
+  const result = report({
     id: "a1",
-    kind: "agent" as const,
+    kind: "agent",
     title: "test",
-    status: "done" as const,
+    status: "done",
     startedAt: 0,
     elapsedSeconds: 1,
     outputPath: "/test/output",
     sessionPath: "/test/session",
     output: "x".repeat(9000),
-  };
-  const result = report(item);
-  expect(result.content.length).toBeLessThanOrEqual(4000);
-  expect(result.content).toContain(item.outputPath);
-  expect(result.content).toContain(item.sessionPath);
-  const running = report({
-    ...item,
-    status: "running",
-    output: Array.from({ length: 30 }, (_, i) => `line-${i}`).join("\n"),
   });
-  expect(running.content).not.toContain("line-9\n");
-  expect(running.content).toContain("line-29");
+  expect(result.content.length).toBeLessThanOrEqual(4000);
+  expect(result.content).toContain("/test/output");
+  expect(result.content).toContain("/test/session");
 });
 
-test("the full bruv extension holds and continues a codemode run", async () => {
+test("the full extension waits inside codemode", async () => {
   const app = await sdk([bruv]);
   try {
     app.faux.setResponses([
-      fauxAssistantMessage(
-        fauxToolCall("codemode", {
-          code: 'return await tools.job_start({command: "sleep 0.2; echo entry-781", waitSeconds: 0});',
-        }),
-        { stopReason: "toolUse" },
+      script(
+        'const job = await tools.job_start({command: "echo done", waitSeconds: 0}); return await tools.wait({ids: [job.id]});',
       ),
-      fauxAssistantMessage("working"),
-      fauxAssistantMessage("received-781"),
+      (context) => {
+        const result = [...context.messages].reverse().find((message) => message.role === "toolResult");
+        expect(result?.role === "toolResult" && result.isError).toBe(false);
+        return fauxAssistantMessage("finished");
+      },
     ]);
     await app.session.prompt("go");
-    expect(app.session.getLastAssistantText()).toBe("received-781");
-    expect(app.faux.state.callCount).toBe(3);
-    expect(
-      app.session.sessionManager
-        .getEntries()
-        .filter((entry) => entry.type === "custom_message" && entry.customType === "bruv-report"),
-    ).toHaveLength(1);
+    expect(app.faux.state.callCount).toBe(2);
   } finally {
     await app.close();
   }

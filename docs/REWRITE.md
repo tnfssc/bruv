@@ -182,7 +182,7 @@ Read from the installed T3 server (`0.0.46-nightly.20261005.2702`):
 - T3 supports steering during a turn, queued messages, structured questions (Pi extension UI
   dialogs over RPC), and fork/rollback.
 
-Consequence: background work must finish **inside** the turn that started it. See 3.4.
+Consequence: wait inside tools, and deliver results left running with the next message. See 3.4.
 
 ---
 
@@ -204,7 +204,7 @@ bruv/
     jobs.ts               background commands: registry, output files, stop (~350)
     agents.ts             subagent launch, profiles, result parsing (~350)
     worktree.ts           git worktree create + setup scripts (~120)
-    settle.ts             holds a run open while its work is pending (~150)
+    settle.ts             reports results and reminds the model to wait (~150)
     goal.ts               /goal command, state, continuation, budget (~350)
     fast.ts               /fast priority tier (~100)
     codex-compaction.ts   Codex native compaction (~350)
@@ -270,8 +270,8 @@ You're working with the user on their code, inside bruv.
 - Clear request? Do it. Need a fact? Look it up before asking. Ask only for what you can't find.
 - Do as much as makes sense in one script: read several files at once, edit and then run the
   check, start agents and wait for them together.
-- Long work goes in the background (jobs and agents). Keep working while it runs; you'll get the
-  results before the turn ends.
+- Long work goes in the background (jobs and agents). Keep working while it runs, and call
+  tools.wait for the results before you end your turn, unless you started it with detach.
 - Prefer the simplest change that works. Each extra part, state or fallback is one more thing to
   break. Fix problems you can see, not ones you imagine. Security and data loss are the exceptions.
 - Say what you checked, what you're guessing, and what's still broken.
@@ -329,34 +329,30 @@ bruv's own tools register with `exposure: "codemode"` (listed in the codemode de
 registered after session start are `deferred`, grouped under a `namespace` whose `instructions`
 hold the details.
 
-### 3.4 Run model: work started in a turn finishes in that turn
+### 3.4 Run model: wait inside tools
 
-This is the core behavior and the reason T3 works.
-
-- `jobs` and `agents` start work and return at once with IDs.
-- The model can `wait` for them in a script, or keep doing other work.
-- When the model ends its turn while work it started is still running, `settle.ts` keeps the run
-  open: in `agent_before_settle` it waits until one of these happens, then returns
-  `{ entries: [report], continue: true }`:
-  1. a pending job or agent finishes, so the report is its result;
-  2. the user sends a message (`ctx.hasPendingMessages()`, checked every 250 ms), so the report
-     lists what is still running and the queued message is delivered by Pi;
-  3. 10 minutes pass with nothing finishing, so the report is a checkpoint: what is running, how
-     long, the last 20 lines of output, and "stop it with tools.job_stop if it's stuck";
-  4. a pending question is answered (3.9).
-- If the run was aborted (Esc, T3 Stop): do not wait. Jobs and agents keep running. Their results
-  are delivered with the next user message (`pi.sendMessage(…, { deliverAs: "nextTurn" })`) and
-  shown in the UI widget. bruv never uses `triggerTurn`.
-- A job started with `detach: true` never holds the run. Its result is delivered with the next user
-  message. Use it for servers and watchers.
-- Reports are custom messages (`customType: "bruv-report"`), rendered compactly by `ui.ts`, capped at
+- Jobs and agents start work and return IDs. The model keeps working, then calls `tools.wait`
+  for results before ending its turn unless the work was detached.
+- Only `wait` and `job_start` with `waitSeconds` block. Their abort signal ends the wait at once
+  on Esc or T3 Stop. They also return when `ctx.hasPendingMessages()` is true. Work keeps running.
+- `agent_before_settle` never waits. If `event.outcome` is `"aborted"`, it returns `{}`.
+  Otherwise, it reports finished, unseen, non-detached items with one `bruv-report` entry per
+  item and `continue: true`, marking each seen.
+- If no result needs reporting but non-detached work still runs, continue once with a single
+  `bruv-report` listing it and saying: "This work is still running. Call tools.wait to get the
+  results, tools.job_stop to stop it, or end your turn again to leave it running; its results
+  will come with the next message." Ending the turn again settles.
+- Keep one `seen` flag per item and one `reminded` flag per session. Calling `wait`, `job_start`
+  or `agent` resets the reminder. Results returned by `wait` or `job_start` count as seen.
+- After settlement, new results are sent with `deliverAs: "nextTurn"` and shown in the UI.
+  Detached jobs never cause reminders and deliver their results with the next message.
+  bruv never uses `triggerTurn`.
+- Result reports use `customType: "bruv-report"`, are rendered by `ui.ts`, and are capped at
   4,000 characters with output file paths for the rest.
 
-**Verify first** (V1): a handler can await for minutes; `ctx.hasPendingMessages()` turns true when
-T3 or the TUI steers during that wait; abort during the wait can be detected (`ctx.signal` or the
-`agent_settled` `aborted` flag) and the wait ends promptly. If abort cannot be detected inside the
-handler, cap each wait at 30 seconds and loop through continuations with no entries only while work
-is pending.
+**Verify first** (V1): codemode can wait for a job, steering releases that wait, and abort ends
+it and the run within one second while the job keeps running. Its result arrives with the next
+prompt. Pi awaits settle handlers even after abort, so settle must not wait.
 
 ### 3.5 Tools (all called from codemode scripts)
 
@@ -451,7 +447,7 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
   otherwise `ctx.ui.input`) and returns `{ id }` at once.
 - When answered, the answer is delivered as a `bruv-answer` custom message: steer if the run is
   active, otherwise next turn.
-- Unanswered questions hold the run like pending jobs (3.4, case 4).
+- Unanswered questions do not make settle wait. Their answers arrive as described above.
 - Without UI (`ctx.hasUI` false, print mode), `ask` fails with "No one can answer questions in this
   mode."
 - **Verify first** (V3): a non-awaited dialog works during a run in the TUI and over RPC in T3.
@@ -522,8 +518,8 @@ into the new tree "for reference".
   rewrite (given a branch with a codex compaction entry, assert the request payload contains the item).
 - Integration tests: create a Pi SDK session (`docs/sdk.md`) with the faux provider from
   `@earendil-works/pi-ai` and the bruv extension loaded. Cover: a codemode script calling
-  `job_start` then `wait`; a run held open until a job finishes, then continued with the report; a
-  queued user message releasing the hold; abort leaving the job running and delivering its result
+  `job_start` then `wait`; a finished unseen job reported through a continuation; one reminder for running work; a
+  queued user message releasing `wait`; abort leaving the job running and delivering its result
   next turn; goal continuation stopping on budget.
 - Agents: test with `BRUV_PI_COMMAND` pointing to a tiny fake script that prints a valid JSON event
   stream.
@@ -577,7 +573,7 @@ Migration for the user (README section "Coming from bruv 0.x"):
 
 | ID | Question | Fallback |
 |---|---|---|
-| V1 | Can `agent_before_settle` await for minutes, see steering via `ctx.hasPendingMessages()`, and notice abort? | Loop with 30 s waits (3.4). |
+| V1 | Does codemode `wait` return on completion, steering and abort, with abort ending the run within 1 s? | Keep all waiting in tools; settle only reports or reminds (3.4). |
 | V2 | How can a package turn on codemode-only mode? | `/bruv-setup` writes settings (3.3). |
 | V3 | Does a non-awaited `ctx.ui.select` dialog work during a run, in TUI and over RPC? | `ask` blocks the script until answered. |
 | V4 | Does system-prompt framing from `before_agent_start` survive `continue: true` requests? | Rewrite the system message in `context_with_system`. |
@@ -594,7 +590,7 @@ Each phase ends with a commit on `rewrite/pi-package` and green `bunx biome ci .
    Acceptance: `pi -e ./` loads the package with no errors; the model-facing prompt contains bruv's
    guidance; tests green.
 2. **Jobs, agents, settle, UI.** `jobs.ts`, `agents.ts`, `worktree.ts`, `settle.ts`, `ui.ts` and
-   their tests. Acceptance: integration tests in 3.14 for jobs, hold, steer release and abort pass.
+   their tests. Acceptance: integration tests in 3.14 for jobs, reminders, wait, steer release and abort pass.
 3. **Goal, fast, codex compaction, questions.** With tests. Acceptance: unit and integration tests
    pass.
 4. **Finish.** README (install, commands, tools, config, migration), `CHANGELOG.md` with one entry
@@ -604,7 +600,7 @@ Each phase ends with a commit on `rewrite/pi-package` and green `bunx biome ci .
 
 ### 4.3 Risks
 
-- T3's Pi driver is in a nightly. If it changes how it treats long turns, the hold-open model needs
+- T3's Pi driver is in a nightly. If it changes how it treats long turns, the tool-wait model needs
   another look.
 - Codemode runs scripts in QuickJS: no direct `fs`, network or npm. Anything needing those goes
   through `tools.bash`. The usage data says that is rare.

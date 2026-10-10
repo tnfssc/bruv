@@ -28,8 +28,7 @@ export type Result = Static<typeof ResultSchema>;
 export interface Work extends Result {
   tail: Buffer;
   detached: boolean;
-  reported: boolean;
-  nextTurn: boolean;
+  seen: boolean;
   stopped: boolean;
   progress?: string;
   pid?: number;
@@ -75,8 +74,7 @@ export class Jobs {
       output: "",
       tail: Buffer.alloc(0),
       detached,
-      reported: false,
-      nextTurn: detached,
+      seen: false,
       stopped: false,
       completion: completion.promise,
       finish: completion.resolve,
@@ -236,7 +234,7 @@ export class Jobs {
       };
     }).finally(() => cleanup());
     const done = items.filter((item) => item.status !== "running");
-    if (!signal?.aborted) for (const item of done) item.reported = true;
+    if (!signal?.aborted) for (const item of done) item.seen = true;
     return {
       done: done.map((item) => this.result(item)),
       running: items.filter((item) => item.status === "running").map((item) => this.summary(item)),
