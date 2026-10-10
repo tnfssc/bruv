@@ -253,7 +253,7 @@ test("stalled playback retains only the pending budget regardless of generated d
   expect(scheduler.state.pendingBytes).toBe(MAX_PENDING_BYTES - 960);
   expect(scheduler.enqueue(packet, 0)).toBe(false);
   expect(scheduler.state.pendingBytes).toBe(MAX_PENDING_BYTES - 960);
-  expect(errors).toEqual(["Local playback queue exceeds pending budget (2880000 bytes); audio incomplete"]);
+  expect(errors).toEqual(["Playback queue over 2880000 bytes. Audio incomplete"]);
   expect(scheduler.enqueue(packet, 0)).toBe(false);
   expect(errors).toHaveLength(1);
   scheduler.interrupt(1);

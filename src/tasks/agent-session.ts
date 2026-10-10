@@ -16,7 +16,7 @@ export async function prepareAgentSession(
   let persisted: typeof session | undefined;
   try {
     const sessionFile = session.getSessionFile();
-    if (!sessionFile) throw new Error("Agent session requires a persisted session file");
+    if (!sessionFile) throw new Error("Agent session needs a saved session file");
     // Pi normally delays persistence until the first assistant message. Persist the
     // header now so even a launch/provider stall has a durable diagnostic identity.
     await writeFile(sessionFile, `${JSON.stringify(session.getHeader())}\n`, { flag: "wx", mode: 0o600 });

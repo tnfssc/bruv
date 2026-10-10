@@ -71,7 +71,7 @@ test("file admission never evicts unexpired readers; existing content reuses a f
   for (let i = 0; i < SNAPSHOT_MAX_FILES; i++) await retainTranscriptSnapshot("queued " + i);
   const reused = await retainTranscriptSnapshot("queued 0");
   expect(reused).toBe(pathFor("queued 0"));
-  await expect(retainTranscriptSnapshot("one too many")).rejects.toThrow("budget exhausted");
+  await expect(retainTranscriptSnapshot("one too many")).rejects.toThrow("budget used up");
   expect((await fs.readdir(SNAPSHOT_DIR)).length).toBe(SNAPSHOT_MAX_FILES);
   expect(await fs.readFile(reused, "utf8")).toBe("queued 0");
   expect(await exists(pathFor("one too many"))).toBe(false);
@@ -83,12 +83,12 @@ test("byte admission measures UTF-8 bytes and still permits reuse at the exact b
   const path = await retainTranscriptSnapshot(content);
   expect((await fs.lstat(path)).size).toBe(SNAPSHOT_MAX_BYTES);
   expect(await retainTranscriptSnapshot(content)).toBe(path);
-  await expect(retainTranscriptSnapshot("new")).rejects.toThrow("budget exhausted");
+  await expect(retainTranscriptSnapshot("new")).rejects.toThrow("budget used up");
   expect(await fs.readFile(path, "utf8")).toBe(content);
 });
 
 test("oversized content fails before taking the store lock", async () => {
-  await expect(retainTranscriptSnapshot("é".repeat(SNAPSHOT_MAX_BYTES / 2 + 1))).rejects.toThrow("exceeds 16 MiB");
+  await expect(retainTranscriptSnapshot("é".repeat(SNAPSHOT_MAX_BYTES / 2 + 1))).rejects.toThrow("over 16 MiB");
   expect(await exists(SNAPSHOT_DIR)).toBe(false);
 });
 
@@ -98,7 +98,7 @@ test("concurrent retainers serialize budget admission without overwriting or evi
   const results = await Promise.allSettled([retainTranscriptSnapshot(a), retainTranscriptSnapshot(b)]);
   expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
   const failure = results.find((result) => result.status === "rejected") as PromiseRejectedResult;
-  expect(failure.reason.message).toContain("budget exhausted");
+  expect(failure.reason.message).toContain("budget used up");
   const winner = results.find((result) => result.status === "fulfilled") as PromiseFulfilledResult<string>;
   expect(await fs.readFile(winner.value, "utf8")).toBe(winner.value === pathFor(a) ? a : b);
   expect((await fs.readdir(SNAPSHOT_DIR)).length).toBe(1);

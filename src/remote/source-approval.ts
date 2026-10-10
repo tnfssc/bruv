@@ -183,7 +183,7 @@ export class SourceApprovalService {
       allowFreeText: false,
       requester: "Source handoff",
       taskIds: [jobId(record.intent.taskId)],
-      reason: "Only a human CLI answer can include pinned untracked bytes. Default is omit all untracked files.",
+      reason: "Pinned untracked bytes need user CLI approval. Default: all untracked files stay out.",
     });
     if (q.status === "pending" && !q.blocked)
       q = await this.questions.block(ctx, {
@@ -191,9 +191,7 @@ export class SourceApprovalService {
         owner: q.owner,
         version: q.version,
         checkpoint:
-          "Retry unchanged subagent source intent with source.retryTaskId=" +
-          record.intent.taskId +
-          " after human answer",
+          "Retry same subagent source with source.retryTaskId=" + record.intent.taskId + " after human answer",
         taskIds: [jobId(record.intent.taskId)],
       });
     const awaiting: SourcePreparation = { ...record, questionId: q.id, questionVersion: q.version };
@@ -234,9 +232,7 @@ export class SourceApprovalService {
       state: "ready",
       decision,
       replyId: human ? q.replyId : undefined,
-      ...(decision === "omit"
-        ? { omissionReason: "Untracked inclusion not approved; all untracked files omitted" }
-        : {}),
+      ...(decision === "omit" ? { omissionReason: "No untracked approval. All untracked files left out." } : {}),
     };
     atomic(this.file(record.intent.taskId), ready);
     return ready;

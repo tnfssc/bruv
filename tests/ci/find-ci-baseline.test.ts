@@ -267,7 +267,7 @@ describe("one deadline covers both HTTP requests and Git ancestry proof", () => 
     }
   });
 
-  test.each(["workflow", "history"])("budget exhausted after %s cannot trust a baseline", async (stage) => {
+  test.each(["workflow", "history"])("budget used up after %s cannot trust a baseline", async (stage) => {
     const f = checkout();
     let now = Date.now();
     const clock = spyOn(Date, "now").mockImplementation(() => now);

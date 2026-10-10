@@ -51,7 +51,7 @@ export async function grantCapabilities(
   return {
     grant: metadata,
     scope: root,
-    authority: "Explicit read-only repo capability grant; no credentials or arbitrary shell",
+    authority: "Read-only repo grant. No credentials or arbitrary shell.",
   };
 }
 /** Local authority inventory; never inferred from a remote request. */
@@ -156,7 +156,7 @@ export async function requestLocalCapability(
   signal?: AbortSignal,
 ): Promise<string> {
   const runtime = process.env.BRUV_REMOTE_RUNTIME_STATE;
-  if (!runtime) throw Error("Local capability requests are only available inside an owned remote task");
+  if (!runtime) throw Error("Local capability requests need an owned remote task");
   const taskDir = dirname(runtime),
     taskId = basename(taskDir),
     id = args.requestId ?? randomUUID();
@@ -183,7 +183,7 @@ async function waitForCapabilityGrant(box: OwnerCapabilityMailbox, kind: Capabil
     if (signal?.aborted) throw Error("Capability request cancelled");
     if (existsSync(join(box.taskDir, "capabilities", "terminal.json")))
       throw Error("Remote task ended; capability unavailable");
-    if (Date.now() - start > 3600_000) throw Error("Capability grant wait timed out; no local work performed");
+    if (Date.now() - start > 3600_000) throw Error("Grant wait timed out. No local work done.");
     const dir = join(box.taskDir, "capabilities", "grants");
     for (const name of existsSync(dir) ? readdirSync(dir) : []) {
       if (!name.endsWith(".json")) continue;

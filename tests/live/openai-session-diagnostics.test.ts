@@ -71,7 +71,7 @@ test("untrusted tokens, fields, message and metadata never surface", async () =>
 });
 test("friendly quota diagnosis is preserved without raw provider text", async () => {
   const output = await rejection({ code: "insufficient_quota", message: "private-key" });
-  expect(output).toContain("Check API billing and limits");
+  expect(output).toContain("Check billing and limits");
   expect(output).not.toContain("private-key");
 });
 

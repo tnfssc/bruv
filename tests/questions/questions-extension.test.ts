@@ -441,14 +441,14 @@ test("inbox submits displayed owner/version even when the ledger changes during 
         if (method === "questions.answer") {
           replies.push(params);
           // This mock rejects the stale submission; runtime/service tests own authorization.
-          throw new Error("Question changed while open; reopen /questions to answer the current question.");
+          throw new Error("Question changed. Reopen /questions for current version.");
         }
         throw new Error(method);
       },
     }),
   );
   await command.handler("", ctx);
-  dialogs.expectComplete(["Question changed while open; reopen /questions to answer the current question."]);
+  dialogs.expectComplete(["Question changed. Reopen /questions for current version."]);
   expect(replies).toEqual([{ id: displayed.id, answer: "staging", owner: displayed.owner, version: 2 }]);
   expect(current.status).toBe("pending");
 });

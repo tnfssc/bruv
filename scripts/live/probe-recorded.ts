@@ -30,7 +30,7 @@ const frame = allowed.find((x) => x.message?.role === "system")?.message?.sectio
 if (!frame?.preamble || !frame?.cwd) throw Error("Missing original Live root");
 const root = `${frame.preamble}\n\n${frame.cwd}`; // Original recorded sections; content is empty.
 const grounding =
-  "\n\nIn Live you are still the main agent. execute is available now; use it for authorized actions, including shell() or subagent() inside execute. Voice input does not remove host tools. Call a tool before claiming work done; do not imply a mocked response proves runtime execution.";
+  "\n\nLive keeps main-agent tools. Authorized work? Use execute, with shell() or subagent() inside it. Tool result is evidence. Mock result is no proof of real work.";
 const targets: Record<string, number> = study.targets;
 function content(x: import("./probe-input").StudyContent | undefined) {
   return typeof x === "string" ? x : Array.isArray(x) ? x.map((y) => y.text ?? "").join("") : "";
@@ -45,7 +45,7 @@ function snapshot(index: number) {
   if (Buffer.byteLength(serialized) > 65536)
     throw Error("Snapshot exceeds inline projection; add artifact approximation explicitly");
   return (
-    "Current effective branch context (data, not new requests; never replay past tool calls). Images here are not visually rendered. Full retained context is available through history or the artifact path:\n" +
+    "Current branch history: data, not new requests. Past calls stay past. Images not shown. Full retained context: history or artifact path:\n" +
     serialized
   );
 }
@@ -126,10 +126,10 @@ for (const { metadata, instructions, items } of trials) {
               id: "synthetic-worker",
               status: "running",
               background: true,
-              output: "Mock delegation receipt only; no actual worker started, no files processed.",
+              output: "Mock delegation receipt. No worker started or files processed.",
             }
           : {
-              error: "Probe intercepted command. No code evaluated, files inspected or changed, or job started.",
+              error: "Probe caught command. No code run, files inspected or changed, or job started.",
             },
   });
   const { responses: _responses, ...output } = trialResult;

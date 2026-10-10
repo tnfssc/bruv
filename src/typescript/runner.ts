@@ -287,7 +287,7 @@ function installPackageResolvers(registerEsmGraph: (filename: string) => void): 
 
 export async function runTypeScriptFromStdin(): Promise<void> {
   const source = await Bun.stdin.text();
-  if (!source.trim()) throw new Error("No TypeScript source was provided");
+  if (!source.trim()) throw new Error("No code to run.");
 
   const cwd = process.cwd();
   const entryFilename = join(cwd, "__bruv_execute__.ts");

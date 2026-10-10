@@ -171,7 +171,7 @@ declare global {
 /** Signal a confirmed cooperative handoff to the execute runner. */
 export class HandoffSignal extends Error {
   constructor() {
-    super("Execution handed off cooperatively");
+    super("Execution handed off");
     this.name = "HandoffSignal";
   }
 }
@@ -182,7 +182,7 @@ function message(error: unknown): string {
 
 function combine(options: Options | undefined, required: Options): Options {
   if (options !== undefined && (!options || typeof options !== "object" || Array.isArray(options)))
-    throw new Error("Job options must be an object");
+    throw new Error("Job options need an object");
   return { ...(options ?? {}), ...required };
 }
 
@@ -226,7 +226,7 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
     number,
     { resolve(value: unknown): void; reject(error: Error): void; promise: Promise<unknown> }
   >();
-  const unavailable = "Job bridge is unavailable for this execute call";
+  const unavailable = "No job bridge for this execute call";
 
   const rejectAll = (
     reason: string,
@@ -614,7 +614,7 @@ export function serveJobBridge(
     const request = requests.get(id);
     if (!request || request.reply === "pending" || request.reply === "foreground-acked") {
       // Early, unknown and replayed ACKs release all outstanding listeners.
-      fail("Unknown or duplicate job bridge acknowledgement id", "protocol_invalid", "response");
+      fail("Unknown or repeated job bridge acknowledgement id", "protocol_invalid", "response");
       return false;
     }
     switch (request.reply) {

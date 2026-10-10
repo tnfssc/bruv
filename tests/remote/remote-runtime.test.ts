@@ -1,3 +1,4 @@
+import { QuestionService } from "../../src/questions/service";
 import { expect, test } from "bun:test";
 import { mkdtempSync, readFileSync, rmSync, statSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -156,6 +157,59 @@ test("incomplete job pagination publishes an error checkpoint, not completion ev
       settled: true,
       error: "Error: Remote job cursor repeated",
     });
+  } finally {
+    if (previous === undefined) delete process.env.BRUV_REMOTE_RUNTIME_STATE;
+    else process.env.BRUV_REMOTE_RUNTIME_STATE = previous;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("saved remote reply starts one new parent turn, without replay", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "remote-runtime-answer-"));
+  const previous = process.env.BRUV_REMOTE_RUNTIME_STATE;
+  process.env.BRUV_REMOTE_RUNTIME_STATE = join(dir, "runtime.json");
+  try {
+    const entries = [{ id: "root", parentId: null }];
+    const ctx = {
+      sessionManager: {
+        getSessionId: () => "session",
+        getSessionFile: () => join(dir, "session.jsonl"),
+        getLeafId: () => "root",
+        getBranch: () => entries,
+        getEntries: () => entries,
+      },
+    };
+    const commands = new Map<string, Function>();
+    const sent: Array<{ message: any; delivery: any }> = [];
+    registerRemoteRuntime({
+      registerCommand: (name: string, command: any) => commands.set(name, command.handler),
+      sendMessage: (message: any, delivery: any) => sent.push({ message, delivery }),
+      on() {},
+    } as any);
+    const service = new QuestionService();
+    const question = await service.ask(ctx, { text: "Pick a path" });
+    const input = {
+      id: question.id,
+      owner: question.owner,
+      version: question.version,
+      text: "Use the saved path",
+      replyId: "reply-1",
+    };
+    const encoded = Buffer.from(JSON.stringify(input)).toString("base64url");
+    const answer = commands.get("remote-native-answer")!;
+    await answer(encoded, ctx);
+    expect(sent).toHaveLength(1);
+    expect(sent[0]!.delivery).toEqual({ triggerTurn: true, deliverAs: "followUp" });
+    expect(sent[0]!.message.customType).toBe("question-answer");
+    expect(sent[0]!.message.display).toBe(false);
+    expect(sent[0]!.message.content).toContain("Saved answer for " + question.id);
+    expect(sent[0]!.message.content).toContain(input.text);
+    const saved = JSON.parse(sent[0]!.message.content.split("\n").slice(1).join("\n"));
+    expect(saved).toMatchObject({ id: question.id, owner: question.owner, replyId: input.replyId, answer: input.text });
+    expect(sent[0]!.message.content).not.toContain("Native children do not resume");
+    expect(service.get(ctx, question.id).delivery).toBe("delivered");
+    await answer(encoded, ctx);
+    expect(sent).toHaveLength(1);
   } finally {
     if (previous === undefined) delete process.env.BRUV_REMOTE_RUNTIME_STATE;
     else process.env.BRUV_REMOTE_RUNTIME_STATE = previous;

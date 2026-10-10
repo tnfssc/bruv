@@ -30,7 +30,7 @@ test("only execute is registered and setup probes share its declaration", () => 
 
 test("registered execute has a provider-friendly schema", () => {
   const [execute] = registeredTools();
-  expect(execute.promptSnippet).toBe("Run JS/TS.");
+  expect(execute.promptSnippet).toBeUndefined();
   expect(execute.parameters).toMatchObject({
     type: "object",
     required: ["code"],

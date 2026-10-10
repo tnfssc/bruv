@@ -36,7 +36,7 @@ export async function repositoryUntracked(
     await reader.cancel().catch(() => {});
   }
   const exit = await child.exited;
-  if (!incomplete && exit !== 0) throw Error("Current directory must be a Git repository");
+  if (!incomplete && exit !== 0) throw Error("Current directory needs a Git repo");
   // A partial final path is not a name that can be approved; still count it as
   // an observed path when reporting the minimum number omitted.
   const bytes = Buffer.concat(chunks);

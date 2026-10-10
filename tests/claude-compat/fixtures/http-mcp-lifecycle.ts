@@ -7,9 +7,13 @@ import { z } from "zod";
 /** Stateful real SDK peer; host shutdown happens only when the test says so. */
 export async function httpMcpLifecycleFixture({
   timeout = 2000,
+  description,
+  schemaDescription,
   threadConfiguration,
 }: {
   timeout?: number;
+  description?: string;
+  schemaDescription?: string;
   threadConfiguration?: () => Promise<unknown> | unknown;
 } = {}) {
   const sessions = new Map<string, StreamableHTTPServerTransport>();
@@ -30,9 +34,13 @@ export async function httpMcpLifecycleFixture({
       },
     });
     const server = new McpServer({ name: "lifecycle-fixture", version: "1" });
-    server.registerTool("echo", { inputSchema: { text: z.string() } }, async ({ text }) => ({
-      content: [{ type: "text", text }],
-    }));
+    server.registerTool(
+      "echo",
+      { description, inputSchema: { text: schemaDescription ? z.string().describe(schemaDescription) : z.string() } },
+      async ({ text }) => ({
+        content: [{ type: "text", text }],
+      }),
+    );
     if (threadConfiguration)
       server.registerTool("t3_thread_configuration", { inputSchema: {} }, async (args) => {
         configurationCalls.push(args);

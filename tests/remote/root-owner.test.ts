@@ -528,21 +528,21 @@ ownedProcessSuite(import.meta.path, () => {
       const manifest = captureTrackedFixture(f.dir);
       const checkout = await uploadWithExactReplay(manifest, f.options);
       const result: RootRequest = { op: "repository-result", ...identity, sessionId: "session", offset: 0 };
-      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed successful");
+      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed task success");
       await handleRootRequest(
         { op: "create", requestId: "create", intent: root(checkout) },
         { ...f.options, launch: () => {} },
       );
-      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed successful");
+      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed task success");
       writeFileSync(join(checkout, "tracked"), "server result change\n");
       let saved = f.store.get("session");
       saved.record = { ...saved.record, state: "unknown" };
       f.store.save(saved);
-      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed successful");
+      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed task success");
       saved = f.store.get("session");
       saved.record = { ...saved.record, state: "closed", exitCode: 1 };
       f.store.save(saved);
-      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed successful");
+      await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed task success");
       saved = f.store.get("session");
       saved.record = { ...saved.record, state: "closed", exitCode: 0 };
       f.store.save(saved);

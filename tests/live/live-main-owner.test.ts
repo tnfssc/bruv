@@ -1,3 +1,4 @@
+import { expectExecuteOnce } from "../prompts/combined-request";
 import { beforeAll, describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -242,7 +243,7 @@ describe("real Pi Live ownership", () => {
       expect(owner.orchestration.tools[0].description).toMatch(/await shell\(/);
       expect(owner.orchestration.tools[0].description).toContain("subagent()");
       expect(JSON.stringify(owner.orchestration.tools[0].parametersJsonSchema)).toContain("code");
-      expect((owner.orchestration as any).instructions).toContain("shell() runs commands");
+      expectExecuteOnce(owner.orchestration.instructions!, owner.orchestration.tools);
       expect(await owner.orchestration.execute({ name: "execute", args: {} })).toHaveProperty("isError", true);
       expect(toolEvents.map((event) => event.type)).toEqual(["tool_execution_start", "tool_execution_end"]);
       expect(toolEvents[0].args).toEqual({});
@@ -339,7 +340,7 @@ describe("direct Live tool turns", () => {
     const f = fixture();
     f.busy();
     expect(f.ctx.isIdle()).toBe(false);
-    await expect(acquireMainOwner({} as any, f.ctx)).rejects.toThrow("Cannot acquire");
+    await expect(acquireMainOwner({} as any, f.ctx)).rejects.toThrow("Live needs idle text agent");
     f.session._isAgentRunActive = false;
     expect(f.ctx.isIdle()).toBe(true);
     const owner = await acquireMainOwner({} as any, f.ctx);
@@ -375,6 +376,19 @@ describe("direct Live tool turns", () => {
     expect(f.messages.at(-1).content).toEqual(payload.content);
     owner.close();
     await owner.released;
+  });
+
+  test("unavailable tool text reaches the Live result", async () => {
+    const f = fixture();
+    const owner = await acquireMainOwner({} as any, f.ctx);
+    try {
+      const result = await owner.orchestration.execute({ name: "other", args: {} });
+      expect((result as any).content).toEqual([{ type: "text", text: "Live tool is unavailable" }]);
+      expect(f.events.at(-1).isError).toBe(true);
+    } finally {
+      owner.close();
+      await owner.released;
+    }
   });
 
   test("production Live events render through pinned ToolExecutionComponent and execute renderers", async () => {

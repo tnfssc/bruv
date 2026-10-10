@@ -635,7 +635,7 @@ function persistBillableUsage(
       operationId,
       dispatch: "response",
     });
-    ctx.ui?.notify?.("Compaction usage checkpoint could not be written; compaction cancelled.", "error");
+    ctx.ui?.notify?.("Usage checkpoint write failed. Compaction cancelled.", "error");
     return false;
   }
 }
@@ -685,10 +685,7 @@ async function compactNativeCapture(
         operationId,
         dispatch: "none",
       });
-      ctx.ui?.notify?.(
-        "Codex native compaction credentials are unavailable. Compaction cancelled; no plaintext request was sent.",
-        "error",
-      );
+      ctx.ui?.notify?.("No Codex credentials. Native compaction cancelled. No plaintext sent.", "error");
       return { cancel: true };
     }
     for (const [key, value] of Object.entries(request.headers)) {
@@ -706,10 +703,7 @@ async function compactNativeCapture(
           dispatch: "none",
           cancellation: "safety",
         });
-        ctx.ui?.notify?.(
-          "Codex native compaction credentials changed. Compaction cancelled; no plaintext request was sent.",
-          "error",
-        );
+        ctx.ui?.notify?.("Codex credentials changed. Native compaction cancelled. No plaintext sent.", "error");
         return { cancel: true };
       }
     }
@@ -797,8 +791,8 @@ async function compactNativeCapture(
     });
     ctx.ui?.notify?.(
       cancelled
-        ? "Codex native compaction was cancelled; no plaintext request was sent."
-        : "Codex native compaction failed. Compaction cancelled; no plaintext request was sent.",
+        ? "Codex native compaction cancelled. No plaintext sent."
+        : "Codex native compaction failed. Cancelled; no plaintext sent.",
       "error",
     );
     return { cancel: true };
@@ -830,8 +824,8 @@ export function registerNativeCodexCompaction(
       });
       blockOrdinaryRequest =
         invalid || !incompatible
-          ? "Unsupported or damaged opaque Codex checkpoint. Use a compatible bruv version or branch before the checkpoint."
-          : "This session contains an opaque Codex checkpoint that cannot be sent to the selected API/provider. Switch back to its Codex API/provider (" +
+          ? "Opaque Codex checkpoint damaged or unsupported. Use matching bruv version or branch before it."
+          : "Opaque Codex checkpoint needs its own API/provider. Switch back to (" +
             incompatible.provider +
             ") or start a new session.";
       ctx.ui?.notify?.(blockOrdinaryRequest, "error");
@@ -868,7 +862,7 @@ export function registerNativeCodexCompaction(
         dispatch: "none",
         cancellation: "safety",
       });
-      const message = "Native Codex checkpoint was lost during provider serialization; request cancelled.";
+      const message = "Provider request lost native Codex checkpoint. Request cancelled.";
       ctx.ui?.notify?.(message, "error");
       ctx.abort();
       throw new Error(message);
@@ -908,7 +902,7 @@ export function registerNativeCodexCompaction(
         cancellation: "safety",
       });
       ctx.ui?.notify?.(
-        "Branch summaries cannot yet carry opaque Codex state. Navigate without a summary or branch before the checkpoint.",
+        "Branch summaries cannot carry opaque Codex state. Navigate with no summary or branch before checkpoint.",
         "error",
       );
       return { cancel: true };
@@ -927,7 +921,7 @@ export function registerNativeCodexCompaction(
           dispatch: "none",
           cancellation: "safety",
         });
-        ctx.ui?.notify?.("Compaction cancelled: switch back to the checkpoint's Codex API/provider first.", "error");
+        ctx.ui?.notify?.("Compaction cancelled. Switch back to checkpoint’s Codex API/provider.", "error");
         return { cancel: true };
       }
       return;
@@ -943,10 +937,7 @@ export function registerNativeCodexCompaction(
           dispatch: "none",
           cancellation: "safety",
         });
-        ctx.ui?.notify?.(
-          "Custom compaction cannot safely rewrite an opaque Codex checkpoint; compaction cancelled.",
-          "error",
-        );
+        ctx.ui?.notify?.("Custom compaction cannot rewrite opaque Codex state. Cancelled.", "error");
         return { cancel: true };
       }
       bestEffortDiagnostic(ctx, {
@@ -957,10 +948,7 @@ export function registerNativeCodexCompaction(
         dispatch: "none",
       });
       captured = undefined;
-      ctx.ui?.notify?.(
-        "Codex native compaction does not support custom instructions; trying cache-affine plaintext compaction.",
-        "warning",
-      );
+      ctx.ui?.notify?.("Codex native compaction has no custom instructions. Trying cache-affine plaintext.", "warning");
       return;
     }
     const fallbackCode = nativeFallbackCode(request, captureInvalidated, event, ctx);
@@ -976,7 +964,7 @@ export function registerNativeCodexCompaction(
       });
       if (existing.length) {
         ctx.ui?.notify?.(
-          "No safe native request covers every message that would be discarded; opaque checkpoint preserved and compaction cancelled.",
+          "Native request misses messages being dropped. Opaque checkpoint kept; compaction cancelled.",
           "error",
         );
         return { cancel: true };

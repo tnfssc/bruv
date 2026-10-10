@@ -177,7 +177,7 @@ describe("stop acknowledgement and closing ownership", () => {
     await expect(audio.play(Buffer.alloc(960), 0)).rejects.toThrow("not running");
     await expect(audio.flush(1)).rejects.toThrow("not running");
     await stop;
-    expect(audio.stopError).toBe("Audio stop acknowledgement was not observed");
+    expect(audio.stopError).toBe("Audio stop not acknowledged");
     expect(worker.killed).toBe(true);
     expect(errors).toEqual([]);
     worker.emit("close");
@@ -196,7 +196,7 @@ describe("stop acknowledgement and closing ownership", () => {
       await stop;
       expect(errors).toEqual(["helper_failure"]);
       expect(played).toEqual([]);
-      expect(audio.stopError).toBe("Audio stop acknowledgement was not observed");
+      expect(audio.stopError).toBe("Audio stop not acknowledged");
       expect(worker.killed).toBe(true);
       worker.emit("close");
     }
@@ -205,7 +205,7 @@ describe("stop acknowledgement and closing ownership", () => {
   test("stop timeout closes ownership without claiming acknowledgement", async () => {
     const { audio, worker } = await running({ stopTimeoutMs: 10 });
     await audio.stop();
-    expect(audio.stopError).toBe("Audio stop acknowledgement was not observed");
+    expect(audio.stopError).toBe("Audio stop not acknowledged");
     expect(worker.killed).toBe(true);
   });
 
@@ -215,7 +215,7 @@ describe("stop acknowledgement and closing ownership", () => {
     worker.emitMessage({ type: "played", queuedMs: 0 });
     worker.stdout.end();
     await stop;
-    expect(audio.stopError).toBe("Audio stop acknowledgement was not observed");
+    expect(audio.stopError).toBe("Audio stop not acknowledged");
     expect(worker.killed).toBe(true);
     worker.emit("close");
   });

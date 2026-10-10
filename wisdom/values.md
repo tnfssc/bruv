@@ -62,7 +62,7 @@ From: [product-first correction](prompts/product-first-engineering.md), [worktre
 
 ## 8. Make it human. Show what is real
 
-Values over rules. Say what matters and why. Leave room for judgment. In prompts, this helps the agent weigh the real job instead of collecting commands. Exact tool facts and safety bounds still matter. See [the prompting correction](prompts/writing-without-clutter.md#value-based-prompting).
+Values over rules. Say what matters and why. Leave room for judgment. In prompts, this helps the agent weigh the real job instead of collecting commands. Exact tool facts and safety bounds still matter. Keep their meaning, not their old wording. Review counts and green checks do not prove the voice. See [the plain-facts correction](prompts/plain-facts-followup.md). Model sees system text and tool descriptions together. Review them together. Say each fact once. See [the combined request fix](prompts/combined-request-dedup.md) and [the prompting correction](prompts/writing-without-clutter.md#value-based-prompting).
 
 All writing: use same voice as rest. Read nearby text first. Match its words and rhythm in all writing. No formal talk. Short words. Short sentences. Plain talk. Same care for app text, prompts, docs, comments, notes, replies. No say same thing twice. UI, picture, command, example already shows it? No tell it again. Cut extra ideas and sections, not just words. Better layout can save words. Keep needed facts, steps, warnings, reasons. Need depth? Keep it. See [the user's README cuts and voice correction](prompts/writing-without-clutter.md).
 

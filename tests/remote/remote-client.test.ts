@@ -51,7 +51,7 @@ test("pins intent before first network POST; uncertain retry uses identical ID o
     prompt: posts[0]!.request.prompt,
     outcome: "unknown",
   });
-  await expect(client.launch("/other", "work", "id1")).rejects.toThrow("different owner or intent");
+  await expect(client.launch("/other", "work", "id1")).rejects.toThrow("other owner or intent");
   expect((await client.launch("/repo", "work", "id1")).outcome).toBe("accepted");
   expect(posts.map(({ request }) => request.taskId)).toEqual(["id1", "id1"]);
   await client.launch("/repo", "work", "id1");
@@ -76,8 +76,8 @@ test("changed owner prevents retry and sync; cache remains available offline", a
   epoch = "two";
   await expect(c.launch("/repo", "p", "id1")).rejects.toThrow("owner changed");
   await c.connect("myhost");
-  await expect(c.launch("/repo", "p", "id1")).rejects.toThrow("different owner or intent");
-  await expect(c.sync("id1")).rejects.toThrow("another remote owner");
+  await expect(c.launch("/repo", "p", "id1")).rejects.toThrow("other owner or intent");
+  await expect(c.sync("id1")).rejects.toThrow("Other remote owner");
   expect((await c.transcript("id1")).outcome).toBe("unknown");
   expect(posts).toBe(1);
 });
@@ -166,7 +166,7 @@ test("page acceptance resumes after rejection, preserving terminal truth and cor
   const client = await fixture(transport);
   await client.connect("box");
   await client.launch("/repo", "work", "pages");
-  await expect(client.answer("pages", { id: "q1", owner, version: 1, text: "yes" })).rejects.toThrow("uncertain");
+  await expect(client.answer("pages", { id: "q1", owner, version: 1, text: "yes" })).rejects.toThrow("unknown");
   replyId = (await client.transcript("pages")).replies!.q1!.replyId;
 
   await expect(client.sync("pages")).rejects.toThrow("Invalid sync cursor");
@@ -379,7 +379,7 @@ test("targeted answer pins reply ID before transport, rejects changed intent, bo
   await c.launch("/repo", "prompt", "one");
   await c.launch("/repo", "another", "two");
   await expect(c.answer("one", { id: "q1", owner, version: 1, text: "yes" })).rejects.toThrow("stale");
-  await expect(c.answer("one", { id: "q1", owner, version: 2, text: "yes" })).rejects.toThrow("uncertain");
+  await expect(c.answer("one", { id: "q1", owner, version: 2, text: "yes" })).rejects.toThrow("unknown");
   const replyId = (await c.transcript("one")).replies!.q1!.replyId;
   expect(answerPosts[0]!.saved).toEqual({ id: "q1", owner, version: 2, text: "yes", replyId });
   expect(answerPosts[0]!.request.replyId).toBe(replyId);
@@ -458,7 +458,7 @@ for (const failure of ["changed-connection", "offline-hello", "lost-cancel"] as 
     await c.launch("/repo", "work", "id");
     broken = true;
     if (failure === "changed-connection") await c.connect("other-box");
-    await expect(c.cancel("id")).rejects.toThrow(failure === "lost-cancel" ? "uncertain" : "no cancel sent");
+    await expect(c.cancel("id")).rejects.toThrow(failure === "lost-cancel" ? "unknown" : "No cancel sent");
     const saved = await c.transcript("id");
     expect(saved.cancelRequested).toBe(true);
     expect(saved.cancelDelivery?.status).toBe(failure === "lost-cancel" ? "uncertain" : "requested");
@@ -494,9 +494,9 @@ test("uncertain cancel stays uncertain across changed owner and only terminal sy
   });
   await c.connect("box");
   await c.launch("/repo", "work", "id");
-  await expect(c.cancel("id")).rejects.toThrow("uncertain");
+  await expect(c.cancel("id")).rejects.toThrow("unknown");
   epoch = "two";
-  await expect(c.cancel("id")).rejects.toThrow("no cancel sent");
+  await expect(c.cancel("id")).rejects.toThrow("No cancel sent");
   expect((await c.transcript("id")).cancelDelivery?.status).toBe("uncertain");
   expect(posts).toBe(1);
   epoch = "one";
@@ -549,7 +549,7 @@ test("placement role/depth/workspace is durable before POST and cannot change on
   );
   await expect(
     client.launch("/repo", "placed work", "placed", undefined, "/parent", { ...placement, profile: "normal" }),
-  ).rejects.toThrow("different owner or intent");
+  ).rejects.toThrow("other owner or intent");
   await expect(client.launch("/repo", "placed work", undefined, undefined, "/parent", placement)).rejects.toThrow(
     "unknown outcome",
   );
@@ -581,7 +581,7 @@ test("older destinations cannot silently downgrade a placed task to legacy norma
       parentDepth: 0,
       workspace: { kind: "inherit" },
     }),
-  ).rejects.toThrow("does not support task placement");
+  ).rejects.toThrow("cannot place tasks");
   expect(posts).toBe(0);
 });
 
@@ -605,6 +605,6 @@ test("a destination role mismatch is uncertain, not silently accepted", async ()
       parentDepth: 0,
       workspace: { kind: "inherit" },
     }),
-  ).rejects.toThrow("different task role or placement");
+  ).rejects.toThrow("changed role or placement");
   expect((await client.transcript("placed")).outcome).toBe("unknown");
 });

@@ -2,7 +2,7 @@ import { taskRowFromLaunch, taskRowKey, type TaskRow } from "../ui/task-rows";
 import { type ExtensionAPI, type ExtensionContext, SettingsManager } from "@earendil-works/pi-coding-agent";
 import * as z from "zod/mini";
 import { type DiagnosticRecord, diagnosticRecorder, inspectDiagnostics } from "../diagnostics";
-import { backgroundHandoff, executeGuidance } from "../prompts";
+import { backgroundHandoff } from "../prompts";
 import { ExecuteParameters, executeDeclaration } from "./definition";
 import {
   type ExecutePreviewState,
@@ -58,8 +58,6 @@ export function registerExecuteTool(
   pi.registerTool({
     ...executeDeclaration(),
     label: "Execute",
-    promptSnippet: "Run JS/TS.",
-    promptGuidelines: executeGuidance,
     renderShell: "self",
     renderCall: (args, theme, context) => {
       if (!context.state.resultVisible) previewStates.add(context.state);
@@ -119,9 +117,9 @@ export function registerExecuteTool(
                 owner?.getSessionId?.() !== ownerSessionId ||
                 owner?.getLeafId?.() !== ownerLeafId
               )
-                throw new Error("Live stop request belongs to an inactive session");
+                throw new Error("Live stop request from inactive session");
               if (params && (typeof params !== "object" || Array.isArray(params) || Object.keys(params).length))
-                throw new Error("live.stop accepts no options; stop jobs explicitly with jobs.stop(exactId)");
+                throw new Error("live.stop takes no options. Jobs: jobs.stop(exactId).");
               return stopCurrentLive(pi, ctx);
             }
             if (!jobHandler) throw new Error("Session job helpers are unavailable");

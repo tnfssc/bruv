@@ -83,7 +83,7 @@ describe("prepared instruction frames", () => {
     await runMode("fast");
     expect(session._runSystemPromptOptions.forceSystemPrompt).toBe("BEFORE\n" + mode.guidance(ctx) + "\nAFTER");
     expect(session._runSystemPromptOptions.forceSystemPrompt).not.toContain(
-      "Shared work is simpler in one place. Extra worktrees bring extra care.",
+      "Shared work is simpler in one place. Extra worktrees cost care,",
     );
 
     await runMode("orchestrator");
@@ -123,12 +123,12 @@ describe("prepared instruction frames", () => {
     expect(switched).toEndWith("CUSTOM AFTER");
     expect(switched).toContain("<!-- bruv:main-agent-mode:owned-test-region:start -->\n\n");
     expect(switched).not.toContain("You build and fix code.");
-    expect(switched).not.toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+    expect(switched).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
 
     const restored = replaceMainAgentGuidance(switched, "orchestrator", owner);
     expect(restored).toStartWith("CUSTOM BEFORE");
     expect(restored).toEndWith("CUSTOM AFTER");
-    expect(restored).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+    expect(restored).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
     expect(replaceMainAgentGuidance("EXPLICIT CUSTOM", "fast", owner)).toBe("EXPLICIT CUSTOM");
   });
 });
@@ -267,7 +267,7 @@ describe("session history", () => {
       expect(afterRestart).toBe(beforeRestart);
       expect(afterRestart).toContain("<!-- bruv:main-agent-mode:");
       expect(afterRestart).not.toContain("You build and fix code.");
-      expect(afterRestart).not.toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+      expect(afterRestart).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

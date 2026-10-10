@@ -106,7 +106,7 @@ export class InjectedMcpSession {
 
   static async open(config: unknown, options: McpSessionOptions): Promise<InjectedMcpSession> {
     if (!Array.isArray(options.appOwnedServers))
-      throw new Error("Trusted binding must explicitly classify app-owned MCP servers");
+      throw new Error("Trusted binding must name which MCP servers the app owns");
     const parsed = parseInjectedMcpConfig(config); // Zod clones: caller cannot replace credentials after admission.
     const session = new InjectedMcpSession({
       ...options,
@@ -141,10 +141,7 @@ export class InjectedMcpSession {
       try {
         await session.close();
       } catch {
-        throw new McpOperationError(
-          "teardown-failed",
-          "MCP discovery failed and connection teardown was not fully confirmed",
-        );
+        throw new McpOperationError("teardown-failed", "MCP discovery failed. Connection close not confirmed.");
       }
       // SDK/transport errors can include credential-bearing config; never forward their prose/cause.
       throw new McpOperationError("connection-failed", "Injected MCP discovery failed or was denied");
@@ -272,7 +269,10 @@ export class InjectedMcpSession {
     const approved = { ...request, input: structuredClone(decision.updatedInput ?? submitted) };
     if (tool.owner === "app_owned") {
       if (!this.options.policy.beforeAppOwnedCall)
-        throw new McpOperationError("permission-denied", "App-owned MCP requires trusted active-run/provider policy");
+        throw new McpOperationError(
+          "permission-denied",
+          "App-owned MCP needs trusted policy for the active run and provider",
+        );
       await this.options.policy.beforeAppOwnedCall(approved);
       signal.throwIfAborted();
     }
@@ -304,10 +304,7 @@ export class InjectedMcpSession {
       signal.throwIfAborted();
       return errorResult ?? (result as CallToolResult);
     } catch {
-      throw new McpOperationError(
-        "call-failed",
-        "MCP call failed; remote mutation outcome may be unknown (not retried)",
-      );
+      throw new McpOperationError("call-failed", "MCP call failed. Remote change may have happened. No retry.");
     }
   }
 
@@ -355,7 +352,7 @@ export class InjectedMcpSession {
       if (fast.length > 1 || (fast.length === 1 && typeof fast[0]?.value !== "boolean")) throw new Error();
       return fast[0]?.value === true;
     } catch {
-      throw new Error("T3 Fast configuration is unavailable or does not match the owning model");
+      throw new Error("T3 Fast config missing or mismatched with owning model");
     }
   }
 
@@ -387,7 +384,7 @@ export class InjectedMcpSession {
             resumed.status = "connected";
           } catch {
             await this.closeConnection(this.requireConnection(name));
-            throw new McpOperationError("connection-failed", "App-owned MCP reconnect failed or was denied");
+            throw new McpOperationError("connection-failed", "Reconnect to app-owned MCP failed or was denied");
           }
         }
       }

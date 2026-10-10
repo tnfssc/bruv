@@ -294,7 +294,7 @@ test("app-owned tools fail closed without binding guard", async () => {
   );
   await expect(
     session.callTool("mcp__t3-code__delegate_task", { clientRequestId: "x" }, { toolUseId: "x" }),
-  ).rejects.toThrow("active-run");
+  ).rejects.toThrow("App-owned MCP needs trusted policy for the active run and provider");
   expect(f.calls).toEqual([]);
 });
 
@@ -307,7 +307,7 @@ test("cancellation/close cannot adopt a late result or retry an ambiguous call",
   const pending = session.callTool("mcp__t3-code__slow", {}, { toolUseId: "slow", signal: controller.signal });
   await f.slowCall.started;
   controller.abort();
-  await expect(pending).rejects.toThrow("outcome may be unknown");
+  await expect(pending).rejects.toThrow("MCP call failed. Remote change may have happened. No retry.");
   f.slowCall.release();
   await f.slowCall.finished;
   expect(f.calls).toEqual(["slow"]);
@@ -376,6 +376,7 @@ test("committed app launch with lost response is unknown, not retried or acknowl
     .callTool("mcp__t3-code__delegate_task", { clientRequestId: "ambiguous" }, { toolUseId: "ambiguous" })
     .catch((error) => error);
   expect(error.code).toBe("call-failed");
+  expect(error.message).toBe("MCP call failed. Remote change may have happened. No retry.");
   expect(String(error)).not.toContain("SECRET_SCOPE");
   expect(f.calls).toEqual(["delegate_task"]);
 });

@@ -22,7 +22,7 @@ export function registerProjectWisdom(pi: ExtensionAPI, options: ProjectWisdomOp
       if (!rootAllowed(options.isRoot, ctx))
         return ctx.ui.notify("Project wisdom is unavailable outside the root agent.", "warning");
       const directory = projectWisdomDir(ctx.cwd, ctx.isProjectTrusted());
-      return ctx.ui.notify(`Project wisdom lives in ${directory}/. Put it with the feature or system it explains.`);
+      return ctx.ui.notify(`Project wisdom: ${directory}/. Keep notes with feature or system they explain.`);
     },
   });
 

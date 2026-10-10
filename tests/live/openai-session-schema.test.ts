@@ -1,3 +1,4 @@
+import { expectExecuteOnce } from "../prompts/combined-request";
 import { describe, expect, test } from "bun:test";
 import { z } from "zod";
 import { OpenAIRealtimeSession, type RealtimeSocket } from "../../src/live/openai-session";
@@ -130,6 +131,7 @@ describe("OpenAI GA setup schema contract (offline)", () => {
       expect(f.ready).toBe(1);
       expect(f.errors).toEqual([]);
       expect(f.socket.events[0].session.instructions).toBe(bruvSystemPrompt());
+      expectExecuteOnce(f.socket.events[0].session.instructions, f.socket.events[0].session.tools);
       expect(f.socket.events[0].session.tools).toEqual(
         setupProbeOrchestration().tools.map((tool) => ({
           type: "function",

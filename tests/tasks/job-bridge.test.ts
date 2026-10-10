@@ -103,7 +103,7 @@ ownedProcessSuite(import.meta.path, () => {
       executablePath: binary,
     });
     expect(result.exitCode).not.toBe(0);
-    expect(result.stderr).toContain("bridge is unavailable");
+    expect(result.stderr).toContain("No job bridge");
   });
   test("foreground work returns inline; background work survives execute and accepts input", async () => {
     await using jobs = new SessionJobs();

@@ -119,7 +119,7 @@ export class JobAttentionScheduler {
 
   snooze(id: string, minutes: number): TaskSummary {
     if (!Number.isFinite(minutes) || minutes <= 0 || minutes > MAX_SNOOZE_MINUTES) {
-      throw new Error(`Snooze minutes must be greater than 0 and at most ${MAX_SNOOZE_MINUTES}`);
+      throw new Error(`Snooze needs >0 to ${MAX_SNOOZE_MINUTES} minutes`);
     }
     const task = this.#running(id);
     const state = this.#states.get(id);
@@ -358,7 +358,7 @@ export function formatAttentionNotification(
   limit = MAX_ATTENTION_NOTIFICATION_CHARS,
 ): string {
   if (!notices.length || limit <= 0) return "";
-  let text = `${notices.length} running job${notices.length === 1 ? "" : "s"} reached an attention checkpoint. Jobs continue running.`;
+  let text = `${notices.length} running job${notices.length === 1 ? "" : "s"} need attention. Still running.`;
   if (text.length >= limit) return text.slice(0, limit);
 
   const omittedBlock = (omitted: AttentionNotice[], available: number): string => {
@@ -368,7 +368,7 @@ export function formatAttentionNotification(
       .map((item) => item.id)
       .join(" ");
     const more = omitted.length > 8 ? ` … (+${omitted.length - 8} more)` : "";
-    const block = `${omitted.length} additional attention checkpoint${omitted.length === 1 ? "" : "s"} omitted. IDs: ${ids}${more}`;
+    const block = `${omitted.length} more checkpoint${omitted.length === 1 ? "" : "s"} not shown. IDs: ${ids}${more}`;
     return block.slice(0, available);
   };
 
@@ -379,7 +379,7 @@ export function formatAttentionNotification(
       `\n\n${notice.id} [${notice.reasons.join("+")}] elapsed=${duration(notice.elapsedMs)} quiet=${duration(notice.quietForMs)} output=${notice.outputBytes}B stdin=${notice.stdinOpen ? "open" : "closed"}` +
       (output
         ? `\nRecent output: ${output.length > 500 ? `\u2026${output.slice(-499)}` : output}`
-        : "\nNo retained output observed.");
+        : "\nNo output seen.");
     const remaining = notices.slice(included + 1);
     const omission = remaining.length ? `\n\n${omittedBlock(remaining, limit)}` : "";
     if (text.length + block.length + omission.length > limit) {

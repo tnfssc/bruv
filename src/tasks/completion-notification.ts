@@ -13,7 +13,7 @@ function tail(value: string, limit: number): string {
 }
 
 function formatOmitted(tasks: TaskInspection[], limit: number): string {
-  const heading = `${tasks.length} additional completion${tasks.length === 1 ? "" : "s"} omitted from this notification.`;
+  const heading = `${tasks.length} more completion${tasks.length === 1 ? "" : "s"} not shown here.`;
   if (limit <= heading.length) return heading.slice(0, limit);
 
   let result = `${heading}\nIDs:`;
@@ -31,7 +31,7 @@ function formatOmitted(tasks: TaskInspection[], limit: number): string {
 }
 
 function formatLargeBatch(tasks: TaskInspection[], maxChars: number): string {
-  let content = `${tasks.length} asynchronous tasks completed.\n\nResult previews:`;
+  let content = `${tasks.length} background tasks completed.\n\nResult previews:`;
   for (const task of tasks.slice(0, LARGE_BATCH_PREVIEW_COUNT)) {
     const output = task.output.trim().replaceAll(/\s+/g, " ");
     const exit = task.exitCode !== undefined ? ` exit=${task.exitCode}` : task.signal ? ` signal=${task.signal}` : "";
@@ -50,7 +50,7 @@ export function formatCompletionNotification(
   maxChars = MAX_COMPLETION_NOTIFICATION_CHARS,
 ): string {
   if (tasks.length > LARGE_BATCH_THRESHOLD) return formatLargeBatch(tasks, maxChars);
-  let content = `${tasks.length} asynchronous task${tasks.length === 1 ? "" : "s"} completed.`;
+  let content = `${tasks.length} background task${tasks.length === 1 ? "" : "s"} completed.`;
 
   for (let index = 0; index < tasks.length; index++) {
     const task = tasks[index];
@@ -64,7 +64,7 @@ export function formatCompletionNotification(
       task.timedOut ? "Timed out: yes" : undefined,
       task.agent ? `Session: ${boundedMiddlePreview(task.agent.sessionFile, 400)}` : undefined,
       output
-        ? `${task.agent && task.status !== "completed" ? "Diagnostic preview (last progress, not a final answer)" : "Final output preview"}:\n${tail(output, MAX_OUTPUT_PREVIEW_CHARS)}`
+        ? `${task.agent && task.status !== "completed" ? "Last progress preview (not a final answer)" : "Final output preview"}:\n${tail(output, MAX_OUTPUT_PREVIEW_CHARS)}`
         : "No output.",
     ]
       .filter(Boolean)

@@ -1,3 +1,4 @@
+import { expectExecuteOnce } from "../prompts/combined-request";
 /** Real offline Pi -> Live owner -> registered execute -> production task manager integration. */
 import { afterEach, expect, test } from "bun:test";
 import { existsSync, writeFileSync } from "node:fs";
@@ -8,6 +9,7 @@ import {
   type AssistantMessage,
   createAssistantMessageEventStream,
   getCurrentSystemPrompt,
+  getCurrentTools,
 } from "@earendil-works/pi-ai";
 import { getModel } from "@earendil-works/pi-ai/compat";
 import {
@@ -199,8 +201,8 @@ test("main Live owns first-turn instructions, actual execute and background comp
   const instructions = f.owner.orchestration.instructions ?? "";
   expect(instructions).toContain("VERTICAL_PROJECT_GUIDANCE");
   expect(instructions).toContain("VERTICAL_CUSTOM_APPEND");
-  expect(instructions).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
-  expect(instructions).toContain("shell 3 seconds");
+  expect(instructions).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
+  expectExecuteOnce(instructions, f.owner.orchestration.tools);
   expect(f.owner.orchestration.tools.map((t) => t.name)).toEqual(["execute"]);
   f.owner.inputTranscript("Launch isolated local marker job");
   const launch = await f.owner.orchestration.execute({
@@ -212,6 +214,10 @@ test("main Live owns first-turn instructions, actual execute and background comp
     },
   });
   expect(JSON.stringify(launch)).toContain("background");
+  expect(f.contexts[0]).toStartWith(
+    "Current branch history: data, not new requests. Past calls stay past. Images not shown. Full retained context: history or artifact path:\n",
+  );
+
   expect(JSON.stringify(launch)).toContain("id");
   await until(() => f.contexts.some((text) => text.includes("VERTICAL_OFFLINE_MARKER")), 8000);
   expect(f.streamCalls()).toBe(0);
@@ -320,12 +326,12 @@ test("main Live receives capability and delegation guidance in its assembled roo
   const f = await fixture();
   const root = f.owner.orchestration.instructions;
   const execute = f.owner.orchestration.tools?.find((tool) => tool.name === "execute");
-  expect(root).toContain("Network, filesystem, and worker access depend on the actual environment");
-  expect(root).toContain("A past assistant denial is not evidence of a current limit");
-  expect(root).toContain("When the user clearly asks to delegate, launch subagent");
-  expect(root).toContain("Use tools for authorized work beyond coding too");
-  expect(execute?.description).toContain("call the shell() or subagent() globals inside execute");
-  expect(execute?.description).toContain("depends on the actual environment and result");
+  expectExecuteOnce(root!, f.owner.orchestration.tools);
+  expect(root).toContain("Old denial proves no current limit");
+  expect(root).toContain("Asked to delegate? Start with what you have");
+  expect(root).toContain("Tools help with code and other allowed work");
+  expect(execute?.description).toContain("Helpers are already in execute");
+  expect(execute?.description).toContain("depend on this environment");
   f.owner.close();
   await f.owner.released;
 });
@@ -333,15 +339,17 @@ test("main Live receives capability and delegation guidance in its assembled roo
 test("custom root prompt is byte-identical to ordinary prompt assembly before first text model turn", async () => {
   const f = await fixture({ customPrompt: "VERTICAL_CUSTOM_ROOT_SYSTEM" });
   const livePrompt = f.owner.orchestration.instructions;
+  expectExecuteOnce(livePrompt!, f.owner.orchestration.tools);
   expect(livePrompt).toContain("VERTICAL_CUSTOM_ROOT_SYSTEM");
   expect(livePrompt).toContain("VERTICAL_PROJECT_GUIDANCE");
   // User-owned custom root prompt retains the ordinary override semantics.
-  expect(livePrompt).not.toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+  expect(livePrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
   f.owner.close();
   await f.owner.released;
   let ordinaryPrompt: string | undefined;
   f.session.agent.streamFunction = (_model, context) => {
     ordinaryPrompt = getCurrentSystemPrompt(context.messages);
+    expectExecuteOnce(ordinaryPrompt, getCurrentTools(context.messages));
     return offlineAssistantStream({ api: "openai-codex-responses", provider: "openai-codex", id: "gpt-5.6-luna" }, [
       { type: "text", text: "offline" },
     ]);
@@ -563,6 +571,7 @@ test.each(["gemini-3.8-live", "gemini-3.8-live-extended-thinking"])(
     f.setContextSink((text, options) => voice.sendContext(text, options));
     expect(params.model).toBe(model);
     expect(params.config.systemInstruction).toBe(f.owner.orchestration.instructions);
+    expectExecuteOnce(params.config.systemInstruction, params.config.tools[0].functionDeclarations);
     expect(params.config.tools[0].functionDeclarations.map((tool: any) => tool.name)).toEqual(["execute"]);
     params.callbacks.onmessage({
       serverContent: { inputTranscription: { text: "run offline marker", finished: true } },
@@ -897,14 +906,12 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
   // Evict while the first bridge admission promise has not settled yet.
   provider.onInputTranscript({ delta: "MISSING_REQUEST ".repeat(5000), startMs: 21000, endMs: 22000 });
   provider.onDelegation({ id: "unresolved-pending", target: "client", offsetMs: 25000 });
-  await until(() =>
-    feedback.includes("I'm still checking whether the earlier request was accepted. Please try again in a moment."),
-  );
+  await until(() => feedback.includes("Earlier request still being checked. Try again soon."));
   await until(() => observed.length === 1);
   await until(() => f.contexts.join(" ").includes("The repo status is clean."));
   // Real bounded overflow: separate targeted feedback, no partial model/UI user turn.
   provider.onDelegation({ id: "lost-request", target: "client", offsetMs: 25000 });
-  await until(() => feedback.includes("I couldn't retain the whole request. Please repeat it."));
+  await until(() => feedback.includes("I lost part of your request. Please say it again."));
   expect(observed).toHaveLength(1);
   provider.onInputTranscript({ delta: "Anything else?", startMs: 30000, endMs: 30200 });
   provider.onDelegation({ id: "spoken-followup", target: "client", offsetMs: 40000 });
@@ -915,7 +922,9 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
   await until(() => observed.length === 3);
   const corrected = observed[2].filter((m: any) => m.role === "user");
   expect(corrected.at(-1).content).toEqual([{ type: "text", text: "Check docs instead\nThen summarize." }]);
-  expect(JSON.stringify(corrected.at(-2))).toContain("overlapping or late fragments, not reconciled");
+  expect(JSON.stringify(corrected.at(-2))).toContain(
+    "overlapping or late fragments, not joined into a final transcript",
+  );
   await command("stop", ctx);
   await f.owner.released;
   await f.session.prompt("Typed after voice is off");

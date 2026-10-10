@@ -221,7 +221,7 @@ export class GptLiveDelegationBridge {
         kind: "clarification",
         id,
         revision,
-        commentary: "I'm still checking whether the earlier request was accepted. Please try again in a moment.",
+        commentary: "Earlier request still being checked. Try again soon.",
       };
     if (prepared.kind === "future-loss") return { kind: "unavailable", id };
     if (prepared.kind === "incomplete")
@@ -229,7 +229,7 @@ export class GptLiveDelegationBridge {
         kind: "clarification",
         id,
         revision,
-        commentary: "I couldn't retain the whole request. Please repeat it.",
+        commentary: "I lost part of your request. Please say it again.",
       };
     const { admission } = prepared;
     const snapshot: DelegationSnapshot = {
@@ -250,7 +250,8 @@ export class GptLiveDelegationBridge {
       const result = await this.host.submitContextual(id, snapshot);
       admitted = !!(result && "queued" in result && result.queued === true);
       if (this.closed || this.epoch !== epoch || this.revision !== revision) return { kind: "stale", id };
-      if (admitted) return { kind: "queued", id, revision, commentary: "Passed your request to the current agent." };
+      if (admitted)
+        return { kind: "queued", id, revision, commentary: "Your request is queued for the current agent." };
       if (result && "clarification" in result && result.clarification === true)
         return { kind: "clarification", id, revision, commentary: "Could you clarify your request?" };
       return { kind: "unavailable", id };

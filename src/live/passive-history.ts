@@ -87,9 +87,9 @@ function projectUserTurn(
     display: false,
     timestamp: message.timestamp,
     content: recovered?.missing
-      ? "Historical voice request was incomplete; no actionable request retained."
+      ? "Past voice request incomplete. No request to act on."
       : "Provisional voice transcription" +
-        (recovered?.overlap ? "; overlapping or late fragments, not reconciled" : ""),
+        (recovered?.overlap ? "; overlapping or late fragments, not joined into a final transcript" : ""),
   };
   if (recovered?.missing) return [context];
   const speech: AgentMessage =

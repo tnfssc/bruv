@@ -405,9 +405,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
 
       this.ctx.ui.setWidget(ID, undefined);
       this.stopping = (async () => {
-        const errors: string[] = audioLaunchPending
-          ? ["Audio startup has not finished; teardown is not yet observed"]
-          : [];
+        const errors: string[] = audioLaunchPending ? ["Audio startup is not done; teardown not yet seen"] : [];
         let providerFinalized = true;
         await Promise.all([
           (async () => {
@@ -432,7 +430,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 providerFinalized = false;
               }
             } catch {
-              errors.push("Provider socket close failed");
+              errors.push("Provider socket failed to close");
               providerFinalized = false;
             }
           })(),
@@ -622,14 +620,11 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           void operation.then(
             () => {
               if (this.alive && this.gptSpeechEpoch === speechEpoch)
-                this.gpt?.commentary(
-                  id,
-                  "Configured coding-agent turn ended; consult session history for its outcome.",
-                );
+                this.gpt?.commentary(id, "Coding-agent turn ended. Read session history for its result.");
             },
             () => {
               if (this.alive)
-                this.gpt?.commentary(id, "Coding-agent delegation failed; check session history before retrying.");
+                this.gpt?.commentary(id, "Coding-agent delegation failed. Check session history before retrying.");
             },
           );
           return { queued: true };

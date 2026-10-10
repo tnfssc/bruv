@@ -232,6 +232,11 @@ for (const [provider, , api] of [
       expect(captured).toHaveLength(2);
       const first = captured[0].payload,
         last = captured[1].payload;
+      if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+        await Bun.write(
+          join(process.env.BRUV_REQUEST_CAPTURE_DIR, `compaction-${provider}.json`),
+          JSON.stringify(last, null, 2),
+        );
       expect(last.tools).toEqual(first.tools);
       expect(captured[1].headers["x-bruv-fixture-routing"]).toBe("same-route");
       if (provider === "openai-codex") {
@@ -244,7 +249,7 @@ for (const [provider, , api] of [
       }
       const conversation = provider === "openai-codex" ? last.input : last.messages;
       const summaryInstruction = JSON.stringify(conversation.at(-1));
-      expect(summaryInstruction).toContain("Summarize the whole conversation above.");
+      expect(summaryInstruction).toContain("Summarize whole conversation above.");
       expect(summaryInstruction).not.toContain("retained tail");
       expect(summaryInstruction).not.toContain("### Scope");
       expect(JSON.stringify(conversation)).toContain("Old task fixture.");

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { createPromptPreview } from "../../src/prompt-preview";
-import { executeGuidance } from "../../src/prompts";
+import { expectBruvFrameOnce, expectExecuteOnce } from "./combined-request";
 import { registerExecuteTool } from "../../src/typescript/extension";
 
 test("offline preview captures production prompt, tool definition, and injected messages", async () => {
@@ -33,10 +33,11 @@ test("offline preview captures production prompt, tool definition, and injected 
     expect(preview.preview.networkRequests).toBe(0);
     expect(preview.preview.role).toBe("root");
     expect(preview.preview.rootMode).toBe("orchestrator");
-    expect(preview.systemPrompt).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+    expect(preview.systemPrompt).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
     expect(preview.systemPrompt).not.toContain("Available tools:");
     expect(preview.systemPrompt).not.toContain("In addition to the tools above");
-    for (const guidance of executeGuidance) expect(preview.systemPrompt).toContain(guidance);
+    expectExecuteOnce(preview.systemPrompt, preview.tools);
+    expectBruvFrameOnce(preview.systemPrompt);
     expect(preview.systemPrompt).not.toContain("Delegation is disabled");
     expect(preview.systemPrompt).toContain("<cwd>");
     expect(preview.messages[0]?.role).toBe("system");
@@ -52,8 +53,11 @@ test("offline preview captures production prompt, tool definition, and injected 
       (await Bun.file(new URL("../../src/prompts/execute-description.md", import.meta.url)).text()).trimEnd(),
     );
     expect(JSON.stringify(preview.messages)).toContain("USER_PREVIEW_MARKER");
-    expect(JSON.stringify(preview.messages)).toContain("Persistent goal state (authoritative)");
+    expect(JSON.stringify(preview.messages)).toContain("Saved goal (current state)");
     expect(JSON.stringify(preview.messages)).toContain("GOAL_PREVIEW_MARKER");
+    for (const call of ["goal.get()", "goal.set({", "goal.update({", "goal.clear()"]) {
+      expect(JSON.stringify(preview.messages).split(call)).toHaveLength(2);
+    }
   } finally {
     fetch.mockRestore();
   }
@@ -72,9 +76,7 @@ test("root modes and explicitly selected project guidance pass through real asse
     expect(preview.systemPrompt).toContain("Next agent not hear whole talk.");
     expect(preview.systemPrompt).not.toContain("main agent in fast instruction mode");
     expect(preview.systemPrompt).not.toContain("You build and fix code.");
-    expect(preview.systemPrompt).not.toContain(
-      "Shared work is simpler in one place. Extra worktrees bring extra care.",
-    );
+    expect(preview.systemPrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -99,9 +101,7 @@ test("selected project base and append are included without loading settings or 
     expect(preview.systemPrompt).toContain("CUSTOM_PREVIEW_APPEND");
     expect(preview.systemPrompt).toContain("Next agent not hear whole talk.");
     expect(preview.systemPrompt).not.toContain("Quick work? Finish it.");
-    expect(preview.systemPrompt).not.toContain(
-      "Shared work is simpler in one place. Extra worktrees bring extra care.",
-    );
+    expect(preview.systemPrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
     expect(JSON.stringify(preview.messages)).toContain("CUSTOM_GOAL");
     expect(preview.preview.excluded).toContain("global and project settings/packages");
     expect(await readdir(dir)).toEqual(before);
@@ -113,12 +113,13 @@ test("selected project base and append are included without loading settings or 
 });
 
 test("workspace reference and delegation mechanics reach real root and child assembly", async () => {
-  const judgment = "Shared work is simpler in one place. Extra worktrees bring extra care.";
+  const judgment = "Shared work is simpler in one place. Extra worktrees cost care,";
   for (const role of ["root", "orchestrator", "normal"] as const) {
     const preview = await createPromptPreview({ role });
     expect(preview.preview.networkRequests).toBe(0);
-    expect(preview.systemPrompt).toContain("title?, workspace?");
-    expect(preview.systemPrompt).toContain("one pinned commit");
+    expectExecuteOnce(preview.systemPrompt, preview.tools);
+    expect(preview.tools[0]!.description).toContain("one pinned commit");
+    expectBruvFrameOnce(preview.systemPrompt, role === "root" ? undefined : role);
     expect(preview.systemPrompt).not.toContain("You lead work.");
     expect(preview.systemPrompt).not.toContain("Give other agents clear jobs and room to think.");
     expect(preview.systemPrompt).not.toContain("Put their work together for user.");
@@ -130,7 +131,7 @@ test("workspace reference and delegation mechanics reach real root and child ass
 });
 
 test("custom child base and append preserve role framing without injecting Bruv API prose", async () => {
-  const dir = await mkdtemp(join("/var/tmp", "bruv-workspace-prompt-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-workspace-prompt-"));
   try {
     await mkdir(join(dir, ".bruv"));
     await writeFile(join(dir, ".bruv", "SYSTEM.md"), "WORKSPACE_CUSTOM_BASE");
@@ -140,7 +141,8 @@ test("custom child base and append preserve role framing without injecting Bruv 
     expect(preview.systemPrompt).toContain("WORKSPACE_CUSTOM_BASE");
     expect(preview.systemPrompt).toContain("WORKSPACE_CUSTOM_APPEND");
     expect(preview.systemPrompt).toContain("You are a orchestrator sub-agent.");
-    expect(preview.systemPrompt).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+    expect(preview.systemPrompt).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
+    expectExecuteOnce(preview.systemPrompt, preview.tools);
     expect(preview.systemPrompt).not.toContain("title?, workspace?");
     expect(preview.systemPrompt).not.toContain("Quick work? Finish it.");
   } finally {
@@ -155,7 +157,7 @@ test("explicit preview roles do not inherit or overwrite the caller child identi
   process.env.BRUV_SUBAGENT_TYPE = "orchestrator";
   try {
     const root = await createPromptPreview();
-    expect(root.systemPrompt).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+    expect(root.systemPrompt).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
     expect(root.systemPrompt).not.toContain("You lead work.");
     expect(root.systemPrompt).not.toContain("You are a orchestrator sub-agent.");
     expect(process.env.BRUV_SUBAGENT_DEPTH).toBe("4");
@@ -163,11 +165,11 @@ test("explicit preview roles do not inherit or overwrite the caller child identi
 
     for (const role of ["fast", "normal"] as const) {
       const child = await createPromptPreview({ role });
+      expectBruvFrameOnce(child.systemPrompt, role);
+      expectExecuteOnce(child.systemPrompt, child.tools);
       expect(child.systemPrompt).toContain(`You are a ${role} sub-agent.`);
       expect(child.systemPrompt).not.toContain("You lead work.");
-      expect(child.systemPrompt).not.toContain(
-        "Shared work is simpler in one place. Extra worktrees bring extra care.",
-      );
+      expect(child.systemPrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
       expect(child.systemPrompt).not.toContain("You are a orchestrator sub-agent.");
       expect(process.env.BRUV_SUBAGENT_DEPTH).toBe("4");
       expect(process.env.BRUV_SUBAGENT_TYPE).toBe("orchestrator");

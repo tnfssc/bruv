@@ -38,7 +38,7 @@ test("foreground stop waits for result delivery, requests abort once, and still 
   const { host, observations, requestStop, acknowledgeDelivery } = foregroundStopFixture();
   expect(requestStop()).toEqual({
     outcome: "pending",
-    detail: "Foreground cancellation will be requested after result delivery",
+    detail: "Foreground stop follows result delivery",
   });
   expect(host.abort).not.toHaveBeenCalled();
   expect(observations).toEqual([]);
@@ -59,9 +59,7 @@ test("foreground stop cannot abort a different session after result delivery", (
 
   acknowledgeDelivery();
   expect(host.abort).not.toHaveBeenCalled();
-  expect(observations).toEqual([
-    { outcome: "error", detail: "Session or branch changed before foreground cancellation" },
-  ]);
+  expect(observations).toEqual([{ outcome: "error", detail: "Session or branch changed before stop" }]);
 });
 
 test("foreground stop cannot abort a different branch within the same session", () => {
@@ -71,9 +69,7 @@ test("foreground stop cannot abort a different branch within the same session", 
 
   acknowledgeDelivery();
   expect(host.abort).not.toHaveBeenCalled();
-  expect(observations).toEqual([
-    { outcome: "error", detail: "Session or branch changed before foreground cancellation" },
-  ]);
+  expect(observations).toEqual([{ outcome: "error", detail: "Session or branch changed before stop" }]);
 });
 
 test("cancelled result delivery disarms foreground cancellation", () => {
@@ -95,7 +91,7 @@ test("foreground abort failure is reported without exposing the thrown error", (
 
   acknowledgeDelivery();
   expect(host.abort).toHaveBeenCalledTimes(1);
-  expect(observations).toEqual([{ outcome: "error", detail: "Foreground cancellation failed" }]);
+  expect(observations).toEqual([{ outcome: "error", detail: "Foreground stop failed" }]);
 });
 
 test("an idle host needs no foreground cancellation or delivery listener", () => {
@@ -117,7 +113,5 @@ test("foreground stop rechecks the active voice owner even when session and bran
   acknowledgeDelivery();
   expect(isCurrentOwner).toHaveBeenCalledTimes(1);
   expect(host.abort).not.toHaveBeenCalled();
-  expect(observations).toEqual([
-    { outcome: "error", detail: "Session or branch changed before foreground cancellation" },
-  ]);
+  expect(observations).toEqual([{ outcome: "error", detail: "Session or branch changed before stop" }]);
 });

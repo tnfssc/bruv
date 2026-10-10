@@ -33,9 +33,9 @@ describe("completion notifications", () => {
 
     expect(notification.length).toBeLessThan(2_500);
     expect(notification.length).toBeLessThanOrEqual(MAX_COMPLETION_NOTIFICATION_CHARS);
-    expect(notification).toContain("50 asynchronous tasks completed");
+    expect(notification).toContain("50 background tasks completed");
     expect(notification).toContain("Result previews:");
-    expect(notification).toContain("additional completions omitted");
+    expect(notification).toContain("more completions not shown here");
     expect(notification).not.toContain("jobs.inspect");
     expect(notification).not.toContain("read retained output");
     for (const task of tasks) expect(notification).toContain(task.id);
@@ -59,7 +59,7 @@ describe("completion notifications", () => {
     expect(notification).toContain("output-1");
     expect(notification).toContain("task_2 completed");
     expect(notification).toContain("output-2");
-    expect(notification).not.toContain("omitted");
+    expect(notification).not.toContain("not shown here");
   });
 });
 
@@ -70,6 +70,6 @@ test("failed agent progress is not labeled as a successful final answer", () => 
   task.timedOut = true;
   task.agent = { type: "orchestrator", depth: 1, model: "provider/model", sessionFile: "/tmp/session.jsonl" };
   const text = formatCompletionNotification([task]);
-  expect(text).toContain("Diagnostic preview (last progress, not a final answer)");
+  expect(text).toContain("Last progress preview (not a final answer)");
   expect(text).not.toContain("Final output preview:");
 });

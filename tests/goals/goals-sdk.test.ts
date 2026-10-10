@@ -130,7 +130,7 @@ test("real offline assembly changes only messages across goal set, update, and c
 
     const messages = contexts.map((context) => context.messages);
     expect(messages[0]).not.toContain("Goal guidance:");
-    expect(messages[0]).not.toContain("Persistent goal state (authoritative)");
+    expect(messages[0]).not.toContain("Saved goal (current state)");
     expect(messages[1]).toContain("Goal guidance:");
     expect(messages[1]).toContain("Goal API:");
     expect(messages[1]).toContain("Status: active");
@@ -138,7 +138,7 @@ test("real offline assembly changes only messages across goal set, update, and c
     expect(messages[2]).toContain("Status: blocked");
     expect(messages[2]).toContain("Need focused fixture");
     expect(messages[3]).not.toContain("Goal guidance:");
-    expect(messages[3]).not.toContain("Persistent goal state (authoritative)");
+    expect(messages[3]).not.toContain("Saved goal (current state)");
   } finally {
     session?.dispose();
     await rm(dir, { recursive: true, force: true });
@@ -458,7 +458,7 @@ test("real SDK print completion cycles pause within bounded agent runs", async (
   );
   expect(goals.at(-1)?.data.goal).toMatchObject({
     status: "paused",
-    pauseReason: expect.stringContaining("no meaningful progress"),
+    pauseReason: expect.stringContaining("Auto turns stalled"),
   });
   const completions = result.entries.filter((entry: any) => entry.customType === "task-complete");
   expect(completions).toHaveLength(MAX_NO_PROGRESS_CONTINUATIONS);

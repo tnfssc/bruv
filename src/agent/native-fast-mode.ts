@@ -222,7 +222,7 @@ export function nativeFastSupport(
     if (model.api !== "openai-responses" || baseUrl !== OPENAI_BASE_URL || (oauth && model.baseUrl !== OPENAI_BASE_URL))
       return {
         supported: false,
-        reason: "OpenAI native fast mode requires the official openai Responses endpoint and auth surface.",
+        reason: "OpenAI fast mode needs the official openai Responses endpoint and auth.",
       };
     // Pi 1.1.0 canonical OpenAI keeps the Responses API/endpoint for both
     // API keys and ChatGPT OAuth; it does not rewrite OAuth to legacy Codex.
@@ -232,7 +232,7 @@ export function nativeFastSupport(
     if (model.api !== "openai-codex-responses" || baseUrl !== CODEX_BASE_URL)
       return {
         supported: false,
-        reason: "Codex native fast mode requires ChatGPT sign-in on the official Codex endpoint.",
+        reason: "Codex fast mode needs ChatGPT sign-in on the official Codex endpoint.",
       };
     // Match the official Codex ServiceTier::Fast request value.
     return { supported: true, tier: "priority", surface: "codex" };
@@ -241,11 +241,11 @@ export function nativeFastSupport(
     return {
       supported: false,
       reason:
-        "Anthropic native fast mode is deferred: it requires speed=fast plus the fast-mode-2026-02-01 beta header; effort is not a substitute.",
+        "Anthropic fast mode not supported yet. Needs speed=fast and fast-mode-2026-02-01 beta header; effort cannot replace them.",
     };
   return {
     supported: false,
-    reason: "Native fast mode currently supports only official OpenAI API and Codex provider surfaces.",
+    reason: "Fast mode supports only official OpenAI API and Codex endpoints and auth.",
   };
 }
 
@@ -287,8 +287,7 @@ function requestTierPolicy(ctx: ExtensionContext, model: Model<Api>, sessionId: 
   if (found.kind === "absent") return;
   if (found.kind === "invalid")
     return {
-      blocked:
-        "Native fast mode rejected a malformed or unsupported authorization record; run /fast on or /fast off again.",
+      blocked: "Fast mode approval is damaged or unsupported. Run /fast on or /fast off again.",
     };
   const active = found.value;
   if (!active.enabled)
@@ -296,13 +295,12 @@ function requestTierPolicy(ctx: ExtensionContext, model: Model<Api>, sessionId: 
       tier: "default",
       ...(officialSurface(model)
         ? {}
-        : { blocked: "Native fast opt-out no longer matches an official provider surface." }),
+        : { blocked: "Fast mode opt-out no longer matches an official provider endpoint and auth." }),
     };
   const oauth = ctx.modelRegistry.isUsingOAuth(model);
   const support = nativeFastSupport(model, oauth);
-  if (active.oauth !== oauth)
-    return { blocked: "Native fast mode authentication surface changed; run /fast on again." };
-  if (!active.costAcknowledged) return { blocked: "Native fast mode authorization is missing; run /fast on again." };
+  if (active.oauth !== oauth) return { blocked: "Fast mode auth changed. Run /fast on again." };
+  if (!active.costAcknowledged) return { blocked: "Fast mode approval missing. Run /fast on again." };
   if (!support.supported) return { blocked: support.reason };
   if (!authSurfaceMatches(ctx, support.surface, model))
     return {
@@ -359,8 +357,7 @@ type RuntimePatch = {
 };
 
 const runtimePatches = new WeakMap<object, RuntimePatch>();
-const COMPATIBILITY_ERROR =
-  "Native fast mode is unavailable: pinned Pi 1.1.0 ModelRuntime compatibility seam is missing.";
+const COMPATIBILITY_ERROR = "Fast mode unavailable. Pi 1.1.0 ModelRuntime hook missing.";
 
 // One immutable authorization covers preparation, payload hooks, and transport.
 function streamAuthorizedRequest(
@@ -384,11 +381,11 @@ function streamAuthorizedRequest(
       }
       if (authorization.tier === undefined) {
         fastDiagnostic(authorization.manager, FAST_GUARD_MISSING_TIER, "blocked", authorization.operationId);
-        throw new Error("Native fast mode authorization did not select a provider tier.");
+        throw new Error("Fast mode approval has no provider tier.");
       }
       if (!record(payload)) {
         fastDiagnostic(authorization.manager, FAST_GUARD_INVALID_PAYLOAD, "blocked", authorization.operationId);
-        throw new Error("Native fast mode rejected a non-object provider payload before dispatch.");
+        throw new Error("Fast mode payload is not an object. Request not sent.");
       }
       // Snapshot injection happens before the complete extension hook pipeline.
       // No hook can cause us to re-read mutable session/model state.
@@ -396,15 +393,15 @@ function streamAuthorizedRequest(
       const finalPayload = priorPayload ? await priorPayload(payload, payloadModel) : payload;
       if (!record(finalPayload)) {
         fastDiagnostic(authorization.manager, FAST_GUARD_INVALID_PAYLOAD, "blocked", authorization.operationId);
-        throw new Error("Native fast mode rejected a non-object provider payload before dispatch.");
+        throw new Error("Fast mode payload is not an object. Request not sent.");
       }
       if (finalPayload.model !== authorization.model) {
         fastDiagnostic(authorization.manager, FAST_GUARD_MODEL_MISMATCH, "blocked", authorization.operationId);
-        throw new Error("Native fast mode rejected a provider payload for a different model before dispatch.");
+        throw new Error("Fast mode payload names another model. Request not sent.");
       }
       if (finalPayload.service_tier !== authorization.tier) {
         fastDiagnostic(authorization.manager, FAST_GUARD_TIER_MUTATION, "blocked", authorization.operationId);
-        throw new Error("Native fast mode rejected a late service-tier mutation before dispatch.");
+        throw new Error("Fast mode service tier changed after approval. Request not sent.");
       }
       return finalPayload;
     },
@@ -420,7 +417,7 @@ function streamAuthorizedRequest(
       runtime.isUsingOAuth(authorization.provider) !== authorization.oauth
     ) {
       fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
-      throw new Error("Native fast mode request identity or authentication changed before provider dispatch.");
+      throw new Error("Fast mode request identity or auth changed. Request not sent.");
     }
     if (authorization.blocked) {
       fastDiagnostic(authorization.manager, FAST_GUARD_BLOCKED_AUTHORIZATION, "blocked", authorization.operationId);
@@ -428,13 +425,13 @@ function streamAuthorizedRequest(
     }
     if (authorization.tier === undefined) {
       fastDiagnostic(authorization.manager, FAST_GUARD_MISSING_TIER, "blocked", authorization.operationId);
-      throw new Error("Native fast mode authorization did not select a provider tier.");
+      throw new Error("Fast mode approval has no provider tier.");
     }
     if (authorization.tier !== "default") {
       const actualSupport = nativeFastSupport(prepared.model, authorization.oauth);
       if (!actualSupport.supported || actualSupport.tier !== authorization.tier) {
         fastDiagnostic(authorization.manager, FAST_GUARD_UNSUPPORTED_ENDPOINT, "blocked", authorization.operationId);
-        throw new Error("Native fast mode actual provider endpoint is not authorized for this request.");
+        throw new Error("Fast mode provider endpoint not approved for this request.");
       }
     }
     if (authorization.tier !== "default" && authorization.provider === "openai") {
@@ -446,7 +443,7 @@ function streamAuthorizedRequest(
       );
       if (typeof key !== "string" || !key || !key.startsWith("sk-") !== authorization.oauth || authOverride) {
         fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
-        throw new Error("Native fast mode resolved credentials do not match the authorized authentication surface.");
+        throw new Error("Fast mode credentials do not match the approved auth.");
       }
     }
     return prepared.provider.streamSimple(prepared.model, transcript, prepared.options);
@@ -484,7 +481,7 @@ function attachConcreteRequestGuard(runtime: unknown, controller: FastController
     if (authorizations.length !== 1)
       return lazyStream(model, async () => {
         fastDiagnostic(authorization.manager, FAST_GUARD_AMBIGUOUS_AUTHORIZATION, "blocked", authorization.operationId);
-        throw new Error("Native fast mode found ambiguous request authorization before dispatch.");
+        throw new Error("Fast mode request approval unclear. Request not sent.");
       });
     return streamAuthorizedRequest(this, model, context, options, authorization);
   };

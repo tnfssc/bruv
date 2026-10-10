@@ -41,14 +41,15 @@ describe("project wisdom extension", () => {
     const f = fixture(true);
     const result = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
     expect(result.systemPrompt).toContain("Next agent not hear whole talk.");
-    expect(result.systemPrompt).toContain("Leave code and wisdom together");
-    expect(result.systemPrompt).toContain("Project wisdom lives in /repo/wisdom/.");
-    expect(result.systemPrompt).toContain("Put it with the feature or system it explains.");
-    expect(result.systemPrompt).toContain("Values live in /repo/wisdom/values.md.");
-    expect(result.systemPrompt).toContain("Write prompts and wisdom in same voice as rest.");
-    expect(result.systemPrompt).toContain("Before big work ends or changes hands");
-    expect(result.systemPrompt).toContain("At end, say what wisdom changed and what values changed.");
-    expect(result.systemPrompt).toContain("Nothing new? No need change values.");
+    expect(result.systemPrompt).toContain("Code and wisdom stay together");
+    expect(result.systemPrompt).toContain("Project wisdom: /repo/wisdom/.");
+    expect(result.systemPrompt).toContain("Keep notes with feature or system they explain.");
+    expect(result.systemPrompt).toContain("Values: /repo/wisdom/values.md.");
+    // Shared values own writing guidance; this hook only adds project memory.
+    expect(result.systemPrompt).not.toContain("Short words. Short sentences. Plain talk.");
+    expect(result.systemPrompt).toContain("Before big work ends");
+    expect(result.systemPrompt).toContain("At handoff, say what wisdom and values changed, or why not.");
+    expect(result.systemPrompt).toContain("Nothing new? No forced edit.");
     expect(result.systemPrompt).not.toContain(".agents/notes");
     expect(result.systemPrompt).not.toContain("pending");
     expect(result.systemPrompt).not.toContain("index.md");
@@ -57,18 +58,14 @@ describe("project wisdom extension", () => {
   test("wisdom goes with the code before saying done", () => {
     const f = fixture(true);
     const { systemPrompt } = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
-    expect(systemPrompt).toContain("Write wisdom while doing the work.");
-    expect(systemPrompt).toContain("Finish it before the last commit, PR, or handoff.");
-    expect(systemPrompt).toContain("Put it with the code. No wait until the job is done.");
-    expect(systemPrompt).toContain("Any edits not committed? Any commits not shared yet?");
-    expect(systemPrompt).toContain("Send code and wisdom where the user asked. Not there yet? Say what is left.");
-    expect(systemPrompt).toContain("Task done or PR merged? No more edits in that worktree.");
-    expect(systemPrompt).toContain(
-      "Record release facts with the release or task, not in the old worktree. No new repo notes after shipping.",
-    );
-    expect(systemPrompt).toContain(
-      "Need another repo change? Start a new task and PR. No quiet edits on the old branch.",
-    );
+    expect(systemPrompt).toContain("Code and wisdom stay together.");
+    expect(systemPrompt).toContain("before last commit, PR or handoff.");
+    expect(systemPrompt).toContain("Write as work moves, before last commit, PR or handoff.");
+    expect(systemPrompt).toContain("Edits uncommitted or commits unshared? Say what left.");
+    expect(systemPrompt).toContain("Done means code and wisdom where user asked. Check files and commits.");
+    expect(systemPrompt).toContain("Task done or PR merged? Leave that worktree as shipped.");
+    expect(systemPrompt).toContain("Release facts go with release or task, not old repo notes.");
+    expect(systemPrompt).toContain("Later repo change needs new task and PR.");
     expect(systemPrompt).not.toContain("After release or broad review, look across the work too.");
     // Do not add a writer or a Git check after the turn has ended.
     expect([...f.handlers.keys()]).toEqual(["before_agent_start"]);
@@ -105,7 +102,7 @@ describe("project wisdom extension", () => {
     expect(f.notices.at(-1)?.severity).toBe("warning");
     root = true;
     await f.commands.get("wisdom")!.handler("", f.ctx);
-    expect(f.notices.at(-1)?.message).toContain("Project wisdom lives in /repo/wisdom/.");
+    expect(f.notices.at(-1)?.message).toContain("Project wisdom: /repo/wisdom/.");
     expect(beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt).toStartWith("base\n\n");
   });
 
@@ -113,7 +110,7 @@ describe("project wisdom extension", () => {
     const f = fixture(true);
     await f.commands.get("wisdom")!.handler("", f.ctx);
     expect(f.notices.at(-1)).toEqual({
-      message: "Project wisdom lives in /repo/wisdom/. Put it with the feature or system it explains.",
+      message: "Project wisdom: /repo/wisdom/. Keep notes with feature or system they explain.",
       severity: undefined,
     });
   });
@@ -177,10 +174,10 @@ describe("project wisdomDir setting", () => {
     const f = fixture(true, p.nested);
     const directory = join(p.root, "docs", "team notes");
     await f.commands.get("wisdom")!.handler("", f.ctx);
-    expect(f.notices.at(-1)?.message).toContain(`Project wisdom lives in ${directory}/.`);
+    expect(f.notices.at(-1)?.message).toContain(`Project wisdom: ${directory}/.`);
     const result = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
-    expect(result.systemPrompt).toContain(`Project wisdom lives in ${directory}/.`);
-    expect(result.systemPrompt).toContain(`Values live in ${join(directory, "values.md")}.`);
+    expect(result.systemPrompt).toContain(`Project wisdom: ${directory}/.`);
+    expect(result.systemPrompt).toContain(`Values: ${join(directory, "values.md")}.`);
     expect(result.systemPrompt).not.toContain("{{");
     expect(result.systemPrompt).not.toContain("wisdom/values.md");
   });
@@ -190,17 +187,17 @@ describe("project wisdomDir setting", () => {
     const f = fixture(true, p.nested, false);
     const beforeStart = f.handlers.get("before_agent_start")![0];
     expect(beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt).toContain(
-      `Project wisdom lives in ${join(p.root, "wisdom")}/.`,
+      `Project wisdom: ${join(p.root, "wisdom")}/.`,
     );
     f.ctx.isProjectTrusted = () => true;
     const configured = beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt;
-    expect(configured).toContain(`Project wisdom lives in ${join(p.root, "notes/$&")}/.`);
-    expect(configured).toContain(`Values live in ${join(p.root, "notes/$&", "values.md")}.`);
+    expect(configured).toContain(`Project wisdom: ${join(p.root, "notes/$&")}/.`);
+    expect(configured).toContain(`Values: ${join(p.root, "notes/$&", "values.md")}.`);
     await writeFile(join(p.root, ".bruv", "settings.json"), JSON.stringify({ wisdomDir: "new-notes" }));
     await f.commands.get("wisdom")!.handler("", f.ctx);
-    expect(f.notices.at(-1)?.message).toContain(`Project wisdom lives in ${join(p.root, "new-notes")}/.`);
+    expect(f.notices.at(-1)?.message).toContain(`Project wisdom: ${join(p.root, "new-notes")}/.`);
     expect(beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt).toContain(
-      `Values live in ${join(p.root, "new-notes", "values.md")}.`,
+      `Values: ${join(p.root, "new-notes", "values.md")}.`,
     );
   });
 

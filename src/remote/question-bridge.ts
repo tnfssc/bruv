@@ -132,15 +132,15 @@ export class RemoteQuestionBridge {
       throw new Error("No explicit human remote reply on this parent branch");
     if (q.remote.replyState === "delivered") return q;
     if (q.remote.replyState !== "saved" && !(options.retry && q.remote.replyState === "uncertain"))
-      throw new Error("Remote answer outcome uncertain; reconnect to reconcile the ledger. No duplicate answer sent.");
+      throw new Error("Remote answer outcome unknown. Reconnect to check ledger. No duplicate sent.");
     const state = await this.client.read(),
       task = state.tasks[q.remote.taskId];
     if (!task || task.jobSessionFile !== ctx.sessionManager.getSessionFile() || !samePinnedOwner(q.remote, task))
-      throw new Error("Pinned remote question owner unavailable; human reply remains saved");
+      throw new Error("Pinned question owner unavailable. Human reply stays saved.");
     const savedRemote = q.remote;
     const pending = questions(task).find((r) => r.id === savedRemote.id && sameOwner(r.owner, savedRemote.owner));
     if (q.remote.replyState === "saved" && (pending?.status !== "pending" || pending.version !== q.remote.version))
-      throw new Error("Remote question owner/version changed; saved human reply was not retargeted or sent");
+      throw new Error("Remote question owner/version changed. Saved reply not moved or sent.");
     if (q.remote.replyState === "saved") q = await this.service.claimRemoteReply(ctx, q);
     // Explicit human resume replays ONLY the same immutable request/replyId.
     // The owner receipt is authoritative and will not dispatch an uncertain command twice.
@@ -170,7 +170,7 @@ export class RemoteQuestionBridge {
       });
     } catch (error) {
       await this.service.finishRemoteReply(ctx, { ...q, replyId: q.replyId, delivered: false, error: String(error) });
-      throw new Error(`Remote answer outcome uncertain; saved reply identity retained. ${String(error)}`);
+      throw new Error(`Remote answer outcome unknown. Saved reply ID kept. ${String(error)}`);
     }
   }
 }

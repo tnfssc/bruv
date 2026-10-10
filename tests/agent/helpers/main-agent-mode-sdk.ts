@@ -1,3 +1,4 @@
+import type { TranscriptContext } from "@earendil-works/pi-ai";
 import { getCurrentSystemPrompt } from "@earendil-works/pi-ai";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -100,8 +101,10 @@ export async function sdk(
   const session = created.session;
   sessions.push(session);
   const requests: string[] = [];
+  const contexts: TranscriptContext[] = [];
   session.agent.streamFunction = (_model, context) => {
     requests.push(getCurrentSystemPrompt(context.messages));
+    contexts.push(structuredClone(context));
     const message: AssistantMessage = {
       role: "assistant",
       api: "openai-codex-responses",
@@ -117,5 +120,5 @@ export async function sdk(
     stream.push({ type: "done", reason: "stop", message });
     return stream;
   };
-  return { session, requests, frameCalls: () => frameCalls, manager };
+  return { session, requests, contexts, frameCalls: () => frameCalls, manager };
 }

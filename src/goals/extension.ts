@@ -196,10 +196,7 @@ export function registerGoalMode(
     const statuses = pendingJobIds.map((id) => jobs.status(id));
     if (statuses.some((status) => status === "unavailable")) {
       const references = pendingJobIds.filter((id) => /^task_[A-Za-z0-9]{1,64}$/.test(id));
-      pause(
-        "Paused because waiting work is unavailable in this process" +
-          (references.length ? `. Job references: ${references.join(", ")}` : ""),
-      );
+      pause("Paused: waiting jobs not here" + (references.length ? `. Job references: ${references.join(", ")}` : ""));
     } else if (statuses.some((status) => status === "finished")) {
       requireStore().update({ status: "active" });
       reminders.invalidate();
@@ -261,7 +258,7 @@ export function registerGoalMode(
         {
           role: "custom" as const,
           customType: "bruv-goal-state",
-          content: `Goal guidance:\n${goalGuidance.trimEnd()}\n\nPersistent goal state (authoritative):\n${formatGoal(goal)}`,
+          content: `Goal guidance:\n${goalGuidance.trimEnd()}\n\nSaved goal (current state):\n${formatGoal(goal)}`,
           display: false,
           timestamp: Date.now(),
         },
@@ -302,10 +299,10 @@ export function registerGoalMode(
     if (controller.endRun(store?.get()) === "pause") {
       requireStore().update({
         status: "paused",
-        reason: "Paused after repeated automatic turns made no meaningful progress",
+        reason: "Auto turns stalled",
       });
       resetContinuation();
-      notify("Goal paused: repeated continuations made no meaningful progress", "warning");
+      notify("Goal paused: auto turns stalled", "warning");
     }
   });
 
@@ -368,12 +365,10 @@ export function registerGoalMode(
       }
       if (method === "goal.update") {
         if ("pendingJobIds" in input) {
-          throw new Error("goal.update pendingJobIds is runtime-managed; use handoff() to wait for owned running jobs");
+          throw new Error("Runtime owns pendingJobIds. handoff() waits for your running jobs.");
         }
         if (input.status === "waiting") {
-          throw new Error(
-            "goal.update waiting status is runtime-managed; use handoff() to wait for owned running jobs",
-          );
+          throw new Error("Runtime owns waiting status. handoff() waits for your running jobs.");
         }
         const result = requireStore().update(input as never);
         reminders.invalidate();

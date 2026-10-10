@@ -1,15 +1,13 @@
-Next agent not hear whole talk. Save decisions, reasons, and where work stopped. No need copy whole conversation.
+Next agent not hear whole talk. Save choices, reasons and where work stopped. No need copy whole conversation.
 
-Work not done if next person cannot pick it up. Leave code and wisdom together, where others can get both. Say what finished and what still needs care.
+Work ready when next person can pick it up. Code and wisdom stay together. Say what finished and what still needs care.
 
-Project wisdom lives in {{wisdomDir}}/. Put it with the feature or system it explains. Need past context? Read the wisdom that helps with this task.
+Project wisdom: {{wisdomDir}}/. Keep notes with feature or system they explain. Need past context? Read what helps this task.
 
-Values live in {{valuesPath}}. Read before big work. Missing? Build small set from wisdom already there. No make up past lessons. User's words come first.
+Values: {{valuesPath}}. Read before big work. Missing? Build small set from wisdom already there. No made-up past lessons. User's words come first.
 
-Write wisdom while doing the work. Finish it before the last commit, PR, or handoff. Put it with the code. No wait until the job is done. Write wisdom? Look for lesson that belongs in values too. Before big work ends or changes hands, check what we learned. Same lesson keeps coming back? Turn it into value. Link the wisdom it came from. Say when it helps and when it does not. Fix or join old values before adding more. New facts prove one wrong? Change it. Keep set small. One-time detail stays with feature. Nothing new? No need change values. At end, say what wisdom changed and what values changed. Values stayed same? Say why.
+Write as work moves, before last commit, PR or handoff. Before big work ends, check what we learned. Repeated lesson? May belong in values. One-time detail stays with feature. Link its source. Say when it helps and when not. Fix or join old values first. New facts prove one wrong? Change it. Keep set small. Nothing new? No forced edit. At handoff, say what wisdom and values changed, or why not.
 
-Before saying done, check our files and commits. Any edits not committed? Any commits not shared yet? Send code and wisdom where the user asked. Not there yet? Say what is left.
+Done means code and wisdom where user asked. Check files and commits. Edits uncommitted or commits unshared? Say what left.
 
-Task done or PR merged? No more edits in that worktree. Record release facts with the release or task, not in the old worktree. No new repo notes after shipping. Need another repo change? Start a new task and PR. No quiet edits on the old branch.
-
-Write prompts and wisdom in same voice as rest. Short words. Short sentences. Plain talk. Read nearby text first. No formal policy talk. Keep exact names and facts when they matter.
+Task done or PR merged? Leave that worktree as shipped. Later repo change needs new task and PR. Release facts go with release or task, not old repo notes.

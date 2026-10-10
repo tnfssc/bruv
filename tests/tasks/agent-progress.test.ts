@@ -42,7 +42,7 @@ test("oversized records are discarded and framing recovers", () => {
   progress.push(Buffer.concat([Buffer.from("\n"), line({ type: "agent_start" })]));
   progress.finish();
   expect(output.length).toBeLessThan(300);
-  expect(output).toContain("Oversized event");
+  expect(output).toContain("Event too large");
   expect(progress.info.phase).toBe("waiting for model");
 });
 test("model failures and retry recovery are observable", () => {

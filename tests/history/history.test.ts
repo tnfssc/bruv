@@ -334,7 +334,7 @@ describe("original history: retrieval exclusions", () => {
         { ref: found.matches[0].ref, maxChars: 6, cursor: readPage.nextCursor },
         { sessionManager: manager },
       ),
-    ).rejects.toThrow("excluded from retrieval");
+    ).rejects.toThrow("or excluded");
   });
 
   test("does not undo historical exclusions when compaction carry trims IDs", async () => {
@@ -387,7 +387,7 @@ describe("original history: cross-session permission and read-only loading", () 
     const local = await service.search({ query: "cross-session-needle" }, ctx);
     expect(local.matches).toEqual([]);
     await expect(service.search({ query: "cross-session-needle", allowCrossSession: true }, ctx)).rejects.toThrow(
-      "explicit sessionFile",
+      "needs sessionFile",
     );
     await expect(service.search({ query: "cross-session-needle", sessionFile: file }, ctx)).rejects.toThrow(
       "allowCrossSession",
@@ -404,7 +404,7 @@ describe("original history: cross-session permission and read-only loading", () 
       sessionFile: file,
     });
 
-    await expect(service.read({ ref: match.ref }, ctx)).rejects.toThrow("selected session");
+    await expect(service.read({ ref: match.ref }, ctx)).rejects.toThrow("another session");
     await expect(service.read({ ref: match.ref, sessionFile: file }, ctx)).rejects.toThrow("allowCrossSession");
     const read = await service.read({ ref: match.ref, sessionFile: file, allowCrossSession: true }, ctx);
     expect(read.text).toBe("cross-session-needle");
@@ -449,7 +449,7 @@ describe("original history: cross-session permission and read-only loading", () 
         { query: "x", sessionFile: empty, allowCrossSession: true },
         { sessionManager: SessionManager.inMemory("/project") },
       ),
-    ).rejects.toThrow("non-empty regular file");
+    ).rejects.toThrow("nonempty regular file");
     expect((await stat(empty)).size).toBe(0);
   });
 
@@ -463,7 +463,7 @@ describe("original history: cross-session permission and read-only loading", () 
         { query: "x", sessionFile: legacy, allowCrossSession: true },
         { sessionManager: SessionManager.inMemory("/project") },
       ),
-    ).rejects.toThrow("migrate a copy");
+    ).rejects.toThrow("Migrate a copy");
     expect(await readFile(legacy, "utf8")).toBe(legacyBytes);
   });
 
@@ -477,7 +477,7 @@ describe("original history: cross-session permission and read-only loading", () 
         { query: "x", sessionFile: large, allowCrossSession: true },
         { sessionManager: SessionManager.inMemory("/project") },
       ),
-    ).rejects.toThrow("history limit");
+    ).rejects.toThrow("byte limit");
   });
 
   test("rejects a FIFO promptly without opening it for blocking reads", async () => {
@@ -504,7 +504,7 @@ describe("original history: bounded scan validation", () => {
     const ctx = { sessionManager: manager };
     const found = await service.search({ query: "read validation target" }, ctx);
     manager.appendMessage(user("x".repeat(4 * 1024 * 1024 + 1)));
-    await expect(service.read({ ref: found.matches[0]!.ref }, ctx)).rejects.toThrow("text part exceeds");
+    await expect(service.read({ ref: found.matches[0]!.ref }, ctx)).rejects.toThrow("text part over");
   });
 
   test("fails closed when active-branch traversal exceeds its work bound", async () => {
@@ -536,7 +536,7 @@ describe("original history: bounded scan validation", () => {
       });
     }
     await expect(new HistoryService().search({ query: "x" }, { sessionManager: manager })).rejects.toThrow(
-      "exclusions exceed",
+      "exclusions over",
     );
   });
 
@@ -544,7 +544,7 @@ describe("original history: bounded scan validation", () => {
     const manager = SessionManager.inMemory("/project");
     manager.appendMessage(user("x".repeat(4 * 1024 * 1024 + 1)));
     await expect(new HistoryService().search({ query: "x" }, { sessionManager: manager })).rejects.toThrow(
-      "text part exceeds",
+      "text part over",
     );
   });
 });

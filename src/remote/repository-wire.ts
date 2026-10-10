@@ -107,7 +107,7 @@ function receiveRepositoryUpload(dir: string, req: UploadRequest, state?: string
     durableJsonReplace(meta, intent);
   }
   if (existsSync(ready)) return read(ready);
-  if (state) throw Error("Accepted task has incomplete repository upload; review required");
+  if (state) throw Error("Task accepted; repo upload incomplete. Needs review.");
   const size = existsSync(bundle) ? statSync(bundle).size : 0;
   if (req.offset > size) throw Error("Repository chunk gap");
   if (req.offset < size) {
@@ -179,7 +179,7 @@ function prepareRepositoryCheckout(dir: string, upload: Upload): string {
   if (tree.exitCode !== 0 || expanded > MAX) throw Error("Remote checkout exceeds 128 MiB limit");
   const history = Bun.spawnSync(["git", "-C", checkout, "rev-list", "--count", "HEAD"], { env, timeout: 10_000 });
   if (history.exitCode !== 0 || history.stdout.toString().trim() !== "1")
-    throw Error("Repository upload must be an orphan snapshot without history");
+    throw Error("Repo upload needs orphan snapshot, no history");
   const checkoutResult = Bun.spawnSync(
     ["git", "-c", "core.hooksPath=/dev/null", "-C", checkout, "checkout", "--force", "HEAD"],
     { env, stdout: "pipe", stderr: "pipe", timeout: 60_000, maxBuffer: 1024 * 1024 },
@@ -205,7 +205,7 @@ function prepareRepositoryCheckout(dir: string, upload: Upload): string {
 }
 
 function repositoryResultPage(dir: string, req: ResultRequest, state?: string) {
-  if (state !== "done") throw Error("Repository result requires confirmed successful task completion");
+  if (state !== "done") throw Error("Repo result needs confirmed task success");
   if (!Number.isSafeInteger(req.offset) || req.offset < 0) throw Error("Invalid repository result offset");
   const meta = read<Upload>(join(dir, "repository-upload.json"));
   const resultFile = join(dir, "repository-result.json"),
@@ -264,20 +264,20 @@ function validatePreparedSnapshot(args: RepositoryLaunch): RepositorySnapshot {
     !snapshot.bundleSha256 ||
     !/^[a-f0-9]{64}$/.test(snapshot.bundleSha256)
   )
-    throw Error("Prepared repository snapshot lacks pinned source identity/digest");
+    throw Error("Repo snapshot missing pinned source ID/digest");
   if (args.preparedSnapshotSha256 !== snapshot.bundleSha256)
-    throw Error("Prepared repository snapshot differs from the human-approved transfer digest");
+    throw Error("Repo snapshot differs from user-approved transfer digest");
   const manifest = read(snapshot.manifest);
   if (
     JSON.stringify(manifest) !== JSON.stringify(snapshot) ||
     digest(readFileSync(snapshot.bundle)) !== snapshot.bundleSha256
   )
-    throw Error("Prepared repository snapshot manifest or bytes changed after human approval");
+    throw Error("Repo snapshot manifest or bytes changed after user approval");
   if (JSON.stringify(snapshot.selectedUntracked) !== JSON.stringify(args.approvedUntracked ?? []))
-    throw Error("Prepared repository snapshot does not match human-approved paths");
+    throw Error("Repo snapshot paths differ from user approval");
   const requestedRef = args.placement?.workspace.kind === "worktree" ? args.placement.workspace.baseRef : undefined;
   if (snapshot.source?.requestedRef !== requestedRef || snapshot.source?.history !== "orphan-baseline")
-    throw Error("Prepared repository snapshot source does not match requested workspace");
+    throw Error("Repo snapshot source differs from requested workspace");
   return snapshot;
 }
 /** Trusted handoff for the normal human-source permission adapter; no recapture after approval. */
@@ -336,8 +336,7 @@ function pinRepositoryLaunch(file: string, args: RepositoryLaunch, owner: Descri
 
 async function uploadRepositorySnapshot(client: RemoteClient, id: string, descriptor: Descriptor): Promise<string> {
   const data = readFileSync(descriptor.snapshot.bundle);
-  if (!data.length || data.length > MAX)
-    throw Error("Repository snapshot exceeds 128 MiB transfer limit; artifacts retained");
+  if (!data.length || data.length > MAX) throw Error("Repo snapshot over 128 MiB transfer limit. Artifacts kept.");
   const sha256 = digest(data);
   let checkout: string | undefined;
   for (let offset = 0; offset < data.length; offset += CHUNK) {
@@ -356,7 +355,7 @@ async function uploadRepositorySnapshot(client: RemoteClient, id: string, descri
     )) as { checkout?: string };
     if (response.checkout) checkout = response.checkout;
   }
-  if (!checkout) throw Error(`Remote repository preparation unconfirmed; retry same task ID ${id}`);
+  if (!checkout) throw Error(`Remote repo setup unconfirmed. Retry same task ID ${id}`);
   return checkout;
 }
 
