@@ -20,6 +20,7 @@ const command = [
 ];
 type App = ReturnType<typeof startWebServer>;
 type State = {
+  revision: number;
   defaultCwd: string;
   workspaces: {
     id: string;
@@ -469,4 +470,84 @@ test("different folders with the same basename stay separate", async () => {
   expect(workspaces.map((workspace) => workspace.name)).toEqual(["project", "project"]);
   expect(workspaces.map((workspace) => workspace.cwd)).toEqual([realpathSync(first), realpathSync(second)]);
   expect(workspaces.map((workspace) => workspace.tabs.length)).toEqual([1, 1]);
+});
+
+test("moves preserve workspace identities, tab processes and concurrent additions", async () => {
+  const app = start({ cwd: directory() });
+  const first = (await state(app)).workspaces[0]!;
+  const terminal = connect(app, first.tabs[0]!.id);
+  await until(() => terminal.text().includes("META "));
+  const pid = terminal.meta().pid;
+  await mutate(app, "/api/workspaces", "POST", { cwd: directory(), name: "Second" });
+  await mutate(app, "/api/workspaces", "POST", { cwd: directory(), name: "Third" });
+  const original = await state(app);
+  const moved = await mutate(app, "/api/workspaces/" + first.id + "/move", "POST", { beforeId: null });
+  expect(moved.workspaces.map((item) => item.id)).toEqual([
+    ...original.workspaces.slice(1).map((item) => item.id),
+    first.id,
+  ]);
+  await mutate(app, "/api/workspaces/" + first.id + "/tabs", "POST", { name: "Two" });
+  await mutate(app, "/api/workspaces/" + first.id + "/tabs", "POST", { name: "Three" });
+  const tabs = (await state(app)).workspaces.find((item) => item.id === first.id)!.tabs;
+  await Promise.all([
+    mutate(app, "/api/tabs/" + tabs[0]!.id + "/move", "POST", { beforeId: null }),
+    mutate(app, "/api/workspaces/" + first.id + "/tabs", "POST", { name: "Four" }),
+  ]);
+  const latest = await state(app);
+  const reordered = latest.workspaces.find((item) => item.id === first.id)!.tabs;
+  expect(reordered).toHaveLength(4);
+  expect(reordered.map((item) => item.id).slice(0, 2)).toEqual([tabs[1]!.id, tabs[2]!.id]);
+  expect(reordered.find((item) => item.id === tabs[0]!.id)!.pid).toBe(pid);
+  terminal.socket.send(JSON.stringify({ type: "input", data: "still-here" }));
+  await until(() => terminal.text().includes("INPUT still-here"));
+  expect(terminal.socket.readyState).toBe(WebSocket.OPEN);
+});
+
+test("moves validate their list and anchor without changing state on rejection or no-op", async () => {
+  const app = start({ cwd: directory() });
+  const initial = (await state(app)).workspaces[0]!;
+  const two = await mutate(app, "/api/workspaces", "POST", { cwd: directory() });
+  const other = two.workspaces[1]!;
+  const path = "/api/tabs/" + initial.tabs[0]!.id + "/move";
+  for (const body of [{}, { beforeId: 1 }, { beforeId: [] }])
+    expect((await request(app, path, "POST", body)).status).toBe(400);
+  expect((await request(app, path, "POST", { beforeId: other.tabs[0]!.id })).status).toBe(404);
+  expect((await request(app, "/api/workspaces/" + initial.id + "/move", "POST", { beforeId: "gone" })).status).toBe(
+    404,
+  );
+  const noOrigin = await fetch(app.origin + path, {
+    method: "POST",
+    headers: { Authorization: "Bearer " + app.token },
+    body: JSON.stringify({ beforeId: null }),
+  });
+  expect(noOrigin.status).toBe(403);
+  const unchanged = await mutate(app, path, "POST", { beforeId: null });
+  expect(unchanged.revision).toBe(two.revision);
+  const self = await mutate(app, path, "POST", { beforeId: initial.tabs[0]!.id });
+  expect(self).toEqual(unchanged);
+});
+
+test("workspace rename preserves its folder and PTY; creation returns the exact new tab", async () => {
+  const app = start({ cwd: directory() });
+  const first = (await state(app)).workspaces[0]!;
+  const terminal = connect(app, first.tabs[0]!.id);
+  await until(() => terminal.text().includes("META "));
+  const renamed = await mutate(app, "/api/workspaces/" + first.id, "PATCH", { name: "  Research  " });
+  expect(renamed.workspaces[0]!.name).toBe("Research");
+  expect(renamed.workspaces[0]!.cwd).toBe(first.cwd);
+  expect(renamed.workspaces[0]!.tabs[0]!.pid).toBe(terminal.meta().pid);
+  const before = renamed.revision;
+  for (const name of ["", " ", "x".repeat(121), 42]) {
+    expect((await request(app, "/api/workspaces/" + first.id, "PATCH", { name })).status).toBe(400);
+  }
+  expect((await state(app)).revision).toBe(before);
+  const created = await Promise.all(
+    [1, 2].map(() => request(app, "/api/workspaces/" + first.id + "/tabs", "POST", {}).then((r) => r.json())),
+  );
+  expect(created[0].tabId).not.toBe(created[1].tabId);
+  for (const result of created)
+    expect(result.workspaces[0].tabs.some((tab: { id: string }) => tab.id === result.tabId)).toBe(true);
+  await mutate(app, "/api/tabs/" + created[0].tabId, "DELETE", { confirm: true });
+  const next = await mutate(app, "/api/workspaces/" + first.id + "/tabs", "POST", {});
+  expect(new Set(next.workspaces[0]!.tabs.map((tab) => tab.name)).size).toBe(next.workspaces[0]!.tabs.length);
 });

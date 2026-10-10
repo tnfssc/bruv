@@ -24,13 +24,15 @@ A folder is a path on the server. A workspace is its shared registry entry. Each
 
 The launch folder is the first workspace. **Open folder** takes a path on the machine running `bruv web`, not on the browser device. Relative paths start from the launch folder. Opening the same resolved folder selects its existing workspace without creating another tab. Symlinks count as the same folder; different folders with the same name stay separate. Bad paths keep the draft and show a local error.
 
-Use **+** to open a terminal tab. Double-click or double-tap its title, or focus it and press F2, to rename. Enter saves; Escape or blur cancels. A failed save keeps the draft. Use the tab's close button or the workspace's Remove button for shared deletion. Confirmations name the shared impact. Close and Remove can stop work and descendants for everyone, even after the CLI exits. They never delete folder files.
+Use **+** to open a terminal tab. Double-click a title, or focus it and press F2, to rename. On touchscreens, double-tap a tab title or use **⋯ → Rename** for a workspace. Enter saves; Escape or blur cancels. A failed save keeps the draft. Use the tab's close button or **⋯ → Remove workspace** for shared deletion. Confirmations name the shared impact. Close and Remove can stop work and descendants for everyone, even after the CLI exits. They never delete folder files.
+
+Drag workspace titles vertically or tab titles horizontally to reorder. On touchscreens, hold briefly before dragging; a normal swipe still scrolls. Focus a title and press **Alt+Shift+↑/↓** for workspaces or **Alt+Shift+←/→** for tabs. Escape or dropping outside the list cancels a drag. Ordering is shared; everyone's selected terminal, running work and voice owner stay put.
 
 On phones, open the workspace drawer from the left end of the tab strip. Escape closes drawers and dialogs. Arrow keys, Home and End navigate the tab strip. Connection and voice details appear on hover or keyboard focus.
 
 ## Shared terminals
 
-Open the same URL and token on each device, with its own matching SSH tunnel when remote. Creation, renaming and deletion appear live. The same tab is the same running CLI: all attached browsers receive its output and can type into its input. Concurrent typing is an interleaved stream, not a collaborative document editor.
+Open the same URL and token on each device, with its own matching SSH tunnel when remote. Creation, renaming, ordering and deletion appear live. The same tab is the same running CLI: all attached browsers receive its output and can type into its input. Concurrent typing is an interleaved stream, not a collaborative document editor.
 
 Navigation stays local. New viewers do not evict old ones. Switching tabs or workspaces keeps sessions alive. Shared terminal size is the smallest active visible viewport; hidden views do not shrink it. This is one shared server, not federation between servers.
 

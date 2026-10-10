@@ -33,7 +33,7 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
   // Host adaptation may write to Pi. Copy it; never link the shared dependency into this fixture.
   const piPackage = "node_modules/@earendil-works/pi-coding-agent";
   await cp(join(root, piPackage), join(fixture, piPackage), { recursive: true });
-  for (const name of ["ghostty-web", "daisyui"]) {
+  for (const name of ["ghostty-web", "daisyui", "sortablejs"]) {
     await cp(join(root, "node_modules", name), join(fixture, "node_modules", name), { recursive: true });
   }
 }
@@ -107,7 +107,7 @@ describe("build asset preparation", () => {
       const icon = await readFile(join(fixture, "site/assets/brand/bruv-icon.svg"), "utf8");
       expect(html).toBe(
         (await readFile(join(fixture, "src/web/index.html"), "utf8"))
-          .replace("<!-- BRUV_WORDMARK -->", wordmark)
+          .replaceAll("<!-- BRUV_WORDMARK -->", wordmark)
           .replace("__BRUV_ICON__", "data:image/svg+xml," + encodeURIComponent(icon)),
       );
       expect(html).toContain(wordmark);

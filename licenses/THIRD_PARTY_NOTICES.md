@@ -35,3 +35,7 @@ Browser buttons and fields use the selective native DOM CSS from daisyUI 5.7.47
 (MIT). Bun bundles only button.css and input.css, without Tailwind, React,
 or the full daisyUI stylesheet. The production dependency graph includes its
 complete MIT license in THIRD_PARTY_LICENSES.txt.
+
+Workspace and tab dragging use SortableJS 1.15.7 (MIT), bundled locally. Its
+complete packaged MIT license is included by the same production dependency
+notice generator.

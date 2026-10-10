@@ -4,9 +4,9 @@ Keep real Bruv terminals central: one workspace rail and one tab strip. Shared t
 
 ## Direct controls
 
-Use name-first workspace rows, direct Remove and paths on demand. Duplicate folder names get distinguishing path suffixes. Folder entry is inline; bad paths retain the draft, focus and local error, including in the phone drawer. Opening an existing canonical folder selects its workspace ID rather than guessing a new tab.
+Use name-first workspace rows, one actions menu for Rename/Remove and paths on demand. Duplicate names get distinguishing path suffixes. Folder entry and workspace rename keep failed drafts, focus and local errors in the phone drawer. Creation responses name the exact workspace or tab to select; never guess from shared list position.
 
-One tab strip, no duplicate menus, reload control or healthy-state dashboard. Rename by double-click, double-tap or F2. Enter saves; Escape, blur, blank or unchanged names cancel. Keep the tab shell and editor node stable across shared updates so a first click, caret or draft is not lost. Remove stale shells before repositioning surviving ones. Shared names may change while editing; Enter compares with the current shared name so a local draft still expresses intent. Failed saves retain draft and focus.
+One tab strip, no duplicate menus or healthy-state dashboard. Rename by double-click or F2; touch uses double-tap for tabs and the workspace menu for folders, since selecting a folder closes the drawer. Enter saves; Escape, blur, blank or unchanged names cancel. Keep shells and editor nodes stable across shared updates so a first click, caret or draft is not lost. Remove stale shells before repositioning surviving ones. Shared names may change while editing; Enter compares with the current shared name so a local draft still expresses intent. See [ordering](reordering.md) for drag, keyboard and shared-edit contracts.
 
 Hide Close while editing and give its space to the field without moving neighbors. A partly clipped tab must not expose a clipped destructive target; selecting its label reveals it. Arrow/Home/End navigation stays on the strip. Save and confirmed close return focus to surviving terminal work; cancel returns to the invoker.
 
@@ -16,7 +16,7 @@ Use native buttons with explicit types for actions and keyboard-focusable status
 
 ## Honest state and recovery
 
-Missing/invalid credentials show Access required, not an empty workspace. Other network failures are not auth errors. Initial list failure has one central Retry view; recovered errors must not return as stale banners. List-update loss and PTY loss have separate recovery.
+Missing/invalid credentials show Access required, release the drawer focus trap and hide unusable controls. Other network failures are not auth errors. Initial list failure has one central Retry view; renderer failure offers Reload. Recovered errors must not return as stale banners. List-update loss and PTY loss have separate recovery.
 
 Replay gaps show View lost and freeze that renderer. The original CLI still runs; New terminal leaves it alive. Never infer CLI exit from lost replay. See [server ownership](browser-terminal.md).
 
@@ -26,7 +26,7 @@ Replay gaps show View lost and freeze that renderer. The original CLI still runs
 
 ## Controls, spacing and sources
 
-Use selective daisyUI 5.7.47 native Button/Input CSS through [controls.css](../../src/web/controls.css). Keep the native dialog and custom editable tabs; no React, Tailwind runtime, library JavaScript or full stylesheet. The notice generator keeps the MIT license. Library adoption and green tests are not visual acceptance.
+Use selective daisyUI native Button/Input CSS through [controls.css](../../src/web/controls.css), SortableJS for drag mechanics, the native dialog/popover and custom editable tabs. No frontend framework or full component stylesheet. The notice generator keeps both MIT licenses. Library adoption and green tests are not visual acceptance.
 
 [Browser CSS](../../src/web/browser.css) owns shared spacing and semantic roles. Keep compact desktop controls and touch-sized phone controls, aligned headers/actions, matched title/editor insets, and whole-cell terminal fitting. Font, borders and logo ratio are separate concerns. Measure shared edges, overflow and focus states, then judge the whole populated view. Do not cure one screenshot with unrelated pixel nudges.
 

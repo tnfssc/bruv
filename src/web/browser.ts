@@ -1,3 +1,4 @@
+import Sortable from "sortablejs";
 import { FitAddon, Ghostty, Terminal } from "ghostty-web";
 import { installTerminalAccessibility } from "./browser-terminal-accessibility";
 import { connectBrowserAudio } from "./browser-audio";
@@ -12,6 +13,7 @@ type WorkspaceState = {
   defaultCwd: string;
 };
 type OpenedWorkspace = WorkspaceState & { workspaceId: string; created: boolean };
+type CreatedTab = WorkspaceState & { tabId: string };
 type Session = {
   id: string;
   term: Terminal;
@@ -63,11 +65,17 @@ const folderInput = requiredElement<HTMLInputElement>("#folder-input");
 const folderError = requiredElement<HTMLElement>("#folder-error");
 const terminalStatus = requiredElement<HTMLElement>("#terminal-status");
 const action = (id: string) => requiredElement<HTMLButtonElement>("#" + id);
+action("dismiss-notice").addEventListener("click", () => {
+  notice.textContent = "";
+  render();
+  focusWorkspaceControl();
+});
 
 let drawerOpen = false;
 function setDrawer(open: boolean) {
   if (drawerOpen === open) return;
   drawerOpen = open;
+  workspaceMenu.hidePopover();
   document.body.setAttribute("data-drawer", open ? "open" : "closed");
   action("open-drawer").setAttribute("aria-expanded", String(open));
   action("drawer-backdrop").hidden = !open;
@@ -108,6 +116,52 @@ type DialogOptions = {
   submit: string;
 };
 const dialog = requiredElement<HTMLDialogElement>("#workspace-dialog");
+const workspaceMenu = requiredElement<HTMLElement>("#workspace-menu");
+let menuWorkspace = "";
+function showWorkspaceMenu(id: string) {
+  if (busy || dragging || accessRequired) return;
+  const invoker = document.getElementById("workspace-actions-" + id);
+  if (!invoker) return;
+  if (workspaceMenu.matches(":popover-open") && menuWorkspace === id) {
+    workspaceMenu.hidePopover();
+    invoker.focus();
+    return;
+  }
+  workspaceMenu.hidePopover();
+  menuWorkspace = id;
+  workspaceMenu.showPopover();
+  const rect = invoker.getBoundingClientRect();
+  workspaceMenu.style.left = Math.max(8, Math.min(rect.left, innerWidth - workspaceMenu.offsetWidth - 8)) + "px";
+  workspaceMenu.style.top = Math.max(8, Math.min(rect.bottom + 4, innerHeight - workspaceMenu.offsetHeight - 8)) + "px";
+  invoker.setAttribute("aria-expanded", "true");
+  action("rename-workspace").focus();
+}
+workspaceMenu.addEventListener("beforetoggle", (event) => {
+  if ((event as ToggleEvent).newState === "closed")
+    document.getElementById("workspace-actions-" + menuWorkspace)?.setAttribute("aria-expanded", "false");
+});
+workspaceMenu.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" || event.key === "Tab") {
+    event.preventDefault();
+    workspaceMenu.hidePopover();
+    (document.getElementById("workspace-actions-" + menuWorkspace) ?? action("add-workspace")).focus();
+  } else if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+    event.preventDefault();
+    const first = action("rename-workspace");
+    (event.key === "Home" || (event.key !== "End" && document.activeElement !== first)
+      ? first
+      : action("remove-workspace")
+    ).focus();
+  }
+});
+action("rename-workspace").addEventListener("click", () => {
+  workspaceMenu.hidePopover();
+  startRename("workspaces", menuWorkspace);
+});
+action("remove-workspace").addEventListener("click", () => {
+  workspaceMenu.hidePopover();
+  void removeWorkspace(menuWorkspace);
+});
 let dialogResult: ((confirmed: boolean) => void) | undefined;
 function askDialog(options: DialogOptions): Promise<boolean> {
   requiredElement<HTMLElement>("#dialog-title").textContent = options.title;
@@ -161,9 +215,12 @@ const sessions = new Map<string, Session>();
 let accessRequired = !token;
 let listLoaded = false;
 let listFailed = false;
+let rendererFailed = false;
 let folderOpen = false;
 let voiceError: { tabId: string; message: string } | undefined;
 let busy = false;
+let dragging = false;
+let suppressClickUntil = 0;
 let unloading = false;
 let voice: VoiceOwner | undefined;
 const socketOrigin = location.origin.replace(/^http/, "ws");
@@ -181,6 +238,19 @@ function button(text: string, click: () => void) {
   element.addEventListener("click", click);
   return element;
 }
+// A drag release is not a click, double-click, or double-tap on its destination.
+for (const type of ["click", "dblclick"]) {
+  document.addEventListener(
+    type,
+    (event) => {
+      if (dragging || ((event as MouseEvent).detail > 0 && performance.now() < suppressClickUntil)) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    },
+    true,
+  );
+}
 function voiceLabel(tabId: string) {
   for (const item of state.workspaces) {
     const tab = item.tabs.find((tab) => tab.id === tabId);
@@ -194,6 +264,7 @@ function renderAudio() {
   const shared = state.voice;
   const elsewhere = shared && sessions.get(shared.tabId)?.ownerId !== shared.ownerId;
   voiceControl.hidden = !(voice || shared || voiceError);
+  voiceControl.dataset.tone = voiceError ? "error" : voice?.state === "Live" ? "live" : "pending";
   audioStatus.textContent = voiceError
     ? voiceError.message + " · " + voiceLabel(voiceError.tabId)
     : voice
@@ -225,12 +296,14 @@ function renderStatus() {
   renderAudio();
 }
 function selectWorkspace(id: string) {
+  if (dragging) return;
   selectedWorkspace = id;
   setDrawer(false);
   render();
   selected()?.term.focus();
 }
 function selectTab(id: string) {
+  if (dragging) return;
   selectedTabs[selectedWorkspace] = id;
   render();
   selected()?.term.focus();
@@ -258,47 +331,78 @@ function updateTabOverflow() {
 }
 tabList.addEventListener("scroll", updateTabOverflow);
 // Keep the input node in place across shared snapshots. Only Enter submits.
-let editingTab: { id: string; input: HTMLInputElement } | undefined;
-let lastTouch: { id: string; time: number } | undefined;
+type ItemKind = "workspaces" | "tabs";
+let editing: { kind: ItemKind; id: string; input: HTMLInputElement } | undefined;
+let movingControl = false;
+let lastTouch: { entry: HTMLElement; time: number } | undefined;
+const itemControlId = (kind: ItemKind, id: string) => (kind === "tabs" ? "tab-" : "workspace-") + id;
 function finishRename(save: boolean, restoreFocus = true) {
-  const edit = editingTab;
+  const edit = editing;
   if (!edit) return;
   const name = edit.input.value.trim();
-  const currentTab = workspace()?.tabs.find((tab) => tab.id === edit.id);
-  if (save && name && currentTab && name !== currentTab.name) {
+  const item = (edit.kind === "tabs" ? workspace()?.tabs : state.workspaces)?.find((item) => item.id === edit.id);
+  if (save && name && item && name !== item.name) {
     if (busy) return;
     edit.input.readOnly = true;
-    void change("/api/tabs/" + encodeURIComponent(edit.id), "PATCH", { name }).then((ok) => {
-      if (editingTab !== edit) return;
+    void change("/api/" + edit.kind + "/" + encodeURIComponent(edit.id), "PATCH", { name }).then((ok) => {
+      if (editing !== edit) return;
       edit.input.readOnly = false;
       if (ok) {
         finishRename(false, false);
-        if (restoreFocus) selected()?.term.focus();
-      } else edit.input.focus({ preventScroll: true });
+        if (restoreFocus) {
+          if (edit.kind === "tabs") selected()?.term.focus();
+          else document.getElementById(itemControlId(edit.kind, edit.id))?.focus({ preventScroll: true });
+        }
+      } else {
+        const shell = edit.input.parentElement;
+        if (edit.kind === "workspaces" && shell) {
+          edit.input.setAttribute("aria-invalid", "true");
+          let error = shell.querySelector<HTMLElement>(".rename-error");
+          if (!error) {
+            error = document.createElement("p");
+            error.id = "workspace-name-error";
+            error.className = "rename-error";
+            error.setAttribute("role", "alert");
+            shell.append(error);
+          }
+          error.textContent = notice.textContent;
+          edit.input.setAttribute("aria-describedby", error.id);
+          notice.textContent = "";
+          render();
+        }
+        edit.input.focus({ preventScroll: true });
+      }
     });
     return;
   }
-  editingTab = undefined;
+  editing = undefined;
+  edit.input.parentElement?.querySelector(".rename-error")?.remove();
   if (edit.input.parentElement) edit.input.parentElement.style.width = "";
   render();
   if (restoreFocus) {
-    if (save) selected()?.term.focus();
-    else document.getElementById("tab-" + edit.id)?.focus({ preventScroll: true });
+    if (save && edit.kind === "tabs") selected()?.term.focus();
+    else document.getElementById(itemControlId(edit.kind, edit.id))?.focus({ preventScroll: true });
   }
 }
-function startRename(id: string) {
-  if (busy || editingTab || !token) return;
-  const tab = workspace()?.tabs.find((tab) => tab.id === id);
-  const entry = document.getElementById("tab-" + id);
-  if (!tab || !entry) return;
+function startRename(kind: ItemKind, id: string) {
+  if (busy || editing || accessRequired || dragging || performance.now() < suppressClickUntil) return;
+  const item = (kind === "tabs" ? workspace()?.tabs : state.workspaces)?.find((item) => item.id === id);
+  const entry = document.getElementById(itemControlId(kind, id));
+  if (!item || !entry) return;
   const input = document.createElement("input");
-  input.className = "input tab-name-input";
+  input.className = "input " + (kind === "tabs" ? "tab" : "workspace") + "-name-input";
   input.autocomplete = "off";
   input.spellcheck = false;
-  input.id = "tab-name-" + id;
-  input.setAttribute("aria-label", "Tab name");
+  input.id = (kind === "tabs" ? "tab" : "workspace") + "-name-" + id;
+  input.setAttribute("aria-label", kind === "tabs" ? "Tab name" : "Workspace name");
   input.title = "Enter to save · Escape or leave to cancel";
-  input.value = tab.name;
+  input.value = item.name;
+  input.maxLength = 120;
+  input.addEventListener("input", () => {
+    input.removeAttribute("aria-invalid");
+    input.removeAttribute("aria-describedby");
+    input.parentElement?.querySelector(".rename-error")?.remove();
+  });
   input.addEventListener("keydown", (event) => {
     event.stopPropagation();
     if (event.key === "Enter" && !event.isComposing) {
@@ -309,55 +413,104 @@ function startRename(id: string) {
       finishRename(false);
     }
   });
-  input.addEventListener("blur", () => finishRename(false, false));
-  editingTab = { id, input };
+  input.addEventListener("blur", () => {
+    if (!movingControl) finishRename(false, false);
+  });
+  editing = { kind, id, input };
   const shell = entry.parentElement;
   if (!shell) throw new Error("Missing tab shell");
   shell.style.width = shell.getBoundingClientRect().width + "px";
   entry.replaceWith(input);
   input.focus({ preventScroll: true });
   input.select();
+  render();
+}
+function nameGestures(entry: HTMLButtonElement, kind: ItemKind, id: string) {
+  entry.addEventListener("dblclick", () => startRename(kind, id));
+  entry.addEventListener("keydown", (event) => {
+    if (event.key === "F2") {
+      event.preventDefault();
+      startRename(kind, id);
+    }
+  });
+  // A workspace tap closes the phone drawer; its menu owns touch rename.
+  if (kind === "workspaces") return;
+  let touch: { x: number; y: number; time: number } | undefined;
+  entry.addEventListener("pointerdown", (event) => {
+    touch = event.pointerType === "touch" ? { x: event.clientX, y: event.clientY, time: event.timeStamp } : undefined;
+  });
+  entry.addEventListener("pointercancel", () => {
+    touch = lastTouch = undefined;
+  });
+  entry.addEventListener("pointerup", (event) => {
+    const tap = touch;
+    touch = undefined;
+    if (
+      !tap ||
+      dragging ||
+      event.timeStamp - tap.time > 220 ||
+      Math.hypot(event.clientX - tap.x, event.clientY - tap.y) > 6
+    ) {
+      lastTouch = undefined;
+      return;
+    }
+    if (lastTouch?.entry === entry && event.timeStamp - lastTouch.time < 450) {
+      lastTouch = undefined;
+      event.preventDefault();
+      startRename(kind, id);
+    } else lastTouch = { entry, time: event.timeStamp };
+  });
 }
 function tabButton(tab: Tab) {
   const entry = button("", () => {
-    if (!editingTab) selectTab(tab.id);
+    if (!editing) selectTab(tab.id);
   });
   entry.className = "btn btn-ghost tab-select";
   entry.id = "tab-" + tab.id;
   entry.setAttribute("role", "tab");
   entry.setAttribute("aria-controls", "terminal-" + tab.id);
-  entry.setAttribute("aria-keyshortcuts", "F2");
-  entry.addEventListener("dblclick", () => startRename(tab.id));
+  entry.setAttribute("aria-keyshortcuts", "F2 Alt+Shift+ArrowLeft Alt+Shift+ArrowRight");
+  entry.setAttribute("aria-describedby", "tab-reorder-help");
+  nameGestures(entry, "tabs", tab.id);
   entry.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       selectTab(tab.id);
     }
-    if (event.key === "F2") {
-      event.preventDefault();
-      startRename(tab.id);
-    }
-  });
-  entry.addEventListener("pointerup", (event) => {
-    if (event.pointerType !== "touch") return;
-    const time = event.timeStamp;
-    if (lastTouch?.id === tab.id && time - lastTouch.time < 450) {
-      lastTouch = undefined;
-      event.preventDefault();
-      startRename(tab.id);
-    } else lastTouch = { id: tab.id, time };
   });
   return entry;
 }
+function workspaceButton(item: Workspace) {
+  const entry = button("", () => {
+    if (!editing) selectWorkspace(item.id);
+  });
+  entry.id = "workspace-" + item.id;
+  entry.className = "btn btn-ghost workspace";
+  entry.innerHTML = '<span class="workspace-name"></span><small></small>';
+  entry.setAttribute("aria-describedby", "workspace-reorder-help");
+  entry.setAttribute("aria-keyshortcuts", "F2 Alt+Shift+ArrowUp Alt+Shift+ArrowDown");
+  nameGestures(entry, "workspaces", item.id);
+  return entry;
+}
 let scrolledTab: string | undefined;
+function placeItem(list: HTMLElement, item: HTMLElement, index: number) {
+  if (list.children[index] === item) return;
+  const focused = document.activeElement as HTMLElement | null;
+  // insertBefore blurs a moved input. That is a shared reorder, not the user
+  // leaving their draft. Keep its node, caret and focus without saving it.
+  movingControl = true;
+  try {
+    list.insertBefore(item, list.children[index] ?? null);
+    if (focused && item.contains(focused)) focused.focus({ preventScroll: true });
+  } finally {
+    movingControl = false;
+  }
+}
 // Shared snapshots update rows, not their identity or local focus.
 function renderWorkspaces() {
-  const focused = document.activeElement;
-  let removedFocus = false;
-  const rows = new Map(Array.from(workspaceList.children).map((row) => [row.id, row]));
+  const rows = new Map(Array.from(workspaceList.children).map((row) => [row.id, row as HTMLElement]));
   for (const [id, row] of rows) {
     if (!state.workspaces.some((item) => "workspace-row-" + item.id === id)) {
-      if (focused && row.contains(focused)) removedFocus = true;
       row.remove();
     }
   }
@@ -369,32 +522,44 @@ function renderWorkspaces() {
       row = document.createElement("div");
       row.id = id;
       row.className = "workspace-row";
-      const entry = button("", () => selectWorkspace(item.id));
-      entry.id = "workspace-" + item.id;
-      entry.className = "btn btn-ghost workspace";
-      entry.innerHTML = '<span class="workspace-name"></span><small></small>';
-      const remove = button("×", () => void removeWorkspace(item.id));
-      remove.id = "workspace-remove-" + item.id;
-      remove.className = "btn btn-ghost btn-square workspace-remove";
+      row.dataset.id = item.id;
+      const entry = workspaceButton(item);
+      const remove = button("⋯", () => showWorkspaceMenu(item.id));
+      remove.id = "workspace-actions-" + item.id;
+      remove.className = "btn btn-ghost btn-square workspace-actions";
+      remove.setAttribute("aria-haspopup", "menu");
+      remove.setAttribute("aria-controls", "workspace-menu");
+      remove.setAttribute("aria-expanded", "false");
       row.append(entry, remove);
     }
-    const entry = row.firstElementChild as HTMLButtonElement;
-    entry.title = item.cwd;
-    entry.setAttribute("aria-label", "Open workspace " + item.name + " · " + item.cwd);
-    entry.setAttribute("aria-pressed", String(item.id === selectedWorkspace));
-    requiredElement(".workspace-name", entry).textContent = item.name;
-    const suffix = requiredElement("small", entry);
-    const duplicates = state.workspaces.filter((other) => other.name === item.name);
-    suffix.textContent = duplicates.length > 1 ? distinguishingPath(item, duplicates) : "";
-    suffix.hidden = duplicates.length < 2;
-    const remove = row.lastElementChild as HTMLButtonElement;
-    remove.setAttribute("aria-label", "Remove workspace " + item.name + " · " + item.cwd);
-    remove.title = "Remove workspace " + item.name;
+    row.dataset.active = String(item.id === selectedWorkspace);
+    if (editing?.kind !== "workspaces" || editing.id !== item.id) {
+      let entry = row.firstElementChild as HTMLButtonElement;
+      if (!entry.classList.contains("workspace")) {
+        const replacement = workspaceButton(item);
+        entry.replaceWith(replacement);
+        entry = replacement;
+      }
+      entry.title = item.cwd + " · Drag to reorder · Double-click to rename (F2)";
+      entry.setAttribute("aria-label", "Open workspace " + item.name + " · " + item.cwd);
+      entry.setAttribute("aria-pressed", String(item.id === selectedWorkspace));
+      requiredElement(".workspace-name", entry).textContent = item.name;
+      const suffix = requiredElement("small", entry);
+      const duplicates = state.workspaces.filter((other) => other.name === item.name);
+      suffix.textContent = duplicates.length > 1 ? distinguishingPath(item, duplicates) : "";
+      suffix.hidden = duplicates.length < 2;
+    }
+    const remove = requiredElement<HTMLButtonElement>(".workspace-actions", row);
+    remove.setAttribute("aria-label", "Actions for workspace " + item.name + " · " + item.cwd);
+    remove.title = "Workspace actions";
     remove.disabled = busy;
-    if (workspaceList.children[index] !== row) workspaceList.insertBefore(row, workspaceList.children[index] ?? null);
+    placeItem(workspaceList, row, index);
     index++;
   }
-  if (removedFocus && drawerOpen && !dialog.open) focusWorkspaceControl();
+  if (workspaceMenu.matches(":popover-open") && !state.workspaces.some((item) => item.id === menuWorkspace)) {
+    workspaceMenu.hidePopover();
+    if (!dialog.open) focusWorkspaceControl();
+  }
 }
 function focusWorkspaceControl() {
   if (drawerOpen) {
@@ -415,12 +580,21 @@ function distinguishingPath(item: Workspace, duplicates: Workspace[]) {
   return item.cwd;
 }
 function render() {
-  const focusedTabControl = document.activeElement?.id;
+  // Keep the grabbed DOM stable. State and PTY updates still arrive during a drag.
+  if (dragging) return;
+  if (
+    editing &&
+    !(editing.kind === "tabs" ? workspace()?.tabs : state.workspaces)?.some((item) => item.id === editing?.id)
+  )
+    editing = undefined;
+  workspaceSorter.option("disabled", busy || accessRequired || !!editing);
+  tabSorter.option("disabled", busy || accessRequired || !!editing);
+  const focusedControl = document.activeElement?.id;
   const tabScroll = tabList.scrollLeft;
   renderWorkspaces();
   const current = workspace();
-  if (editingTab && !current?.tabs.some((tab) => tab.id === editingTab?.id)) editingTab = undefined;
-  const previous = new Map(Array.from(tabList.children).map((shell) => [shell.id, shell]));
+  document.title = current ? current.name + " · Bruv" : "Bruv terminal";
+  const previous = new Map(Array.from(tabList.children).map((shell) => [shell.id, shell as HTMLElement]));
   for (const [id, shell] of previous) {
     if (!current?.tabs.some((tab) => "tab-shell-" + tab.id === id)) {
       shell.remove();
@@ -431,12 +605,13 @@ function render() {
     const shellId = "tab-shell-" + tab.id;
     const shell = previous.get(shellId) ?? document.createElement("div");
     shell.id = shellId;
+    shell.dataset.id = tab.id;
     shell.className = "terminal-tab";
     shell.setAttribute("role", "presentation");
     sessions.get(tab.id)?.element.setAttribute("aria-label", tab.name);
     const active = tab.id === selectedTabs[selectedWorkspace];
     shell.setAttribute("data-active", String(active));
-    if (editingTab?.id !== tab.id) {
+    if (editing?.kind !== "tabs" || editing.id !== tab.id) {
       let entry = shell.firstElementChild as HTMLButtonElement | null;
       if (!entry?.classList.contains("tab-select")) {
         const replacement = tabButton(tab);
@@ -453,7 +628,7 @@ function render() {
             : "");
       entry.setAttribute("aria-label", "Select tab " + entry.textContent);
       entry.setAttribute("aria-selected", String(active));
-      entry.title = entry.textContent + " · Double-click or double-tap to rename (F2)";
+      entry.title = entry.textContent + " · Drag to reorder · Double-click or double-tap to rename (F2)";
       entry.tabIndex = active ? 0 : -1;
     }
     let close = shell.children[1] as HTMLButtonElement | undefined;
@@ -470,11 +645,12 @@ function render() {
     close.setAttribute("aria-label", closeLabel);
     close.title = closeLabel;
     close.disabled = busy;
-    if (tabList.children[index] !== shell) tabList.insertBefore(shell, tabList.children[index] ?? null);
+    placeItem(tabList, shell, index);
     index++;
   }
   tabList.scrollLeft = tabScroll;
-  if (focusedTabControl?.startsWith("tab-")) document.getElementById(focusedTabControl)?.focus({ preventScroll: true });
+  if (focusedControl?.startsWith("tab-") || focusedControl?.startsWith("workspace-"))
+    document.getElementById(focusedControl)?.focus({ preventScroll: true });
   const activeTabId = selectedTabs[selectedWorkspace];
   if (scrolledTab !== activeTabId) {
     scrolledTab = activeTabId;
@@ -494,26 +670,34 @@ function render() {
   empty.hidden = !!active && !accessRequired;
   syncStatus.hidden = !listLoaded;
   notice.hidden = !listLoaded || accessRequired;
+  requiredElement<HTMLElement>("#notice-row").hidden = notice.hidden || !notice.textContent;
   requiredElement<HTMLElement>(".tab-bar").hidden = accessRequired || !state.workspaces.length;
+  const hideSidebar = accessRequired || !listLoaded || !state.workspaces.length;
+  requiredElement<HTMLElement>("#workspace-sidebar").hidden = hideSidebar;
+  requiredElement<HTMLElement>(".empty-brand").hidden = !hideSidebar;
   const awaiting = !accessRequired && !listLoaded;
   requiredElement("h1", empty).textContent = accessRequired
     ? "Access required"
-    : awaiting
-      ? listFailed
-        ? "Workspace list unavailable"
-        : "Loading workspaces…"
-      : current
-        ? "No terminals in " + current.name
-        : "Open a folder";
+    : rendererFailed
+      ? "Terminal unavailable"
+      : awaiting
+        ? listFailed
+          ? "Workspace list unavailable"
+          : "Loading workspaces…"
+        : current
+          ? "No terminals in " + current.name
+          : "Open a folder";
   requiredElement("p", empty).textContent = accessRequired
     ? "Open the full URL printed by bruv web, including its token."
-    : awaiting
-      ? listFailed
-        ? "Check the server connection, then retry."
-        : ""
-      : "";
-  action("empty-action").textContent = awaiting ? "Retry" : "New terminal";
-  action("empty-action").hidden = accessRequired || (!current && !listFailed);
+    : rendererFailed
+      ? "The terminal could not load. Reload to try again."
+      : awaiting
+        ? listFailed
+          ? "Check the server connection, then retry."
+          : ""
+        : "";
+  action("empty-action").textContent = rendererFailed ? "Reload" : awaiting ? "Retry" : "New terminal";
+  action("empty-action").hidden = accessRequired || (!current && !listFailed && !rendererFailed);
   action("empty-action").disabled = busy;
   action("add-workspace").hidden = accessRequired || !listLoaded || !state.workspaces.length;
   action("new-tab").hidden = accessRequired || !current || !active;
@@ -540,12 +724,20 @@ function render() {
   action("cancel-folder").hidden = !current;
   action("cancel-folder").disabled = busy;
   action("open-folder").disabled = busy;
-  if (drawerOpen && !state.workspaces.length) {
+  if (drawerOpen && hideSidebar) {
     setDrawer(false);
     if (showFolder) folderInput.focus();
+    else requiredElement<HTMLElement>("h1", empty).focus();
   }
   persistSelection();
   renderStatus();
+  if (
+    focusedControl &&
+    /^(tab|workspace)-/.test(focusedControl) &&
+    !document.getElementById(focusedControl) &&
+    !dialog.open
+  )
+    focusWorkspaceControl();
   requestAnimationFrame(updateTabOverflow);
   if (selectionChanged) requestAnimationFrame(resizeSelected);
 }
@@ -609,9 +801,9 @@ new ResizeObserver(updateTabOverflow).observe(tabList);
 window.visualViewport?.addEventListener("resize", resizeSelected);
 window.addEventListener("resize", () => requestAnimationFrame(revealSelectedTab));
 tabList.addEventListener("keydown", (event) => {
-  if ((event.target as HTMLElement)?.getAttribute("role") !== "tab") return;
+  if (event.altKey || (event.target as HTMLElement)?.getAttribute("role") !== "tab") return;
   const tabs = workspace()?.tabs ?? [];
-  const index = tabs.findIndex((tab) => tab.id === selectedTabs[selectedWorkspace]);
+  const index = tabs.findIndex((tab) => "tab-" + tab.id === (event.target as HTMLElement).id);
   let next: number;
   if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
   else if (event.key === "ArrowLeft") next = (index + tabs.length - 1) % tabs.length;
@@ -996,7 +1188,8 @@ async function change(path: string, method = "GET", body?: object, choose?: (nex
   return ok;
 }
 action("empty-action").addEventListener("click", () => {
-  if (!listLoaded) void change("/api/workspaces");
+  if (rendererFailed) location.reload();
+  else if (!listLoaded) void change("/api/workspaces");
   else action("new-tab").click();
 });
 action("lost-new-tab").addEventListener("click", () => action("new-tab").click());
@@ -1048,15 +1241,20 @@ folderInput.addEventListener("input", () => {
   folderError.textContent = "";
   folderInput.removeAttribute("aria-invalid");
 });
+folderInput.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && folderOpen && !busy) {
+    event.preventDefault();
+    event.stopPropagation();
+    action("cancel-folder").click();
+  }
+});
 action("new-tab").addEventListener("click", () => {
   const current = workspace();
   if (!current) return;
-  const before = new Set(current.tabs.map((tab) => tab.id));
   void change("/api/workspaces/" + encodeURIComponent(current.id) + "/tabs", "POST", {}, (next) => {
     const tab = next.workspaces
       .find((item) => item.id === current.id)
-      ?.tabs.filter((tab) => !before.has(tab.id))
-      .at(-1);
+      ?.tabs.find((tab) => tab.id === (next as CreatedTab).tabId);
     if (tab) {
       selectedWorkspace = current.id;
       selectedTabs[current.id] = tab.id;
@@ -1066,9 +1264,9 @@ action("new-tab").addEventListener("click", () => {
   });
 });
 async function closeTab(tab: Tab) {
+  if (busy || dragging || accessRequired || dialog.open) return;
   const ended = tab.exited || sessions.get(tab.id)?.loss === "exit";
-  const focused = document.activeElement?.id;
-  const origin = focused;
+  const origin = document.activeElement?.id;
   const confirmed = await askDialog({
     title: (ended ? "Remove “" : "Close “") + tab.name + "”?",
     description: ended
@@ -1097,9 +1295,10 @@ async function closeTab(tab: Tab) {
   else action("empty-action").focus();
 }
 async function removeWorkspace(id: string) {
+  if (busy || dragging || accessRequired || dialog.open) return;
   const current = state.workspaces.find((item) => item.id === id);
   if (!current) return;
-  const invoker = document.getElementById("workspace-remove-" + id);
+  const invoker = document.getElementById("workspace-actions-" + id);
   const confirmed = await askDialog({
     title: "Remove “" + current.name + "”?",
     description:
@@ -1157,6 +1356,126 @@ function connectEvents() {
     }, 1000);
   };
 }
+async function moveItem(kind: ItemKind, id: string, beforeId: string | null) {
+  if (busy || accessRequired || editing) return render();
+  const items: { id: string; name: string }[] = kind === "workspaces" ? state.workspaces : (workspace()?.tabs ?? []);
+  const from = items.findIndex((item) => item.id === id);
+  const before = beforeId === null ? items.length : items.findIndex((item) => item.id === beforeId);
+  if (from < 0 || before < 0) return render(); // A collaborator removed the source or target.
+  const to = before > from ? before - 1 : before;
+  if (from === to) return render();
+  const previous = [...items];
+  const revision = state.revision;
+  const [item] = items.splice(from, 1);
+  items.splice(to, 0, item);
+  const ok = await change("/api/" + kind + "/" + encodeURIComponent(id) + "/move", "POST", { beforeId });
+  if (!ok && state.revision === revision) {
+    items.splice(0, items.length, ...previous);
+    render();
+  }
+  if (ok) {
+    requiredElement("#reorder-status").textContent =
+      item.name + " moved to position " + (to + 1) + " of " + items.length + ".";
+    if (kind === "tabs") revealTabShell(document.getElementById("tab-shell-" + id));
+  }
+}
+function reorderList(list: HTMLElement, handle: string, kind: ItemKind) {
+  let cancelled = false;
+  const horizontal = kind === "tabs";
+  list.addEventListener("keydown", (event) => {
+    if (
+      dragging ||
+      !event.altKey ||
+      !event.shiftKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      !(event.target as HTMLElement).matches(handle)
+    )
+      return;
+    const step =
+      event.key === (horizontal ? "ArrowLeft" : "ArrowUp")
+        ? -1
+        : event.key === (horizontal ? "ArrowRight" : "ArrowDown")
+          ? 1
+          : 0;
+    if (!step) return;
+    event.preventDefault();
+    const item = (event.target as HTMLElement).parentElement;
+    if (!item?.dataset.id) return;
+    const siblings = Array.from(list.children) as HTMLElement[];
+    const index = siblings.indexOf(item),
+      next = index + step;
+    if (next < 0 || next >= siblings.length) return;
+    void moveItem(kind, item.dataset.id, siblings[step > 0 ? next + 1 : next]?.dataset.id ?? null);
+  });
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (Sortable.active !== sorter || !dragging || event.key !== "Escape") return;
+      cancelled = true;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      sorter.sort((kind === "tabs" ? (workspace()?.tabs ?? []) : state.workspaces).map((item) => item.id));
+      document.body.dataset.reorder = "cancelled";
+      requiredElement("#reorder-status").textContent = "Reorder cancelled.";
+    },
+    true,
+  );
+  const sorter = new Sortable(list, {
+    direction: horizontal ? "horizontal" : "vertical",
+    draggable: horizontal ? ".terminal-tab" : ".workspace-row",
+    handle,
+    animation: matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 140,
+    easing: "var(--ease-out)",
+    delay: 220,
+    delayOnTouchOnly: true,
+    touchStartThreshold: 6,
+    fallbackTolerance: 6,
+    fallbackOnBody: true,
+    ghostClass: "reorder-slot",
+    dragClass: "reorder-drag",
+    fallbackClass: "reorder-drag",
+    onStart(event) {
+      dragging = true;
+      cancelled = false;
+      lastTouch = undefined;
+      document.body.dataset.reorder = kind;
+      requiredElement("#reorder-status").textContent =
+        (event.item.querySelector(handle)?.textContent ?? "Item") + " picked up. Escape cancels.";
+    },
+    onMove() {
+      if (cancelled) return false;
+    },
+    onEnd(event) {
+      const beforeId = (event.item.nextElementSibling as HTMLElement | null)?.dataset.id ?? null;
+      // Sortable includes the native drop event; @types/sortablejs omits it.
+      const original = (event as Sortable.SortableEvent & { originalEvent: DragEvent | TouchEvent }).originalEvent;
+      const point = "changedTouches" in original ? original.changedTouches[0] : original;
+      const bounds = list.getBoundingClientRect();
+      const outside =
+        point &&
+        (point.clientX < bounds.left ||
+          point.clientX > bounds.right ||
+          point.clientY < bounds.top ||
+          point.clientY > bounds.bottom);
+      cancelled ||=
+        outside ||
+        original.type.endsWith("cancel") ||
+        (original.type === "dragend" && (original as DragEvent).dataTransfer?.dropEffect === "none");
+      dragging = false;
+      suppressClickUntil = performance.now() + 250;
+      delete document.body.dataset.reorder;
+      const id = event.item.dataset.id;
+      if (cancelled || !id) render();
+      else void moveItem(kind, id, beforeId);
+      if (id) document.getElementById(itemControlId(kind, id))?.focus({ preventScroll: true });
+    },
+  });
+  return sorter;
+}
+const workspaceSorter = reorderList(workspaceList, ".workspace", "workspaces");
+const tabSorter = reorderList(tabList, ".tab-select", "tabs");
+
 let ghostty: Ghostty;
 render();
 if (token) {
@@ -1172,9 +1491,7 @@ if (token) {
     })
     .catch((error) => {
       console.error("Terminal renderer could not load.", error);
-      listLoaded = true;
-      listFailed = true;
-      requiredElement("h1", empty).textContent = "Terminal unavailable";
-      requiredElement("p", empty).textContent = "Reload to try again.";
+      rendererFailed = true;
+      render();
     });
 }

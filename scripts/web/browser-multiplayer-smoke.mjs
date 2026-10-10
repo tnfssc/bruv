@@ -229,7 +229,7 @@ await withBrowserProbe("bruv-multiplayer", async (owned) => {
       await page.locator("#folder-form").waitFor({ state: "hidden" });
     }
     async function dialog(page, selector, confirm) {
-      if (selector.startsWith("#workspace-remove-") && (await page.locator("#open-drawer").isVisible()))
+      if (selector.startsWith("#workspace-actions-") && (await page.locator("#open-drawer").isVisible()))
         await page.locator("#open-drawer").click();
       if (selector.startsWith("#tab-close-")) {
         // Rename can widen the selected tab. Scroll its whole shell into view.
@@ -238,6 +238,7 @@ await withBrowserProbe("bruv-multiplayer", async (owned) => {
           .evaluate((button) => button.parentElement.scrollIntoView({ block: "nearest", inline: "nearest" }));
       }
       await page.locator(selector).click();
+      if (selector.startsWith("#workspace-actions-")) await page.locator("#remove-workspace").click();
       await page.locator("#workspace-dialog").waitFor({ state: "visible" });
       assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-cancel");
       await page.locator(confirm ? "#dialog-submit" : "#dialog-cancel").click();
@@ -457,7 +458,7 @@ await withBrowserProbe("bruv-multiplayer", async (owned) => {
       .find((w) => w.id === second.id)
       .tabs.map((t) => t.pid)
       .filter(Boolean);
-    await dialog(b, "#workspace-remove-" + second.id, true);
+    await dialog(b, "#workspace-actions-" + second.id, true);
     await until(
       async () => (await a.getByRole("button", { name: "Open workspace two · " + two, exact: true }).count()) === 0,
       "Remote workspace deletion not observed",

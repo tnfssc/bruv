@@ -94,9 +94,14 @@ export function startWebServer(options: WebServerOptions) {
       BRUV_LIVE_RELAY_URL: origin.replace(/^http/, "ws") + relay.pathname + "?role=cli&session=" + id,
       BRUV_LIVE_RELAY_SECRET: secret,
     };
+    if (name === undefined) {
+      let number = 1;
+      while (workspace.tabs.some((tab) => tab.name === "Terminal " + number)) number++;
+      name = "Terminal " + number;
+    }
     const tab = {
       id,
-      name: name ?? "Terminal " + (workspace.tabs.length + 1),
+      name,
       terminal: new TerminalSession(
         options.command,
         workspace.cwd,
@@ -202,19 +207,31 @@ export function startWebServer(options: WebServerOptions) {
             return;
           return response("WebSocket required", "text/plain", 426);
         }
-        const workspaceMatch = /^\/api\/workspaces\/([^/]+)(\/tabs)?$/.exec(url.pathname);
-        const tabMatch = /^\/api\/tabs\/([^/]+)$/.exec(url.pathname);
+        const workspaceMatch = /^\/api\/workspaces\/([^/]+)(\/tabs|\/move)?$/.exec(url.pathname);
+        const tabMatch = /^\/api\/tabs\/([^/]+)(\/move)?$/.exec(url.pathname);
         if (url.pathname === "/api/workspaces" || workspaceMatch || tabMatch) {
           const json = () => response(JSON.stringify(state()), "application/json");
           if (url.pathname === "/api/workspaces" && request.method === "GET") return json();
           const createWorkspace = url.pathname === "/api/workspaces" && request.method === "POST";
-          const createTab = workspaceMatch?.[2] && request.method === "POST";
-          const renameTab = tabMatch && request.method === "PATCH";
-          const deleteTab = tabMatch && request.method === "DELETE";
+          const createTab = workspaceMatch?.[2] === "/tabs" && request.method === "POST";
+          const moveWorkspace = workspaceMatch?.[2] === "/move" && request.method === "POST";
+          const moveTab = tabMatch?.[2] === "/move" && request.method === "POST";
+          const renameTab = tabMatch && !tabMatch[2] && request.method === "PATCH";
+          const renameWorkspace = workspaceMatch && !workspaceMatch[2] && request.method === "PATCH";
+          const deleteTab = tabMatch && !tabMatch[2] && request.method === "DELETE";
           const deleteWorkspace = workspaceMatch && !workspaceMatch?.[2] && request.method === "DELETE";
-          if (!createWorkspace && !createTab && !renameTab && !deleteTab && !deleteWorkspace)
+          if (
+            !createWorkspace &&
+            !createTab &&
+            !renameTab &&
+            !renameWorkspace &&
+            !deleteTab &&
+            !deleteWorkspace &&
+            !moveWorkspace &&
+            !moveTab
+          )
             return response("Method not allowed", "text/plain", 405);
-          let body: { cwd?: unknown; name?: unknown; confirm?: unknown };
+          let body: { cwd?: unknown; name?: unknown; confirm?: unknown; beforeId?: unknown };
           try {
             body = await request.json();
             if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("Invalid body");
@@ -225,11 +242,31 @@ export function startWebServer(options: WebServerOptions) {
           const tabId = tabMatch?.[1];
           const tab = tabId ? tabs.get(tabId) : undefined;
           if ((workspaceMatch && !workspace) || (tabMatch && !tab)) return response("Not found", "text/plain", 404);
+          if (moveWorkspace || moveTab) {
+            if (body.beforeId !== null && typeof body.beforeId !== "string")
+              return response("beforeId must be an item ID or null", "text/plain", 400);
+            const items: { id: string }[] = moveWorkspace
+              ? workspaces
+              : (workspaces.find((item) => item.tabs.some((item) => item.id === tabId))?.tabs ?? []);
+            const from = items.findIndex((item) => item.id === (moveWorkspace ? workspaceMatch?.[1] : tabId));
+            if (from < 0) return response("Move source not found", "text/plain", 404);
+            const before = body.beforeId === null ? items.length : items.findIndex((item) => item.id === body.beforeId);
+            if (before === -1) return response("Drop target not found in this list", "text/plain", 404);
+            const to = before > from ? before - 1 : before;
+            if (from !== to) {
+              const [item] = items.splice(from, 1);
+              items.splice(to, 0, item);
+              publish();
+            }
+            return json();
+          }
           if (
-            (body.name !== undefined && (typeof body.name !== "string" || !body.name.trim())) ||
-            (renameTab && body.name === undefined)
+            (body.name !== undefined &&
+              (typeof body.name !== "string" || !body.name.trim() || body.name.length > 120)) ||
+            ((renameTab || renameWorkspace) && body.name === undefined)
           )
-            return response("Name required", "text/plain", 400);
+            return response("Name must be 1–120 characters", "text/plain", 400);
+          if (typeof body.name === "string") body.name = body.name.trim();
           if ((deleteTab || deleteWorkspace) && body.confirm !== true)
             return response("Deletion requires confirm: true", "text/plain", 400);
           let cleanup: Promise<void> | undefined;
@@ -263,8 +300,12 @@ export function startWebServer(options: WebServerOptions) {
               JSON.stringify({ ...state(), workspaceId: workspace.id, created: true }),
               "application/json",
             );
-          } else if (createTab && workspace) addTab(workspace, body.name as string | undefined);
-          else if (renameTab && tab) tab.name = body.name as string;
+          } else if (createTab && workspace) {
+            const tab = addTab(workspace, body.name as string | undefined);
+            publish();
+            return response(JSON.stringify({ ...state(), tabId: tab.id }), "application/json");
+          } else if (renameTab && tab) tab.name = body.name as string;
+          else if (renameWorkspace && workspace) workspace.name = body.name as string;
           else if (deleteTab && tab) {
             const owner = workspaces.find((w) => w.tabs.includes(tab));
             if (!owner) throw new Error("Missing workspace for tab");

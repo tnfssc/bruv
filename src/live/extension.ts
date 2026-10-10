@@ -1050,9 +1050,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
             Boolean(process.env.BRUV_LIVE_RELAY_URL) ||
             (await ctx.ui.confirm(
               "Mic check",
-              process.env.BRUV_LIVE_RELAY_URL
-                ? "Open this browser microphone briefly? Audio crosses the session relay for this check, then is discarded. No provider or agent tools."
-                : "Open microphone and speakers briefly? No playback, provider or agent tools. Audio is discarded, not saved or sent. macOS may ask for microphone access.",
+              "Open microphone and speakers briefly? No playback, provider or agent tools. Audio is discarded, not saved or sent. macOS may ask for microphone access.",
             ));
         } catch {
           /* dialog closed */

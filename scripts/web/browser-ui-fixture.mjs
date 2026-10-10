@@ -35,7 +35,7 @@ export function startFixture(assets) {
     "/terminal.js": ["terminal.js.asset", "application/javascript"],
     "/terminal.css": ["terminal.css.asset", "text/css"],
     "/ghostty-vt.wasm": ["ghostty-vt.wasm.asset", "application/wasm"],
-    "/JetBrainsMonoNerdFontMono-Regular.woff2": ["JetBrainsMonoNerdFontMono-Regular.woff2.asset", "font/woff2"],
+    "/fonts/JetBrainsMonoNerdFontMono-Regular.woff2": ["JetBrainsMonoNerdFontMono-Regular.woff2.asset", "font/woff2"],
   };
   const send = (socket, message) => socket.send(JSON.stringify(message));
   const publish = () => {
@@ -74,8 +74,14 @@ export function startFixture(assets) {
       if (path === "/api/workspaces" && request.method === "GET") return Response.json(state);
       const workspace = state.workspaces.find((item) => item.id === path.split("/")[3]);
       const tab = state.workspaces.flatMap((item) => item.tabs).find((item) => item.id === path.split("/")[3]);
-      let workspaceId;
-      if (request.method === "PATCH" && tab) tab.name = body.name;
+      let workspaceId, tabId;
+      if (request.method === "POST" && path.endsWith("/move")) {
+        const items = workspace ? state.workspaces : state.workspaces.find((item) => item.tabs.includes(tab))?.tabs;
+        const from = items?.findIndex((item) => item.id === (workspace ?? tab)?.id) ?? -1;
+        const before = body.beforeId === null ? items?.length : items?.findIndex((item) => item.id === body.beforeId);
+        if (from < 0 || before === undefined || before < 0) return new Response("Missing drop target", { status: 404 });
+        items.splice(before > from ? before - 1 : before, 0, ...items.splice(from, 1));
+      } else if (request.method === "PATCH" && (tab || workspace)) (tab ?? workspace).name = body.name;
       else if (request.method === "DELETE" && tab) {
         for (const item of state.workspaces) item.tabs = item.tabs.filter((entry) => entry !== tab);
       } else if (request.method === "DELETE" && workspace)
@@ -88,11 +94,12 @@ export function startFixture(assets) {
           state.workspaces.push({ id: workspaceId, name: basename(body.cwd), cwd: body.cwd, tabs: [] });
         }
       } else if (request.method === "POST" && workspace && path.endsWith("/tabs")) {
-        workspace.tabs.push({ id: "t" + nextId++, name: "New terminal" });
+        tabId = "t" + nextId++;
+        workspace.tabs.push({ id: tabId, name: "New terminal" });
       } else return Response.json({ error: "unknown fixture request" }, { status: 404 });
       state.revision++;
       publish();
-      return Response.json(workspaceId ? { ...state, workspaceId } : state);
+      return Response.json({ ...state, ...(workspaceId ? { workspaceId } : {}), ...(tabId ? { tabId } : {}) });
     },
     websocket: {
       open(socket) {

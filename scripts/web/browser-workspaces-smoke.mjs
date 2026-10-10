@@ -202,9 +202,10 @@ await withBrowserProbe("bruv-web-workspaces", async (owned) => {
       await page.locator("#folder-form").waitFor({ state: "hidden" });
     }
     async function dialogClick(selector, confirm) {
-      if (selector.startsWith("#workspace-remove-") && (await page.locator("#open-drawer").isVisible()))
+      if (selector.startsWith("#workspace-actions-") && (await page.locator("#open-drawer").isVisible()))
         await page.locator("#open-drawer").click();
       await page.locator(selector).click();
+      if (selector.startsWith("#workspace-actions-")) await page.locator("#remove-workspace").click();
       await page.locator("#workspace-dialog").waitFor({ state: "visible" });
       assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-cancel");
       await page.locator(confirm ? "#dialog-submit" : "#dialog-cancel").click();
@@ -425,6 +426,44 @@ await withBrowserProbe("bruv-web-workspaces", async (owned) => {
     assert.equal(await page.locator("#cancel-voice").isVisible(), false, "Only pending requests can be cancelled");
     await captureVoice("live");
 
+    // Reorder the real CLI while it owns fake-device voice and an unsent draft.
+    const voiceBeforeMove = (await state()).voice;
+    const tracksBeforeMove = await page.evaluate(() => window.mediaTracks.length);
+    await page.locator("#terminal textarea:visible").focus();
+    await page.keyboard.type("draft-before-reorder");
+    await until(
+      async () => (await terminalText(owner.tab.id)).includes("draft-before-reorder"),
+      "Draft did not reach the real editor",
+    );
+    for (const [selector, forward, back, path] of [
+      ["#tab-" + owner.tab.id, "ArrowRight", "ArrowLeft", "/api/tabs/" + owner.tab.id + "/move"],
+      ["#workspace-" + owner.workspace.id, "ArrowDown", "ArrowUp", "/api/workspaces/" + owner.workspace.id + "/move"],
+    ]) {
+      for (const key of [forward, back]) {
+        await page.locator(selector).focus();
+        const response = page.waitForResponse((r) => new URL(r.url()).pathname === path);
+        await page.keyboard.press("Alt+Shift+" + key);
+        assert.equal((await response).status(), 200);
+        await page.waitForFunction(() => !document.querySelector("#new-tab").disabled);
+        assert.equal(
+          await page.locator('[role="tab"][aria-selected="true"]').getAttribute("id"),
+          "tab-" + owner.tab.id,
+        );
+        assert.deepEqual((await state()).voice, voiceBeforeMove, "Reorder moved voice ownership");
+      }
+    }
+    assert.deepEqual(
+      (await state()).workspaces.flatMap((w) => w.tabs.map((t) => t.pid)),
+      pids,
+      "Reorder restarted a CLI",
+    );
+    assert.equal(await page.evaluate(() => window.mediaTracks.length), tracksBeforeMove, "Reorder reopened microphone");
+    assert(await page.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")));
+    assert((await terminalText(owner.tab.id)).includes("draft-before-reorder"), "Reorder lost the editor draft");
+    await page.locator("#terminal textarea:visible").focus();
+    await page.keyboard.press("Control+u");
+    console.log("REORDER_PRESERVED_REAL_PTY_DRAFT_AND_VOICE");
+
     const otherCapability = await page.evaluate(
       (id) =>
         window.terminalMessages
@@ -556,7 +595,11 @@ await withBrowserProbe("bruv-web-workspaces", async (owned) => {
     await paintedTerminal(page);
     await page.screenshot({ caret: "initial", path: join(project, "artifacts/ghostty/web-workspaces-narrow.png") });
     await page.locator("#open-drawer").click();
-    await page.screenshot({ caret: "initial", path: join(project, "artifacts/ghostty/web-workspaces-drawer.png") });
+    await page.screenshot({
+      animations: "disabled",
+      caret: "initial",
+      path: join(project, "artifacts/ghostty/web-workspaces-drawer.png"),
+    });
     await page.keyboard.press("Escape");
     await page.setViewportSize({ width: 1100, height: 720 });
     await page.waitForTimeout(300);
@@ -636,9 +679,9 @@ await withBrowserProbe("bruv-web-workspaces", async (owned) => {
     await page.keyboard.press("Escape", { delay: 20 });
     await page.keyboard.press("Enter");
     await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
-    await dialogClick("#workspace-remove-" + other.workspace.id, false);
+    await dialogClick("#workspace-actions-" + other.workspace.id, false);
     assert.equal((await state()).workspaces.length, 2, "Cancel workspace remove");
-    await dialogClick("#workspace-remove-" + other.workspace.id, true);
+    await dialogClick("#workspace-actions-" + other.workspace.id, true);
     await until(async () => (await state()).workspaces.length === 1, "Workspace remove not applied");
     await allDevicesReleased();
     await page.waitForFunction(

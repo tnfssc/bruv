@@ -22,7 +22,7 @@ export async function prepareWebAssets(
   const wordmark = await Bun.file(resolve(root, "site/assets/brand/bruv-wordmark-light.svg")).text();
   const icon = await Bun.file(resolve(root, "site/assets/brand/bruv-icon.svg")).text();
   const html = (await Bun.file(resolve(root, "src/web/index.html")).text())
-    .replace("<!-- BRUV_WORDMARK -->", wordmark)
+    .replaceAll("<!-- BRUV_WORDMARK -->", wordmark)
     .replace("__BRUV_ICON__", "data:image/svg+xml," + encodeURIComponent(icon));
   await write(resolve(out, "index.html.asset"), html);
   await write(
