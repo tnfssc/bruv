@@ -13,8 +13,11 @@ export const SOCKET_BYTES = 2 * 1024 * 1024;
 /** One real CLI process. Disconnects detach; they never restart or kill it. */
 export class TerminalSession {
   private process?: Subprocess;
-  private clients = new Map<ServerWebSocket<SocketData>, { active: boolean; cols: number; rows: number }>();
-  private chunks: { seq: number; data: string; bytes: number }[] = [];
+  private clients = new Map<
+    ServerWebSocket<SocketData>,
+    { active: boolean; cols: number; rows: number; sequence: number }
+  >();
+  private chunks: { seq: number; data: string; bytes: number; replied?: boolean }[] = [];
   private bytes = 0;
   private sequence = 0;
   private code?: number;
@@ -60,6 +63,11 @@ export class TerminalSession {
       socket.close(1013, "Output backlog; reconnect to replay");
       return false;
     }
+    const output = message as { type?: string; seq?: number };
+    if (output.type === "output") {
+      const view = this.clients.get(socket);
+      if (view && output.seq !== undefined) view.sequence = output.seq;
+    }
     return true;
   }
 
@@ -97,7 +105,7 @@ export class TerminalSession {
       socket.close(1008, "Replay expired");
       return false;
     }
-    this.clients.set(socket, { active: false, cols: this.cols, rows: this.rows });
+    this.clients.set(socket, { active: false, cols: this.cols, rows: this.rows, sequence: after });
     if (!this.sendTo(socket, { type: "ready", cols: this.cols, rows: this.rows })) return false;
     for (const chunk of this.chunks)
       if (chunk.seq > after && !this.sendTo(socket, { type: "output", seq: chunk.seq, data: chunk.data })) return false;
@@ -154,6 +162,23 @@ export class TerminalSession {
     try {
       const message = JSON.parse(String(raw));
       if (
+        message.type === "terminal-reply" &&
+        Number.isSafeInteger(message.seq) &&
+        message.seq > 0 &&
+        message.seq <= view.sequence &&
+        typeof message.data === "string" &&
+        message.data.length > 0 &&
+        Buffer.byteLength(message.data) <= 64 * 1024
+      ) {
+        // This session owns protocol input. The first renderer batch claims
+        // the output chunk; replay and socket handover cannot answer it twice.
+        const chunk = this.chunks.find((chunk) => chunk.seq === message.seq);
+        if (chunk && !chunk.replied && this.code === undefined) {
+          chunk.replied = true;
+          this.process?.terminal?.write(message.data);
+        }
+        this.sendTo(socket, { type: "terminal-reply-ack", seq: message.seq });
+      } else if (
         message.type === "input" &&
         typeof message.data === "string" &&
         Buffer.byteLength(message.data) <= 64 * 1024

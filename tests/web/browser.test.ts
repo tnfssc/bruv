@@ -303,8 +303,10 @@ async function browser(
       this.rows = rows;
       for (const listener of this.resizeListeners) listener({ cols, rows });
     }
+    writeReplies: string[] = [];
     write(bytes: Uint8Array, callback?: () => void) {
       this.writes.push(bytes);
+      for (const reply of this.writeReplies.splice(0)) this.data(reply);
       callback?.();
       this.render();
     }
@@ -412,6 +414,7 @@ async function browser(
     },
     URLSearchParams,
     Uint8Array,
+    TextEncoder,
     AbortController,
     Error,
     atob,
@@ -1348,4 +1351,61 @@ test("initial list failure uses the recovery view without stacked notices", asyn
   expect(b.node("sync-status").hidden).toBe(false);
   expect(b.node("notice").hidden).toBe(false);
   expect(b.node("notice").textContent).toBe("");
+});
+
+test("output replies are one batch, never human input, and survive socket handover until ack", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.ready("b");
+  const term = b.terminals[1]; // Hidden panes still render and answer queries.
+  term.writeReplies.push("\x1b[1;1R", "\x1b[0n");
+  b.terminal("b").message({ type: "output", seq: 1, data: btoa("query tail") });
+  expect(b.terminal("b").sent.filter((m: any) => m.type === "terminal-reply")).toEqual([
+    { type: "terminal-reply", seq: 1, data: "\x1b[1;1R\x1b[0n" },
+  ]);
+  expect(b.terminal("b").sent.some((m: any) => m.type === "input")).toBe(false);
+  term.data("shared typing");
+  term.binary("\xff");
+  expect(b.terminal("b").sent.slice(-2)).toEqual([
+    { type: "input", data: "shared typing" },
+    { type: "input", data: btoa("\xff"), encoding: "base64" },
+  ]);
+  const old = b.terminal("b");
+  old.onclose!({ code: 1006, reason: "lost" });
+  b.timers.at(-1)!();
+  const next = b.terminal("b");
+  expect(next.url).toContain("after=1");
+  b.ready("b");
+  expect(next.sent.find((m: any) => m.type === "terminal-reply")).toEqual({
+    type: "terminal-reply",
+    seq: 1,
+    data: "\x1b[1;1R\x1b[0n",
+  });
+  // An event from the old socket cannot erase the new socket's pending batch.
+  old.message({ type: "terminal-reply-ack", seq: 1 });
+  next.onclose!({ code: 1006, reason: "lost again" });
+  b.timers.at(-1)!();
+  b.ready("b");
+  const newest = b.terminal("b");
+  expect(newest.sent.some((m: any) => m.type === "terminal-reply")).toBe(true);
+  newest.message({ type: "terminal-reply-ack", seq: 1 });
+  newest.onclose!({ code: 1006, reason: "after ack" });
+  b.timers.at(-1)!();
+  b.ready("b");
+  expect(b.terminal("b").sent.some((m: any) => m.type === "terminal-reply")).toBe(false);
+});
+
+test("unacknowledged protocol replies stay within the replay byte budget", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  for (let seq = 1; seq <= 33; seq++) {
+    b.terminals[0].writeReplies.push("r".repeat(64 * 1024));
+    b.terminal("a").message({ type: "output", seq, data: btoa("query") });
+  }
+  expect(b.terminal("a").sent.filter((m: any) => m.type === "terminal-reply")).toHaveLength(32);
+  expect(b.terminal("a").sent.some((m: any) => m.type === "input")).toBe(false);
+  expect(b.terminals[0].options.disableStdin).toBe(true);
+  expect(b.node("status").textContent).toContain("View lost");
 });

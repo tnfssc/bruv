@@ -21,6 +21,9 @@ type Session = {
   accessibility: ReturnType<typeof installTerminalAccessibility>;
   socket?: WebSocket;
   sequence: number;
+  outputReplies?: string[];
+  pendingReplies: Map<number, string>;
+  replyBytes: number;
   ready: boolean;
   halted: boolean;
   loss?: "view" | "exit";
@@ -739,6 +742,7 @@ function connect(session: Session) {
       session.ready = true;
       session.term.options.disableStdin = false;
       session.status = "Connected";
+      for (const [seq, data] of session.pendingReplies) send(session, { type: "terminal-reply", seq, data });
       if (selected() === session) {
         resizeSelected();
         if (document.activeElement === document.body) session.term.focus();
@@ -753,6 +757,12 @@ function connect(session: Session) {
       if (voice?.tabId === session.id && voice.capability !== message.id) void releaseVoice();
       session.capability = message.id;
       session.ownerId = message.ownerId;
+    } else if (message.type === "terminal-reply-ack") {
+      const data = session.pendingReplies.get(message.seq);
+      if (data !== undefined) {
+        session.replyBytes -= new TextEncoder().encode(data).byteLength;
+        session.pendingReplies.delete(message.seq);
+      }
     } else if (message.type === "output") {
       if (message.seq <= session.sequence) return;
       if (message.seq !== session.sequence + 1) {
@@ -763,7 +773,29 @@ function connect(session: Session) {
         );
         return;
       }
-      session.term.write(Uint8Array.from(atob(message.data), (char) => char.charCodeAt(0)));
+      // Pinned Ghostty drains terminal responses synchronously inside write(),
+      // before its optional animation-frame callback. Keys use the other path.
+      const replies: string[] = [];
+      session.outputReplies = replies;
+      try {
+        session.term.write(Uint8Array.from(atob(message.data), (char) => char.charCodeAt(0)));
+      } finally {
+        session.outputReplies = undefined;
+      }
+      const data = replies.join("");
+      if (data) {
+        const bytes = new TextEncoder().encode(data).byteLength;
+        if (bytes > 64 * 1024 || session.replyBytes + bytes > 2 * 1024 * 1024) {
+          session.pendingReplies.clear();
+          session.replyBytes = 0;
+          session.loss = "view";
+          halt(session, "View lost · terminal replies could not be delivered. Open a new terminal.");
+          return;
+        }
+        session.pendingReplies.set(message.seq, data);
+        session.replyBytes += bytes;
+        send(session, { type: "terminal-reply", seq: message.seq, data });
+      }
       session.accessibility.refresh();
       session.sequence = message.seq;
     } else if (message.type === "exit") {
@@ -880,12 +912,17 @@ function attach(tab: Tab) {
     touch,
     accessibility,
     sequence: 0,
+    pendingReplies: new Map(),
+    replyBytes: 0,
     ready: false,
     halted: false,
     status: "Connecting…",
   };
   sessions.set(tab.id, session);
-  term.onData((data) => sendInput(session, data));
+  term.onData((data) => {
+    if (session.outputReplies) session.outputReplies.push(data);
+    else sendInput(session, data);
+  });
   term.onBinary((data) => sendInput(session, data, true));
   connect(session);
 }
