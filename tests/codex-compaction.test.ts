@@ -49,8 +49,8 @@ async function setup(fetch: (url: string, init: RequestInit) => Promise<Response
     baseUrl: "https://fixture.invalid/backend-api/codex/",
   });
   const runner = app.session.extensionRunner;
-  await runner.emitBeforeProviderRequest(structuredClone(body));
   await runner.emitBeforeProviderHeaders(headers);
+  await runner.emitBeforeProviderRequest(structuredClone(body));
   return { ...app, runner, notices: () => notices };
 }
 function nextPayload(app: Awaited<ReturnType<typeof setup>>) {

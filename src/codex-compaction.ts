@@ -153,11 +153,13 @@ export function registerCodexCompaction(
   options: { fetch?: (url: string, init: RequestInit) => Promise<Response> } = {},
 ) {
   let captured: Capture | undefined;
+  let requestHeaders: Capture["headers"];
   let latest: CompactionEntry | undefined;
   let useDefault = false;
   let warned: string | undefined;
   const reset = () => {
     captured = undefined;
+    requestHeaders = undefined;
   };
   const remember = (entry: CompactionEntry | undefined) => {
     latest = (entry?.details as Details | undefined)?.strategy === "codex-native" ? entry : undefined;
@@ -178,7 +180,8 @@ export function registerCodexCompaction(
   pi.on("model_select", reset);
   pi.on("session_compact", (event) => remember(event.compactionEntry));
   pi.on("before_provider_headers", (event) => {
-    if (captured) captured.headers = { ...event.headers };
+    requestHeaders = { ...event.headers };
+    if (captured) captured.headers = requestHeaders;
   });
   pi.on("before_provider_request", (event, ctx) => {
     const details = latest?.details as Details | undefined;
@@ -214,7 +217,7 @@ export function registerCodexCompaction(
     }
     captured =
       ctx.model?.api === "openai-codex-responses"
-        ? { model: structuredClone(ctx.model), payload: structuredClone(payload) }
+        ? { model: structuredClone(ctx.model), payload: structuredClone(payload), headers: requestHeaders }
         : undefined;
   });
   pi.on("session_before_compact", async (event, ctx) => {
