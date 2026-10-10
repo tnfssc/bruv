@@ -2,7 +2,7 @@ export const BROWSER_INPUT_MARKER = "\x1b]777;bruv-input;";
 /** Reports describe the terminal, not an editor action. */
 export function browserInputReport(packet: string): boolean {
   // biome-ignore lint/suspicious/noControlCharactersInRegex: Terminal protocol bytes.
-  return /^(?:\x1b\[[IO]|\x1b\[(?:[?>][0-9;]*c|[0-9;]+[tR]|\?[0-9;]+u)|\x1b\](?:10|11|4;[0-9]+);rgb:[a-fA-F0-9/]+(?:\x07|\x1b\\))$/.test(
+  return /^(?:\x1b\[[IO]|\x1b\[(?:[?>][0-9;]*c|[0-9;]+[tR]|\?[0-9;]+u|0n|\??[0-9;]+\$y)|\x1bP[01]\$r[0-9;: ]*[a-z]\x1b\\|\x1b\](?:10|11|4;[0-9]+);rgb:[a-fA-F0-9/]+(?:\x07|\x1b\\))+$/.test(
     packet,
   );
 }

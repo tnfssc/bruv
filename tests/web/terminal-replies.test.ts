@@ -130,8 +130,10 @@ test("protocol replies cannot mint human author tickets", async () => {
   const b = viewer(session, "b");
   a.input("/li");
   expect(owners).toEqual(["a"]);
-  // Even an arbitrary protocol batch with Enter cannot call the human ticket path.
-  b.reply(b.sequence(), "protocol\r");
+  // A genuine terminal report bypasses human attribution.
+  b.reply(b.sequence(), "\x1b[0n");
+  expect(b.socket.readyState).toBe(1);
+  expect(b.messages.some((message) => message.type === "terminal-reply-ack")).toBe(true);
   expect(owners).toEqual(["a"]);
   a.input("ve\r");
   expect(owners).toEqual(["a", "a"]);
@@ -176,3 +178,23 @@ test("an evicted pending reply reports view loss instead of a false acknowledgem
   expect(session.pid).toBe(pid);
   expect(session.exited).toBe(false);
 });
+
+test.each(["/live\r", "\x1b[13u", "\x1b]777;bruv-input;" + "a".repeat(32) + ":" + "b".repeat(32) + "\x07"])(
+  "reply channel rejects unattributed command input %j",
+  async (data) => {
+    const owners: (string | undefined)[] = [];
+    const session = create((owner) => {
+      owners.push(owner);
+      return "a".repeat(32);
+    });
+    const a = viewer(session, "a");
+    await until(() => a.text().includes("RAW READY"));
+    a.input("draft");
+    const b = viewer(session, "b");
+    b.reply(b.sequence(), data);
+    expect(b.socket.readyState).toBe(3);
+    expect(b.messages.some((message) => message.type === "terminal-reply-ack")).toBe(false);
+    expect(owners).toEqual(["a"]);
+    expect(session.exited).toBe(false);
+  },
+);

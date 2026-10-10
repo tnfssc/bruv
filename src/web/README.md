@@ -60,6 +60,7 @@ bun test tests/web tests/live/browser-audio.test.ts tests/live/browser-audio-tui
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-smoke.mjs
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-multiplayer-smoke.mjs
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-ui.mjs
+bun scripts/web/browser-transport.mjs
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-audio-probe.ts
 ```
 

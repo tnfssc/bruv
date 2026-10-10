@@ -1,5 +1,6 @@
 import type { ServerWebSocket, Subprocess } from "bun";
 import { InputOwnership } from "./input-ownership";
+import { browserInputReport } from "../live/browser-protocol";
 
 export interface SocketData {
   channel: "terminal" | "state" | "live-audio";
@@ -168,7 +169,7 @@ export class TerminalSession {
         message.seq > 0 &&
         message.seq <= view.sequence &&
         typeof message.data === "string" &&
-        message.data.length > 0 &&
+        browserInputReport(message.data) &&
         Buffer.byteLength(message.data) <= 64 * 1024
       ) {
         // This session owns protocol input. The first renderer batch claims
