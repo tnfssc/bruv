@@ -11,6 +11,8 @@ Disable the old "bruv (not Claude)" provider.
 
 - `/keep-going` shows the setting. `/keep-going on|off|auto` saves it for this session, future sessions and child agents. `auto` is the default: on for OpenAI and Codex Responses APIs, off for other APIs.
 
+- `/check on|off` saves whether a fresh agent checks finished work (on by default). `/check` shows it.
+
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
 - `/review` picks uncommitted changes, a branch diff, or a commit; `/review <branch or commit>` starts directly.
 - `/import-codex` previews and imports Codex settings after you confirm.
@@ -39,6 +41,13 @@ With keep-going active, a text reply alone does not end the run. The model write
 the next step is your choice, or `blocked` when it cannot go on. An optional `note` adds detail.
 Call `finish` alone after other tool calls have returned; Pi skips the next model request only
 when every tool in a batch agrees to end the run.
+
+Before accepting `done`, bruv checks work that changed files since your latest message, including
+committed edits and new files. A fresh agent gets your messages, the final reply and the diff,
+then tries the result. It uses your model and thinking level, so checks use extra quota.
+Gaps send the model back to work. After two checks, the next finish is accepted with any remaining
+gaps recorded. A failed checker does not hold up the run. Plain answers without file changes skip
+this check. `/check off` disables it.
 
 `finish` stays a top-level tool even in codemode-only mode. It is hidden when keep-going is off.
 Job reports and reminders come first, then goal continuation, then keep-going. Each settle adds
@@ -117,6 +126,7 @@ Set agent profiles in `~/.pi/agent/bruv.json`:
 ```json
 {
   "keepGoing": "auto",
+  "checkWork": true,
   "profiles": {
     "fast": { "model": "openai-codex/gpt-6-luna", "thinking": "low" },
     "normal": { "model": "openai-codex/gpt-6-astra", "thinking": "high" }

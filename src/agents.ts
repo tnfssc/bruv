@@ -78,10 +78,10 @@ const parameters = Type.Object({
     ]),
   ),
 });
-export type StartAgents = (args: Static<typeof parameters>, ctx: ExtensionContext) => string[];
+export type StartAgents = (args: Static<typeof parameters>, ctx: ExtensionContext, checker?: boolean) => string[];
 
 export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boolean = () => false): StartAgents {
-  const start: StartAgents = (args, ctx) => {
+  const start: StartAgents = (args, ctx, checker = false) => {
     if ((args.prompt === undefined) === (args.prompts === undefined)) throw new Error("Give prompt or prompts");
     const prompts = args.prompt !== undefined ? [args.prompt] : (args.prompts ?? []);
     const profile = args.profile ?? "normal";
@@ -94,7 +94,9 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
     const directory = workDirectory(ctx);
     const sessions = join(directory, "agents");
     mkdirSync(sessions, { recursive: true });
-    const promptPath = fileURLToPath(new URL(`../prompts/agent-${profile}.md`, import.meta.url));
+    const promptPath = fileURLToPath(
+      new URL(checker ? "../prompts/checker.md" : `../prompts/agent-${profile}.md`, import.meta.url),
+    );
     const ids = prompts.map((prompt, index) => {
       const item = jobs.create(
         "agent",
@@ -112,7 +114,22 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
             if (options.branch && prompts.length > 1) options.branch += `-${index + 1}`;
             cwd = (await createWorktree(jobs, item, cwd, ctx.sessionManager.getSessionId(), options)).path;
           }
-          const command = ["--mode", "json", "--session", sessionPath, "--append-system-prompt", promptPath];
+          const command = ["--mode", "json", "--session", sessionPath];
+          if (checker)
+            command.push(
+              "--system-prompt",
+              promptPath,
+              "--append-system-prompt",
+              "",
+              "--no-extensions",
+              "--no-skills",
+              "--no-context-files",
+              "--no-prompt-templates",
+              "--no-mcp",
+              "--tools",
+              "read,bash,grep,find,ls",
+            );
+          else command.push("--append-system-prompt", promptPath);
           if (selected.model) command.push("--model", selected.model);
           if (selected.thinking) command.push("--thinking", selected.thinking);
           command.push("--", prompt);

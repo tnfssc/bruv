@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Check changed work with a fresh agent before accepting `finish(done)`. Retry gaps twice, stop checks on abort, and add `/check on|off`.
+
 - Keep GPT runs going until they call `finish` with their reply. Add `/keep-going on|off|auto`, saved for sessions and child agents. Keep finish visible in codemode-only mode, respect Esc and Stop, and stop after two continuations without tools.
 
 - Removed `/race`.

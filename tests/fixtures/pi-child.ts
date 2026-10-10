@@ -1,22 +1,29 @@
 #!/usr/bin/env bun
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fauxAssistantMessage } from "@earendil-works/pi-ai";
 
 const args = process.argv.slice(2);
 const sessionPath = args[args.indexOf("--session") + 1];
 const header = { type: "session", version: 3, id: "fixture", timestamp: new Date().toISOString(), cwd: process.cwd() };
-writeFileSync(sessionPath, `${JSON.stringify(header)}\n`);
+writeFileSync(sessionPath, `${JSON.stringify({ ...header, args })}\n`);
+const checking = args.includes("--system-prompt");
+const checkPath = ".tmp/checker.json";
+const check = checking && existsSync(checkPath) ? JSON.parse(readFileSync(checkPath, "utf8")) : undefined;
+if (check?.fail) process.exit(1);
+if (check?.hang) await new Promise(() => setInterval(() => {}, 50));
 const task = args.at(-1)?.split("\n")[0] ?? "";
 const edits = task.startsWith("fixture-edit ") ? (JSON.parse(task.slice(13)) as Record<string, string>) : undefined;
 if (edits) for (const [path, content] of Object.entries(edits)) writeFileSync(path, content);
 const message = fauxAssistantMessage(
-  JSON.stringify({
-    args,
-    cwd: process.cwd(),
-    depth: process.env.BRUV_DEPTH,
-    fast: process.env.BRUV_FAST,
-    separator: "one\u2028two",
-  }) + (edits ? "\n\nchecks pass" : ""),
+  checking
+    ? (check?.answer ?? `\`\`\`json\n${JSON.stringify({ verdict: "pass", checked: ["used-781"], gaps: [] })}\n\`\`\``)
+    : JSON.stringify({
+        args,
+        cwd: process.cwd(),
+        depth: process.env.BRUV_DEPTH,
+        fast: process.env.BRUV_FAST,
+        separator: "one\u2028two",
+      }) + (edits ? "\n\nchecks pass" : ""),
 );
 message.usage = {
   input: 7,

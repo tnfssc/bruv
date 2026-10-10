@@ -1,5 +1,6 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerAgents } from "../src/agents";
+import { registerCheck } from "../src/check";
 import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
@@ -25,13 +26,14 @@ export default function bruv(pi: ExtensionAPI): void {
   registerSettle(pi, jobs, () => hasFinished());
   registerJobs(pi, jobs);
   const isFast = registerFast(pi);
-  registerAgents(pi, jobs, isFast);
+  const startAgents = registerAgents(pi, jobs, isFast);
+  const check = registerCheck(pi, jobs, startAgents);
   const usage = registerUsage(pi);
   registerTurn(pi, jobs, usage);
   registerCodexCompaction(pi);
   registerQuestions(pi);
   registerGoal(pi, () => hasFinished());
-  const hasFinished = registerFinish(pi);
+  const hasFinished = registerFinish(pi, undefined, check);
   registerPrompt(pi);
   registerCodemode(pi);
   registerCodexImport(pi);

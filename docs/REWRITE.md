@@ -208,6 +208,7 @@ bruv/
     settle.ts             reports results and reminds the model to wait (~150)
     goal.ts               /goal command, state, continuation, budget (~350)
     finish.ts             explicit finish and keep-going continuation (~150)
+    check.ts              fresh checker, Git snapshots and verdicts (~250)
     fast.ts               /fast priority tier (~100)
     usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
@@ -228,6 +229,7 @@ bruv/
     goal.md
     goal-continue.md
     review.md             review guidance, under 150 words
+    checker.md            fresh check guidance, under 130 words
   tests/
   docs/
     REWRITE.md            this file
@@ -239,7 +241,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 2,600 lines, including Codex import and review. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 2,850 lines, including Codex import and review. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -339,7 +341,7 @@ hold the details.
 
 - Jobs and agents start work and return IDs. The model keeps working, then calls `tools.wait`
   for results before ending its turn unless the work was detached.
-- Only `wait` and `job_start` with `waitSeconds` block. Their abort signal ends the wait at once
+- `finish` also blocks while its checker runs. `wait` and `job_start` with `waitSeconds` block. Their abort signal ends the wait at once
   on Esc or T3 Stop. They also return when `ctx.hasPendingMessages()` is true.
 - Esc in the terminal and Stop in T3 behave the same: the run ends and every job and agent the
   session started is stopped, detached ones included. T3 restarts Pi after Stop, so its jobs end
@@ -486,6 +488,23 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
   hidden continuation entries, exact request counts after finish, all three finish statuses,
   prompt stability, the empty-turn limit, abort, API selection, saved settings and settle order.
   Tests make no network or paid model calls.
+
+### 3.8.2 Fresh check (`src/check.ts`)
+
+- With keep-going active, `finish(done)` checks work if HEAD or tracked/untracked content changed
+  since the latest user message. No Git repo means no change detection. Scratch under `.tmp/`
+  is excluded. Snapshots use a separate index, preserving staging and pre-existing changes.
+- `checkWork` defaults to true in bruv.json. `/check on|off` saves the setting.
+- Finish waits for one child launched through `agents.ts`, using the parent model and thinking.
+  Its board title is `check · <first request line>`. Abort stops the child.
+- The child gets checker.md as its system prompt and a JSON payload: verbatim user messages
+  for this run, final reply text, and diff stat plus patch since the snapshot, capped at 40,000
+  characters. It starts a fresh session without extensions, skills, context files, prompt
+  templates or MCP servers. Built-in read, bash, grep, find and ls tools let it try the result.
+- Parse its final fenced JSON verdict and checked/gaps lists. Pass accepts finish. Gaps return
+  to the model to fix them. After two checker rounds per user message, accept the next finish
+  with the latest gaps saved. Failed checks accept finish and report that the check did not complete.
+- Checker jobs count as seen because finish consumes their result; settle does not send it again.
 
 ### 3.9 Async questions (`src/questions.ts`)
 

@@ -9,6 +9,7 @@ interface Profile {
 }
 
 export interface Config {
+  checkWork?: boolean;
   keepGoing?: "auto" | "on" | "off";
   codexImportOffered?: boolean;
   fast?: boolean;

@@ -1,5 +1,6 @@
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
+import type { Checker } from "./check";
 import { type Config, readConfig, saveConfig } from "./config";
 import { toolResult } from "./jobs";
 
@@ -8,7 +9,7 @@ const parameters = Type.Object({
   note: Type.Optional(Type.String()),
 });
 
-export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir()) {
+export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir(), check?: Checker) {
   let mode: NonNullable<Config["keepGoing"]> = "auto";
   let active = false;
   let finished = false;
@@ -32,7 +33,12 @@ export function registerFinish(pi: ExtensionAPI, agentDir = getAgentDir()) {
       exposure: active ? "model-only" : "hidden",
       parameters,
       outputSchema: parameters,
-      async execute(_id, args) {
+      async execute(_id, args, signal, _update, ctx) {
+        if (active && args.status === "done") {
+          const retry = await check?.run(ctx, signal);
+          if (retry) return toolResult({ status: args.status, note: retry });
+        }
+        signal?.throwIfAborted();
         finished = true;
         return { ...toolResult(args), terminate: true };
       },
