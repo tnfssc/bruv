@@ -117,7 +117,7 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
   let active = true;
   const tell = (content: string) =>
     pi.sendMessage({ customType: "bruv-report", content, display: true }, { triggerTurn: false });
-  const pick = async (race: Race, id: string) => {
+  const pick = async (race: Race, id: string, ctx: ExtensionContext) => {
     if (race.closed || race.applying) return;
     if (race.items.some((item) => item.status === "running"))
       throw new Error("Wait for the race to finish before picking.");
@@ -127,10 +127,18 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
         const item = race.items.find((item) => item.id === id);
         if (!item) throw new Error(`Agent ${id} is not in race ${race.id}.`);
         await apply(race, item);
-        tell(`Applied ${id}'s changes to your worktree.`);
       }
       const count = await remove(race);
       tell(`${id === "none" ? "Kept none. " : ""}Removed ${count} race worktrees.`);
+      if (id !== "none")
+        pi.sendMessage(
+          {
+            customType: "bruv-report",
+            content: `Applied ${id}'s changes. Run this project's checks here and fix anything they break.`,
+            display: true,
+          },
+          ctx.mode === "tui" ? { triggerTurn: true } : { deliverAs: "nextTurn" },
+        );
     } finally {
       race.applying = false;
     }
@@ -143,7 +151,7 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
     const selected = await ctx.ui.select(`Race ${race.id}: pick a result`, options);
     if (!active || current !== race || ctx.sessionManager.getSessionId() !== sessionId || selected === undefined)
       return;
-    await pick(race, selected === "Keep none" ? "none" : rows[options.indexOf(selected)].item.id);
+    await pick(race, selected === "Keep none" ? "none" : rows[options.indexOf(selected)].item.id, ctx);
   };
   const start = async (task: string, n: number, ctx: ExtensionContext, signal?: AbortSignal) => {
     if (starting || (current && !current.closed))
@@ -228,7 +236,7 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
           ctx.ui.notify("No race in this session.", "info");
           return;
         }
-        if (text) await pick(current, text.slice(5).trim());
+        if (text) await pick(current, text.slice(5).trim(), ctx);
         else {
           if (current.closed || current.applying) {
             ctx.ui.notify(`Race ${current.id}: ${current.closed ? "finished" : "applying a result"}.`, "info");

@@ -352,7 +352,7 @@ hold the details.
   `agent` or `race` resets the reminder. Results returned by `wait` or `job_start` count as seen.
 - After settlement, new results are sent with `deliverAs: "nextTurn"` and shown in the UI.
   Detached jobs never cause reminders and deliver their results with the next message.
-  bruv never sets `triggerTurn` to true.
+  Background reports never start a turn. A race pick starts checks only in TUI mode (3.7.1).
 - Result reports use `customType: "bruv-report"`, are rendered by `ui.ts`, and are capped at
   4,000 characters with output file paths for the rest.
 
@@ -450,6 +450,9 @@ There is no `handoff`. In codemode the model ends its turn by replying.
 - Commit the winner's worktree, then apply its binary diff against the snapshot with
   `git apply --3way`. A temporary index prepared from the user's current files lets Git merge
   newer edits while leaving the user's real index and branch unchanged.
+- After a successful pick, ask the model to run the project checks in the user's tree and fix failures.
+  In TUI mode, show the message and start a turn; in RPC, queue it with `deliverAs: "nextTurn"`.
+  Failed applies and "Keep none" do not request checks.
 - Successful picks and "Keep none" remove all race worktrees and branches. Failed applies name
   conflicts or Git errors and keep all worktrees. Git may leave conflict markers and apply
   clean parts of the diff; the user resolves those files. Race status lives in this session's

@@ -84,6 +84,8 @@ Set agent profiles in `~/.pi/agent/bruv.json`:
 Missing fields use the parent model and thinking level. The model can override either for a single agent.
 Ordinary agent worktrees and branches stay on disk after the agent finishes.
 A race includes your uncommitted and untracked files. Picking a result applies only that agent's changes to your current worktree, without committing or changing your staging choices.
+After a successful pick, the terminal starts a turn to run your project checks and fix failures.
+In T3/RPC, that request arrives with your next message.
 Successful picks and "Keep none" remove all race worktrees and branches. On a conflict,
 the worktrees stay available and Git leaves conflict markers for you to resolve.
 

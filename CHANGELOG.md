@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Recheck the user's tree after a race pick; start checks in the terminal and queue them for the next turn in T3/RPC.
+
 - Separate footer parts with dots in a fixed order: usage, fast, goal, then agent cost.
 - Give race agents task titles and put the result comparison on the first report line.
 - Fix worktree diff totals when `.tmp/` is ignored; count once at completion and keep totals visible beside long titles.

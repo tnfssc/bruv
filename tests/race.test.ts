@@ -41,9 +41,25 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
     const cleaned = Promise.withResolvers<void>();
     const jobs = new Jobs();
     const notices: string[] = [];
+    const followups: { content: unknown; triggerTurn?: boolean; deliverAs?: string }[] = [];
+    const checked = Promise.withResolvers<void>();
+    let checking = false;
+    let runs = 0;
     const app = await sdk(
       [
         (pi) => {
+          const send = pi.sendMessage;
+          pi.sendMessage = (message, options) => {
+            if (options?.triggerTurn || options?.deliverAs === "nextTurn")
+              followups.push({ content: message.content, ...options });
+            send(message, options);
+          };
+          pi.on("agent_start", () => {
+            if (checking) runs++;
+          });
+          pi.on("agent_settled", () => {
+            if (checking) checked.resolve();
+          });
           registerJobs(pi, jobs);
           registerRace(pi, jobs, registerAgents(pi, jobs));
         },
@@ -134,6 +150,8 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
       await app.session.prompt("/race");
       expect(notices.at(-1)).toBe(notices.at(-2));
       writeFileSync(join(dir, "meanwhile.txt"), "keep this\n");
+      checking = true;
+      app.faux.setResponses([fauxAssistantMessage("checked")]);
       if (mode === "conflict") {
         writeFileSync(join(dir, "file.txt"), "user changed it\n");
         await app.session.prompt("/race pick a1");
@@ -155,6 +173,26 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
         expect(readFileSync(join(dir, "new.txt"), "utf8")).toBe(mode === "none" ? "untracked\n" : "updated\n");
         expect(existsSync(join(dir, "added.txt"))).toBe(mode !== "none");
         if (mode !== "none") expect(readFileSync(join(dir, "asset.bin"))).toEqual(Buffer.from("a\0b"));
+      }
+      if (mode === "dialog") {
+        await checked.promise;
+        expect(runs).toBe(1);
+        expect(followups).toHaveLength(1);
+        expect(followups[0].triggerTurn).toBe(true);
+      } else {
+        expect(runs).toBe(0);
+        expect(followups).toHaveLength(mode === "none" || mode === "conflict" ? 0 : 1);
+        if (followups.length) {
+          expect(followups[0].deliverAs).toBe("nextTurn");
+          expect(followups[0].triggerTurn).not.toBe(true);
+          await app.session.prompt("continue");
+          expect(runs).toBe(1);
+          expect(
+            app.session.messages.some(
+              (message) => message.role === "custom" && message.content === followups[0].content,
+            ),
+          ).toBe(true);
+        }
       }
       expect(readFileSync(join(dir, "meanwhile.txt"), "utf8")).toBe("keep this\n");
       expect(readFileSync(join(dir, ".git/index"))).toEqual(index);
