@@ -568,9 +568,11 @@ dialog h2 {
 
 /* Drag feedback shares the same geometry as the real list. */
 .reorder-slot {
-  opacity: 0.35;
   outline: 1px dashed var(--accent);
   outline-offset: -1px;
+}
+.reorder-slot > :first-child {
+  opacity: 0.35;
 }
 .reorder-slot::before {
   content: "";

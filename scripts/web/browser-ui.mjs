@@ -139,6 +139,11 @@ try {
     await page.waitForFunction(() => document.querySelector("#new-tab").disabled === false);
     assert.equal(fixture.requests.filter((r) => r.path.endsWith("/move")).length, 1);
     assert.equal(await page.locator("#tab-t1").getAttribute("aria-selected"), "true");
+    // A new pointer gesture is intentional, even immediately after a drop.
+    await page.locator("#add-workspace").click();
+    await focused(page, "#folder-input");
+    await page.keyboard.press("Escape");
+    await focused(page, "#add-workspace");
     await mouseDrag(page, "#workspace-w1", "#workspace-w2");
     await waitOrder(page, "#workspace-list", ["w2", "w1"]);
     await page.waitForFunction(() => document.querySelector("#new-tab").disabled === false);

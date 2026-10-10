@@ -239,6 +239,13 @@ function button(text: string, click: () => void) {
   return element;
 }
 // A drag release is not a click, double-click, or double-tap on its destination.
+document.addEventListener(
+  "pointerdown",
+  () => {
+    if (!dragging) suppressClickUntil = 0;
+  },
+  true,
+);
 for (const type of ["click", "dblclick"]) {
   document.addEventListener(
     type,
@@ -385,7 +392,7 @@ function finishRename(save: boolean, restoreFocus = true) {
   }
 }
 function startRename(kind: ItemKind, id: string) {
-  if (busy || editing || accessRequired || dragging || performance.now() < suppressClickUntil) return;
+  if (busy || editing || accessRequired || dragging) return;
   const item = (kind === "tabs" ? workspace()?.tabs : state.workspaces)?.find((item) => item.id === id);
   const entry = document.getElementById(itemControlId(kind, id));
   if (!item || !entry) return;
@@ -1432,6 +1439,7 @@ function reorderList(list: HTMLElement, handle: string, kind: ItemKind) {
     touchStartThreshold: 6,
     fallbackTolerance: 6,
     fallbackOnBody: true,
+    fallbackOffset: { x: 8, y: 8 },
     ghostClass: "reorder-slot",
     dragClass: "reorder-drag",
     fallbackClass: "reorder-drag",

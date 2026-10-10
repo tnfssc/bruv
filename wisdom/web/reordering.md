@@ -1,6 +1,6 @@
 # Workspace and tab order
 
-Drag workspace titles vertically and tabs horizontally within their workspace. Touch uses a short hold so normal swipes can still scroll. Alt+Shift+arrow keys move a focused title. Escape, pointer cancellation and dropping outside the list cancel. Drag releases must not select, rename or close anything.
+Drag workspace titles vertically and tabs horizontally within their workspace. Touch uses a short hold so normal swipes can still scroll. Alt+Shift+arrow keys move a focused title. Escape, pointer cancellation and dropping outside the list cancel. Suppress drag release clicks without delaying the next intentional pointer gesture. Keep the drop marker at full contrast; dim the label, not the whole slot.
 
 Order belongs to the server; navigation belongs to each browser. A move names one item and the item it should precede (null means the end). Do not send a whole stale order over newer shared changes. Moving must not recreate a PTY, select another terminal or transfer voice.
 
