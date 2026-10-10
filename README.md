@@ -2,6 +2,8 @@
 
 **Codex models. Less babysitting.**
 
+![Three agents race on one task; bruv shows a scoreboard and applies the best result](site/assets/race.gif)
+
 Give it a goal, let agents work in parallel, and come back to results—not another request to continue.
 bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, not a plugin for it.
 

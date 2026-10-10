@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>bruv race clip</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // A clock the recorder steps frame by frame, so the clip is the same every time.
+      (() => {
+        let now = 0;
+        let next = 0;
+        const timers = new Map();
+        const add = (fn, ms, every) => {
+          const id = ++next;
+          timers.set(id, { id, at: now + (ms || 0), fn, every });
+          return id;
+        };
+        window.setTimeout = (fn, ms) => add(fn, ms);
+        window.setInterval = (fn, ms) => add(fn, ms, ms);
+        window.clearTimeout = window.clearInterval = (id) => timers.delete(id);
+        let seed = 7;
+        Math.random = () => {
+          seed = (seed * 16807) % 2147483647;
+          return seed / 2147483647;
+        };
+        const yieldTask = () => new Promise((resolve) => {
+          const channel = new MessageChannel();
+          channel.port1.onmessage = resolve;
+          channel.port2.postMessage(0);
+        });
+        window.__advance = async (ms) => {
+          const end = now + ms;
+          for (;;) {
+            let due = null;
+            for (const t of timers.values()) if (t.at <= end && (!due || t.at < due.at)) due = t;
+            if (!due) break;
+            now = due.at;
+            if (due.every) due.at += due.every;
+            else timers.delete(due.id);
+            due.fn();
+            await yieldTask();
+          }
+          now = end;
+        };
+      })();
+    </script>
+    <style>
+      body { width: 1200px; height: 675px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; gap: 22px; padding: 34px 48px; }
+      .head { display: flex; align-items: center; justify-content: space-between; }
+      .head img { height: 34px; }
+      .head p { margin: 0; font-size: 26px; font-weight: 650; letter-spacing: -0.01em; }
+      .term { box-shadow: 0 30px 80px -30px rgba(255, 199, 153, 0.25); }
+      .term-body { font-size: 18px; min-height: 0; height: 470px; }
+      .term-foot { font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <div class="head"><img src="assets/bruv-wordmark-light.svg" alt="bruv" /><p>Ask once. Three agents race. Keep the best.</p></div>
+    <figure class="term">
+      <div class="term-bar"><span></span><span></span><span></span><b>~/shop</b></div>
+      <div class="term-body" id="race-demo"></div>
+      <div class="term-foot"><span>~/shop (main)</span><span>week 41% · fast · gpt-6-astra • high</span></div>
+    </figure>
+    <script src="app.js" defer></script>
+  </body>
+</html>
