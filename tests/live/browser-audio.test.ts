@@ -523,7 +523,12 @@ test("browser client with fake devices sends PCM, schedules 24k output, flushes,
     },
   );
   const states: string[] = [];
-  const browser = await connectBrowserAudio({ url: f.browser + "&request=" + request, onState: (s) => states.push(s) });
+  const browser = await connectBrowserAudio({
+    token: "fixture",
+    owner: "owner",
+    url: f.browser + "&request=" + request,
+    onState: (s) => states.push(s),
+  });
   cleanup.push(() => browser.close());
   const audio = await pending;
   cleanup.push(() => audio.close());
@@ -578,7 +583,11 @@ test("insecure browser context reports HTTPS before acquiring devices", async ()
     });
     Object.defineProperty(globalThis, "isSecureContext", { configurable: true, value: false });
     await expect(
-      connectBrowserAudio({ url: "ws://bruv.test/api/live/audio?role=browser&session=owner&request=test" }),
+      connectBrowserAudio({
+        token: "fixture",
+        owner: "owner",
+        url: "ws://bruv.test/api/live/audio?role=browser&session=owner&request=test",
+      }),
     ).rejects.toThrow("Microphone needs HTTPS or localhost");
   } finally {
     names.forEach((name, i) => {
@@ -669,6 +678,8 @@ for (const mode of ["abort", "rejected close", "CLI stop and disconnect"]) {
     const controller = new AbortController();
     const states: string[] = [];
     const device = await connectBrowserAudio({
+      token: "fixture",
+      owner: "owner",
       url: "ws://localhost/audio?role=browser&session=owner",
       signal: controller.signal,
       onState: (state) => states.push(state),

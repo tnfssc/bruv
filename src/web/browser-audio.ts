@@ -37,10 +37,10 @@ registerProcessor('bruv-capture', BruvCapture);
 export interface BrowserAudioOptions {
   /** Authenticated same-origin endpoint, role=browser, exact server-issued session ID. No secret. */
   url: string;
-  /** Terminal capability sent in WS protocols, never in a request URL. */
-  token?: string;
+  /** Server token and private attachment capability stay in WebSocket protocols. */
+  token: string;
   signal?: AbortSignal;
-  owner?: string;
+  owner: string;
   onState?: (state: "connecting" | "enabled" | "running" | "closed" | "error") => void;
 }
 /** Called only by an owning CLI request. Selection never moves this device. */
@@ -162,13 +162,7 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
       for (const byte of bytes) text += String.fromCharCode(byte);
       send({ type: "capture", data: btoa(text), ...(data.epoch === undefined ? {} : { epoch: data.epoch }) });
     };
-    const socket = options.token
-      ? new WebSocket(url, [
-          "bruv-audio",
-          "bruv-token." + options.token,
-          ...(options.owner ? ["bruv-owner." + options.owner] : []),
-        ])
-      : new WebSocket(url);
+    const socket = new WebSocket(url, ["bruv-audio", "bruv-token." + options.token, "bruv-owner." + options.owner]);
     ws = socket;
     const opened = new Promise<void>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error("Browser audio connection timed out")), 10_000);

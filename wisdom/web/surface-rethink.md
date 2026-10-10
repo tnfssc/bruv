@@ -34,6 +34,8 @@ Vesper sources: [official editor theme](https://github.com/raunofreiberg/vesper/
 
 Build from canonical [wordmark](../../site/assets/brand/bruv-wordmark-light.svg) and [icon](../../site/assets/brand/bruv-icon.svg). Do not recreate the brand in text. Embed them locally; no extra fetch or route.
 
+Drawer focus wraps through rendered controls only. When a focused row disappears, focus returns to a surviving sidebar control without stealing a live dialog's focus. Rename keeps a stable panel name and uses the field font size on phones, not the smaller tab-title size. The shared dialog is a yes/no destructive confirmation, not a hidden name editor.
+
 ## Checks
 
 [Browser regressions](../../tests/web/browser.test.ts) keep rename/draft/focus, shared updates, local selection and destructive cancellation. Use the [operator guide's developer commands](../../src/web/README.md#developer-checks) and the compiled [design](../../scripts/web/browser-workspace-design.mjs), [recovery](../../scripts/web/browser-recovery-design.mjs) and [multiplayer](../../scripts/web/browser-multiplayer-smoke.mjs) checks. Inspect populated desktop and phone views, including edit, overflow, drawer, errors and confirmations. A blank terminal capture can prove a form, not current CLI output; investigate the actual rendered view before calling it a capture artifact. Keep disposable captures and run receipts out of durable guidance.

@@ -56,7 +56,7 @@ await writeFile(
     "const gum = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);",
     "navigator.mediaDevices.getUserMedia = async (...args) => { const stream = await gum(...args); window.tracks.push(...stream.getTracks()); return stream; };",
     "const AC = window.AudioContext; window.AudioContext = class extends AC { constructor(...args) { super(...args); window.contexts.push(this); } };",
-    'window.requestVoice = async request => { try { window.audio = await connectBrowserAudio({url: location.origin.replace("http", "ws") + "/api/live/audio?role=browser&session=probe&request=" + request, onState: s => window.states.push(s)}); } catch(e) { window.failure = String(e); } };',
+    'window.requestVoice = async request => { try { window.audio = await connectBrowserAudio({token: "fixture", owner: "owner", url: location.origin.replace("http", "ws") + "/api/live/audio?role=browser&session=probe&request=" + request, onState: s => window.states.push(s)}); } catch(e) { window.failure = String(e); } };',
   ].join("\n"),
 );
 const built = await Bun.build({ entrypoints: [entry], target: "browser" });
