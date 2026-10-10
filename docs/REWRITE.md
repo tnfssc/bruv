@@ -214,6 +214,7 @@ bruv/
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
     render.ts             readable codemode calls and output (~200)
+    turn.ts               turn counts and non-context summary (~100)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
   prompts/
     system.md
@@ -549,6 +550,10 @@ Only when `ctx.hasUI`.
   line when collapsed and all content when expanded. `agent` and `wait` show one status line per
   item; expanded results include recent output or the final answer, output path, and session path.
   Tool errors without result items keep their text.
+- After a non-aborted run that used tools settles, append one `bruv-turn` custom entry. Its dim
+  single-line renderer shows scripts, calls, agents started, and elapsed time, plus weekly plan
+  use gained during the run when both readings cover the same window. Automatic continuations
+  belong to the same run. This entry never enters model context.
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,
   bounded, seam, authority).
 

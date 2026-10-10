@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a dim turn summary with tool and agent counts, elapsed time, and weekly plan use changes.
+
 - Render script calls and bash/wait output as readable lines, with full script and output on expansion.
 
 - Show running jobs and agents on a live board with tools, tokens, elapsed time, and finished worktree changes.
