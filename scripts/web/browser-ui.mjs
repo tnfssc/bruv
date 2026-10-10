@@ -107,6 +107,15 @@ try {
     false,
     async (page, context) => {
       await ready(page);
+      let releaseMove;
+      const responseHeld = new Promise((resolve) => {
+        releaseMove = resolve;
+      });
+      await page.route("**/api/tabs/t1/move", async (route) => {
+        const response = await route.fetch();
+        await responseHeld;
+        await route.fulfill({ response });
+      });
       const other = await context.newPage();
       await other.goto(fixture.origin + "/#token=fixture");
       await ready(other);
@@ -120,6 +129,11 @@ try {
       assert.equal(await page.locator("#tab-t1").getAttribute("aria-selected"), "true");
       assert.equal(await other.locator("#tab-t2").getAttribute("aria-selected"), "true");
       assert(await canvas.evaluate((e) => e.isConnected), "reorder recreated Ghostty");
+      // The shared event can arrive before the write's HTTP response. Keep that
+      // race explicit; another mutation must wait until the controls are ready.
+      assert.equal(await page.locator("#new-tab").isDisabled(), true);
+      releaseMove();
+      await page.waitForFunction(() => !document.querySelector("#new-tab").disabled);
       await page.locator("#workspace-w1").focus();
       await page.keyboard.press("Alt+Shift+ArrowDown");
       await waitOrder(other, "#workspace-list", ["w2", "w1"]);
