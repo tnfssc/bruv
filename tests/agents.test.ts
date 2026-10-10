@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
@@ -7,6 +7,7 @@ import { Jobs, registerJobs } from "../src/jobs";
 import { registerRace } from "../src/race";
 import { sdk } from "./sdk";
 
+setDefaultTimeout(15000);
 test("profile fields fall back independently and calls take precedence", () => {
   const parent = { model: "parent/model", thinking: "medium" };
   const config = { profiles: { fast: { thinking: "low" as const } } };

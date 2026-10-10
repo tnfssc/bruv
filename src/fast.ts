@@ -1,5 +1,6 @@
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
 import { readConfig, saveConfig } from "./config";
+import { setStatus } from "./status";
 
 export function registerFast(pi: ExtensionAPI, agentDir = getAgentDir()) {
   let preferred = false;
@@ -9,7 +10,7 @@ export function registerFast(pi: ExtensionAPI, agentDir = getAgentDir()) {
     ctx.model?.api === "openai-responses" || ctx.model?.api === "openai-codex-responses";
   const show = (ctx: ExtensionContext) => {
     on = preferred && supported(ctx);
-    if (ctx.hasUI) ctx.ui.setStatus("bruv-fast", on ? "fast" : undefined);
+    setStatus(ctx, "fast", on ? "fast" : undefined);
   };
   const restore = (_event: unknown, ctx: ExtensionContext) => {
     const config = readConfig(agentDir);

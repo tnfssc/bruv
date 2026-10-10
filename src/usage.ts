@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
 import { readJson } from "./config";
+import { setStatus } from "./status";
 
 type Window = { used_percent: number; window_minutes: number; reset_at: number };
 export type PlanUsage = {
@@ -83,11 +84,7 @@ export function registerUsage(pi: ExtensionAPI, agentDir = getAgentDir()) {
   };
   const show = (ctx: ExtensionContext) => {
     const data = state(ctx).data;
-    if (ctx.hasUI)
-      ctx.ui.setStatus(
-        "bruv-usage",
-        ctx.model?.api === "openai-codex-responses" && data ? usageFooter(data) : undefined,
-      );
+    setStatus(ctx, "usage", ctx.model?.api === "openai-codex-responses" && data ? usageFooter(data) : undefined);
   };
   const accept = (data: PlanUsage, ctx: ExtensionContext) => {
     const current = state(ctx);

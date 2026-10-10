@@ -1,12 +1,13 @@
-import { expect, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
 import { initTheme, type ToolRenderers } from "@earendil-works/pi-coding-agent";
-import { Text } from "@earendil-works/pi-tui";
+import { Text, visibleWidth } from "@earendil-works/pi-tui";
 import { Jobs, registerJobs } from "../src/jobs";
 import { outputLines, registerRender } from "../src/render";
 import { sdk } from "./sdk";
 
+setDefaultTimeout(15000);
 test("JSON output becomes plain lines and unknown data stays intact", () => {
   expect(outputLines(JSON.stringify({ output: "\x1b[31mone\x1b[0m\ntwo\n" }), false)).toEqual(["one", "two"]);
   const wait = JSON.stringify({
@@ -29,9 +30,17 @@ test("nested call durations below one second are hidden for saved and live calls
     const theme = runner.createContext().ui.theme;
     for (const source of ["saved", "live"]) {
       for (const name of ["read", "edit", "bash"]) {
+        const command = `${name === "bash" ? "echo short" : "界".repeat(80)}\nsecond line`;
         for (const durationMs of [undefined, 0, 1, 499, 999, 1000, 1500]) {
           const id = `${source}-${name}-${durationMs}`;
           if (source === "live") {
+            await runner.emit({
+              type: "tool_execution_start",
+              toolCallId: id,
+              parentToolCallId: id,
+              toolName: name,
+              args: { command },
+            });
             await runner.emit({
               type: "tool_execution_end",
               toolCallId: id,
@@ -47,7 +56,12 @@ test("nested call durations below one second are hidden for saved and live calls
               ?.renderResult?.(
                 {
                   content: [],
-                  details: { calls: source === "saved" ? [{ id, name, args: "{}", status: "ok", durationMs }] : [] },
+                  details: {
+                    calls:
+                      source === "saved"
+                        ? [{ id, name, args: JSON.stringify({ command }), status: "ok", durationMs }]
+                        : [],
+                  },
                 },
                 { expanded, isPartial: false },
                 theme,
@@ -58,6 +72,10 @@ test("nested call durations below one second are hidden for saved and live calls
             expect(rows).toHaveLength(1);
             const fields = rows?.[0].trimEnd().split(" · ") ?? [];
             const visible = durationMs !== undefined && durationMs >= 1000;
+            const target = fields[0].slice(`✓ ${name} `.length);
+            expect(visibleWidth(target)).toBeLessThanOrEqual(60);
+            expect(target.endsWith("…")).toBe(name !== "bash");
+            expect(target).not.toContain("second line");
             expect(fields).toHaveLength(visible ? 2 : 1);
             if (visible) expect(fields[1]).toBe(`${durationMs / 1000}s`);
           }

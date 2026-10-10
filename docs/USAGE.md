@@ -55,8 +55,14 @@ The model calls these through `tools.<name>(...)` in Pi's scripting tool.
 ## What you see
 
 The terminal board shows each job and agent, its elapsed time, and live agent tools and tokens.
-Finished rows show the result and worktree change totals, and stay until your next prompt.
-Script results list the tool calls and show plain output. Expand a result to see the full script and output.
+Finished rows show the result and worktree change totals (`+85 −3 · 4 files`), and stay until your next prompt.
+Totals are counted once against the starting commit, including committed and uncommitted edits and new files.
+Titles shorten to leave room for totals and elapsed time.
+Race titles include the race ID, entry number, and the start of the task.
+The collapsed race report compares each agent's result, added/deleted lines, check report, and time; expand for the full report.
+The footer shows usage, fast mode, goal, then agent cost, separated by ` · `. Only active parts appear.
+Script results list the tool calls and show plain output. Bash call rows show the first command line, cut to 60 columns.
+Expand a result to see the full script and output.
 A dim line after each run with tools totals scripts, calls, agents, elapsed time, and any increase in weekly plan use.
 While working, the terminal title spins; waiting shows which agents or jobs are pending.
 In supported terminals, a desktop notification and bell announce runs longer than 30 seconds,

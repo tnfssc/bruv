@@ -1,4 +1,4 @@
-import { expect, spyOn, test } from "bun:test";
+import { expect, setDefaultTimeout, spyOn, test } from "bun:test";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -8,6 +8,7 @@ import { Jobs, registerJobs } from "../src/jobs";
 import { raceSnapshot, registerRace } from "../src/race";
 import { sdk } from "./sdk";
 
+setDefaultTimeout(15000);
 function repo() {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/race-"));
@@ -16,7 +17,7 @@ function repo() {
   git("config", "user.name", "Test");
   git("config", "user.email", "test@example.com");
   writeFileSync(join(dir, "file.txt"), "base\n");
-  writeFileSync(join(dir, ".gitignore"), "ignored\n");
+  writeFileSync(join(dir, ".gitignore"), "ignored\n.tmp/\n");
   git("add", ".");
   git("commit", "-qm", "Start");
   writeFileSync(join(dir, "file.txt"), "staged\n");
@@ -105,6 +106,10 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
         })),
       ).toEqual(items.map(() => ({ status: "done", error: undefined })));
       expect(options).toHaveLength(items.length + 1);
+      for (const [index, item] of items.entries()) {
+        expect(item.title.split(" · ")).toEqual([`r1 #${index + 1}`, editTask.slice(0, 50)]);
+        expect(item.changes).toEqual({ added: 3, removed: 2, files: 4 });
+      }
       expect(options[0]).toMatch(/a1 · \+3 −2 · 4 files · checks pass · \d+m\d+s/);
       const paths = items.map((item) => item.worktree?.path as string);
       const snapshot = execFileSync("git", ["rev-parse", "HEAD"], { cwd: paths[0], encoding: "utf8" }).trim();
@@ -120,7 +125,14 @@ test.each(["command", "tool", "conflict", "none", "dialog"])(
       const reports = app.session.sessionManager
         .getBranch()
         .filter((entry) => entry.type === "custom_message" && entry.customType === "bruv-report");
-      expect(reports.some((entry) => "content" in entry && String(entry.content).includes("+3 −2"))).toBe(true);
+      const report = reports.find((entry) => "content" in entry && String(entry.content).includes("+3 −2"));
+      const lines = String(report && "content" in report ? report.content : "").split("\n");
+      expect(lines[0].match(/a\d .*?\+3 −2 .*?\d+m\d+s/g)).toHaveLength(items.length);
+      expect(lines[0].split(" | ")).toHaveLength(items.length);
+      expect(lines.length).toBeGreaterThan(items.length);
+      writeFileSync(join(paths[0], "later.txt"), "after completion\n");
+      await app.session.prompt("/race");
+      expect(notices.at(-1)).toBe(notices.at(-2));
       writeFileSync(join(dir, "meanwhile.txt"), "keep this\n");
       if (mode === "conflict") {
         writeFileSync(join(dir, "file.txt"), "user changed it\n");

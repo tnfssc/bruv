@@ -44,7 +44,7 @@ function callLine(call: Call, theme: Theme) {
       : typeof args.path === "string"
         ? args.path
         : typeof args.command === "string"
-          ? args.command
+          ? truncateToWidth(plain(args.command).split(/\r\n|[\r\n]/)[0], 60, "…")
           : Array.isArray(args.ids)
             ? args.ids.join(", ")
             : typeof args.id === "string"

@@ -3,6 +3,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { Type } from "typebox";
 import { toolResult } from "./jobs";
 import { notify } from "./notify";
+import { setStatus } from "./status";
 
 const guidance = readFileSync(new URL("../prompts/goal.md", import.meta.url), "utf8").trim();
 const continuation = readFileSync(new URL("../prompts/goal-continue.md", import.meta.url), "utf8").trim();
@@ -78,13 +79,13 @@ export function registerGoal(pi: ExtensionAPI): void {
     reported = undefined;
   };
   const status = (ctx: ExtensionContext) => {
-    if (ctx.hasUI)
-      ctx.ui.setStatus(
-        "bruv-goal",
-        goal
-          ? `goal ${goal.status} ${tokens(goal.tokensUsed)}${goal.tokenBudget ? `/${tokens(goal.tokenBudget)}` : ""}`
-          : undefined,
-      );
+    setStatus(
+      ctx,
+      "goal",
+      goal
+        ? `goal ${goal.status} ${tokens(goal.tokensUsed)}${goal.tokenBudget ? `/${tokens(goal.tokenBudget)}` : ""}`
+        : undefined,
+    );
   };
   const save = (ctx: ExtensionContext) => {
     pi.appendEntry("bruv-goal", goal ? structuredClone(goal) : null);

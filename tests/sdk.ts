@@ -8,6 +8,7 @@ export async function sdk(
   ui?: Partial<Pi.ExtensionUIContext>,
   cwd?: string,
   mode: Pi.ExtensionContext["mode"] = "rpc",
+  agentsFiles: { path: string; content: string }[] = [],
 ) {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/sdk-"));
@@ -35,6 +36,7 @@ export async function sdk(
     noThemes: true,
     noPromptTemplates: true,
     noContextFiles: true,
+    agentsFilesOverride: () => ({ agentsFiles }),
   });
   await resourceLoader.reload();
   const { session } = await Pi.createAgentSession({
@@ -52,6 +54,7 @@ export async function sdk(
   });
   return {
     session,
+    resourceLoader,
     faux,
     dir,
     async close() {

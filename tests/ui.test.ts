@@ -1,10 +1,10 @@
 import { expect, spyOn, test } from "bun:test";
 import { fauxAssistantMessage } from "@earendil-works/pi-ai";
 import { initTheme } from "@earendil-works/pi-coding-agent";
-import type { Component } from "@earendil-works/pi-tui";
-import { visibleWidth } from "@earendil-works/pi-tui";
+import { type Component, visibleWidth } from "@earendil-works/pi-tui";
 import { agentParser } from "../src/agents";
 import { Jobs, registerJobs } from "../src/jobs";
+import { setStatus } from "../src/status";
 import { registerUI } from "../src/ui";
 import { sdk } from "./sdk";
 
@@ -14,6 +14,7 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
   let board: (Component & { dispose?: () => void }) | undefined;
   let renders = 0;
   let widgets = 0;
+  const statuses = new Map<string, string | undefined>();
   const working: (string | undefined)[] = [];
   const timers = spyOn(globalThis, "setInterval");
   const cleared = spyOn(globalThis, "clearInterval");
@@ -25,6 +26,9 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
       },
     ],
     {
+      setStatus: (key, text) => {
+        statuses.set(key, text);
+      },
       setWorkingMessage: (message) => {
         working.push(message);
       },
@@ -75,6 +79,11 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
       await jobs.run(item, async () => 0);
       expect(cleared.mock.calls.some(([value]) => value === timer)).toBe(true);
       expect(board?.render(80)).toHaveLength(1);
+      for (const part of ["goal", "fast", "usage"] as const) setStatus(runner.createContext(), part, part);
+      expect([...statuses.keys()]).toEqual(["bruv"]);
+      expect(statuses.get("bruv")?.split(" · ").slice(0, 3)).toEqual(["usage", "fast", "goal"]);
+      setStatus(runner.createContext(), "fast", undefined);
+      expect(statuses.get("bruv")?.split(" · ")).toHaveLength(3);
       app.faux.setResponses([fauxAssistantMessage("ready")]);
       await app.session.prompt("next");
       expect(board).toBeUndefined();
@@ -86,6 +95,7 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
   } finally {
     for (const item of jobs.items.values()) if (item.status === "running") await jobs.run(item, async () => 0);
     await app.close();
+    expect(statuses.get("bruv")).toBeUndefined();
     timers.mockRestore();
     cleared.mockRestore();
   }

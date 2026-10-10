@@ -213,6 +213,7 @@ bruv/
     codex-compaction.ts   Codex native compaction (~350)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
+    status.ts             shared footer parts (~30)
     render.ts             readable codemode calls and output (~200)
     turn.ts               turn counts and non-context summary (~100)
     notify.ts             desktop alerts and terminal title (~100)
@@ -435,11 +436,14 @@ There is no `handoff`. In codemode the model ends its turn by replying.
 - Snapshot the current branch's working tree, including uncommitted and non-ignored untracked
   files, with a temporary index found through `git rev-parse --git-path`. `git commit-tree`
   makes the base commit without changing the user's files, index, or branch.
-- Each agent uses the existing launcher and a worktree from that commit. Ask it to run the
-  project's checks, report the result, and avoid merging.
+- Each agent uses the existing launcher and a worktree from that commit. Its board title is
+  `r1 #1 · <task>`, with about 50 characters of the task. Ask it to run the project's checks,
+  report the result, and avoid merging.
 - `/race` shows aligned status, files and added/deleted lines against the snapshot, elapsed time,
   cost, and the last paragraph of each agent's answer. Check results are agent reports.
-  Count changes using a temporary index in each agent worktree so status reads do not change its staging.
+  Reuse the change totals saved when each agent finishes; status reads do not rerun Git.
+  The report starts with each agent ID, result, added/deleted lines, short check report, and
+  elapsed time on one line. Expansion keeps the full rows and check reports.
 - Once all agents finish, append a report without starting a model turn and open a selection
   dialog when UI is available, including over RPC. The user can also run `/race pick <agent id>`
   or `/race pick none`. Dismissing the dialog keeps the results available. One race at a time.
@@ -539,13 +543,17 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
 - Only in TUI mode, widget `bruv` above the editor uses a component with one row per job or agent.
   Running rows show a spinner, ID, title, agent tool and tokens, and elapsed time. Finished rows
   show a green check, red failure mark, or dim stop mark, plus worktree changes counted once
-  against the starting commit, including new files without changing staging.
+  against the starting commit, including committed edits and uncommitted new or changed files,
+  without changing staging. Exclude scratch under `.tmp/`, whether Git ignores it or not.
+  Shorten titles to leave room for change totals and elapsed time.
 - Finished rows stay until the next prompt. Truncate each row to terminal width using theme colors.
 - Animate every 100 ms while work runs; stop the timer when idle or disposed. Clear the widget
-  and agent cost status at shutdown. Fast and goal set their own status keys.
+  and footer at shutdown. `status.ts` sets one `bruv` footer key: usage, fast, goal, then agent
+  cost, separated by ` · `. Hide missing parts without removing the others.
 - Codemode rendering (`src/render.ts`) lists nested calls from Pi records and live events, followed
   by plain output. Unwrap bash and wait JSON, strip ANSI, and cap collapsed output at 12 screen
   lines with an omitted-line count. Expansion shows the full script and output available from Pi.
+  Bash call rows show only the first command line, cut to 60 terminal columns with `…`.
   Unknown result shapes and images use Pi rendering. Restore saved calls on session changes.
 - Register job and message renderers only in TUI sessions. `bruv-report` and `bruv-answer` show the first content
   line when collapsed and all content when expanded. `agent` and `wait` show one status line per
@@ -586,6 +594,9 @@ into the new tree "for reference".
 ### 3.14 Tests
 
 - Runner: `bun test`. Target under 60 seconds locally, total test code no larger than source code.
+  Allow 15 seconds for tests that run several SDK turns or child processes on busy hosts.
+  A test preload clears `BRUV_DEPTH` and `BRUV_FAST` so runs inside agents work too. Tests that
+  change either variable restore it afterward.
 - Unit tests: job registry and stop, report formatting caps, profile resolution, worktree creation in
   a temporary git repo, goal state transitions and budget, fast payload change, codex payload
   rewrite (given a branch with a codex compaction entry, assert the request payload contains the item).

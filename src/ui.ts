@@ -1,6 +1,7 @@
 import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
-import { Text, truncateToWidth } from "@earendil-works/pi-tui";
+import { Text, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import type { Jobs, Result, Summary, Work } from "./jobs";
+import { clearStatus, setStatus } from "./status";
 
 const oneLine = (text: string) => text.replace(/[\r\n\t]+/g, " ");
 const duration = (seconds: number) => (seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m${seconds % 60}s`);
@@ -44,7 +45,7 @@ export class WorkBoard {
           : item.status === "failed"
             ? "error"
             : "dim";
-      const parts = [this.theme.fg(color, mark), item.id, oneLine(item.title)];
+      const parts = [this.theme.fg(color, mark), item.id];
       if (running && item.kind === "agent") {
         if (item.progress) parts.push(oneLine(item.progress));
         parts.push(`${item.tokens ?? (item.usage?.input ?? 0) + (item.usage?.output ?? 0)} tokens`);
@@ -54,6 +55,11 @@ export class WorkBoard {
         parts.push(`+${added} −${removed}`, `${files} files`);
       }
       parts.push(this.theme.fg("dim", duration(this.jobs.summary(item).elapsedSeconds)));
+      parts.splice(
+        2,
+        0,
+        truncateToWidth(oneLine(item.title), Math.max(0, width - visibleWidth(parts.join(" · ")) - 3)),
+      );
       return truncateToWidth(parts.join(" · "), width);
     });
   }
@@ -83,8 +89,9 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
         { placement: "aboveEditor" },
       );
     const cost = [...jobs.items.values()].reduce((sum, item) => sum + (item.usage?.cost ?? 0), 0);
-    ctx.ui.setStatus(
-      "bruv-agents",
+    setStatus(
+      ctx,
+      "agents",
       [...jobs.items.values()].some((item) => item.kind === "agent") ? `agents $${cost.toFixed(2)}` : undefined,
     );
   };
@@ -115,6 +122,7 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
     board?.dispose();
     board = undefined;
     ctx = context;
+    clearStatus(ctx);
     hidden.clear();
     waiting.clear();
     if (!ctx.hasUI || ctx.mode !== "tui") return;
@@ -178,8 +186,8 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
     board = undefined;
     if (ctx?.hasUI && ctx.mode === "tui") {
       ctx.ui.setWidget("bruv", undefined);
-      ctx.ui.setStatus("bruv-agents", undefined);
     }
+    if (ctx) clearStatus(ctx);
     ctx = undefined;
   });
 }

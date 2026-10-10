@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Separate footer parts with dots in a fixed order: usage, fast, goal, then agent cost.
+- Give race agents task titles and put the result comparison on the first report line.
+- Fix worktree diff totals when `.tmp/` is ignored; count once at completion and keep totals visible beside long titles.
+- Shorten bash call rows to the first command line and 60 columns.
+- Clear inherited agent settings before tests so the suite also runs inside bruv agents.
+
 - Notify when long runs, races, and goals finish; show a working title and pending wait IDs in the terminal. Keep terminal escapes out of RPC, JSON, and print modes.
 
 - Add a dim turn summary with tool and agent counts, elapsed time, and weekly plan use changes.

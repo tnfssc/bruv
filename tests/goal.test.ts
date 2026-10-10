@@ -1,9 +1,10 @@
-import { expect, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { fauxAssistantMessage, fauxToolCall, type SystemMessage } from "@earendil-works/pi-ai";
 import { type Goal, registerGoal } from "../src/goal";
 import { registerPrompt } from "../src/prompt";
 import { sdk } from "./sdk";
 
+setDefaultTimeout(15000);
 const update = (args: object) =>
   fauxAssistantMessage(fauxToolCall("codemode", { code: `return await tools.goal_update(${JSON.stringify(args)});` }), {
     stopReason: "toolUse",

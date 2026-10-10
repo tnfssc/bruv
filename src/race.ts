@@ -36,44 +36,39 @@ type Race = {
   snapshot: string;
   items: Work[];
   rows?: Row[];
-  scoring?: Promise<Row[]>;
   closed: boolean;
   applying: boolean;
 };
 const duration = (seconds: number) => `${Math.floor(seconds / 60)}m${seconds % 60}s`;
 const changes = (row: Row) => `+${row.added} −${row.removed} · ${row.files} files`;
 const option = (row: Row) => `${row.item.id} · ${changes(row)} · ${row.summary} · ${duration(row.seconds)}`;
-function scoreboard(race: Race): Promise<Row[]> {
-  if (race.scoring) return race.scoring;
-  race.scoring = Promise.all(
-    race.items.map(async (item): Promise<Row> => {
-      let stat = "";
-      if (item.worktree) {
-        const path = item.worktree.path;
-        stat = await withIndex(path, (env) => git(path, ["diff", "--cached", "--shortstat", race.snapshot], env));
-      }
-      return {
-        item,
-        files: Number(/(\d+) files? changed/.exec(stat)?.[1] ?? 0),
-        added: Number(/(\d+) insertions?/.exec(stat)?.[1] ?? 0),
-        removed: Number(/(\d+) deletions?/.exec(stat)?.[1] ?? 0),
-        summary:
-          item.answer
-            ?.trim()
-            .split(/\n\s*\n/)
-            .at(-1)
-            ?.replace(/\s+/g, " ") || "No checks reported",
-        seconds: Math.floor(((item.endedAt ?? Date.now()) - item.startedAt) / 1000),
-      };
-    }),
-  ).finally(() => {
-    race.scoring = undefined;
-  });
-  return race.scoring;
+// Agents save change totals before their completion promise resolves.
+function scoreboard(race: Race): Row[] {
+  return (
+    race.rows ??
+    race.items.map((item) => ({
+      item,
+      ...(item.changes ?? { files: 0, added: 0, removed: 0 }),
+      summary:
+        item.answer
+          ?.trim()
+          .split(/\n\s*\n/)
+          .at(-1)
+          ?.replace(/\s+/g, " ") || "No checks reported",
+      seconds: Math.floor(((item.endedAt ?? Date.now()) - item.startedAt) / 1000),
+    }))
+  );
 }
 function report(race: Race, rows: Row[]) {
+  const running = race.items.some((item) => item.status === "running");
+  const summary = rows
+    .map((row) => {
+      const checks = row.summary.length > 60 ? `${row.summary.slice(0, 59)}…` : row.summary;
+      return `${row.item.id} ${row.item.status} +${row.added} −${row.removed} · ${checks} · ${duration(row.seconds)}`;
+    })
+    .join(" | ");
   return [
-    `Race ${race.id}`,
+    `Race ${race.id} ${running ? "running" : "done"}: ${summary}${running ? "" : " — pick one below"}`,
     ...rows.map(
       (row) =>
         `${row.item.id.padEnd(4)} ${row.item.status.padEnd(7)} ${changes(row).padEnd(25)} ${duration(row.seconds).padEnd(8)} $${(row.item.usage?.cost ?? 0).toFixed(2)} · ${row.summary}`,
@@ -128,7 +123,6 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
       throw new Error("Wait for the race to finish before picking.");
     race.applying = true;
     try {
-      await race.scoring;
       if (id !== "none") {
         const item = race.items.find((item) => item.id === id);
         if (!item) throw new Error(`Agent ${id} is not in race ${race.id}.`);
@@ -144,7 +138,7 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
   const choose = async (race: Race, ctx: ExtensionContext) => {
     if (!active || !ctx.hasUI || race.closed || race.applying) return;
     const sessionId = ctx.sessionManager.getSessionId();
-    const rows = race.rows ?? (await scoreboard(race));
+    const rows = scoreboard(race);
     const options = [...rows.map(option), "Keep none"];
     const selected = await ctx.ui.select(`Race ${race.id}: pick a result`, options);
     if (!active || current !== race || ctx.sessionManager.getSessionId() !== sessionId || selected === undefined)
@@ -163,9 +157,14 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
       signal?.throwIfAborted();
       const id = `r${++next}`;
       const prompt = `${task}\n\nWork only in this worktree. When done, run the project's checks and say whether they pass. Do not merge anything.`;
-      const ids = startAgents(
-        { prompts: Array(n).fill(prompt), title: `Race ${id}`, worktree: { baseRef: snapshot } },
-        { ...ctx, cwd },
+      const title = task.replace(/\s+/g, " ").slice(0, 50);
+      const ids = Array.from(
+        { length: n },
+        (_, index) =>
+          startAgents(
+            { prompt, title: `${id} #${index + 1} · ${title}`, worktree: { baseRef: snapshot } },
+            { ...ctx, cwd },
+          )[0],
       );
       const race: Race = { id, cwd, snapshot, items: ids.map((id) => jobs.get(id)), closed: false, applying: false };
       current = race;
@@ -181,8 +180,7 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
             ctx.sessionManager.getSessionId() !== sessionId
           )
             return;
-          race.rows = await scoreboard(race);
-          if (!active || current !== race) return;
+          race.rows = scoreboard(race);
           tell(`${report(race, race.rows)}\nPick with /race pick <agent id>, or /race pick none.`);
           notify(ctx, `Race ${race.id} is ready to pick`);
           await choose(race, ctx);
@@ -203,8 +201,6 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
     const race = current;
     if (!race || race.closed || race.applying) return;
     await Promise.all(race.items.map((item) => item.completion));
-    // Let a scoreboard that already started finish its git commands first.
-    await race.scoring;
     await remove(race);
   });
   pi.registerTool({
@@ -238,7 +234,7 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
             ctx.ui.notify(`Race ${current.id}: ${current.closed ? "finished" : "applying a result"}.`, "info");
             return;
           }
-          const rows = await scoreboard(current);
+          const rows = scoreboard(current);
           ctx.ui.notify(report(current, rows), "info");
         }
         return;

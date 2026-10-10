@@ -47,7 +47,8 @@ export async function worktreeChanges(cwd: string, base: string) {
   const env = { ...process.env, GIT_INDEX_FILE: path };
   try {
     await git(["read-tree", "HEAD"], env);
-    await git(["add", "-A", "--", ".", ":!.tmp"], env);
+    // A literal .tmp exclusion fails when Git ignores that directory.
+    await git(["add", "-A", "--", ".", ":(exclude,glob)**/.tmp/**"], env);
     const stat = await git(["diff", "--cached", "--shortstat", base], env);
     return {
       files: Number(/(\d+) files? changed/.exec(stat)?.[1] ?? 0),

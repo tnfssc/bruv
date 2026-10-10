@@ -1,18 +1,41 @@
-import { expect, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { stripVTControlCharacters } from "node:util";
+import { initTheme } from "@earendil-works/pi-coding-agent";
+import { registerAgents, type StartAgents } from "../src/agents";
 import { Jobs } from "../src/jobs";
-import { createWorktree, worktreeChanges } from "../src/worktree";
+import { WorkBoard } from "../src/ui";
+import { sdk } from "./sdk";
 
-test("worktrees keep branches, run setup scripts, and report setup failure", async () => {
+setDefaultTimeout(15000);
+test("worktree agents keep branches, count edits once, and report setup failure", async () => {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/worktree-"));
-  const jobs = new Jobs();
   const git = (...args: string[]) => execFileSync("git", args, { cwd: dir, encoding: "utf8" }).trim();
+  const previous = process.env.BRUV_PI_COMMAND;
+  process.env.BRUV_PI_COMMAND = resolve("tests/fixtures/pi-child.ts");
+  const jobs = new Jobs();
+  let start: StartAgents;
+  initTheme("dark", false);
+  const app = await sdk(
+    [
+      (pi) => {
+        start = registerAgents(pi, jobs);
+      },
+    ],
+    undefined,
+    dir,
+  );
   try {
     git("init", "-q");
-    git("-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "--allow-empty", "-qm", "Start");
+    git("config", "user.name", "Test");
+    git("config", "user.email", "test@example.com");
+    writeFileSync(join(dir, "file.txt"), "base\n");
+    git("add", ".");
+    git("commit", "-qm", "Start");
+    const base = git("rev-parse", "HEAD");
     const setup = (command: string) =>
       writeFileSync(
         join(dir, "t3.json"),
@@ -23,38 +46,41 @@ test("worktrees keep branches, run setup scripts, and report setup failure", asy
           ],
         }),
       );
-    setup("echo ready > setup.txt");
-    const first = jobs.create("agent", "first", join(dir, "logs"));
-    await jobs.run(first, async () => {
-      await createWorktree(jobs, first, dir, "12345678-abcd", {});
-      return 0;
-    });
-    expect(first.worktree).toEqual({ path: join(dir, ".bruv/worktrees/12345678-a1"), branch: "bruv/12345678-a1" });
-    expect(readFileSync(join(first.worktree?.path as string, "setup.txt"), "utf8")).toBe("ready\n");
+    setup(
+      "printf 'committed\\n' > file.txt && git add file.txt && git -c commit.gpgsign=false commit -qm Edit && echo ready > setup.txt && echo staged > new.txt && git add new.txt",
+    );
+    const ctx = app.session.extensionRunner.createContext();
+    const launch = async (branch?: string) => {
+      const [id] = start(
+        { prompt: 'fixture-edit {"new.txt":"new\\n"}', title: "界".repeat(100), worktree: { branch } },
+        ctx,
+      );
+      const item = jobs.get(id);
+      await item.completion;
+      return item;
+    };
+    const first = await launch();
+    expect(first.status).toBe("done");
+    expect(first.base).toBe(base);
+    expect(first.changes).toEqual({ files: 3, added: 3, removed: 1 });
     const path = first.worktree?.path as string;
-    expect(await worktreeChanges(path, first.base as string)).toEqual({ files: 1, added: 1, removed: 0 });
-    expect(execFileSync("git", ["diff", "--cached", "--name-only"], { cwd: path, encoding: "utf8" })).toBe("");
-    const otherJobs = new Jobs();
-    const other = otherJobs.create("agent", "other session", join(dir, "other-logs"));
-    await otherJobs.run(other, async () => {
-      await createWorktree(otherJobs, other, dir, "87654321-abcd", {});
-      return 0;
-    });
-    expect(other.id).toBe(first.id);
-    expect(other.status).toBe("done");
-    expect(other.worktree).toEqual({ path: join(dir, ".bruv/worktrees/87654321-a1"), branch: "bruv/87654321-a1" });
-    expect(existsSync(first.worktree?.path as string)).toBe(true);
-    expect(existsSync(other.worktree?.path as string)).toBe(true);
+    const inTree = (...args: string[]) => execFileSync("git", args, { cwd: path, encoding: "utf8" }).trim();
+    expect(inTree("rev-parse", "HEAD")).not.toBe(base);
+    expect(inTree("show", ":new.txt")).toBe("staged");
+    expect(readFileSync(join(path, "setup.txt"), "utf8")).toBe("ready\n");
+    const board = new WorkBoard(jobs, ctx.ui.theme, () => {});
+    board.update([first]);
+    const row = () => stripVTControlCharacters(board.render(80)[0]);
+    expect(row()).toMatch(/\+3 −1 · 3 files/);
+    writeFileSync(join(path, "later.txt"), "later\n");
+    expect(row()).toMatch(/\+3 −1 · 3 files/);
     setup("echo setup-error; exit 7");
-    const second = jobs.create("agent", "second", join(dir, "logs"));
-    await jobs.run(second, async () => {
-      await createWorktree(jobs, second, dir, "12345678", { branch: "custom", baseRef: "HEAD" });
-      return 0;
-    });
-    expect(second.status).toBe("failed");
-    expect(jobs.result(second).output).toContain("setup-error");
-    expect(existsSync(second.worktree?.path as string)).toBe(true);
-    expect(git("branch", "--list", "custom").trim()).toBe("+ custom");
+    const failed = await launch("custom");
+    expect(failed.status).toBe("failed");
+    expect(jobs.result(failed).output).toContain("setup-error");
+    expect(existsSync(failed.worktree?.path as string)).toBe(true);
+    expect(existsSync(path)).toBe(true);
+    expect(git("branch", "--list", "custom")).toBe("+ custom");
     expect(
       readFileSync(join(dir, ".git/info/exclude"), "utf8")
         .split("\n")
@@ -62,6 +88,9 @@ test("worktrees keep branches, run setup scripts, and report setup failure", asy
     ).toHaveLength(1);
   } finally {
     await jobs.shutdown();
+    await app.close();
+    if (previous === undefined) delete process.env.BRUV_PI_COMMAND;
+    else process.env.BRUV_PI_COMMAND = previous;
     rmSync(dir, { recursive: true, force: true });
   }
 });

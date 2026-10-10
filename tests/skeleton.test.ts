@@ -1,49 +1,22 @@
 import { afterAll, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { fauxAssistantMessage, fauxProvider, InMemoryCredentialStore } from "@earendil-works/pi-ai";
-import * as Pi from "@earendil-works/pi-coding-agent";
+import { fauxAssistantMessage } from "@earendil-works/pi-ai";
 import bruv from "../extensions/bruv";
 import { enableCodemode } from "../src/codemode";
 import { type Config, readConfig } from "../src/config";
+import { sdk } from "./sdk";
 
 mkdirSync(".tmp", { recursive: true });
 const dir = mkdtempSync(resolve(".tmp/tests-"));
 const previousDir = process.env.PI_CODING_AGENT_DIR;
 process.env.PI_CODING_AGENT_DIR = dir;
-const paths = { cwd: dir, agentDir: dir };
-const faux = fauxProvider();
-const modelRuntime = await Pi.ModelRuntime.create({
-  credentials: new InMemoryCredentialStore(),
-  modelsPath: null,
-  refreshOnCreate: false,
-  modelsStorePath: join(dir, "models.json"),
-});
-modelRuntime.registerNativeProvider(faux.provider);
-const settingsManager = Pi.SettingsManager.inMemory({ compaction: { enabled: false }, retry: { enabled: false } });
-const resourceLoader = new Pi.DefaultResourceLoader({
-  ...paths,
-  settingsManager,
-  extensionFactories: [bruv],
-  noExtensions: true,
-  noSkills: true,
-  noThemes: true,
-  noPromptTemplates: true,
-  noContextFiles: true,
-  agentsFilesOverride: () => ({ agentsFiles: [{ path: join(dir, "AGENTS.md"), content: "fixture-context-781" }] }),
-});
-await resourceLoader.reload();
-const { session } = await Pi.createAgentSession({
-  ...paths,
-  modelRuntime,
-  model: faux.getModel(),
-  resourceLoader,
-  settingsManager,
-  sessionManager: Pi.SessionManager.inMemory(dir),
-});
+const app = await sdk([bruv], undefined, dir, "rpc", [
+  { path: join(dir, "AGENTS.md"), content: "fixture-context-781" },
+]);
+const { session, faux, resourceLoader } = app;
 afterAll(async () => {
-  await session.extensionRunner.emit({ type: "session_shutdown", reason: "quit" });
-  session.dispose();
+  await app.close();
   rmSync(dir, { recursive: true, force: true });
   if (previousDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
   else process.env.PI_CODING_AGENT_DIR = previousDir;
