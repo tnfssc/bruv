@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import { fauxProvider, InMemoryCredentialStore } from "@earendil-works/pi-ai";
 import * as Pi from "@earendil-works/pi-coding-agent";
 
-export async function sdk(extensionFactories: Pi.ExtensionFactory[]) {
+export async function sdk(extensionFactories: Pi.ExtensionFactory[], ui?: Partial<Pi.ExtensionUIContext>) {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/sdk-"));
   const faux = fauxProvider();
@@ -41,7 +41,10 @@ export async function sdk(extensionFactories: Pi.ExtensionFactory[]) {
     settingsManager,
     sessionManager: Pi.SessionManager.create(dir, dir),
   });
-  await session.bindExtensions({ mode: "rpc" });
+  await session.bindExtensions({
+    mode: "rpc",
+    uiContext: ui ? { ...session.extensionRunner.createContext().ui, ...ui } : undefined,
+  });
   return {
     session,
     faux,

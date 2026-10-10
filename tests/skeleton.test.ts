@@ -41,7 +41,8 @@ const { session } = await Pi.createAgentSession({
   settingsManager,
   sessionManager: Pi.SessionManager.inMemory(dir),
 });
-afterAll(() => {
+afterAll(async () => {
+  await session.extensionRunner.emit({ type: "session_shutdown", reason: "quit" });
   session.dispose();
   rmSync(dir, { recursive: true, force: true });
   if (previousDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
