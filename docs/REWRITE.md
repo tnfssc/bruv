@@ -486,8 +486,9 @@ Port the essential behavior of `src/agent/native-compaction.ts` (read it with
 Only when `ctx.hasUI`.
 
 - Widget `bruv` above the editor: one line per running job or agent: `a2 Fix lint in foo.ts · 3m12s ·
-  edit`. Hidden when nothing runs.
-- Status in the footer: `fast`, goal status and budget (`goal 1.2m/2m`), agent cost total.
+  edit`. Completed items stay visible until the next prompt. Hide the widget when no items remain.
+- This module sets only the agent cost status. Fast and goal set their own status keys.
+- Update the widget on creation, completion, stop and a one-second timer, never on output chunks.
 - Renderers for `bruv-report`, `bruv-answer` and the `agent`/`wait` results: one line per item,
   expandable.
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,

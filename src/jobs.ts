@@ -95,7 +95,6 @@ export class Jobs {
   append(item: Work, chunk: Buffer | string) {
     item.outputStream.write(chunk);
     item.tail = Buffer.concat([item.tail, Buffer.from(chunk)]).subarray(-65536);
-    this.changed();
   }
   summary(item: Work): Summary {
     return {

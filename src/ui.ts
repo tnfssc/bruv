@@ -4,52 +4,40 @@ import type { Jobs, Result, Summary } from "./jobs";
 
 const oneLine = (text: string) => text.replace(/[\r\n\t]+/g, " ");
 const duration = (seconds: number) => (seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m${seconds % 60}s`);
-const tokens = (value: number) =>
-  value >= 1000000
-    ? `${(value / 1000000).toFixed(1)}m`
-    : value >= 1000
-      ? `${(value / 1000).toFixed(1)}k`
-      : String(value);
 const line = (item: Summary) => `${item.id} ${oneLine(item.title)} · ${item.status} · ${duration(item.elapsedSeconds)}`;
 
 export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
   let ctx: ExtensionContext | undefined;
   let renderers = false;
+  let lastPromptAt = 0;
   let timer: ReturnType<typeof setInterval> | undefined;
   const update = () => {
     if (!ctx?.hasUI) return;
-    const running = jobs.list().filter((item) => item.status === "running");
+    const visible = jobs
+      .list()
+      .filter((item) => item.status === "running" || (jobs.get(item.id).endedAt ?? 0) > lastPromptAt);
     ctx.ui.setWidget(
       "bruv",
-      running.length
-        ? running.map((item) => {
+      visible.length
+        ? visible.map((item) => {
+            if (item.status !== "running") return line(item);
             const progress = jobs.get(item.id).progress;
             return `${item.id} ${oneLine(item.title)} · ${duration(item.elapsedSeconds)}${progress ? ` · ${oneLine(progress)}` : ""}`;
           })
         : undefined,
       { placement: "aboveEditor" },
     );
-    let fast = process.env.BRUV_FAST === "1";
-    let goal: { status: string; tokensUsed: number; tokenBudget?: number } | undefined;
-    for (const entry of ctx.sessionManager.getBranch()) {
-      if (entry.type !== "custom") continue;
-      if (entry.customType === "bruv-fast") fast = (entry.data as { on: boolean }).on;
-      if (entry.customType === "bruv-goal") goal = entry.data as typeof goal;
-    }
-    const status: string[] = [];
-    if (fast) status.push("fast");
-    if (goal)
-      status.push(
-        `goal ${goal.status} ${tokens(goal.tokensUsed)}${goal.tokenBudget ? `/${tokens(goal.tokenBudget)}` : ""}`,
-      );
     const cost = [...jobs.items.values()].reduce((sum, item) => sum + (item.usage?.cost ?? 0), 0);
-    if ([...jobs.items.values()].some((item) => item.kind === "agent")) status.push(`agents $${cost.toFixed(2)}`);
-    ctx.ui.setStatus("bruv", status.length ? status.join(" · ") : undefined);
+    ctx.ui.setStatus(
+      "bruv-agents",
+      [...jobs.items.values()].some((item) => item.kind === "agent") ? `agents $${cost.toFixed(2)}` : undefined,
+    );
   };
   jobs.listeners.add(update);
   pi.on("session_start", (_event, context) => {
     clearInterval(timer);
     ctx = context;
+    lastPromptAt = 0;
     if (!ctx.hasUI) return;
     if (!renderers) {
       renderers = true;
@@ -102,11 +90,14 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
     timer.unref();
     update();
   });
+  pi.on("before_agent_start", () => {
+    lastPromptAt = Date.now();
+  });
   pi.on("session_shutdown", () => {
     clearInterval(timer);
     if (ctx?.hasUI) {
       ctx.ui.setWidget("bruv", undefined);
-      ctx.ui.setStatus("bruv", undefined);
+      ctx.ui.setStatus("bruv-agents", undefined);
     }
     ctx = undefined;
   });

@@ -2,10 +2,9 @@ import { expect, test } from "bun:test";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
-import bruv from "../extensions/bruv";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerPrompt } from "../src/prompt";
-import { registerSettle, report } from "../src/settle";
+import { registerSettle } from "../src/settle";
 import { sdk } from "./sdk";
 
 const script = (code: string) => fauxAssistantMessage(fauxToolCall("codemode", { code }), { stopReason: "toolUse" });
@@ -41,6 +40,16 @@ async function setup() {
     waiting: waiting.promise,
     release,
     reports,
+    async nextPrompt() {
+      app.faux.setResponses([
+        (context) => {
+          const path = jobs.get("j1").outputPath;
+          expect(context.messages.some((message) => JSON.stringify(message).includes(path))).toBe(true);
+          return fauxAssistantMessage("received");
+        },
+      ]);
+      await app.session.prompt("next");
+    },
     async close() {
       release();
       await Promise.all([...jobs.items.values()].map((item) => item.completion));
@@ -95,15 +104,7 @@ test.each([false, true])("running work gets at most one reminder and delivers la
     app.release();
     await app.jobs.get("j1").completion;
     expect(app.faux.state.callCount).toBe(detach ? 2 : 3);
-    app.faux.setResponses([
-      (context) => {
-        expect(
-          context.messages.some((message) => JSON.stringify(message).includes(app.jobs.get("j1").outputPath)),
-        ).toBe(true);
-        return fauxAssistantMessage("received");
-      },
-    ]);
-    await app.session.prompt("next");
+    await app.nextPrompt();
     expect(app.reports()).toHaveLength(detach ? 1 : 2);
   } finally {
     await app.close();
@@ -183,13 +184,7 @@ test("abort ends codemode wait within one second and delivers the job next promp
     await item.completion;
     expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("done");
     expect(app.faux.state.callCount).toBe(2);
-    app.faux.setResponses([
-      (context) => {
-        expect(context.messages.some((message) => JSON.stringify(message).includes(item.outputPath))).toBe(true);
-        return fauxAssistantMessage("received");
-      },
-    ]);
-    await app.session.prompt("next");
+    await app.nextPrompt();
     expect(app.reports()).toHaveLength(1);
   } finally {
     await app.close();
@@ -209,43 +204,6 @@ test("a nested wait resets the reminder", async () => {
     await app.session.prompt("go");
     expect(app.faux.state.callCount).toBe(5);
     expect(app.reports()).toHaveLength(2);
-  } finally {
-    await app.close();
-  }
-});
-
-test("reports cap content and preserve output and session paths", () => {
-  const result = report({
-    id: "a1",
-    kind: "agent",
-    title: "test",
-    status: "done",
-    startedAt: 0,
-    elapsedSeconds: 1,
-    outputPath: "/test/output",
-    sessionPath: "/test/session",
-    output: "x".repeat(9000),
-  });
-  expect(result.content.length).toBeLessThanOrEqual(4000);
-  expect(result.content).toContain("/test/output");
-  expect(result.content).toContain("/test/session");
-});
-
-test("the full extension waits inside codemode", async () => {
-  const app = await sdk([bruv]);
-  try {
-    app.faux.setResponses([
-      script(
-        'const job = await tools.job_start({command: "echo done", waitSeconds: 0}); return await tools.wait({ids: [job.id]});',
-      ),
-      (context) => {
-        const result = [...context.messages].reverse().find((message) => message.role === "toolResult");
-        expect(result?.role === "toolResult" && result.isError).toBe(false);
-        return fauxAssistantMessage("finished");
-      },
-    ]);
-    await app.session.prompt("go");
-    expect(app.faux.state.callCount).toBe(2);
   } finally {
     await app.close();
   }

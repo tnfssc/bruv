@@ -2,6 +2,7 @@ import { afterAll, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 import { Jobs } from "../src/jobs";
+import { report } from "../src/settle";
 
 mkdirSync(".tmp", { recursive: true });
 const dir = mkdtempSync(resolve(".tmp/jobs-"));
@@ -33,6 +34,10 @@ test("registry records output, exit codes, previews, waits and IDs", async () =>
   expect(jobs.result(large).output.length).toBe(4000);
   expect(readFileSync(large.outputPath, "utf8")).toBe("x".repeat(70000));
   expect(large.outputStream.closed).toBe(true);
+  const message = report({ ...jobs.result(large), sessionPath: "/test/session" });
+  expect(message.content.length).toBeLessThanOrEqual(4000);
+  expect(message.content).toContain(large.outputPath);
+  expect(message.content).toContain("/test/session");
   expect(await jobs.wait([], true)).toEqual({ done: [], running: [], userMessagePending: false });
   expect(() => jobs.get("missing")).toThrow();
 });

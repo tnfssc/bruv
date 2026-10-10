@@ -20,6 +20,8 @@ test("profile fields fall back independently and calls take precedence", () => {
 test("codemode starts a job, waits, and parses fake child agents", async () => {
   const previous = process.env.BRUV_PI_COMMAND;
   const previousDir = process.env.PI_CODING_AGENT_DIR;
+  const previousFast = process.env.BRUV_FAST;
+  process.env.BRUV_FAST = "1";
   process.env.BRUV_PI_COMMAND = resolve("tests/fixtures/pi-child.ts");
   const jobs = new Jobs();
   const app = await sdk([
@@ -55,6 +57,7 @@ test("codemode starts a job, waits, and parses fake child agents", async () => {
       expect(result.usage).toEqual({ input: 7, output: 3, cost: 0.3 });
       const answer = JSON.parse(result.answer as string);
       expect(answer.depth).toBe("1");
+      expect(answer.fast).toBe("1");
       expect(answer.cwd).toBe(app.dir);
       expect(answer.args.slice(0, 2)).toEqual(["--mode", "json"]);
       expect(answer.args[answer.args.indexOf("--model") + 1]).toBe("faux/selected");
@@ -66,6 +69,8 @@ test("codemode starts a job, waits, and parses fake child agents", async () => {
     await app.close();
     if (previous === undefined) delete process.env.BRUV_PI_COMMAND;
     else process.env.BRUV_PI_COMMAND = previous;
+    if (previousFast === undefined) delete process.env.BRUV_FAST;
+    else process.env.BRUV_FAST = previousFast;
     if (previousDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
     else process.env.PI_CODING_AGENT_DIR = previousDir;
   }

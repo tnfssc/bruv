@@ -43,7 +43,6 @@ export function agentParser(jobs: Jobs, item: Work) {
       failed ||= message.stopReason === "error" || message.stopReason === "aborted";
       if (message.errorMessage) jobs.append(item, `\n${message.errorMessage}\n`);
     }
-    jobs.changed();
   };
   return {
     push(chunk: string) {
