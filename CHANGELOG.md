@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Show each pending script call once and update its row when it finishes.
+
 - Recheck the user's tree after a race pick; start checks in the terminal and queue them for the next turn in T3/RPC.
 
 - Separate footer parts with dots in a fixed order: usage, fast, goal, then agent cost.

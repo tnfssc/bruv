@@ -135,11 +135,17 @@ export function registerRender(pi: ExtensionAPI) {
             )
           );
         const list = new Map<string, Call>();
-        for (const call of details.calls) {
+        const live = calls.get(context.toolCallId) ?? new Map<string, Call>();
+        const pending = [...live.values()].filter((call) => !details.calls.some((saved) => saved.id === call.id));
+        for (const [index, call] of details.calls.entries()) {
           const args = json(call.args);
-          list.set(call.id, { ...call, arguments: record(args) ? (args as Call["arguments"]) : undefined });
+          // Pi gives running script calls a /? ID until executeTool returns.
+          const match = call.id.endsWith("/?") ? pending.findIndex((item) => item.name === call.name) : -1;
+          const current = match >= 0 ? pending.splice(match, 1)[0] : live.get(call.id);
+          const id = current?.id ?? (call.id.endsWith("/?") ? `${call.id}/${index}` : call.id);
+          list.set(id, current ?? { ...call, id, arguments: record(args) ? (args as Call["arguments"]) : undefined });
         }
-        for (const call of calls.get(context.toolCallId)?.values() ?? []) list.set(call.id, call);
+        for (const call of live.values()) list.set(call.id, call);
         const rows = [...list.values()].map((call) => callLine(call, theme));
         const output = result.content
           .filter((b) => b.type === "text")

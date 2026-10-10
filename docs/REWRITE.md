@@ -556,6 +556,8 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
 - Codemode rendering (`src/render.ts`) lists nested calls from Pi records and live events, followed
   by plain output. Unwrap bash and wait JSON, strip ANSI, and cap collapsed output at 12 screen
   lines with an omitted-line count. Expansion shows the full script and output available from Pi.
+  Each nested call has one row, moving from pending to done; match Pi's temporary script IDs
+  to live call IDs without combining separate calls.
   Bash call rows show only the first command line, cut to 60 terminal columns with `…`.
   Unknown result shapes and images use Pi rendering. Restore saved calls on session changes.
 - Register job and message renderers only in TUI sessions. `bruv-report` and `bruv-answer` show the first content

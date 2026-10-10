@@ -3,6 +3,7 @@ import { stripVTControlCharacters } from "node:util";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
 import { initTheme, type ToolRenderers } from "@earendil-works/pi-coding-agent";
 import { Text, visibleWidth } from "@earendil-works/pi-tui";
+import { Type } from "typebox";
 import { Jobs, registerJobs } from "../src/jobs";
 import { outputLines, registerRender } from "../src/render";
 import { sdk } from "./sdk";
@@ -165,6 +166,79 @@ test("codemode lists real nested calls, expands output and script, and restores 
       ),
     ).toBe(fallback);
   } finally {
+    await app.close();
+  }
+});
+
+test("parallel pending script calls each keep one row through completion", async () => {
+  initTheme("dark", false);
+  const gates = [Promise.withResolvers<void>(), Promise.withResolvers<void>()];
+  const waiting = Promise.withResolvers<void>();
+  const updated = Promise.withResolvers<void>();
+  let started = 0;
+  let latest: { content: []; details: { calls: { status: string }[] } };
+  let parent = "";
+  const app = await sdk([
+    (pi) => {
+      registerRender(pi);
+      pi.registerTool({
+        name: "wait",
+        label: "Wait",
+        description: "Wait for test release",
+        exposure: "codemode",
+        parameters: Type.Object({ id: Type.String() }),
+        async execute() {
+          const gate = gates[started++];
+          if (started === 2) waiting.resolve();
+          await gate.promise;
+          return { content: [], details: undefined };
+        },
+      });
+      pi.on("tool_execution_update", (event) => {
+        if (event.toolName !== "codemode") return;
+        parent = event.toolCallId;
+        latest = event.partialResult as typeof latest;
+        if (latest.details.calls.some((call) => call.status === "ok")) updated.resolve();
+      });
+    },
+  ]);
+  const runner = app.session.extensionRunner;
+  const renderer = runner.resolveToolRenderers("codemode", () => undefined);
+  const rows = () =>
+    renderer
+      ?.renderResult?.(latest, { expanded: false, isPartial: true }, runner.createContext().ui.theme, {
+        args: {},
+        toolCallId: parent,
+        expanded: false,
+      } as Parameters<NonNullable<ToolRenderers["renderResult"]>>[3])
+      .render(120)
+      .map(stripVTControlCharacters) ?? [];
+  app.faux.setResponses([
+    fauxAssistantMessage(
+      fauxToolCall("codemode", {
+        code: 'await Promise.all([tools.wait({id:"j1"}), tools.wait({id:"j1"})]);',
+      }),
+      { stopReason: "toolUse" },
+    ),
+    fauxAssistantMessage("done"),
+  ]);
+  const run = app.session.prompt("go");
+  try {
+    await waiting.promise;
+    expect(rows()).toHaveLength(2);
+    expect(rows().filter((row) => row.startsWith("…"))).toHaveLength(2);
+    gates[0].resolve();
+    await updated.promise;
+    expect(rows()).toHaveLength(2);
+    expect(rows().filter((row) => row.startsWith("✓"))).toHaveLength(1);
+    expect(rows().filter((row) => row.startsWith("…"))).toHaveLength(1);
+    gates[1].resolve();
+    await run;
+    expect(rows()).toHaveLength(2);
+    expect(rows().filter((row) => row.startsWith("✓"))).toHaveLength(2);
+  } finally {
+    for (const gate of gates) gate.resolve();
+    await run;
     await app.close();
   }
 });
