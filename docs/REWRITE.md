@@ -163,7 +163,7 @@ Release notes: `docs/releases/release-v0.16.20.md` is 895 lines, 263 of them the
 | D1 | bruv becomes a **pure Pi package**: extensions plus prompts, installed with `pi install`. No bruv binary, no compiled build, no `bruv update`, no install script, no Pi patches. |
 | D2 | In T3, bruv runs through **T3's built-in Pi driver**. claude-compat and the "bruv (not Claude)" provider are deleted. |
 | D3 | Scripting runs on **Pi codemode**. bruv's own Bun `execute` runtime is deleted. |
-| D4 | v1 keeps: background jobs, subagents with optional worktrees, goal mode, `/fast`, Codex native compaction, async questions. |
+| D4 | v1 keeps: background jobs, subagents with optional worktrees, goal mode, keep-going, `/fast`, Codex native compaction, async questions. |
 | D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, cross-session history search, cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, `wisdom/`, `site/`, release tooling, perf harnesses. |
 | D6 | One large PR from `rewrite/pi-package` into `develop`. Git history keeps everything deleted; nothing is archived as copies. |
 | D7 | Prompts and all text use plain, short, normal English. Not "grug" grammar. |
@@ -207,6 +207,7 @@ bruv/
     worktree.ts           git worktree create + setup scripts (~120)
     settle.ts             reports results and reminds the model to wait (~150)
     goal.ts               /goal command, state, continuation, budget (~350)
+    finish.ts             explicit finish and keep-going continuation (~150)
     fast.ts               /fast priority tier (~100)
     usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
@@ -269,7 +270,8 @@ is truly needed. Prompts are Markdown files read at load time relative to `impor
 `before_agent_start` adds bruv's guidance to `systemPromptOptions.sections.bruv`, preserving Pi's
 context files (`AGENTS.md`), skills and tool sections. When codemode is active, the same section
 includes the scripting examples. Pi keeps these sections during requests continued through
-`agent_before_settle`. Goal state never changes the system prompt.
+`agent_before_settle`. Goal state never changes the system prompt. The finish guidance line in `prompts/system.md` is
+included only when `finish` is active at `before_agent_start`, and stays unchanged through continuations.
 
 `prompts/system.md` (final wording may be tuned, keep it under 250 words):
 
@@ -316,8 +318,8 @@ Delete all other prompt files.
 
 ### 3.3 Codemode-only setup
 
-Goal: the model sees one tool, `codemode`. `read`, `edit`, `write`, `bash` and bruv's tools are
-callable from scripts only.
+The model sees `codemode`, plus `finish` while keep-going is active. `read`, `edit`, `write`,
+`bash` and the remaining bruv tools are callable from scripts only.
 
 Pi does this with settings `"defaultTools": ["+codemode"]` and `"codemode": { "mode": "only" }`.
 Extensions can read settings (`pi.getSettings()`) but cannot write them.
@@ -328,7 +330,7 @@ confirmation, then writes `codemode.mode: "only"` and adds codemode to `defaultT
 `~/.pi/agent/settings.json`. It preserves other settings and existing explicit or relative tool
 lists, then tells the user to `/reload`. In RPC mode (T3), the notice uses `ctx.ui.notify`.
 
-bruv's own tools register with `exposure: "codemode"` (listed in the codemode description) or
+Except for `finish` (`model-only`), bruv's own tools register with `exposure: "codemode"` (listed in the codemode description) or
 `"deferred"` (callable, not listed). Rule: tools used often are `codemode`; rare tools and anything
 registered after session start are `deferred`, grouped under a `namespace` whose `instructions`
 hold the details.
@@ -349,7 +351,7 @@ hold the details.
 - If no result needs reporting but non-detached work still runs, continue once with a single
   `bruv-report` listing it and saying: "This work is still running. Call tools.wait to get the
   results, tools.job_stop to stop it, or end your turn again to leave it running; its results
-  will come with the next message." Ending the turn again settles.
+  will come with the next message." Goal or keep-going may still continue the run.
 - Keep one `seen` flag per item and one `reminded` flag per session. Calling `wait`, `job_start`
   or `agent` resets the reminder. Results returned by `wait` or `job_start` count as seen.
 - After settlement, new results are sent with `deliverAs: "nextTurn"` and shown in the UI.
@@ -362,13 +364,14 @@ hold the details.
 it and the run within one second while the job keeps running. Its result arrives with the next
 prompt. Pi awaits settle handlers even after abort, so settle must not wait.
 
-### 3.5 Tools (all called from codemode scripts)
+### 3.5 Tools
 
 All parameters use TypeBox schemas. All tools declare `outputSchema` and return `structuredContent`
 so scripts get objects, not text.
 
 | Tool | Exposure | Input | Output |
 |---|---|---|---|
+| `finish` | model-only while keep-going is active; hidden otherwise | `{ status: "done" \| "need_you" \| "blocked", note?: string }` | Same fields; `terminate: true` on the tool result |
 | `job_start` | codemode | `{ command: string, cwd?: string, title?: string, waitSeconds?: number = 3, timeoutSeconds?: number, detach?: boolean }` | `{ id, status: "running" \| "done" \| "failed" \| "stopped", exitCode?, output, outputPath }` |
 | `agent` | codemode | `{ prompt?: string, prompts?: string[], profile?: "fast" \| "normal" = "normal", model?: string, thinking?: string, worktree?: boolean \| { branch?: string, baseRef?: string }, title?: string }` | `{ ids: string[] }` |
 | `wait` | codemode | `{ ids?: string[], all?: boolean = false, timeoutSeconds?: number = 600 }` | `{ done: Result[], running: Summary[], userMessagePending: boolean }` |
@@ -384,7 +387,7 @@ assistant text), `usage` (`{ input, output, cost }`), `sessionPath`.
 `wait` returns as soon as one listed item finishes (or all, with `all: true`), when the timeout hits,
 or when the user has sent a message. With no `ids`, it waits on everything this session started.
 
-There is no `handoff`. In codemode the model ends its turn by replying.
+There is no `handoff`. With keep-going active, the model replies and calls `finish` directly.
 
 ### 3.6 Jobs (`src/jobs.ts`)
 
@@ -457,6 +460,32 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - Goal instructions and changing state stay in conversation messages, preserving the system
   prompt and its cache. `/goal` shows plain lines for objective, status and token use, plus criteria,
   last progress, and blocker when present.
+
+### 3.8.1 Finish loop (`src/finish.ts`)
+
+- `keepGoing` in `bruv.json` is `"auto"` by default, or `"on"` or `"off"`. Auto enables it for
+  `openai-codex-responses` and `openai-responses`. `/keep-going` shows it; an argument saves it
+  globally while preserving the other settings. Children read the same file.
+- Recheck on `session_start`, `session_tree` and `model_select`. Register `finish` with
+  `exposure: "model-only"` when active, and `"hidden"` otherwise. Pi cannot unregister tools.
+  Codemode's `prepareLoadout` hides callable direct tools, so finish remains declared even in
+  `codemode.mode: "only"`. It is called directly, outside scripts.
+- `finish({ status: "done" | "need_you" | "blocked", note? })` records that the model finished
+  since the latest user message and returns `terminate: true`. Write the user reply in the same
+  message. Call finish alone after other tools return: every tool in a batch must agree to stop.
+- Register `agent_before_settle` handlers in this order: job reports and reminders, goal,
+  keep-going. Each yields if `event.continue` is true or `event.entries` is nonempty.
+  After an explicit finish, job and goal handlers also yield. Unseen job results wait for
+  the next message; a saved active goal can continue when the user replies.
+- Keep-going does nothing after abort, while off, or after finish. Otherwise append a hidden
+  `bruv-keep-going` custom message and return `continue: true`. The message asks the model to
+  keep working or write its reply and call finish when done, needing the user, or blocked.
+- Stop after two keep-going continuations in a row with no tool calls. Reset on any tool call
+  or new user message. Esc and T3 Stop still stop everything immediately.
+- SDK tests with the faux provider inspect model tool declarations in codemode-only mode,
+  hidden continuation entries, exact request counts after finish, all three finish statuses,
+  prompt stability, the empty-turn limit, abort, API selection, saved settings and settle order.
+  Tests make no network or paid model calls.
 
 ### 3.9 Async questions (`src/questions.ts`)
 

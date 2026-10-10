@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep GPT runs going until they call `finish` with their reply. Add `/keep-going on|off|auto`, saved for sessions and child agents. Keep finish visible in codemode-only mode, respect Esc and Stop, and stop after two continuations without tools.
+
 - Removed `/race`.
 
 - Add `/review` for uncommitted changes, branch diffs and commits, with bug-focused guidance and no file edits unless asked.

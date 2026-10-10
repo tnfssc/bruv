@@ -9,10 +9,11 @@ export async function sdk(
   cwd?: string,
   mode: Pi.ExtensionContext["mode"] = "rpc",
   agentsFiles: { path: string; content: string }[] = [],
+  api?: string,
 ) {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/sdk-"));
-  const faux = fauxProvider();
+  const faux = fauxProvider({ api });
   const modelRuntime = await Pi.ModelRuntime.create({
     credentials: new InMemoryCredentialStore(),
     modelsPath: null,

@@ -67,7 +67,7 @@ const tokens = (n: number) =>
 const tokenStatus = (goal: Goal) =>
   `${tokens(goal.tokensUsed)} / ${goal.tokenBudget ? tokens(goal.tokenBudget) : "no limit"} tokens`;
 
-export function registerGoal(pi: ExtensionAPI): void {
+export function registerGoal(pi: ExtensionAPI, hasFinished = () => false): void {
   let goal: Goal | undefined;
   let savedStatus: Goal["status"] | undefined;
   let blocker: string | undefined;
@@ -201,7 +201,7 @@ export function registerGoal(pi: ExtensionAPI): void {
       ctx.ui.notify("Goal paused. /goal resume continues it.", "info");
       return {};
     }
-    if (event.continue || event.entries.length) return {};
+    if (event.continue || event.entries.length || hasFinished()) return {};
     if (reported) {
       repeated = reported === blocker ? repeated + 1 : 1;
       blocker = reported;

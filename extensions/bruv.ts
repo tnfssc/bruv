@@ -4,6 +4,7 @@ import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
 import { registerFast } from "../src/fast";
+import { registerFinish } from "../src/finish";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerNotifications } from "../src/notify";
@@ -21,7 +22,7 @@ export default function bruv(pi: ExtensionAPI): void {
   registerUI(pi, jobs);
   registerRender(pi);
   registerNotifications(pi);
-  registerSettle(pi, jobs);
+  registerSettle(pi, jobs, () => hasFinished());
   registerJobs(pi, jobs);
   const isFast = registerFast(pi);
   registerAgents(pi, jobs, isFast);
@@ -29,7 +30,8 @@ export default function bruv(pi: ExtensionAPI): void {
   registerTurn(pi, jobs, usage);
   registerCodexCompaction(pi);
   registerQuestions(pi);
-  registerGoal(pi);
+  registerGoal(pi, () => hasFinished());
+  const hasFinished = registerFinish(pi);
   registerPrompt(pi);
   registerCodemode(pi);
   registerCodexImport(pi);

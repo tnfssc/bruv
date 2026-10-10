@@ -18,7 +18,7 @@ export function report(item: Result): CustomMessageEntryDraft {
   };
 }
 
-export function registerSettle(pi: ExtensionAPI, jobs: Jobs) {
+export function registerSettle(pi: ExtensionAPI, jobs: Jobs, hasFinished = () => false) {
   let reminded = false;
   const flush = (idle = true) => {
     for (const item of jobs.items.values()) {
@@ -50,7 +50,7 @@ export function registerSettle(pi: ExtensionAPI, jobs: Jobs) {
     void Promise.all(running.map((item) => item.completion)).then(() => flush());
   });
   pi.on("agent_before_settle", (event) => {
-    if (event.outcome === "aborted") return {};
+    if (event.outcome === "aborted" || event.continue || event.entries.length || hasFinished()) return {};
     const items = [...jobs.items.values()].filter((item) => !item.detached);
     const done = items.filter((item) => item.status !== "running" && !item.seen);
     if (done.length) {

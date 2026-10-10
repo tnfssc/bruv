@@ -9,6 +9,8 @@ Disable the old "bruv (not Claude)" provider.
 
 ## Commands
 
+- `/keep-going` shows the setting. `/keep-going on|off|auto` saves it for this session, future sessions and child agents. `auto` is the default: on for OpenAI and Codex Responses APIs, off for other APIs.
+
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
 - `/review` picks uncommitted changes, a branch diff, or a commit; `/review <branch or commit>` starts directly.
 - `/import-codex` previews and imports Codex settings after you confirm.
@@ -29,6 +31,20 @@ Goal examples:
 
 Budgets count tokens; `k` means thousand and `m` means million. The model must record evidence to finish a goal.
 A goal also stops at its budget, after the same blocker in three consecutive rounds, or when you stop the run.
+
+## Finish the work
+
+With keep-going active, a text reply alone does not end the run. The model writes its reply and calls
+`finish` in the same message: `done` when everything asked is done and checked, `need_you` when
+the next step is your choice, or `blocked` when it cannot go on. An optional `note` adds detail.
+Call `finish` alone after other tool calls have returned; Pi skips the next model request only
+when every tool in a batch agrees to end the run.
+
+`finish` stays a top-level tool even in codemode-only mode. It is hidden when keep-going is off.
+Job reports and reminders come first, then goal continuation, then keep-going. Each settle adds
+at most one continuation. An explicit finish also stops job and goal continuations; the saved
+goal stays available and unseen results arrive with your next message. Two keep-going continuations with no tool calls stop the loop. Any
+tool call or new user message resets that count. Esc or T3 Stop ends the run and its jobs at once.
 
 ## Review changes
 
@@ -60,7 +76,7 @@ A notice offers the import once when Codex settings are found.
 
 ## What the model can call from scripts
 
-The model calls these through `tools.<name>(...)` in Pi's scripting tool.
+`finish` is called directly when keep-going is active. The model calls the following through `tools.<name>(...)` in Pi's scripting tool.
 
 | Tool | What it does |
 |---|---|
@@ -100,6 +116,7 @@ Set agent profiles in `~/.pi/agent/bruv.json`:
 
 ```json
 {
+  "keepGoing": "auto",
   "profiles": {
     "fast": { "model": "openai-codex/gpt-6-luna", "thinking": "low" },
     "normal": { "model": "openai-codex/gpt-6-astra", "thinking": "high" }
