@@ -39,7 +39,7 @@ test("registered execute exports an optional string label and action-not-finding
   expect(tool.parameters.properties.label).toEqual({ type: "string" });
   expect(tool.parameters.required).not.toContain("label");
   expect(tool.description).toContain("short plain");
-  expect(tool.description).toContain("not an unverified result");
+  expect(tool.description).toContain("not a claim it worked");
   expect(tool.promptGuidelines).toBeUndefined();
 });
 

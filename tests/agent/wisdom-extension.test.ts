@@ -45,7 +45,8 @@ describe("project wisdom extension", () => {
     expect(result.systemPrompt).toContain("Project wisdom lives in /repo/wisdom/.");
     expect(result.systemPrompt).toContain("Put it with the feature or system it explains.");
     expect(result.systemPrompt).toContain("Values live in /repo/wisdom/values.md.");
-    expect(result.systemPrompt).toContain("Prompts and wisdom use nearby voice.");
+    // Shared values own writing guidance; this hook only adds project memory.
+    expect(result.systemPrompt).not.toContain("Short words. Short sentences. Plain talk.");
     expect(result.systemPrompt).toContain("Before big work ends or changes hands");
     expect(result.systemPrompt).toContain("At handoff, say what wisdom and values changed, or why values stayed same.");
     expect(result.systemPrompt).toContain("Nothing new? No forced change.");

@@ -1227,7 +1227,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       for (const context of contexts) {
         expectExecuteOnce(getCurrentSystemPrompt(context.messages), getCurrentTools(context.messages));
         const whole = JSON.stringify(context);
-        expect(whole.split("Native children do not resume in place.")).toHaveLength(2);
+        expect(whole.split("No old execute or native child resumes in place.")).toHaveLength(2);
         expect(whole).not.toContain("This saved reply belongs to a new parent turn.");
       }
       const continued = JSON.stringify(contexts.at(-1));
