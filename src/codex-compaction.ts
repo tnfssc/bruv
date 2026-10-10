@@ -1,15 +1,18 @@
 import { randomUUID } from "node:crypto";
-import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import { calculateCost, type Model, type Usage } from "@earendil-works/pi-ai";
 import { getPiUserAgent } from "@earendil-works/pi-ai/utils/pi-user-agent";
-import { convertToLlm, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import {
+  type CompactionEntry,
+  convertToLlm,
+  type ExtensionAPI,
+  type ExtensionContext,
+} from "@earendil-works/pi-coding-agent";
 
 type Item = { type: "compaction"; id: string; encrypted_content: string };
 type Details = { strategy: "codex-native"; version: 1; provider: string; model: string; item: Item };
 type Capture = {
   model: Model<string>;
-  messages: AgentMessage[];
-  payload?: Record<string, unknown>;
+  payload: Record<string, unknown>;
   headers?: Record<string, string | null>;
 };
 const summary =
@@ -150,33 +153,37 @@ export function registerCodexCompaction(
   options: { fetch?: (url: string, init: RequestInit) => Promise<Response> } = {},
 ) {
   let captured: Capture | undefined;
+  let latest: CompactionEntry | undefined;
   let useDefault = false;
   let warned: string | undefined;
   const reset = () => {
     captured = undefined;
   };
-  pi.on("session_start", () => {
+  const remember = (entry: CompactionEntry | undefined) => {
+    latest = (entry?.details as Details | undefined)?.strategy === "codex-native" ? entry : undefined;
+  };
+  const restore = (_event: unknown, ctx: ExtensionContext) => {
     reset();
     useDefault = false;
     warned = undefined;
-  });
-  pi.on("session_tree", reset);
+    remember(
+      ctx.sessionManager
+        .getBranch()
+        .reverse()
+        .find((entry) => entry.type === "compaction"),
+    );
+  };
+  pi.on("session_start", restore);
+  pi.on("session_tree", restore);
   pi.on("model_select", reset);
-  pi.on("context", (event, ctx) => {
-    if (ctx.model?.api === "openai-codex-responses")
-      captured = { model: structuredClone(ctx.model), messages: structuredClone(event.messages) };
-  });
+  pi.on("session_compact", (event) => remember(event.compactionEntry));
   pi.on("before_provider_headers", (event) => {
     if (captured) captured.headers = { ...event.headers };
   });
   pi.on("before_provider_request", (event, ctx) => {
-    const latest = ctx.sessionManager
-      .getBranch()
-      .reverse()
-      .find((entry) => entry.type === "compaction");
-    const details = latest?.type === "compaction" ? (latest.details as Details | undefined) : undefined;
+    const details = latest?.details as Details | undefined;
     const payload = event.payload as Record<string, unknown>;
-    if (latest?.type === "compaction" && details?.strategy === "codex-native") {
+    if (latest && details) {
       if (
         ctx.model?.api === "openai-codex-responses" &&
         ctx.model.provider === details.provider &&
@@ -205,7 +212,10 @@ export function registerCodexCompaction(
         ctx.ui.notify("The model changed. Using the saved text summary.", "info");
       }
     }
-    if (captured) captured.payload = structuredClone(payload);
+    captured =
+      ctx.model?.api === "openai-codex-responses"
+        ? { model: structuredClone(ctx.model), payload: structuredClone(payload) }
+        : undefined;
   });
   pi.on("session_before_compact", async (event, ctx) => {
     if (ctx.model?.api !== "openai-codex-responses") return;
@@ -214,13 +224,7 @@ export function registerCodexCompaction(
       return;
     }
     const request = captured;
-    if (
-      !request?.payload ||
-      !request.headers ||
-      request.model.provider !== ctx.model.provider ||
-      request.model.id !== ctx.model.id
-    )
-      return;
+    if (!request?.headers || request.model.provider !== ctx.model.provider || request.model.id !== ctx.model.id) return;
     const payload = request.payload;
     if (
       !Array.isArray(payload.input) ||

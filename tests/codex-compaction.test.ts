@@ -49,7 +49,6 @@ async function setup(fetch: (url: string, init: RequestInit) => Promise<Response
     baseUrl: "https://fixture.invalid/backend-api/codex/",
   });
   const runner = app.session.extensionRunner;
-  await runner.emitContext(app.session.messages);
   await runner.emitBeforeProviderRequest(structuredClone(body));
   await runner.emitBeforeProviderHeaders(headers);
   return { ...app, runner, notices: () => notices };
@@ -110,6 +109,21 @@ test.each([false, true])("Codex request, saved item, replay, and model fallback 
     });
     expect(result.usage).toMatchObject({ input: 8, output: 2, cacheRead: 4, totalTokens: 14 });
     const payload = nextPayload(app);
+    expect(
+      ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
+    ).toContainEqual(item);
+    await app.runner.emit({ type: "session_start", reason: "reload" });
+    expect(
+      ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
+    ).toContainEqual(item);
+    const compactionId = app.session.sessionManager.getLeafId();
+    const earlier = app.session.sessionManager.getBranch().find((entry) => entry.type === "message");
+    if (!earlier || !compactionId) throw new Error("Missing test entries");
+    app.session.sessionManager.branch(earlier.id);
+    await app.runner.emit({ type: "session_tree", oldLeafId: compactionId, newLeafId: earlier.id });
+    expect(await app.runner.emitBeforeProviderRequest(structuredClone(payload))).toEqual(payload);
+    app.session.sessionManager.branch(compactionId);
+    await app.runner.emit({ type: "session_tree", oldLeafId: earlier.id, newLeafId: compactionId });
     expect(
       ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
     ).toContainEqual(item);
