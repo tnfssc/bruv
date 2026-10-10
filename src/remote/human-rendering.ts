@@ -40,7 +40,7 @@ const replyLines = (t: RemoteTask) =>
       "): " +
       (reply.status === "delivered"
         ? "delivered to owner (not proof it was used)"
-        : `delivery uncertain; reconcile saved reply with /remote sync ${safe(t.taskId)} before retrying`),
+        : `delivery unknown; check saved reply with /remote sync ${safe(t.taskId)} before retrying`),
   );
 const cancellationLine = (t: RemoteTask) =>
   t.cancelDelivery &&
@@ -56,8 +56,8 @@ const cancellationLine = (t: RemoteTask) =>
       ? " (terminal)."
       : "; /remote sync " +
         safe(t.taskId) +
-        " to check terminal state" +
-        (t.cancelDelivery.status === "uncertain" ? "; reconcile before retrying" : "") +
+        " to check if task ended" +
+        (t.cancelDelivery.status === "uncertain" ? "; check saved state before retrying" : "") +
         ".");
 export function taskLine(t: RemoteTask): string {
   const problems = [
@@ -207,15 +207,13 @@ export function renderHuman(value: unknown, kind = "result"): string {
       `Authority: ${Array.isArray(obj(v.grant).kinds) ? (obj(v.grant).kinds as unknown[]).map(safe).join(", ") : "unknown"}`,
       `Local repository: ${safe(v.scope)}`,
       `Grant: ${safe(obj(v.grant).id)}`,
-      "Read-only named authority for this task. No arbitrary shell or credentials.",
+      "This task has named read-only access. No arbitrary shell or credentials.",
     ].join("\n");
   if (v.revoked === true && v.grantId)
     return (
       "Local capability revoked · " +
       safe(v.grantId) +
-      (v.ownerNotified === true
-        ? "\nOwner acknowledged revocation."
-        : "\nOwner not notified; local authority has ended.")
+      (v.ownerNotified === true ? "\nOwner got revoke notice." : "\nOwner not told; local grant ended.")
     );
   if (kind === "error" && v.error) return `Remote error: ${detail(v.error)}${v.hint ? `\n${detail(v.hint)}` : ""}`;
   if (kind === "status") {
@@ -246,7 +244,7 @@ export function renderHuman(value: unknown, kind = "result"): string {
           (p.state === "snapshot_incomplete"
             ? "snapshot incomplete; check local preparation before a new launch"
             : p.state === "prepared_not_confirmed_launched"
-              ? "prepared, launch not confirmed; check with owner before retrying the same task ID"
+              ? "prepared; launch unconfirmed. Check owner before retrying same task ID"
               : "state unknown; inspect local preparation") +
           (p.artifact ? ` · local artifact: ${safe(p.artifact)}` : ""),
       ),
@@ -378,12 +376,9 @@ export class RemoteAttention {
       if (t.replyDelivery)
         for (const [questionId, reply] of Object.entries(t.replyDelivery))
           if (reply.status === "uncertain")
-            add(
-              `reply:${questionId}:${reply.replyId}`,
-              "answer delivery uncertain; reconcile saved reply before retrying",
-            );
+            add(`reply:${questionId}:${reply.replyId}`, "answer delivery unknown; check saved reply before retrying");
       if (t.cancelRequested && !["cancelled", "done", "failed"].includes(t.task?.state ?? ""))
-        add("cancel", "cancel requested; terminal state not yet confirmed");
+        add("cancel", "cancel requested; task end not yet confirmed");
       const stateName = t.task?.state;
       if (
         ["done", "cancelled", "failed", "unknown"].includes(stateName ?? "") &&

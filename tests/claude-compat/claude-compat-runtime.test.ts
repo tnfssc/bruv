@@ -401,7 +401,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       await expect(fixture({ auth: false })).rejects.toThrow("No configured authentication");
       const { runtime } = await fixture();
       await expect(runtime.controls.set_model!(control("set_model", { model: "sonnet" }), signal())).rejects.toThrow(
-        "Claude aliases are not supported",
+        "Claude aliases not supported",
       );
       expect(runtime.controls.set_permission_mode).toBeUndefined();
       const gated = await fixture({ extra: { permissionMode: "default" } });
@@ -856,6 +856,11 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     });
     expect(result.structured_output).toEqual({ title: "Actual fixture title" });
     const request = JSON.stringify(captured);
+    if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+      await Bun.write(
+        join(process.env.BRUV_REQUEST_CAPTURE_DIR, "auxiliary-request.json"),
+        JSON.stringify(captured, null, 2),
+      );
     expect(request.split("Only JSON. Match this schema:").length - 1).toBe(1);
     expect(request).toContain("Answer user request.");
     expect(captured.tools ?? []).toHaveLength(0);

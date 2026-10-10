@@ -95,7 +95,7 @@ def prove_offline_revocation(master, grants):
     assert "Revoke local capability for this task?" in text(), "confirmation missing"
     assert not revoked.exists(), "revoked before confirmation"
     send(b"\r", 1.2)  # confirm
-    assert revoked.exists() and "Owner not notified" in text(), "durable local revoke / honest status missing"
+    assert revoked.exists() and "Owner not told" in text(), "durable local revoke / honest status missing"
     print("PASS compiled terminal: offline task -> local capability -> confirm -> durable revoke; owner not notified")
 
 

@@ -784,7 +784,7 @@ describe("fail-closed checkpoint lifecycle", () => {
       expect(result.messages[0]).toMatchObject({ role: "assistant", model: "other" });
       expect(() =>
         h.handlers.get("before_provider_request")!({ payload: { ...payload, model: "other", input } }, h.ctx),
-      ).toThrow("serialization lost native Codex checkpoint");
+      ).toThrow("request lost native Codex checkpoint");
       expect(h.aborted).toBe(1);
     }
   });
@@ -1138,9 +1138,7 @@ describe("fail-closed checkpoint lifecycle", () => {
     const manager = checkpointManager(),
       h = harness(manager, model);
     h.handlers.get("context")!({ messages: manager.buildSessionContext().messages }, h.ctx);
-    expect(() => h.handlers.get("before_provider_request")!({ payload: { input: [] } }, h.ctx)).toThrow(
-      "serialization lost",
-    );
+    expect(() => h.handlers.get("before_provider_request")!({ payload: { input: [] } }, h.ctx)).toThrow("request lost");
     expect(h.aborted).toBe(1);
     const entry = manager.getEntries().find((e) => e.type === "compaction") as any;
     entry.details.version = 99;

@@ -17,6 +17,8 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { registerExecuteTool } from "../../src/typescript/extension";
 import asynchronousTasksExtension from "../../src/agent/extension";
+import remoteExtension from "../../src/remote/extension";
+import { RemoteClient } from "../../src/remote/client";
 import { bruvSystemPrompt, workingValues } from "../../src/prompts";
 
 function offlineStream(capture: (context: TranscriptContext) => void) {
@@ -121,7 +123,19 @@ test("production tasks extension guidance reaches the actual stream context", as
       noPromptTemplates: true,
       noThemes: true,
       systemPrompt: bruvSystemPrompt(),
-      extensionFactories: [{ name: "bruv-tasks", factory: asynchronousTasksExtension }],
+      extensionFactories: [
+        { name: "bruv-tasks", factory: asynchronousTasksExtension },
+        {
+          name: "bruv-remote",
+          factory: (pi) =>
+            remoteExtension(
+              pi,
+              new RemoteClient(join(dir, "remote-state.json"), async () => {
+                throw new Error("Offline fixture must not contact a remote host");
+              }),
+            ),
+        },
+      ],
       appendSystemPromptOverride: () => ["KEEP_APPEND_GUIDANCE"],
       agentsFilesOverride: () => ({
         agentsFiles: [{ path: join(dir, "AGENTS.md"), content: "KEEP_PROJECT_GUIDANCE" }],
@@ -188,6 +202,18 @@ test("production tasks extension guidance reaches the actual stream context", as
     if (process.env.BRUV_REQUEST_CAPTURE_DIR)
       await Bun.write(
         join(process.env.BRUV_REQUEST_CAPTURE_DIR, "sdk-remote-request.json"),
+        JSON.stringify(streamedContext, null, 2),
+      );
+    await session.agent.waitForIdle();
+    await session.prompt("/remote status");
+    await session.prompt("Read the saved remote report");
+    const withHumanReport = JSON.stringify(streamedContext);
+    expect(withHumanReport).toContain("No saved tasks or repository preparations.");
+    expect(withHumanReport).toContain("cached observations");
+    expectExecuteOnce(getCurrentSystemPrompt(streamedContext!.messages), getCurrentTools(streamedContext!.messages));
+    if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+      await Bun.write(
+        join(process.env.BRUV_REQUEST_CAPTURE_DIR, "sdk-human-remote-request.json"),
         JSON.stringify(streamedContext, null, 2),
       );
   } finally {

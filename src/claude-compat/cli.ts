@@ -139,7 +139,7 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
     await access(options.executablePath);
   } catch {
     throw new Error(
-      "Paired Bruv executable is missing or inaccessible; set provider-instance BRUV_CLAUDE_COMPAT_BRUV_PATH to the absolute installed bruv path.",
+      "Paired Bruv executable missing or not accessible. Set provider-instance BRUV_CLAUDE_COMPAT_BRUV_PATH to its absolute installed path.",
     );
   }
   await bootstrap(options.agentDir);

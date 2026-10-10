@@ -130,7 +130,7 @@ test("real offline assembly changes only messages across goal set, update, and c
 
     const messages = contexts.map((context) => context.messages);
     expect(messages[0]).not.toContain("Goal guidance:");
-    expect(messages[0]).not.toContain("Saved goal state (source of truth)");
+    expect(messages[0]).not.toContain("Saved goal (current state)");
     expect(messages[1]).toContain("Goal guidance:");
     expect(messages[1]).toContain("Goal API:");
     expect(messages[1]).toContain("Status: active");
@@ -138,7 +138,7 @@ test("real offline assembly changes only messages across goal set, update, and c
     expect(messages[2]).toContain("Status: blocked");
     expect(messages[2]).toContain("Need focused fixture");
     expect(messages[3]).not.toContain("Goal guidance:");
-    expect(messages[3]).not.toContain("Saved goal state (source of truth)");
+    expect(messages[3]).not.toContain("Saved goal (current state)");
   } finally {
     session?.dispose();
     await rm(dir, { recursive: true, force: true });

@@ -132,7 +132,7 @@ def prove_offline_revoke(master, grant):
     send_and_expect(b"Local\r", "Revoke: repo.read")
     send_and_expect(b"Revoke\r", "Revoke local capability for this task?")
     assert not revoked.exists(), "revoked before confirmation"
-    send_and_expect(b"\r", "Owner not notified; local authority has ended.")
+    send_and_expect(b"\r", "Owner not told; local grant ended.")
     assert revoked.exists(), "confirmed revoke was not persisted locally"
     print("PASS source terminal: offline task -> local capability -> confirm -> durable revoke; owner not notified")
 

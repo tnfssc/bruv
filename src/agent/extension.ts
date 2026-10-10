@@ -577,13 +577,12 @@ export default function asynchronousTasksExtension(
           },
         },
         signal,
-        (observed) =>
-          sessionHost?.observe({ type: "stopping", text: `Foreground stop observation: ${JSON.stringify(observed)}` }),
+        (observed) => sessionHost?.observe({ type: "stopping", text: `Foreground stop: ${JSON.stringify(observed)}` }),
         voiceOwner ? () => currentMainToolOwner(ctx.sessionManager) === voiceOwner : undefined,
       );
       sessionHost?.observe({
         type: "stopping",
-        text: `Session stop-work result (pending jobs may still run): ${JSON.stringify(result)}`,
+        text: `Session stop result (pending jobs may still run): ${JSON.stringify(result)}`,
       });
       return {
         ...(result as object),

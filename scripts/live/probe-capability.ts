@@ -10,11 +10,11 @@ import { createPromptPreview } from "../../src/prompt-preview";
 import { createHash } from "node:crypto";
 
 const guidance =
-  "\n\nYou are the same main Bruv agent in Live. Your execute tool is available in this voice turn. It runs JavaScript in the Bruv host; jobs.list(), shell(), and subagent() are host helpers inside execute, not direct function names. If the user asks for an action, call execute to perform the authorized action before reporting its result. Do not infer inability from the audio interface. If a tool has not run, say so; do not claim work completed. For audio cleanup, delegate to a worker using subagent through execute rather than asking the user to run a command.";
+  "\n\nSame Bruv agent in Live. Voice keeps host tools. execute runs JS in host; jobs.list(), shell() and subagent() are helpers inside it. User authorized work? Try it before reporting results. No tool run means no proof of work. Audio cleanup goes to a worker through subagent(), inside execute.";
 const intention =
-  "\n\nWhen an authorized request asks you to do something, select the needed execute call now instead of describing a command. Only a tool response confirms an action happened. If you just refused because you thought you lacked filesystem, shell, or audio-processing ability, reassess the available execute tool and attempt the safe requested action. Voice input/output does not remove host tools.";
+  "\n\nEarlier refusal is not proof of a current limit. Check available tools. Try the safe, authorized work now.";
 const description =
-  "Run JS/TS code in the host's current directory. Top-level await works. Use await jobs.list() for jobs; await shell(command) for shell; await subagent({type:'normal',prompt:'...'}) to delegate tasks including audio cleanup. Calls execute in the real app; this probe mocks results and never executes generated code.";
+  "Run JS/TS in host's current directory. Top-level await works. await jobs.list() reads jobs; await shell(command) runs commands; await subagent({type:'normal',prompt:'...'}) delegates work, including audio cleanup. Real app runs code. This probe returns mock results; generated code never runs.";
 function syntheticJobs() {
   return { jobs: [] };
 }
@@ -29,9 +29,9 @@ function syntheticAudio(code: unknown) {
         id: "probe-worker-1",
         status: "running",
         background: true,
-        output: "Synthetic delegation accepted; no actual audio processed",
+        output: "Mock delegation accepted. No audio processed.",
       }
-    : { error: "Probe intercepted direct audio command; no execution or delegation occurred" };
+    : { error: "Probe caught direct audio command. No code run or work delegated." };
 }
 
 const scenarios: Record<

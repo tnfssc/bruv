@@ -240,7 +240,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     if (!active.length && tasks.length === 1) return tasks[0].taskId;
     const preparations = await repositoryPreparations(client);
     if (!tasks.length && preparations.length === 1) return preparations[0].taskId;
-    throw Error("Choose a task from /remote status; more than one task is available");
+    throw Error("No single task selected. Choose one from /remote status.");
   };
   const pick = (
     ctx: ExtensionContext,
@@ -272,7 +272,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         task.lastError ||
         !["accepted", "running"].includes(task.task?.state ?? "")
       )
-        throw Error("Capability action unavailable: pinned owner changed, offline, or task ended; no grant sent");
+        throw Error("Capability unavailable: pinned owner changed, offline or task ended. No grant sent.");
       return task;
     };
     let task = pinned;
@@ -548,9 +548,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
                 pinned.lastError ||
                 !["accepted", "running"].includes(pinned.task?.state ?? "")
               )
-                throw Error(
-                  "Cancellation unavailable: pinned owner offline, changed, or task no longer active; no cancel sent",
-                );
+                throw Error("Cannot cancel: pinned owner offline, changed or task no longer active. No cancel sent.");
               publish(summary(await client.cancel(id)));
             }
           }
@@ -560,7 +558,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       publish(
         {
           error: String(error),
-          hint: "A failed/uncertain submission proves neither an answer nor confirmed cancellation. Check saved status.",
+          hint: "Failed or unknown submission is no proof of an answer or completed stop. Check saved state.",
         },
         "error",
       );
@@ -586,7 +584,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               host: rest[0],
               ...(await client.connect(rest[0], rest[1])),
               scope:
-                "Host and cache are shared across this OS user’s sessions. Repo snapshots and local read-only grants need explicit actions. No credentials copied.",
+                "Host and cache shared across this OS user's sessions. Repo snapshots and local read-only grants need explicit actions. No credentials copied.",
             };
             break;
           case "status":
@@ -617,7 +615,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
                 untrackedOmitted: untracked.preview,
                 untrackedCount: untracked.count,
                 untrackedCountIncomplete: untracked.incomplete,
-                question: `Omitting ${untracked.incomplete ? "at least " : ""}${untracked.count} untracked files by default. ${untracked.incomplete ? "Listing incomplete; bulk approval unavailable. " : ""}Explicitly approve paths with /remote launch-repo-json {"prompt":"...","include":["path"]}.`,
+                question: `${untracked.incomplete ? "At least " : ""}${untracked.count} untracked files left out by default. ${untracked.incomplete ? "List incomplete; cannot approve all at once. " : ""}User can approve paths with /remote launch-repo-json {"prompt":"...","include":["path"]}.`,
               });
               if (
                 !untracked.incomplete &&
@@ -752,7 +750,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         publish(
           {
             error: String(error),
-            hint: "/remote status shows saved task/question IDs. Transcript works offline. An uncertain operation needs the same ID to reconcile.",
+            hint: "/remote status shows saved task/question IDs. Transcript works offline. Outcome unknown? Check the same ID before retrying.",
           },
           "error",
         );

@@ -862,7 +862,7 @@ export function registerNativeCodexCompaction(
         dispatch: "none",
         cancellation: "safety",
       });
-      const message = "Provider serialization lost native Codex checkpoint. Request cancelled.";
+      const message = "Provider request lost native Codex checkpoint. Request cancelled.";
       ctx.ui?.notify?.(message, "error");
       ctx.abort();
       throw new Error(message);

@@ -6,7 +6,7 @@ Working together
 - Find simple way that works. More parts and state mean more ways to fail. Add what helps.
 - Temp files stay in this worktree's `.tmp/`. Scratch stays with work, easy to find and clean up.
 - Shared work needs clear owners and pieces that fit. User needs one useful result, not pile of pieces.
-- Solve real problems. Product progress beats defenses for unseen risks. Fix observed problems. Accept known gaps. Speculative guards, fallbacks, state and test matrices cost care. Keep essential security and data-loss protections.
+- Product progress beats defenses for unseen risks. Fix observed problems. Accept known gaps. Speculative guards, fallbacks, state and test matrices cost care. Keep essential security and data-loss protections.
 - All writing: match nearby words and rhythm. Short words. Short sentences. Plain talk. Same care for app text, prompts, docs, comments, notes, replies. UI or example says it? No repeat. Cut extra ideas, not needed facts, steps, warnings or reasons. Layout can save words. Need depth? Keep it. Exact names and facts still matter.
 
 Opinions

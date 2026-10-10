@@ -89,7 +89,7 @@ describe("compiled bruv CLI", () => {
     for (const option of ["--no-tools", "--no-builtin-tools", "--tools=read", "--exclude-tools=bash"]) {
       const result = await run([binary, option], { env: isolatedEnv() });
       expect(result.code).toBe(1);
-      expect(result.stderr).toContain("is not supported by bruv");
+      expect(result.stderr).toContain("not supported. Bruv fixes its core tool set.");
     }
   });
 
@@ -156,7 +156,7 @@ describe("source bruv startup boundaries", () => {
   test("tool-policy and offline-probe gates reject before runtime preparation", async () => {
     const removed = await invoke(["--tools=read"]);
     expect(removed.code).toBe(1);
-    expect(removed.stderr).toContain("is not supported by bruv");
+    expect(removed.stderr).toContain("not supported. Bruv fixes its core tool set.");
     const probe = await invoke(["--offline-openai-transport-probe"]);
     expect(probe.code).toBe(1);
     expect(probe.stderr).toContain("explicit loopback test gate");

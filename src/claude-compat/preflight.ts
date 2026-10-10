@@ -25,7 +25,7 @@ async function existingAncestor(path: string): Promise<{ path: string; suffix: s
 export async function preflightNativeHome(configDir: string | undefined, home: string): Promise<void> {
   if (!configDir || !isAbsolute(configDir) || configDir.includes("~") || configDir.includes("$HOME"))
     throw new Error(
-      "Native stream setup requires an explicit absolute CLAUDE_CONFIG_DIR (set T3 provider homePath to a connector-owned history directory; no ~ or $HOME).",
+      "Native stream setup needs an absolute CLAUDE_CONFIG_DIR. Set T3 provider homePath to a connector-owned history directory. No ~ or $HOME.",
     );
   try {
     const selected = await existingAncestor(resolve(configDir));

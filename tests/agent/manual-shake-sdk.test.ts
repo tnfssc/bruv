@@ -427,7 +427,7 @@ test("actual SDK aborts provider dispatch after a carry-forward persistence fail
     await session.prompt("ordinary request");
     expect(dispatches).toBe(0);
     expect(session.messages.at(-1)?.stopReason).toBe("error");
-    expect(session.messages.at(-1)?.errorMessage).toContain("Refusing to expose context");
+    expect(session.messages.at(-1)?.errorMessage).toContain("Context blocked");
   } finally {
     session?.dispose();
     globalThis.fetch = originalFetch;

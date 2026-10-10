@@ -258,7 +258,7 @@ export function registerGoalMode(
         {
           role: "custom" as const,
           customType: "bruv-goal-state",
-          content: `Goal guidance:\n${goalGuidance.trimEnd()}\n\nSaved goal state (source of truth):\n${formatGoal(goal)}`,
+          content: `Goal guidance:\n${goalGuidance.trimEnd()}\n\nSaved goal (current state):\n${formatGoal(goal)}`,
           display: false,
           timestamp: Date.now(),
         },

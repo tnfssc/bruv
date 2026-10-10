@@ -545,7 +545,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
     void Promise.resolve()
       .then(() => {
         if (this.stateValue !== "ready" || response.cancelled)
-          throw new Error("Tool request invalidated before dispatch");
+          throw new Error("Tool request no longer valid. Not sent.");
         entry.dispatched = true;
         return orchestration.execute({ id, name, args });
       })

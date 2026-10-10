@@ -106,7 +106,7 @@ export class InjectedMcpSession {
 
   static async open(config: unknown, options: McpSessionOptions): Promise<InjectedMcpSession> {
     if (!Array.isArray(options.appOwnedServers))
-      throw new Error("Trusted binding must explicitly classify app-owned MCP servers");
+      throw new Error("Trusted binding must name which MCP servers the app owns");
     const parsed = parseInjectedMcpConfig(config); // Zod clones: caller cannot replace credentials after admission.
     const session = new InjectedMcpSession({
       ...options,

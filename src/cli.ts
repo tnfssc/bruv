@@ -114,7 +114,7 @@ for (const argument of cliArgs) {
   if (argument === "--") break;
   const option = argument.split("=", 1)[0];
   if (removedToolOptions.has(option)) {
-    console.error(`${option} is not supported by bruv; its core tool set is fixed by the current product phase.`);
+    console.error(`${option} not supported. Bruv fixes its core tool set.`);
     process.exit(1);
   }
 }

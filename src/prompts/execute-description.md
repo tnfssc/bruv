@@ -1,12 +1,10 @@
-Run JS/TS in current directory. A short plain `label` says the action, not a claim it worked. Example: "Read task UI code". Expand for code and output.
+Run JS/TS in current directory. A short plain `label` says the action, not a claim it worked. Example: "Read task UI code".
 
 ## Code and output
 
 Top-level await, import/export, require(), Bun/Node/Web APIs, local modules and installed packages work. File, network and worker access depend on this environment.
 
-Bun.file, Bun.write and node:fs handle files. shell() runs commands; subagent() starts an agent. Helpers are already in execute. No bruv import. Helpers return values. console.log shows them:
-
-`const r = await shell("pwd"); console.log(r.output);`
+Bun.file, Bun.write and node:fs handle files. shell() runs commands; subagent() starts an agent. Helpers are already in execute. No bruv import. Helpers return values. console.log shows them.
 
 Text: 4,000 characters inline, then preview and file paths. stdout and stderr share a 10 MiB capture limit. outputByteLimit sets it for this call. Truncation is reported.
 
@@ -36,7 +34,7 @@ Workspace and target are separate choices.
 - SSH: exact human-pinned connection.host from /remote connect. Only the user can pin hosts. Reserved host local is "ssh:local".
 - Named SSH: model: "provider/model" and supported thinking overrides. Default is the destination profile, not laptop settings. Local and scoped-native launches reject these overrides.
 - SSH and scoped-native: omit waitSeconds or use 0. No positive wait or timeoutSeconds; jobs.stop cancels. Native backend owns depth/profile limits and delivery. Scoped-native rejects cross-placement.
-- SSH launch: durable task ID even if outcome is unknown, plus workspace/snapshot facts. Jobs deliver progress and results. No sync/inbox/answer loop. Legacy remote.launch/launchRepository reject task work. remote.status() checks the backend, not provider access.
+- SSH launch: durable task ID even if outcome is unknown, plus workspace/snapshot facts. Jobs deliver progress and results. No sync/inbox/answer loop. Legacy remote.launch/launchRepository reject task work. remote.status() reads saved backend state.
 
 `workspace`: `{ kind: "inherit" }` (default) or `{ kind: "worktree", baseRef?, branch? }`. Worktrees need Git.
 
@@ -66,7 +64,7 @@ Jobs can outlive execute, its cancellation or handoff. A stop request is not pro
 - `await jobs.input(id, data, {closeInput?})` — Send input; stays open unless closeInput is true.
 - `await jobs.closeInput(id)` — Close input; job keeps running.
 - `await jobs.stop(id)` — Stop one job by exact listed ID.
-- `await jobs.stopWork()` — Ask to cancel this session’s jobs and descendants, with existing confirmation. Reports each acknowledgement, pending state or error, plus whether discovery finished. Foreground cancellation waits until execute gets this report.
+- `await jobs.stopWork()` — Ask to cancel this session's jobs and descendants, with existing confirmation. Reports each acknowledgement, pending state or error, plus whether discovery finished. Foreground cancellation waits until execute gets this report.
 - `await jobs.snooze(id, {minutes})` — Delay attention: >0, max 55 minutes.
 - `await jobs.setWatch(id, {enabled})` — Attention starts on. false off, true on. Completion/failure notices still arrive.
 
@@ -103,6 +101,6 @@ Live can ask/read questions. No targeted voice replies. Speech is not a saved an
 
 /live model lists voice models across providers and picks the provider. /live provider sets credentials, not a model filter. Saved credentials are not proof of API access.
 
-`await live.stop()` waits for this session’s mic, playback and provider teardown. Jobs keep running. Its result is proof: stopped: false has teardown errors, not a completed stop.
+`await live.stop()` waits for this session's mic, playback and provider teardown. Jobs keep running. Its result is proof: stopped: false has teardown errors, not a completed stop.
 
 Voice and work are separate. Both need stopping? Voice first, then jobs.stopWork. Speech interruption ends neither Live session nor jobs.

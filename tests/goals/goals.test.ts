@@ -464,7 +464,7 @@ test("goal guidance is conditional and accompanies every persisted status", () =
     expect(result.messages).toHaveLength(2);
     expect(result.messages[1]).toMatchObject({ role: "custom", customType: "bruv-goal-state", display: false });
     expect(result.messages[1].content).toContain("Goal guidance:\n- Goal API:");
-    expect(result.messages[1].content).toContain("Saved goal state (source of truth)");
+    expect(result.messages[1].content).toContain("Saved goal (current state)");
     expect(result.messages[1].content).toContain(`Status: ${status}`);
   }
 });
@@ -477,7 +477,7 @@ test("waiting job completion reactivates at the next turn boundary", () => {
 
   expect(h.runtime.get()?.status).toBe("active");
   const result = h.assembleContext([]);
-  expect(result.messages.at(-1).content).toContain("Saved goal state");
+  expect(result.messages.at(-1).content).toContain("Saved goal (current state)");
   expect(result.messages.at(-1).content).toContain("Status: active");
 });
 

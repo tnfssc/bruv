@@ -375,7 +375,7 @@ for (const change of ["offline", "changed-owner"] as const) {
       },
     });
     expect(cancels).toBe(0);
-    expect(messages.some((m) => JSON.stringify(m).includes("no cancel sent"))).toBe(true);
+    expect(messages.some((m) => JSON.stringify(m).includes("No cancel sent"))).toBe(true);
   });
 }
 
@@ -514,7 +514,7 @@ test("capability, delivery uncertainty, blocked, failure and integration review 
   expect(poll()).toContain("capability request");
   expect(poll()).toBe("");
   t.replyDelivery = { q: { replyId: "reply-1", status: "uncertain" } };
-  expect(poll()).toContain("delivery uncertain");
+  expect(poll()).toContain("delivery unknown");
   expect(poll()).toBe("");
   t.task.state = "unknown";
   expect(poll()).toContain("unknown");
@@ -1040,7 +1040,7 @@ test("capability menu shows remote request details and refuses changed owner aft
       },
     },
   });
-  expect(messages.at(-1).content).toContain("no grant sent");
+  expect(messages.at(-1).content).toContain("No grant sent");
 });
 
 test("open remote menu signals snapshot freshness without rewriting the picker or transcript", async () => {
@@ -1246,7 +1246,7 @@ test("offline terminal menu revokes only the selected local grant; Escape and de
     await run(true);
     expect(localCapabilityGrants(client, "first")).toEqual([]);
     expect(localCapabilityGrants(client, "second")).toHaveLength(1);
-    expect(messages.at(-1).content).toContain("Owner not notified");
+    expect(messages.at(-1).content).toContain("Owner not told");
     expect(calls.filter((x) => x === "confirm")).toHaveLength(2);
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -1309,7 +1309,7 @@ test("changed-owner accepted task loses local grant without wrong-owner dispatch
       },
     });
     expect(localCapabilityGrants(client, "one")).toEqual([]);
-    expect(output.at(-1).content).toContain("Owner not notified");
+    expect(output.at(-1).content).toContain("Owner not told");
     expect(picks).toBe(5);
   } finally {
     await rm(dir, { recursive: true, force: true });

@@ -239,7 +239,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     };
     try {
       await expect(createClaudeCompatRuntime({ ...options, fastMode: true })).rejects.toThrow(
-        "Anthropic native fast mode is deferred",
+        "Anthropic fast mode not supported yet.",
       );
       expect(
         manager.getBranch().filter((entry) => entry.type === "custom" && entry.customType === NATIVE_FAST_ENTRY),
@@ -258,7 +258,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
             },
             signal,
           ),
-        ).rejects.toThrow("Anthropic native fast mode is deferred");
+        ).rejects.toThrow("Anthropic fast mode not supported yet.");
         expect(nativeFastEnabled(runtime.session.extensionRunner.createContext())).toBe(false);
       } finally {
         await runtime.close();

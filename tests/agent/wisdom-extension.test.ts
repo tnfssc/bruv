@@ -58,14 +58,14 @@ describe("project wisdom extension", () => {
   test("wisdom goes with the code before saying done", () => {
     const f = fixture(true);
     const { systemPrompt } = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
-    expect(systemPrompt).toContain("Wisdom travels with code.");
+    expect(systemPrompt).toContain("Code and wisdom stay together.");
     expect(systemPrompt).toContain("before last commit, PR or handoff.");
-    expect(systemPrompt).toContain("Wisdom travels with code. Write as work moves, before last commit, PR or handoff.");
+    expect(systemPrompt).toContain("Write as work moves, before last commit, PR or handoff.");
     expect(systemPrompt).toContain("Edits uncommitted or commits unshared? Say what left.");
     expect(systemPrompt).toContain("Done means code and wisdom where user asked. Check files and commits.");
-    expect(systemPrompt).toContain("Task done or PR merged? No more edits there.");
+    expect(systemPrompt).toContain("Task done or PR merged? Leave that worktree as shipped.");
     expect(systemPrompt).toContain("Release facts go with release or task, not old repo notes.");
-    expect(systemPrompt).toContain("Later repo change needs new task and PR. No quiet edits on old branch.");
+    expect(systemPrompt).toContain("Later repo change needs new task and PR.");
     expect(systemPrompt).not.toContain("After release or broad review, look across the work too.");
     // Do not add a writer or a Git check after the turn has ended.
     expect([...f.handlers.keys()]).toEqual(["before_agent_start"]);

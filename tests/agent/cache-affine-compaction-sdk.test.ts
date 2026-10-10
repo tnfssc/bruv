@@ -232,6 +232,11 @@ for (const [provider, , api] of [
       expect(captured).toHaveLength(2);
       const first = captured[0].payload,
         last = captured[1].payload;
+      if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+        await Bun.write(
+          join(process.env.BRUV_REQUEST_CAPTURE_DIR, `compaction-${provider}.json`),
+          JSON.stringify(last, null, 2),
+        );
       expect(last.tools).toEqual(first.tools);
       expect(captured[1].headers["x-bruv-fixture-routing"]).toBe("same-route");
       if (provider === "openai-codex") {

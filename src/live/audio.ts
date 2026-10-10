@@ -510,7 +510,7 @@ export class LiveAudio {
     const stopped = this.waitFor("stopped", this.options.stopTimeoutMs ?? 2000);
     void this.input.send({ type: "stop" }).catch(() => this.close());
     this.stoppedPromise = stopped.catch(() => {
-      this.stopError = "Audio stop acknowledgement was not observed";
+      this.stopError = "Audio stop not acknowledged";
       this.close();
     });
     return this.stoppedPromise;

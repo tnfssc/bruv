@@ -104,7 +104,7 @@ test("overlap remains separate model context, not words added to user speech", (
   expect(context[0]).toMatchObject({
     role: "custom",
     display: false,
-    content: "Provisional voice transcription; overlapping or late fragments, not reconciled",
+    content: "Provisional voice transcription; overlapping or late fragments, not joined into a final transcript",
   });
   expect(context[1]).toBe(messages[1]);
   expect(JSON.stringify(context)).not.toContain("Overlapping provisional voice fragments:");
