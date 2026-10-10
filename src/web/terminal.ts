@@ -2,9 +2,10 @@ import type { ServerWebSocket, Subprocess } from "bun";
 import { InputOwnership } from "./input-ownership";
 
 export interface SocketData {
-  channel: string;
+  channel: "terminal" | "state" | "live-audio";
   after?: number;
-  [key: string]: unknown;
+  tabId?: string;
+  audioOwner?: string;
 }
 
 const REPLAY_BYTES = 2 * 1024 * 1024;

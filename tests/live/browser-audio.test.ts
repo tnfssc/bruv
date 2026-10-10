@@ -18,9 +18,8 @@ function fixture(targetAvailable = true) {
   const requests: { session: string; owner: string; request: string }[] = [];
   const cancelled: typeof requests = [];
   const relay = createAudioRelay({
-    allowedOrigins: ["https://bruv.test"],
     authorizeBrowser: (req, id) =>
-      id === "owner" && req.headers.get("cookie") === "auth=yes"
+      req.headers.get("origin") === "https://bruv.test" && id === "owner" && req.headers.get("cookie") === "auth=yes"
         ? (req.headers.get("x-attachment") ?? privateOwner)
         : false,
     requestBrowser: (session, owner, request) => {
@@ -251,8 +250,7 @@ test("malformed/browser tool messages and backpressure close audio; no arbitrary
   await until(() => closed);
   // Injectable mount uses bounded server backpressure, independent of a fast loopback socket.
   const relay = createAudioRelay({
-    allowedOrigins: ["https://bruv.test"],
-    authorizeBrowser: () => privateOwner,
+    authorizeBrowser: (req) => (req.headers.get("origin") === "https://bruv.test" ? privateOwner : false),
     requestBrowser: () => true,
   });
   const secret = relay.registerSession("s");

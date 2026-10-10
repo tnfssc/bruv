@@ -64,11 +64,13 @@ assert(built.success, String(built.logs));
 const bundle = built.outputs[0];
 assert(bundle);
 const javascript = await bundle.text();
-const origins: string[] = [];
 const relay = createAudioRelay({
-  allowedOrigins: origins,
   authorizeBrowser: (req, id) =>
-    id === "probe" && req.headers.get("cookie") === "probe=authorized" ? "probe-owner" : false,
+    req.headers.get("origin") === server.url.origin &&
+    id === "probe" &&
+    req.headers.get("cookie") === "probe=authorized"
+      ? "probe-owner"
+      : false,
   requestBrowser: (_id, _owner, request) => {
     void page.evaluate((request: string) => (window as ProbeWindow).requestVoice(request), request);
     return true;
@@ -93,7 +95,6 @@ const server = Bun.serve<AudioRelayData>({
   },
   websocket: relay.websocket,
 });
-origins.push(server.url.origin);
 const browser = await chromium.launch({
   executablePath,
   headless: process.env.HEADLESS !== "0",

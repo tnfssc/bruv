@@ -14,7 +14,9 @@ Touch belongs to the visible connected pane from start to end. Reject hidden/dis
 
 ## Package patch
 
-[patches/ghostty-web@0.4.0.patch](../../patches/ghostty-web@0.4.0.patch) patches both published ESM/CJS entries and types through Bun's patchedDependencies. The exact path has `-whitespace` in [.gitattributes](../../.gitattributes): preserve blank diff context and upstream CRLF declarations for replay. Parser, canvas renderer and WASM remain upstream; no global production event hooks.
+[patches/ghostty-web@0.4.0.patch](../../patches/ghostty-web@0.4.0.patch) patches the shipped ESM entry and its types through Bun's patchedDependencies. The exact path has `-whitespace` in [.gitattributes](../../.gitattributes): preserve blank diff context and upstream CRLF declarations for replay. Parser, canvas renderer and WASM remain upstream; no global production event hooks.
+
+Bruv imports the ESM entry. The unused CommonJS distribution stays upstream; we do not maintain or test a second renderer fork. Compiled asset checks verify that the browser bundles the patched entry with no embedded default WASM.
 
 The patch exists for these regressions:
 
@@ -27,6 +29,8 @@ The patch exists for these regressions:
 
 UTF-8 1005, urxvt 1015 and pixel-SGR 1016 mouse encodings emit nothing, not fallback arrows. Legacy events beyond cell 223 are dropped. A pending drag release uses its last reported cell; SGR retains full coordinates. DOM buttons 0–2 are covered; extended buttons, pen mapping and window-only focus changes are not.
 
+Output writes emit protocol replies synchronously at this pin. The browser tags those batches with the output sequence; TerminalSession accepts each batch once. Replayed output can complete an unanswered query but cannot send a second answer. Human input follows a separate path. Check this boundary when updating Ghostty.
+
 Native clipboard input goes through `Terminal.paste()`: 0.4.0's input-handler paste listener bypasses bracketed-paste mode. The browser captures that event before the handler. Human input is framed below the server byte limit without splitting surrogate pairs; binary mouse bytes stay binary. Normal-buffer swipes use wheel input when `hasMouseTracking()` is true, otherwise they scroll history.
 
 ## Assets and updates
@@ -37,7 +41,7 @@ Keep [Ghostty/Unicode/Zig provenance and notices](../../licenses/third-party/gho
 
 When changing the pin or patch:
 
-1. Update the package pin, lock and both patched entry points/types together. Review provenance and license inputs when the dependency changes.
+1. Update the package pin, lock and the ESM entry and types together. Review provenance and license inputs when the dependency changes.
 2. Run `bun install --frozen-lockfile` and `bun test tests/dependencies/ghostty-web-patch.test.ts`. Check fresh patch replay, not only already-patched node_modules.
 3. Run `bun run check`, `bun run build`, `bun run generate:notices` and `bun test tests/web tests/packaging/prepare-assets.test.ts tests/packaging/generate-third-party-notices.test.ts tests/release/release-workflows.test.ts`.
 4. Check the compiled binary with the browser commands below. Compare real cells and inspected populated captures; asset hashes and canvas ink alone do not prove current CLI output. Historical draw calls can survive erasures.

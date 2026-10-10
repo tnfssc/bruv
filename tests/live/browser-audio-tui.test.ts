@@ -23,8 +23,7 @@ test.skipIf(!Bun.which("tmux"))(
     let browser: WebSocket | undefined;
     const Client = WebSocket as unknown as new (url: string, options: { headers: Record<string, string> }) => WebSocket;
     const relay = createAudioRelay({
-      allowedOrigins: ["https://bruv.test"],
-      authorizeBrowser: () => privateOwner,
+      authorizeBrowser: (req) => (req.headers.get("origin") === "https://bruv.test" ? privateOwner : false),
       requestBrowser: (session, owner, request) => {
         requests.push({ session, owner, request });
         browser = new Client(
