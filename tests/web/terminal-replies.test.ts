@@ -9,7 +9,7 @@ afterEach(async () => {
 const command = [
   process.execPath,
   "-e",
-  'process.stdin.setRawMode(true); console.log("RAW READY"); process.stdin.on("data", d => { const s=d.toString(); if(s==="query") process.stdout.write("\\x1b[6n"); else if(s==="split") { process.stdout.write("\\x1b["); setTimeout(()=>process.stdout.write("6n"),30); } else if(s==="batch") process.stdout.write("\\x1b[6n\\x1b[6n"); else if(s==="offline") setTimeout(()=>process.stdout.write("\\x1b[6n"),50); else console.log("BYTES "+d.toString("hex")); }); setInterval(()=>{},1000);',
+  'process.stdin.setRawMode(true); console.log("RAW READY"); process.stdin.on("data", d => { const s=d.toString(); if(s==="query") process.stdout.write("\\x1b[6n"); else if(s==="split") { process.stdout.write("\\x1b["); setTimeout(()=>process.stdout.write("6n"),30); } else if(s==="batch") process.stdout.write("\\x1b[6n\\x1b[6n"); else if(s==="flood") process.stdout.write("x".repeat(3*1024*1024)+"FLOOD END"); else if(s==="offline") setTimeout(()=>process.stdout.write("\\x1b[6n"),50); else console.log("BYTES "+d.toString("hex")); }); setInterval(()=>{},1000);',
 ];
 function create(ticket?: (owner: string | undefined) => string) {
   const session = new TerminalSession(command, process.cwd(), process.env, undefined, ticket);
@@ -119,26 +119,24 @@ test("an unanswered query while offline completes once after reconnect", async (
   expect(count(b.text(), "BYTES 1b5b313b3152")).toBe(1);
 });
 
-test("protocol replies bypass InputOwnership; shared typing and command owners stay human", async () => {
+test("protocol replies cannot mint human author tickets", async () => {
   const owners: (string | undefined)[] = [];
   const session = create((owner) => {
     owners.push(owner);
-    return "ticket";
+    return "1".repeat(32);
   });
   const a = viewer(session, "a");
   await until(() => a.text().includes("RAW READY"));
   const b = viewer(session, "b");
   a.input("/li");
+  expect(owners).toEqual(["a"]);
   // Even an arbitrary protocol batch with Enter cannot call the human ticket path.
   b.reply(b.sequence(), "protocol\r");
-  expect(owners).toEqual([]);
-  a.input("ve\r");
   expect(owners).toEqual(["a"]);
-  a.input("shared");
+  a.input("ve\r");
+  expect(owners).toEqual(["a", "a"]);
   b.input(" typing\r");
-  expect(owners).toEqual(["a", undefined]);
-  b.input("/live\r");
-  expect(owners).toEqual(["a", undefined, "b"]);
+  expect(owners).toEqual(["a", "a", "b"]);
 });
 
 test("a viewer cannot claim an output chunk it has not received; detached sockets cannot reply", async () => {
@@ -151,4 +149,30 @@ test("a viewer cannot claim an output chunk it has not received; detached socket
   session.detach(a.socket);
   a.reply(seq);
   expect(a.messages.some((m) => m.type === "terminal-reply-ack")).toBe(false);
+});
+
+test("an evicted pending reply reports view loss instead of a false acknowledgement", async () => {
+  const session = create();
+  const a = viewer(session, "a");
+  await until(() => a.text().includes("RAW READY"));
+  const pid = session.pid;
+  a.input("query");
+  await until(() => a.text().includes("\x1b[6n"));
+  const query = a.sequence();
+  a.input("flood");
+  await until(() => a.text().endsWith("FLOOD END"));
+  const cursor = a.sequence();
+  a.detach();
+  const retry = viewer(session, "retry", cursor);
+  retry.reply(query);
+  expect(retry.messages.some((message) => message.type === "gap")).toBe(true);
+  expect(retry.messages.some((message) => message.type === "terminal-reply-ack")).toBe(false);
+  expect(retry.socket.readyState).toBe(3);
+  retry.detach();
+  const healthy = viewer(session, "healthy", cursor);
+  healthy.input("barrier");
+  await until(() => healthy.text().includes("BYTES 62617272696572"));
+  expect(healthy.text()).not.toContain("BYTES 1b5b");
+  expect(session.pid).toBe(pid);
+  expect(session.exited).toBe(false);
 });

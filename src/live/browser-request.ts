@@ -38,28 +38,24 @@ export function createBrowserRequestInput() {
     attach(editor: CustomEditor) {
       attached = editor;
       let handling = false;
-      let onSubmit = editor.onSubmit;
-      const descriptor = Object.getOwnPropertyDescriptor(editor, "onSubmit");
       const originalHandleInput = editor.handleInput;
       const originalSetText = editor.setText;
-      Object.defineProperty(editor, "onSubmit", {
-        configurable: true,
-        get: () => (text: string) => {
-          submitted = mixed ? undefined : ticket;
-          clear();
-          return onSubmit?.(text);
-        },
-        set: (callback: typeof editor.onSubmit) => {
-          onSubmit = callback;
-        },
-      });
       const handleInput = editor.handleInput.bind(editor);
       editor.handleInput = (data) => {
+        if (handling) return handleInput(data);
+        const callback = editor.onSubmit;
+        const submit = (text: string) => {
+          submitted = mixed ? undefined : ticket;
+          clear();
+          return callback?.call(editor, text);
+        };
+        editor.onSubmit = submit;
         handling = true;
         try {
           handleInput(data);
         } finally {
           handling = false;
+          if (editor.onSubmit === submit) editor.onSubmit = callback;
           if (!editor.getText()) clear();
         }
       };
@@ -69,7 +65,6 @@ export function createBrowserRequestInput() {
         if (!handling && !text) clear();
       };
       return () => {
-        Object.defineProperty(editor, "onSubmit", { ...descriptor, value: onSubmit });
         editor.handleInput = originalHandleInput;
         editor.setText = originalSetText;
         clear();

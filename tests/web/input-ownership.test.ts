@@ -305,3 +305,22 @@ test("replaced editors cannot use a stale submitted ticket", () => {
     f.close();
   }
 });
+
+test("submit callbacks still compose without recursion or losing the captured ticket", () => {
+  const f = editorFixture();
+  try {
+    let calls = 0;
+    const previous = f.editor.onSubmit;
+    f.editor.onSubmit = (text) => {
+      if (++calls > 2) throw new Error("submit callback cycle");
+      previous?.(text);
+    };
+    f.input("a", "/live\r");
+    expect(calls).toBe(1);
+    expect(f.submissions).toHaveLength(1);
+    expect(f.submissions[0].owner).toBe("a");
+    expect(f.submissions[0].ticket).toMatch(/^[a-f0-9]{32}$/);
+  } finally {
+    f.close();
+  }
+});

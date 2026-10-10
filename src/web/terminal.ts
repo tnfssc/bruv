@@ -174,7 +174,16 @@ export class TerminalSession {
         // This session owns protocol input. The first renderer batch claims
         // the output chunk; replay and socket handover cannot answer it twice.
         const chunk = this.chunks.find((chunk) => chunk.seq === message.seq);
-        if (chunk && !chunk.replied && this.code === undefined) {
+        if (!chunk) {
+          this.sendTo(socket, {
+            type: "gap",
+            message:
+              "View lost · a terminal reply expired before delivery. The original work still runs. Open a new terminal.",
+          });
+          socket.close(1008, "Terminal reply expired");
+          return;
+        }
+        if (!chunk.replied && this.code === undefined) {
           chunk.replied = true;
           this.process?.terminal?.write(message.data);
         }

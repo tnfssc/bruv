@@ -54,7 +54,7 @@ bun scripts/web/browser-font-smoke.mjs
 bun scripts/web/browser-theme-smoke.mjs
 bun scripts/web/browser-ghostty-lifecycle.mjs
 bun scripts/web/browser-ghostty-mouse.mjs
-bun scripts/web/browser-recovery-design.mjs
+bun scripts/web/browser-ui.mjs
 ```
 
 Use the operator guide's compiled CLI, workspace, multiplayer and audio checks too. Keep mouse/focus/disposal, late canceled touch, same-PID replay gap, real-cell accessibility and voice handoff assertions. Browser fixtures must wait for actual CLI submit readiness, not just WebSocket ready. Send real keyboard input; filling an editable host does not prove PTY input. Keep Escape and Enter separate where the CLI could combine them as Alt+Enter.
