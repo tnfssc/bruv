@@ -1,31 +1,33 @@
-# Bruv in a browser means a real terminal
+# Browser terminal ownership
 
-Task: browser-terminal half of bruv web, 2026-10-09. Source and interfaces: [src/web](../../src/web/README.md). The audio owner integrates separately. Herder is not part of this task.
+`bruv web` embeds a real terminal renderer and starts the ordinary CLI on authenticated attachment. It is not a chat UI or bundled T3. See the [operator guide](../../src/web/README.md), [renderer](ghostty-renderer.md) and [surface](surface-rethink.md).
 
-The old web command printed an external T3 guide. We keep that under bruv web --setup. The default command now starts a loopback HTTP/WebSocket server and launches the ordinary CLI in a PTY when an authenticated browser attaches. It is not another chat UI and it does not bundle T3.
+## Server and PTYs
 
-## What we learned
+One [TerminalSession](../../src/web/terminal.ts) owns each tab's Bun PTY. Attachments own views, not the process. Joining never evicts a viewer. Detach removes a view; tab/workspace deletion and server shutdown stop the owned process group with TERM then KILL. This includes lingering descendants after CLI exit, but not detached Bruv jobs. Deletion never removes folder files.
 
-Bun 1.4.2 has native Bun.Terminal. A small probe got a real TTY, stty size 31 91, and exit 0. Its POSIX PTY child was a process-group/session leader with PID = PGID = SID. We can use that group for shutdown instead of adding node-pty or a shell wrapper. Shutdown tests cover a CLI that ignores TERM and its child tool. TERM then KILL reaps both and releases sockets. Detached Bruv jobs are not covered by PTY group cleanup.
+The [server](../../src/web/server.ts) owns the shared workspace/tab registry and revisioned snapshots. Mutations publish before waiting for teardown. REST replies can trail events; the browser ignores older revisions. Selection stays local. Folder identity uses realpath relative to the launch folder. Opening an existing folder returns its workspace ID without creating a tab, publishing a revision or renaming it.
 
-Use an actual terminal renderer. xterm.js 6.0.0 and addon-fit 0.11.0 are bundled at build time and embedded into the normal executable. The compiled CLI does not need node_modules, a CDN, or a separate asset install. Existing release names and version stay unchanged.
+Visible attachments report available geometry. The server chooses the per-axis minimum and broadcasts it. Hidden views withdraw; with no active views, the last size remains. Size messages must not trigger resize replies. An exited view can change display size without resizing its closed PTY.
 
-A token is shell access. Bind loopback only. Require an exact Host and Origin plus the random token before any API dispatch, including future audio routes. Put the token in the initial fragment, then sessionStorage; send it in a WebSocket subprotocol or HTTP Bearer header. Do not make an unauthenticated fallback or a broad Origin list. Tunnel users must preserve the printed browser origin.
+Output replay is bounded to 2 MiB and private to the joining view. An expired cursor reports a gap and freezes that view, not the CLI. Reconnect retains the same PID. Never replay or queue input. Terminal/state sockets have per-client send-backlog bounds; a slow observer closes independently while healthy views continue. Fresh-view replay after old resizes is best effort until redraw. Registry and replay are in memory, not durable restart recovery.
 
-A terminal replay is not conversation history. Reconnect must keep the same PID and disable input while offline. Only output is replayed, never input. Keep a bounded raw replay window and report gaps. This first version does not save durable terminal snapshots or resize history; refreshing after past resizes is best effort until the next CLI redraw. Existing-tab reconnect retains its renderer. An expired replay or exited CLI does not create a replacement. These limits are deliberate and documented, not hidden recovery claims.
+## Access and voice
 
-WebSocket tests under Bun need headers: { Origin: ... }, not ws's origin option. Bun uses its own WebSocket implementation and ignored that option in our probe. Also avoid Bun console color escapes in fixture assertions about booleans/numbers. The first timeouts were test setup errors, not PTY failures.
+The token is shared shell authority, not participant identity. Bind loopback. Check exact Host, Origin and token before API dispatch. WebSocket upgrades and mutations require Origin; authenticated GET may omit it. The initial token lives in the URL fragment, then sessionStorage; requests use Bearer auth or a WebSocket subprotocol. Remote use needs a matching SSH tunnel, not public HTTP or an unreviewed proxy mount.
 
-An extension fetch needs to distinguish a successful upgrade from an unhandled route. The interface returns "upgraded" for the former and undefined for the latter. Otherwise the HTTP dispatcher can return 404 after an extension upgraded. A focused extension socket test proves the seam before audio code is attached.
+The [input owner](../../src/web/input-ownership.ts) issues a bounded one-use ticket at Enter and inserts a private OSC marker into PTY input. The root Live extension consumes it before the editor. Capture the ticket when `/live` is invoked, before async settings or dialogs; later keystrokes cannot retarget it. Mixed authorship rejects voice rather than guessing an owner. Ctrl-C resets authorship; focus/resize and bracketed-paste newlines are not submissions.
 
-## Proof and limits
+The [audio relay](../../src/web/audio-relay.ts) consumes that ticket and targets only its attached browser. Admission needs the matching request and private attachment capability. Shared owner IDs are hashes for display, never credentials. Keep per-tab CLI relay secrets out of browser state, URLs and logs, and strip them from [descendant environments](../../src/delegation-environment.ts). Invalid relay configuration fails closed, not back to a server microphone.
 
-Focused tests cover shared token/Origin/Host protection, no pre-auth CLI startup, PTY input and resize, same-PID reconnect and bounded replay, actual exit code, failed startup without retries, owned group shutdown, and the authenticated extension WebSocket seam.
+One voice reservation spans the server. Page load, focus, selection and observer joins cannot acquire it. Observers cannot steal or release it. Owner attachment loss, CLI/device error, audio close, cancellation or disposal releases voice without stopping coding work. Stale requests and late closes cannot release a newer reservation. Late permission tracks must stop before capture is wired. App code cannot dismiss the browser's permission prompt.
 
-The compiled Bruv TUI starts offline in an owned home/config/agent fixture. Its model footer renders and typing reaches its actual editor. A Chromium smoke opens the printed compiled bruv web URL, types browser PTY input, reconnects, refreshes, and resizes to 390 px. Wide and narrow screenshots were inspected. No page errors or horizontal page overflow; server SIGTERM exits 0. Reproduce with scripts/web/browser-smoke.mjs. Screenshots and disposable outputs stay ignored under artifacts; fixtures stay under /tmp/bruv-web-*.
+Run `/live stop` in the voice tab before requesting voice elsewhere. The command stops that CLI's Live run, not every tab. Trusted collaborators still share command authority. Provider, agent and tool ownership stays in the real CLI; the browser is only its audio device.
 
-Final checks passed: bun run check, paired bun run build, 98 tests across terminal/T3 guide/architecture/CLI/packaging, paired standalone smoke, production notice generation (including the two xterm packages), Chromium smoke, and git diff --check. Focused lint exits 0 with existing-style warnings (non-null assertions and assignment expressions); no clean-lint claim.
+## Regression checks
 
-This is Linux/Bun 1.4.2 proof. macOS, Termux, real paid-provider requests, physical mic/audio, and parent whole-flow integration remain separate acceptance. No src/live edits or audio relay were made.
+[Workspace/PTY tests](../../tests/web/multiplexer.test.ts), [server tests](../../tests/web/server.test.ts) and [multiplayer tests](../../tests/web/multiplayer-server.test.ts) cover auth, same-PID reconnect, replay gaps, shared geometry, slow observers and group cleanup. [Audio tests](../../tests/live/browser-audio.test.ts) cover tickets, refusal, retry, cancellation and stop; [environment tests](../../tests/remote/remote-descendant-environment.test.ts) cover secret scrubbing. Keep assertions, not old pass counts. Commands and device limits are in the operator guide.
 
-Values unchanged. Values 1 (requested mechanism), 2 (honest proof), 5 (bounded use), 6 (owned cleanup) and 10 (handoff with exact interfaces) already cover the lesson. Keep PTY/browser details with this feature instead of adding another general rule.
+For Bun socket fixtures, send `headers: { Origin: ... }`; ws's `origin` option is not equivalent. The extension dispatcher must distinguish successful upgrade from an unhandled route, or it can return 404 after upgrading. Packaging fixtures must include every new module and license input. Isolate child temp/config state rather than inheriting worker placement or changing product behavior to fix a fixture.
+
+Retired browser recipes and CI diaries are recoverable with `git show f54a51c77863169409c433b5e112d2bddc32d83b:<path>` (repo-relative path). They describe old controls and runs, not the current contract.

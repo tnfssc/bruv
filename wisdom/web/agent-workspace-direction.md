@@ -1,6 +1,6 @@
 # Worktrees and agent tabs
 
-User direction, 2026-10-09. This is a future design brief, not shipped behavior. Keep it separate from the current command-driven browser microphone change.
+User direction, 2026-10-09. Deferred design brief. Agent discovery, read-only agent tabs, retained finished output and presence are not shipped. See the [current browser contract](../../src/web/README.md).
 
 ## The shape
 
@@ -18,12 +18,6 @@ Refine how running, attention, done, failure, and cancellation appear. Decide wh
 
 Use actual agent/worktree lifecycle data. Do not start duplicate agents just to display them, or infer completion from terminal output. The existing interactive root terminal and a read-only subagent view need different input permissions.
 
-## Current work
-
-The active task remains /live requesting browser audio without a manual microphone button. This note does not add agent discovery or read-only tabs to that task.
-
-Recorded in branch bruv/web-live-command-microphone, worktree /home/tnfssc/.bruv/worktrees/t3-6f8b2e16-5442693331ce-task_021035a9. Include this brief with the current task's wisdom before its final delivery. Values need no change: shared state, explicit ownership, and honest scope already cover this direction.
-
 ## People and presence, later
 
 User also wants lightweight participant identity and live presence:
@@ -35,7 +29,7 @@ User also wants lightweight participant identity and live presence:
 
 Display names and avatars are not authentication or new access rights. Exact presence rules, multiple tabs for one person, reconnects, and image handling still need design.
 
-Priority now: one user can use the same instance in two browser tabs, navigate independently, and share the terminal when both open the same workspace/tab. Do not gate that on name entry, profiles, avatars, or presence work. Finish the command-driven /live flow first.
+Independent navigation and shared terminal views already work. Do not gate them on name entry, profiles, avatars or presence.
 
 ## Space and attention
 

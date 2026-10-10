@@ -1,63 +1,39 @@
-# Browser workspace: rethink the whole surface
+# Browser workspace surface
 
-User asked for a bold review of every exposed browser surface. Five independent reviews informed one integrated design, not five separate products. Keep all work in [PR64](https://github.com/tnfssc/bruv/pull/64). Do not merge or install unless asked.
+Keep real Bruv terminals central: one workspace rail and one tab strip. Shared tabs mean shared PTYs and input; navigation stays local. Use pure black, Vesper, the official logo and embedded Nerd Font. [Worktree/agent discovery and presence](agent-workspace-direction.md) remain deferred.
 
-## Scope and choices
+## Direct controls
 
-Keep real Bruv terminals, a workspace sidebar and terminal tabs. Shared tabs mean shared PTYs and input; navigation stays local. Keep pure black, Vesper, the official logo and embedded Nerd Font. Automatic worktree discovery, agent tabs, profiles and presence remain future work.
+Use name-first workspace rows, direct Remove and paths on demand. Duplicate folder names get distinguishing path suffixes. Folder entry is inline; bad paths retain the draft, focus and local error, including in the phone drawer. Opening an existing canonical folder selects its workspace ID rather than guessing a new tab.
 
-Subtraction is the redesign. One merged rail header. Name-first workspace rows with contextual removal and paths on demand. One direct tab strip, without duplicate menus or a healthy-state dashboard. The phone opener names the current workspace. Empty screens show the next action, not subtitles that repeat it.
+One tab strip, no duplicate menus, reload control or healthy-state dashboard. Rename by double-click, double-tap or F2. Enter saves; Escape, blur, blank or unchanged names cancel. Keep the tab shell and editor node stable across shared updates so a first click, caret or draft is not lost. Remove stale shells before repositioning surviving ones. Shared names may change while editing; Enter compares with the current shared name so a local draft still expresses intent. Failed saves retain draft and focus.
 
-Folder entry stays inline. Bad paths retain input, focus and a local error, including in the phone drawer. The server resolves canonical paths and reuses an existing workspace without creating a tab or changing its revision. POST /api/workspaces returns the flat snapshot plus workspaceId and created. The browser selects workspaceId locally.
+Hide Close while editing and give its space to the field without moving neighbors. A partly clipped tab must not expose a clipped destructive target; selecting its label reveals it. Arrow/Home/End navigation stays on the strip. Save and confirmed close return focus to surviving terminal work; cancel returns to the invoker.
 
-Rename uses double-click, double-tap or F2. Enter saves; Escape or blur cancels. A failed save keeps the draft and focus. Enter compares against the current shared name, so another browser's rename does not erase explicit local intent. Successful saves and confirmed closes return focus to work. Cancel restores the invoker. Keep destructive confirmation for shared work and lingering descendants.
+Keep compact destructive confirmation. Close and Remove affect everyone and can stop lingering descendants after CLI exit. Name the tab/path and shared impact; focus Cancel. Wrap long unbroken target names on phones. Settle dialog results at submit/cancel before closing, so a queued old close event cannot consume a newly opened confirmation.
 
-Access failure is not an empty workspace. List failure and PTY failure have separate recovery. Expired replay freezes a lost view; it does not mean the CLI exited. New terminal must leave the original process alive.
+Use native buttons with explicit types for actions and keyboard-focusable status details. Give dialogs initial labels before browser code sets target text. The phone drawer traps focus and leaves terminal work inert while open. Closing it restores access. If the last workspace disappears, close the drawer, clear inert and focus folder entry. Empty screens show the next action, not repeated subtitles or decorative cards.
 
-/live still requests the submitting browser's microphone. Show phase and owner. Pending Cancel and scoped dismissible errors are not permanent mic controls. Navigation never transfers voice. Use xterm's own accessibility output, enabled only for the visible pane. Do not add another transcript.
+## Honest state and recovery
 
-A touch belongs to the visible connected pane. An independent review caught a held alternate-screen touch sending input after a tab switch. Cancel gestures on hide and disposal, and reject hidden/disconnected starts and moves. Hide then show must not revive a gesture. See [touch ownership](browser-terminal-touch-lifecycle.md).
+Missing/invalid credentials show Access required, not an empty workspace. Other network failures are not auth errors. Initial list failure has one central Retry view; recovered errors must not return as stale banners. List-update loss and PTY loss have separate recovery.
 
-## Source and owners
+Replay gaps show View lost and freeze that renderer. The original CLI still runs; New terminal leaves it alive. Never infer CLI exit from lost replay. See [server ownership](browser-terminal.md).
 
-Parent: /home/tnfssc/.bruv/worktrees/bruv-web-surface-rethink, branch bruv/web-surface-rethink. Base c66b65e3 was green on all eight hosted checks. Publish only to origin bruv/web-workspaces-tabs.
+`/live` requests the submitting browser's microphone. Show phase and workspace/tab owner only when useful. Pending Cancel and scoped dismissible errors are not permanent mic controls. Navigation never transfers voice. Run `/live stop` in the voice tab before starting it elsewhere.
 
-Review jobs: task_b5e188ff architecture; task_7c94d93c workspaces; task_aec180c3 terminals; task_66d639ec voice-state; task_7141b990 visual. Reports are under artifacts/surface-rethink/<scope>/findings.md. Later safety review task_79308eae found the held-touch bug and no other concrete blocker in its scoped boundaries.
+[Ghostty](ghostty-renderer.md) exposes real current-cell accessibility output only for the active pane. Do not restore old xterm options or add a transcript. Cancel held touches on hide/document hide/disposal; returning to a pane needs a fresh gesture, not just a visibility check.
 
-Implementation worktrees, kept for recovery:
-- Frontend task_d42a48e0: /home/tnfssc/.bruv/worktrees/t3-6f8b2e16-5442693331ce-task_d42a48e0, branch bruv/web-surface-ui. All commits through 2b636acc are integrated. Parent equivalents run from 05c3a54 through 555574d6. Do not reapply them.
-- Server/help task_b9132ef7: /home/tnfssc/.bruv/worktrees/t3-6f8b2e16-5442693331ce-task_b9132ef7, branch bruv/web-surface-entry. Commit 36217ca8 became d8fb0835.
-- Touch fix task_85bcabb5: /home/tnfssc/.bruv/worktrees/t3-6f8b2e16-5442693331ce-task_85bcabb5, branch bruv/web-touch-owner-fix. Commit f6f3f4a became 13776552. Merge retained both the rename and touch regressions.
-- Frontend combined proof tree: /home/tnfssc/.bruv/worktrees/bruv-web-surface-proof-d42a. Do not import its ancestry. Parent owns the final combined gate.
+## Controls, spacing and sources
 
-Details: [frontend](surface-rethink-frontend.md), [folder reuse](surface-folder-reuse.md). Finished worker trees must not be edited.
+Use selective daisyUI 5.7.47 native Button/Input CSS through [controls.css](../../src/web/controls.css). Keep the native dialog and custom editable tabs; no React, Tailwind runtime, library JavaScript or full stylesheet. The notice generator keeps the MIT license. Library adoption and green tests are not visual acceptance.
 
-## Integration checks
+[Browser CSS](../../src/web/browser.css) owns shared spacing and semantic roles. Keep compact desktop controls and touch-sized phone controls, aligned headers/actions, matched title/editor insets, and whole-cell terminal fitting. Font, borders and logo ratio are separate concerns. Measure shared edges, overflow and focus states, then judge the whole populated view. Do not cure one screenshot with unrelated pixel nudges.
 
-Parent also aligned the merged rail controls to the tab baseline, removed redundant empty copy, and updated the packaging fixture to copy browser-terminal-touch.ts.
+Vesper sources: [official editor theme](https://github.com/raunofreiberg/vesper/blob/9043f3849b776949445f0cd4990365959cca35a3/themes/Vesper-dark-color-theme.json) and [terminal ANSI port](https://github.com/mbadolato/iTerm2-Color-Schemes/blob/4a5043e87c32158f0d7d9f6cdd03f30804c58bce/ghostty/Vesper). The workspace uses #000000 rather than the site's #101010. Cursor uses official peach; selection uses official translucent white, not the port's brown. Retain the Vesper MIT notice.
 
-The first broad run had 705 pass, four existing skips and two failures. The asset fixture omitted the new module. The theme fixture's explicit child environment dropped TMPDIR. A direct launch reproduced exit 2 with ENOSPC and no startup URL: this machine's /tmp was full. The test now gives its child TMPDIR=root. No runtime fallback, weakened assertion or timeout increase.
+Build from canonical [wordmark](../../site/assets/brand/bruv-wordmark-light.svg) and [icon](../../site/assets/brand/bruv-icon.svg). Do not recreate the brand in text. Embed them locally; no extra fetch or route.
 
-Final parent check/build/lint/format passed. The web/live/launcher/asset/notice regression gate passed: 707 tests, four existing paid-provider/diagnostic skips, zero failures, 24,972 assertions. Logs: artifacts/surface-final/. This is not a zero-warning claim.
+## Checks
 
-Final compiled design, workspace lifecycle, two-browser multiplayer and audio probes passed in the parent tree. They cover shared PID/input/output, local navigation, explicit voice handoff, observer safety, denial/error retry and zero paid-provider calls. A headed recovery probe passed real CLI swipe and wheel history after Ctrl+O, visible-only accessibility output, and View lost/New terminal with the original process alive. Owned fixture servers exited 0. The last change only adjusted empty-state spacing and removed stale static copy; build, format and the full design probe passed again afterward.
-
-Parent viewed final populated desktop/phone and empty desktop/phone under artifacts/workspace-design/. Also viewed surface-rethink/frontend/view-lost-phone.png, touch-history-phone.png, access-phone.png and path-error-desktop.png, plus artifacts/web-workspaces-voice-owner.png. These contain real terminal output. The recovery fixture's printed sample check counts are fixture text, not test results. Design-probe folder-error-desktop.png lacks terminal paint and counts only as form evidence. Earlier drawer and inline-edit captures are described in the frontend note.
-
-At this commit, code and proof are ready to push to PR64. Fresh hosted CI is still required; the old green head does not cover this redesign. Watch the PR after push and fix concrete failures. Record the hosted result on the PR, not as a new note in this tree after the task is done.
-
-## Proof limits and setup
-
-Use TMPDIR=/var/tmp for Git signing, builds and browser fixtures. Chromium: /home/tnfssc/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome. Playwright: /home/tnfssc/.cache/ci-speed-browser/release-browser/node_modules/playwright-core/index.mjs. Headed Chromium works with DISPLAY=:0 and --ozone-platform=x11. Xvfb lacks libnettle.so.9. Browser MCP is disabled for this thread.
-
-Some CDP captures omit xterm paint. Reject those as terminal-output proof. The folder-error capture can prove its form without proving terminal paint. Actual owned X11 capture helpers live under the prior bruv-web-alignment-round2 worktree's artifacts/component-review-round2/headed/. Do not change the renderer to make a screenshot pass.
-
-No physical microphone or audible-speech acceptance, paid-provider call, physical phone keyboard/IME, Safari/iOS or actual screen-reader acceptance. Fake voice probes and Chromium phone emulation are labeled evidence, not those claims.
-
-## Values
-
-Values unchanged. Existing values already require direct user flows, scarce attention, visible ownership, preserving shared work, shipped-path checks and honest evidence. This task adds concrete recipes and proof, not a new general rule.
-
-## Spacing follow-up
-
-The user rejected the prior spacing despite its green tests. The component-based rebuild and fresh visual evidence are recorded in [spacing system](spacing-system.md). It starts from 0c651e35 in a new task tree; the finished surface-rethink tree remains read-only.
+[Browser regressions](../../tests/web/browser.test.ts) keep rename/draft/focus, shared updates, local selection and destructive cancellation. Use the [operator guide's developer commands](../../src/web/README.md#developer-checks) and the compiled [design](../../scripts/web/browser-workspace-design.mjs), [recovery](../../scripts/web/browser-recovery-design.mjs) and [multiplayer](../../scripts/web/browser-multiplayer-smoke.mjs) checks. Inspect populated desktop and phone views, including edit, overflow, drawer, errors and confirmations. A blank terminal capture can prove a form, not current CLI output; investigate the actual rendered view before calling it a capture artifact. Keep disposable captures and run receipts out of durable guidance.

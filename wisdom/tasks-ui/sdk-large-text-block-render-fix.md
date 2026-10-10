@@ -2,7 +2,7 @@
 
 ## Scope and result
 
-Base: b3d7d7857a69ddafd8f47c54b86207cc26366d62. Bun 1.4.2, Pi 1.0.3, Marked 18.0.11, Linux x64 / Ryzen 9 7940HS. Read values, [interaction lab](terminal-interaction-lab.md), [send workloads](terminal-send-workloads.md), and [tool mutations](tool-interaction-mutation-probes.md).
+Base: b3d7d7857a69ddafd8f47c54b86207cc26366d62. Bun 1.4.2, Pi 1.0.3, Marked 18.0.11, Linux x64 / Ryzen 9 7940HS. Read values and the [interaction lab](terminal-interaction-lab.md). Earlier `terminal-send-workloads.md` and `tool-interaction-mutation-probes.md` notes are recoverable at this base with `git show <base>:wisdom/tasks-ui/<path>`.
 
 Owned: SDK text-render hunks in the two existing Bun patches, two focused tests, this NEW note. No harness/shared-note/editor/ScrollView changes. Existing ScrollView/layout and startup-grammar patch hunks stay byte-for-byte intact. Another worker owns editor.handlePaste. No PR/push.
 
@@ -138,3 +138,7 @@ Values unchanged: existing measure-the-actual-work, whole-product proof and hone
 ## Parent focused review
 
 Read-only task_f2115523 found no differences in 1808 mixed block probes, 16 actual Markdown renders or 8 Mermaid transforms. It found one low-priority export issue: constructor installed base hooks as own methods, suppressing subclass lheading/paragraph overrides. Parent now captures resolved hooks instead and adds an actual Marked subclass regression. Reinstall, prepare:assets, TypeScript and 6 block tests/54318 assertions pass. Current SDK callers were unaffected. Inherited del registration remains a pre-existing SDK limitation; huge structured fallbacks remain open. Values unchanged: existing behavior proof and honest-boundary principles cover the review.
+
+## Equivalence timeout
+
+The [equivalence test](../../tests/ui/sdk-markdown-blocks.test.ts) retains the original regexes as its reference, including Bun effort-limit behavior. Complete token/link comparisons and large sources do real synchronous work. Measured constrained parallel runs exceeded the old 5s timeout; only this equivalence check has a 10s budget. Keep its sources and assertions. Separate structural-work checks keep their own budgets; this is not a parser/runtime or runner-policy change.

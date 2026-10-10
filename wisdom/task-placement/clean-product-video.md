@@ -36,3 +36,7 @@ Important limits, not hidden cleanup:
 - Two failed producer attempts are preserved separately (string quoting, then array question-list shape); neither supplies final frames. Final recording tools and source return succeeded. Its harness then failed an incorrect journal substring check for worktree intent. Recovery used the untouched actual jobs.list receipt (workspace/type/depth/status), not a guessed outcome; failure.txt/harness.log remain. See receipt's postCaptureVerificationCorrection.
 
 Parent owns visual approval, upload and PR15 replacement. Old acceptance source proof remains separate. A clean rendered clip does not erase the genuine product metadata finding above.
+
+## Native capture completion
+
+Tmux pane_dead means the PTY fd closed, not that the child result was reaped. Read dead/status/signal together, wait for a result, reject signals and require exit status 0 before capture/removal. Failed panes retain evidence until owned server cleanup. [Capture tooling](../../scripts/tui/task-placement-clean-capture.ts) and [regressions](../../tests/tasks/task-placement-clean-capture.test.ts) cover pending result, early EOF, nonzero exit and signals while keeping dimensions, reopen, timeline and raw viewport/scrollback checks.
