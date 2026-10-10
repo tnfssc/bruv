@@ -464,11 +464,12 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 
 ### 3.10 `/fast` (`src/fast.ts`)
 
-- `/fast` toggles, `/fast on`, `/fast off`. Saved with `appendEntry("bruv-fast", { on })`.
-- First time it is turned on in a session, confirm: "Fast mode uses the priority tier. It is faster
-  and uses more of your quota, including subagents. Turn it on?"
+- `/fast` toggles, `/fast on`, `/fast off`. Save `fast: true|false` in `~/.pi/agent/bruv.json`,
+  preserving other config fields. The default applies to future sessions and child agents.
+- First time it is turned on, confirm: "Fast mode uses the priority tier. It is faster
+  and uses more of your quota, including subagents. Turn it on?" Save `fastConfirmed: true` once accepted.
 - Supported when the current model's API is OpenAI or Codex Responses. Otherwise: "Fast mode only
-  works with OpenAI and Codex models." and stay off.
+  works with OpenAI and Codex models." and stay off for that model without changing the saved default.
 - `before_provider_request`: set `payload.service_tier = "priority"`.
 - Child agents get `BRUV_FAST=1` and start with fast on, no confirmation.
 - The footer shows `fast` while on.

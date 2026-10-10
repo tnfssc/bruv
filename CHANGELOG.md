@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Save `/fast` globally for future sessions and agents, with a one-time cost confirmation.
 - Add `/usage` for ChatGPT plan limits, credits, and session usage, with footer status and limit warnings.
 
 ## 1.0.0

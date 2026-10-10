@@ -24,7 +24,7 @@ Disable the old "bruv (not Claude)" provider.
 
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
-- `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents.
+- `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
 - `/bruv-setup` turns on scripting for all tool calls; run `/reload` afterward.
 
 Goal examples:
