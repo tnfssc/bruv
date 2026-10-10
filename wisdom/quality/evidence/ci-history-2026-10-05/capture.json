@@ -1,7 +1,0 @@
-{
-  "captured_at": "2026-10-05T18:19:55.131076+00:00",
-  "repo": "tnfssc/bruv",
-  "api_total_count": 587,
-  "unique_runs": 587,
-  "scope": "All retained Actions runs returned by unfiltered repository endpoint. First response sets page count; concurrent new runs can shift pages."
-}

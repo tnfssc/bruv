@@ -1,53 +1,97 @@
-<div align="center">
-<p>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="site/assets/brand/bruv-wordmark-light.svg">
-    <img src="site/assets/brand/bruv-wordmark.svg" width="318" height="113" alt="bruv CLI">
-  </picture>
-</p>
+# bruv
 
-An opinionated coding agent. Built on [Pi](https://pi.dev).
+bruv is a Pi package that lets the model work through one scripting tool and do several things per turn.
+Long work runs in the background, and agents can work in their own git worktrees.
+Goals keep the model working until the task is done.
 
-| ![bruv delegates a fix to a subagent in its own Git worktree](site/assets/demos/delegate.gif) | ![bruv runs tests in the background while answering another question](site/assets/demos/background.gif) |
-| --- | --- |
-| ![bruv reads project wisdom, finishes a regression test, and saves the next steps](site/assets/demos/wisdom.gif) | ![Live mode starts, listens while Space is held, then speaks a reply and shows its transcript](site/assets/demos/live.gif) |
+## Install
 
-</div>
-
-### Install
-
-> Want shared Bruv terminals in a browser? Run `bruv web` and open its printed token URL on each device. Workspaces and tabs update live.
-> Type `/live` in the terminal and allow browser microphone access. [Remote setup and limits](src/web/README.md).
-> For the separate graphical T3 frontend, use `bruv web --setup` or the [T3 Code setup guide](wisdom/docs/t3-code/README.md).
+Install [Pi](https://pi.dev), then:
 
 ```sh
-curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh
+pi install git:github.com/tnfssc/bruv
+pi
 ```
 
-Supports Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64 (API 28+).
-Requires curl and either sha256sum or shasum.
+Run `/bruv-setup` once, confirm, then run `/reload`.
 
-Put `~/.local/bin` on your PATH, then start Bruv in your project:
+## Use with T3 Code
+
+Enable the Pi provider and set its binary to `pi`. No launch arguments are needed.
+Disable the old "bruv (not Claude)" provider.
+
+## Commands
+
+- `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
+- `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents.
+- `/bruv-setup` turns on scripting for all tool calls; run `/reload` afterward.
+
+Goal examples:
+
+```text
+/goal Fix the failing tests
+/goal Add CSV export --criteria "handles empty data; tests pass" --budget 2m
+/goal Review the parser --budget 50k
+/goal pause
+/goal resume
+/goal clear
+```
+
+Budgets count tokens; `k` means thousand and `m` means million. The model must record evidence to finish a goal.
+A goal also stops at its budget, after the same blocker in three consecutive rounds, or when you stop the run.
+
+## What the model can call from scripts
+
+The model calls these through `tools.<name>(...)` in Pi's scripting tool.
+
+| Tool | What it does |
+|---|---|
+| `job_start` | Run a shell command in the background and return its ID and recent output. |
+| `wait` | Wait for one or all jobs or agents, or until you send a message. |
+| `jobs` | List the jobs and agents started in this session. |
+| `job_stop` | Stop a job or agent and its child processes. |
+| `agent` | Start one or several agents, with optional git worktrees. |
+| `goal_update` | Record progress, a blocker, or completion with evidence. |
+| `ask` | Ask you a question while work continues; your answer arrives as a message. |
+
+## How background work behaves
+
+- Agents return an ID at once. Use `waitSeconds: 0` for jobs to return at once; jobs otherwise wait up to three seconds.
+- `wait` blocks until a result, timeout, or new message.
+- Esc in the terminal or Stop in T3 ends the run and stops every job and agent it left running. The model hears about it with your next message.
+- At the end of a turn, the model gets unseen results or one reminder to wait. Detached jobs do not cause reminders.
+- Work left running at the end of a turn reports with your next message. Closing Pi stops all jobs and agents.
+
+## Configuration
+
+Set agent profiles in `~/.pi/agent/bruv.json`:
+
+```json
+{
+  "profiles": {
+    "fast": { "model": "openai-codex/gpt-6-luna", "thinking": "low" },
+    "normal": { "model": "openai-codex/gpt-6-astra", "thinking": "high" }
+  }
+}
+```
+
+Missing fields use the parent model and thinking level. The model can override either for a single agent.
+Agent worktrees and branches stay on disk after the agent finishes.
+
+## Coming from bruv 0.x
+
+- Sign in again with `/login` in Pi, or copy `~/.bruv/agent/auth.json` to `~/.pi/agent/auth.json`.
+- Old sessions under `~/.bruv/agent/sessions` are not migrated.
+- Move `~/.bruv/subagents.json` profiles to `~/.pi/agent/bruv.json` using the format above.
+- In T3, enable the Pi provider with binary `pi` and disable the "bruv (not Claude)" provider.
+- Remove `~/.local/bin/bruv` and `~/.local/bin/bruv-claude-compat`.
+
+## Development
 
 ```sh
-bruv
+bun install
+bunx biome ci . && bunx tsc --noEmit && bun test
+pi install /path/to/checkout
 ```
 
-Configure your provider with `/login` and choose a model with `/model`.
-Credentials and model access come from your provider; they are not included.
-
-### Updates
-
-```sh
-bruv update --check           # Check without changing files
-bruv update                   # Update the sibling CLI and connector together
-```
-
-### Commands
-
-```sh
-bruv                          # Start the interactive terminal
-bruv -p "Describe this tree"  # Run one prompt and exit
-bruv -c                       # Continue the latest session
-bruv -r                       # Pick a saved session to resume
-```
+Local installs load directly from the checkout. Read `docs/REWRITE.md` before changing a module.

@@ -1,9 +1,0 @@
-{
-  "passed": true,
-  "officialRelease": "v0.0.46-nightly.20261004.2644",
-  "officialSource": "737993303d36e10674c54b95e5bd3826682c99c7",
-  "archiveSha256": "5f9e29cf2712c87736556c99ea580606b399897cb846c2401a434a0d05c4eeca",
-  "executableSha256": "53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48",
-  "suites": ["command", "local-child", "human", "app-delegation", "default-controls", "command-final"],
-  "dependencyQueueRaceFixed": false
-}

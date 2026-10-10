@@ -1,3 +1,0 @@
-3922313 execve("/var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3", ["/var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3", "__claude-history", "forkSession", "ac5d3ced-07bb-4f44-9241-5232bb2bc61c", "{\"dir\":\"/var/tmp/bruv-ui-only-P0KIje/project\",\"upToMessageId\":\"2a49b039-a1dd-4430-85b8-450ff9e800dc\"}"], 0x50be57a0 /* 11 vars */) = 0
-3922313 write(1, "{\"sessionId\":\"324c92f6-5a26-4990-ace0-be415832b138\"}", 52) = 52
-3922313 +++ exited with 0 +++

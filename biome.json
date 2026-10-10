@@ -5,65 +5,29 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "files": {
-    "maxSize": 4194304,
-    "includes": [
-      "**",
-      "!!node_modules",
-      "!!runtime-assets",
-      "!!dist",
-      "!!.bruv-harness",
-      "!!artifacts",
-      "!!wisdom/experiments"
-    ]
-  },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 120,
-    "includes": ["**", "!!**/*.md", "!!wisdom/claude-compat/proof/**"]
+    "lineWidth": 120
   },
   "linter": {
     "enabled": true,
     "rules": {
       "preset": "recommended",
-      "correctness": {
-        "noUnusedImports": "warn",
-        "noUnusedVariables": "warn"
-      },
-      "suspicious": {
-        "noImplicitAnyLet": "warn",
-        "noControlCharactersInRegex": "warn",
-        "noAssignInExpressions": "warn",
-        "useIterableCallbackReturn": "warn"
-      }
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double",
-      "semicolons": "always",
-      "trailingCommas": "all"
-    }
-  },
-  "overrides": [
-    {
-      "includes": ["tests/**/*.ts"],
-      "linter": {
-        "rules": {
-          "complexity": {
-            "noBannedTypes": "off"
-          },
-          "style": {
-            "noNonNullAssertion": "off",
-            "useTemplate": "off"
-          },
-          "suspicious": {
-            "noExplicitAny": "off"
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["@earendil-works/*/**"],
+                "message": "Pi maps only package roots for installed extensions. Import from the package root."
+              }
+            ]
           }
         }
       }
     }
-  ]
+  }
 }

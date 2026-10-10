@@ -1,0 +1,1 @@
+The goal is still active. Take the next useful step instead of repeating a summary. Follow recent user steering while working toward the saved objective. Verify completion and record evidence, or report the specific blocker for the runtime's three-turn check. You do not need to record progress to keep working.

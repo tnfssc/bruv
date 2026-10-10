@@ -1,2 +1,0 @@
-$ bun run prepare:assets && tsc --noEmit
-$ bun ./scripts/prepare-assets.ts

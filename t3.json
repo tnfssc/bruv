@@ -3,31 +3,9 @@
   "scripts": [
     {
       "name": "Setup Worktree",
-      "command": "mise trust -y --quiet && mise exec -- bun install --frozen-lockfile && mise exec -- bun run prepare:assets",
+      "command": "bun install --frozen-lockfile",
       "icon": "configure",
       "runOnWorktreeCreate": true
-    },
-    {
-      "name": "CI Checks",
-      "command": "env SHELL=/bin/sh bun run ci",
-      "icon": "test"
-    },
-    {
-      "name": "Build",
-      "command": "bun run build",
-      "icon": "build"
-    },
-    {
-      "name": "Terminal Frame Lab",
-      "command": "bun run perf:terminal",
-      "icon": "debug",
-      "async": true
-    },
-    {
-      "name": "Terminal Interaction Lab",
-      "command": "bun run perf:interactions",
-      "icon": "debug",
-      "async": true
     }
   ]
 }
