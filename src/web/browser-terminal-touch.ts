@@ -43,7 +43,7 @@ export function installTerminalTouch(element: HTMLElement, term: Terminal) {
     const lines = Math.trunc(gesture.lines);
     if (!lines) return;
     gesture.lines -= lines;
-    if (term.buffer.active.type === "alternate") {
+    if (term.buffer.active.type === "alternate" || term.hasMouseTracking()) {
       screen.dispatchEvent(
         new WheelEvent("wheel", {
           deltaY: lines,

@@ -8,7 +8,8 @@ const wasmPath = new URL("ghostty-vt.wasm", packageRoot).pathname;
 // This patch handles DOM mouse buttons 0–2, wheel and pane focusin/focusout.
 // Touch/pen gestures, extended buttons and window-only focus changes aren't
 // mapped here. UTF-8 (1005), urxvt (1015) and pixel-SGR (1016) are unimplemented.
-// Legacy coordinates cap at cell 223; SGR uses the full terminal geometry.
+// Legacy overflow is dropped; pending releases use the last reported cell.
+// SGR uses the full terminal geometry.
 // Keep the fake DOM in a VM. Nothing changes the host's browser globals.
 class Element {
   style: Record<string, string> = {};
@@ -16,6 +17,18 @@ class Element {
   children: Element[] = [];
   parentNode: Element | null = null;
   parentElement: Element | null = null;
+  hidden = false;
+  isConnected = true;
+  get clientHeight() {
+    return this.height;
+  }
+  querySelector(selector: string) {
+    return selector === "canvas" ? this.children[0] : null;
+  }
+  dispatchEvent(event: any) {
+    this.fire(event.type, event);
+    return !event.defaultPrevented;
+  }
   width = 0;
   height = 0;
   value = "";
@@ -121,7 +134,17 @@ function harness(entry: string) {
     clearInterval,
     requestAnimationFrame: () => 1,
     cancelAnimationFrame() {},
-    WheelEvent: { DOM_DELTA_PIXEL: 0, DOM_DELTA_LINE: 1, DOM_DELTA_PAGE: 2 },
+    WheelEvent: class {
+      static DOM_DELTA_PIXEL = 0;
+      static DOM_DELTA_LINE = 1;
+      static DOM_DELTA_PAGE = 2;
+      constructor(
+        public type: string,
+        options: any,
+      ) {
+        Object.assign(this, options);
+      }
+    },
   });
   let source = readFileSync(new URL(entry, packageRoot), "utf8");
   if (entry.endsWith(".js")) {
@@ -162,6 +185,45 @@ async function mouseHarness(entry: string, modes: number[]) {
   const subscription = term.onBinary((value: string) => binary.push(value));
   const canvas = host.children[0];
   return { term, host, canvas, document, data, binary, subscription };
+}
+
+// The child reads the slave PTY in raw mode, not a UTF-8 string or a fake socket.
+async function ptyBytes(term: any, send: () => void) {
+  const ready = Promise.withResolvers<void>();
+  const receipt = Promise.withResolvers<string>();
+  let output = "";
+  const proc = Bun.spawn(
+    [
+      "python3",
+      "-c",
+      "import os, tty\ntty.setraw(0)\nos.write(1, b'ready')\ndata = b''\nwhile not data.endswith(b'\\0'):\n data += os.read(0, 4096)\nos.write(1, b'hex:' + data[:-1].hex().encode() + b'\\n')",
+    ],
+    {
+      terminal: {
+        data(_terminal, bytes) {
+          output += Buffer.from(bytes).toString();
+          if (output.includes("ready")) ready.resolve();
+          const match = output.match(/hex:([a-f0-9]*)\n/);
+          if (match) receipt.resolve(match[1]);
+        },
+      },
+    },
+  );
+  const data = term.onData((value: string) => proc.terminal!.write(value));
+  const binary = term.onBinary((value: string) => proc.terminal!.write(Buffer.from(value, "latin1")));
+  try {
+    await ready.promise;
+    send();
+    proc.terminal!.write(new Uint8Array([0]));
+    const result = await receipt.promise;
+    expect(await proc.exited).toBe(0);
+    return Buffer.from(result, "hex");
+  } finally {
+    data.dispose();
+    binary.dispose();
+    proc.kill();
+    proc.terminal?.close();
+  }
 }
 
 for (const entry of ["dist/ghostty-web.js", "dist/ghostty-web.umd.cjs"]) {
@@ -380,6 +442,120 @@ for (const entry of ["dist/ghostty-web.js", "dist/ghostty-web.umd.cjs"]) {
     canvas.fire("wheel", mouseEvent(term, 100, 30, { deltaY: 1 }));
     expect(binary).toHaveLength(3);
     term.dispose();
+  });
+
+  test(entry + " drops legacy overflow but releases drags at the last reported cell through a raw PTY", async () => {
+    const { term, canvas, document, data, binary } = await mouseHarness(entry, [1002]);
+    term.resize(300, 300);
+    const expected: number[][] = [];
+    try {
+      const bytes = await ptyBytes(term, () => {
+        for (const [x, y] of [
+          [223, 2],
+          [2, 223],
+        ]) {
+          canvas.fire("mousedown", mouseEvent(term, x, y));
+          document.fire("mouseup", mouseEvent(term, x, y));
+          canvas.fire("wheel", mouseEvent(term, x, y, { deltaY: 1 }));
+          expected.push(
+            [27, 91, 77, 32, x + 32, y + 32],
+            [27, 91, 77, 35, x + 32, y + 32],
+            [27, 91, 77, 97, x + 32, y + 32],
+          );
+        }
+        for (const [x, y] of [
+          [224, 2],
+          [2, 224],
+        ]) {
+          canvas.fire("mousedown", mouseEvent(term, x, y));
+          canvas.fire("mousemove", mouseEvent(term, 3, 2, { buttons: 1 }));
+          document.fire("mouseup", mouseEvent(term, 3, 2));
+          canvas.fire("wheel", mouseEvent(term, x, y, { deltaY: -1 }));
+          canvas.fire("wheel", mouseEvent(term, x, y, { deltaX: 1 }));
+        }
+        // No motion report: release where the press was actually sent, not cell 223.
+        canvas.fire("mousedown", mouseEvent(term, 100, 2));
+        document.fire("mouseup", mouseEvent(term, 224, 2));
+        expected.push([27, 91, 77, 32, 132, 34], [27, 91, 77, 35, 132, 34]);
+        for (const vertical of [false, true]) {
+          const cell = (n: number) => (vertical ? [2, n] : [n, 2]);
+          const [x, y] = cell(222),
+            [mx, my] = cell(223),
+            [ox, oy] = cell(224);
+          canvas.fire("mousedown", mouseEvent(term, x, y));
+          canvas.fire("mousemove", mouseEvent(term, mx, my, { buttons: 1 }));
+          canvas.fire("mousemove", mouseEvent(term, ox, oy, { buttons: 1 }));
+          document.fire("mouseup", mouseEvent(term, ox, oy, { shiftKey: true }));
+          // A later document release cannot report the same drag twice.
+          document.fire("mouseup", mouseEvent(term, mx, my));
+          expected.push(
+            [27, 91, 77, 32, x + 32, y + 32],
+            [27, 91, 77, 64, mx + 32, my + 32],
+            [27, 91, 77, 35, mx + 32, my + 32],
+          );
+        }
+      });
+      expect([...bytes]).toEqual(expected.flat());
+      expect(binary.map((value: string) => [...value].map((char) => char.charCodeAt(0)))).toEqual(expected);
+      expect(data).toEqual([]);
+      expect(term.reportedMouseButtons).toBe(0);
+      expect(term.selectionManager.isSelecting).toBe(false);
+    } finally {
+      term.dispose();
+    }
+  });
+
+  test(entry + " preserves full SGR coordinates through a raw PTY", async () => {
+    const { term, canvas, document, binary } = await mouseHarness(entry, [1002, 1006]);
+    term.resize(300, 300);
+    try {
+      const bytes = await ptyBytes(term, () => {
+        canvas.fire("mousedown", mouseEvent(term, 223, 223));
+        canvas.fire("mousemove", mouseEvent(term, 224, 224, { buttons: 1 }));
+        canvas.fire("mousemove", mouseEvent(term, 300, 300, { buttons: 1 }));
+        document.fire("mouseup", mouseEvent(term, 300, 300));
+        canvas.fire("wheel", mouseEvent(term, 300, 300, { deltaY: 1 }));
+      });
+      expect(bytes.toString()).toBe(
+        "\x1b[<0;223;223M\x1b[<32;224;224M\x1b[<32;300;300M\x1b[<0;300;300m\x1b[<65;300;300M",
+      );
+      expect(binary).toEqual([]);
+    } finally {
+      term.dispose();
+    }
+  });
+
+  test(entry + " sends normal-buffer tracked touch swipes through Ghostty to a raw PTY", async () => {
+    const { pkg, document, context } = harness(entry);
+    const term = new pkg.Terminal({ ghostty: await pkg.Ghostty.load(wasmPath), cols: 120, rows: 40 });
+    const host = new Element();
+    document.appendChild(host);
+    term.open(host);
+    term.write("\x1b[?1000;1006h");
+    expect(term.buffer.active.type).toBe("normal");
+    const source = new Bun.Transpiler({ loader: "ts" }).transformSync(
+      readFileSync(new URL("../../src/web/browser-terminal-touch.ts", import.meta.url), "utf8")
+        .replace(/^import .*;\n/gm, "")
+        .replace("export function", "function"),
+    );
+    Object.assign(context, { host, term });
+    runInContext(source + "\nglobalThis.touch = installTerminalTouch(host, term);", context);
+    try {
+      const bytes = await ptyBytes(term, () => {
+        const y = 1.5 * term.renderer.charHeight;
+        const event = (clientY: number) => ({
+          touches: [{ identifier: 1, clientX: 2.5 * term.renderer.charWidth, clientY }],
+        });
+        host.fire("touchstart", event(y + 4 * term.renderer.charHeight));
+        host.fire("touchmove", event(y));
+        context.touch.cancel();
+        host.fire("touchmove", event(y + 2 * term.renderer.charHeight));
+      });
+      expect(bytes.toString()).toBe("\x1b[<65;3;2M".repeat(4));
+    } finally {
+      context.touch.dispose();
+      term.dispose();
+    }
   });
 
   test(entry + " accumulates pixel wheel cells and gates all disabled input", async () => {

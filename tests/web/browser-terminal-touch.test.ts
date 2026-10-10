@@ -7,7 +7,7 @@ const source = new Bun.Transpiler({ loader: "ts" }).transformSync(
     .replace(/^import .*;\n/gm, "")
     .replace("export function", "function"),
 );
-function fixture(type = "normal") {
+function fixture(type = "normal", tracking = false) {
   const listeners = new Map<string, { fn: (event: any) => void; capture: boolean }[]>();
   const wheel: any[] = [],
     lines: number[] = [],
@@ -34,6 +34,7 @@ function fixture(type = "normal") {
   };
   const term = {
     rows: 20,
+    hasMouseTracking: () => tracking,
     buffer: { active: { type } },
     scrollLines: (count: number) => lines.push(count),
     focus: () => {
@@ -57,6 +58,9 @@ function fixture(type = "normal") {
   return {
     wheel,
     lines,
+    setTracking(value: boolean) {
+      tracking = value;
+    },
     element,
     listeners,
     removed,
@@ -243,4 +247,24 @@ test("small alternate swipes accumulate rows and cancel discards the fraction", 
   expect(f.wheel).toHaveLength(1);
   f.fire("touchmove", 110);
   expect(f.wheel.map((event) => event.deltaY)).toEqual([-1, -1]);
+});
+
+test("normal-buffer tracking uses wheel packets and follows the public mode state", () => {
+  const f = fixture("normal", true);
+  f.fire("touchstart", 100);
+  f.fire("touchmove", 140);
+  expect(f.wheel.map((event) => event.deltaY)).toEqual([-4]);
+  expect(f.wheel[0]).toMatchObject({ deltaMode: 1, clientX: 20, clientY: 140 });
+  expect(f.lines).toEqual([]);
+  f.setTracking(false);
+  f.fire("touchmove", 180);
+  expect(f.lines).toEqual([-4]);
+  f.setTracking(true);
+  f.cancel();
+  f.fire("touchmove", 220);
+  expect(f.wheel).toHaveLength(1);
+  f.fire("touchstart", 100);
+  f.dispose();
+  f.fire("touchmove", 140);
+  expect(f.wheel).toHaveLength(1);
 });
