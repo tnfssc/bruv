@@ -3,6 +3,7 @@ import { mkdir, mkdtemp } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import {
   type ExtensionAPI,
   createAgentSession,
@@ -177,6 +178,9 @@ test("paired Pi wakes its canonical backend on an async job completion without a
   let owner: Awaited<ReturnType<typeof acquireMainOwner>> | undefined;
   try {
     const feedback: string[] = [];
+    const errors: string[] = [];
+    const contexts: AgentMessage[][] = [];
+    const requests: { modelId: string; messages: unknown[] }[] = [];
     const hooks: string[] = [];
     let jobFinished: Promise<void> | undefined;
     session = await createPairedSession(dir, (pi) => {
@@ -204,6 +208,9 @@ test("paired Pi wakes its canonical backend on an async job completion without a
       pi.on("before_agent_start", (event) => {
         hooks.push(event.prompt);
       });
+      pi.on("context", (event) => {
+        contexts.push(structuredClone(event.messages));
+      });
       pi.on("tool_call", (event) => {
         hooks.push("tool:" + event.toolName);
       });
@@ -211,17 +218,13 @@ test("paired Pi wakes its canonical backend on an async job completion without a
     owner = await acquireMainOwner(
       {} as any,
       { sessionManager: session.sessionManager, isIdle: () => !session!.isStreaming } as any,
-      { onContext: (text) => feedback.push(text) },
+      { onContext: (text) => feedback.push(text), onError: (text) => errors.push(text) },
     );
     owner.delegatedVoice = true;
     let streams = 0;
     session.agent.streamFunction = ((model: any, context: any) => {
-      expect(model.id).toBe("gpt-5.6-luna");
+      requests.push({ modelId: model.id, messages: structuredClone(context.messages) });
       const turn = streams++;
-      if (turn === 2) {
-        expect(JSON.stringify(context.messages)).toContain("task-complete");
-        expect(context.messages.filter((message: any) => message.role === "user")).toHaveLength(1);
-      }
       const content: AssistantMessage["content"] =
         turn === 0
           ? [
@@ -245,21 +248,31 @@ test("paired Pi wakes its canonical backend on an async job completion without a
     await owner.delegate!("voice-launch", "Launch asynchronous shell job");
     owner.sendContext("provisional", { customType: "live-transcript" });
     await jobFinished;
-    const deadline = Date.now() + 8000;
-    while (!feedback.some((text) => text.includes("Async completion inspected")) && Date.now() < deadline)
-      await new Promise((resolve) => setTimeout(resolve, 20));
+    await owner.released;
+    expect(errors).toEqual([]);
+    expect(
+      session.agent.state.messages.filter((message) => message.role === "assistant" && message.stopReason === "error"),
+    ).toEqual([]);
     expect(feedback.join(" ")).toContain("PAIRED_ASYNC_DONE");
     expect(feedback.join(" ")).toContain("Async completion inspected by paired coder.");
-    const completedStreams = streams;
-    expect(completedStreams).toBeGreaterThanOrEqual(3);
+    expect(streams).toBe(3);
+    expect(requests.map((request) => request.modelId)).toEqual(Array(3).fill("gpt-5.6-luna"));
+    // Pi keeps custom metadata in history, then maps its content to a provider user message.
+    const continuation = contexts.at(-1)!;
+    expect(continuation.filter((message) => message.role === "user")).toHaveLength(1);
+    expect(
+      continuation.filter((message) => message.role === "custom" && message.customType === "task-complete"),
+    ).toHaveLength(1);
+    expect(requests[2]!.messages).toContainEqual(
+      expect.objectContaining({ role: "user", content: [{ type: "text", text: "Task complete: PAIRED_ASYNC_DONE" }] }),
+    );
     expect(hooks).toContain("tool:execute");
     expect(hooks).toContain("Launch asynchronous shell job");
-    const custom = session.sessionManager
-      .buildSessionContext()
-      .messages.filter((message: any) => message.role === "custom" && message.customType === "task-complete");
+    const history = session.sessionManager.buildSessionContext().messages;
+    expect(history.filter((message) => message.role === "user")).toHaveLength(1);
+    const custom = history.filter((message) => message.role === "custom" && message.customType === "task-complete");
     expect(custom).toHaveLength(1);
     expect(feedback.filter((text) => text.includes("Task complete: PAIRED_ASYNC_DONE"))).toHaveLength(1);
-    await owner.released;
   } finally {
     owner?.close();
     await session?.dispose();
