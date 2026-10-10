@@ -29,8 +29,19 @@ test("worktrees keep branches, run setup scripts, and report setup failure", asy
       await createWorktree(jobs, first, dir, "12345678-abcd", {});
       return 0;
     });
-    expect(first.worktree).toEqual({ path: join(dir, ".bruv/worktrees/a1"), branch: "bruv/12345678-a1" });
+    expect(first.worktree).toEqual({ path: join(dir, ".bruv/worktrees/12345678-a1"), branch: "bruv/12345678-a1" });
     expect(readFileSync(join(first.worktree?.path as string, "setup.txt"), "utf8")).toBe("ready\n");
+    const otherJobs = new Jobs();
+    const other = otherJobs.create("agent", "other session", join(dir, "other-logs"));
+    await otherJobs.run(other, async () => {
+      await createWorktree(otherJobs, other, dir, "87654321-abcd", {});
+      return 0;
+    });
+    expect(other.id).toBe(first.id);
+    expect(other.status).toBe("done");
+    expect(other.worktree).toEqual({ path: join(dir, ".bruv/worktrees/87654321-a1"), branch: "bruv/87654321-a1" });
+    expect(existsSync(first.worktree?.path as string)).toBe(true);
+    expect(existsSync(other.worktree?.path as string)).toBe(true);
     setup("echo setup-error; exit 7");
     const second = jobs.create("agent", "second", join(dir, "logs"));
     await jobs.run(second, async () => {

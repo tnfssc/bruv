@@ -415,7 +415,7 @@ There is no `handoff`. In codemode the model ends its turn by replying.
   Missing profile fields fall back to the parent's current model and thinking level. `model` and
   `thinking` on the call override the profile.
 - `prompts` launches one agent per prompt. With `worktree`, each gets its own worktree.
-- Worktree: `git worktree add -b <branch> <repo root>/.bruv/worktrees/<agent id> <baseRef or HEAD>`.
+- Worktree: `git worktree add -b <branch> <repo root>/.bruv/worktrees/<session short id>-<agent id> <baseRef or HEAD>`.
   Default branch name `bruv/<session short id>-<agent id>`. Add `.bruv/` to `.git/info/exclude` once.
   If `t3.json` in the repo root has scripts with `runOnWorktreeCreate: true`, run them in the new
   worktree before starting the agent, and fail the agent with their output if they fail.

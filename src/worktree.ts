@@ -17,7 +17,7 @@ export async function createWorktree(jobs: Jobs, item: Work, cwd: string, sessio
   if (!existsSync(exclude) || !readFileSync(exclude, "utf8").split("\n").includes(".bruv/"))
     appendFileSync(exclude, "\n.bruv/\n");
   const branch = options.branch ?? `bruv/${sessionId.slice(0, 8)}-${item.id}`;
-  const path = join(root, ".bruv", "worktrees", item.id);
+  const path = join(root, ".bruv", "worktrees", `${sessionId.slice(0, 8)}-${item.id}`);
   const base = await git(["rev-parse", "--verify", "--end-of-options", `${options.baseRef ?? "HEAD"}^{commit}`]);
   if (item.stopped) throw new Error("Agent stopped before worktree creation");
   const code = await jobs.process(item, "git", ["worktree", "add", "-b", branch, "--", path, base], root);

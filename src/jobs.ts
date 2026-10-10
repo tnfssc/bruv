@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
-import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { createWriteStream, mkdirSync, type WriteStream } from "node:fs";
 import { join } from "node:path";
+import { finished } from "node:stream/promises";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
 
@@ -27,6 +28,8 @@ export type Summary = Static<typeof SummarySchema>;
 export type Result = Static<typeof ResultSchema>;
 export interface Work extends Result {
   tail: Buffer;
+  outputStream: WriteStream;
+  outputDone: Promise<undefined | Error>;
   detached: boolean;
   seen: boolean;
   stopped: boolean;
@@ -63,6 +66,7 @@ export class Jobs {
     const id = `${kind === "job" ? "j" : "a"}${++this.counts[kind]}`;
     mkdirSync(directory, { recursive: true });
     const completion = Promise.withResolvers<void>();
+    const outputStream = createWriteStream(join(directory, `${id}.log`));
     const item: Work = {
       id,
       kind,
@@ -73,19 +77,23 @@ export class Jobs {
       outputPath: join(directory, `${id}.log`),
       output: "",
       tail: Buffer.alloc(0),
+      outputStream,
+      outputDone: finished(outputStream).then(
+        () => undefined,
+        (error: Error) => error,
+      ),
       detached,
       seen: false,
       stopped: false,
       completion: completion.promise,
       finish: completion.resolve,
     };
-    writeFileSync(item.outputPath, "");
     this.items.set(id, item);
     this.changed();
     return item;
   }
   append(item: Work, chunk: Buffer | string) {
-    appendFileSync(item.outputPath, chunk);
+    item.outputStream.write(chunk);
     item.tail = Buffer.concat([item.tail, Buffer.from(chunk)]).subarray(-65536);
     this.changed();
   }
@@ -117,6 +125,12 @@ export class Jobs {
       item.exitCode = await task();
     } catch (error) {
       this.append(item, `\n${String(error)}\n`);
+      item.exitCode = 1;
+    }
+    item.outputStream.end();
+    const outputError = await item.outputDone;
+    if (outputError) {
+      item.tail = Buffer.from(String(outputError));
       item.exitCode = 1;
     }
     item.status = !item.stopped && item.exitCode === 0 ? "done" : "failed";

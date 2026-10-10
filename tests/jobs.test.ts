@@ -23,10 +23,16 @@ test("registry records output, exit codes, previews, waits and IDs", async () =>
   await jobs.wait(undefined, true);
   expect(jobs.result(first).output).toBe("done\nerr\n");
   expect(second.status).toBe("failed");
-  jobs.append(first, "x".repeat(70000));
-  expect(first.tail.byteLength).toBe(65536);
-  expect(jobs.result(first).output.length).toBe(4000);
-  expect(readFileSync(first.outputPath).length).toBeGreaterThan(70000);
+  const large = jobs.create("job", "large output", dir);
+  void jobs.run(large, async () => {
+    for (let i = 0; i < 70; i++) jobs.append(large, "x".repeat(1000));
+    return 0;
+  });
+  expect((await jobs.wait([large.id])).done[0].exitCode).toBe(0);
+  expect(large.tail.byteLength).toBe(65536);
+  expect(jobs.result(large).output.length).toBe(4000);
+  expect(readFileSync(large.outputPath, "utf8")).toBe("x".repeat(70000));
+  expect(large.outputStream.closed).toBe(true);
   expect(await jobs.wait([], true)).toEqual({ done: [], running: [], userMessagePending: false });
   expect(() => jobs.get("missing")).toThrow();
 });
@@ -82,3 +88,14 @@ test("timeouts and shutdown stop jobs, including detached jobs", async () => {
   await jobs.shutdown();
   expect([item.status, detached.status]).toEqual(["failed", "failed"]);
 }, 7000);
+
+test("a log write failure completes the item with an error", async () => {
+  const jobs = new Jobs();
+  const directory = resolve(dir, "failed-output");
+  mkdirSync(resolve(directory, "j1.log"), { recursive: true });
+  const item = jobs.create("job", "log failure", directory);
+  await jobs.run(item, async () => 0);
+  expect(item.status).toBe("failed");
+  expect(item.exitCode).toBe(1);
+  expect(jobs.result(item).output.length).toBeGreaterThan(0);
+});
