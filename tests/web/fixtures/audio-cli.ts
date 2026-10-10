@@ -7,7 +7,7 @@ import { LIVE_PROVIDERS } from "../../../src/live/providers";
 
 /** Real Live command/audio lifecycle; only the provider and root owner are fake. */
 
-const commandEditor = import.meta.main
+let commandEditor = import.meta.main
   ? new CompactEditor(
       { requestRender() {} } as any,
       { borderColor: (s: string) => s } as any,
@@ -17,7 +17,7 @@ const commandEditor = import.meta.main
 let failProvider = () => {};
 function install(pi: ExtensionAPI) {
   liveExtension(pi, {
-    ...(commandEditor ? { editor: () => commandEditor } : {}),
+    editor: () => commandEditor,
     local: () => true,
     audio: (callbacks, signal, request) => {
       const route = browserAudioEnvironment();
@@ -55,6 +55,14 @@ function install(pi: ExtensionAPI) {
 
 // Loaded by the built CLI: leave its own /live mic-check intact.
 export default function fixtureExtension(pi: ExtensionAPI) {
+  // External extensions have their own module registry. Use the shipped editor
+  // class through Pi's normal factory, so this fake provider tracks real submits.
+  pi.on("session_start", (_event, ctx) => {
+    ctx.ui.setEditorComponent((tui, theme, bindings) => {
+      commandEditor = new CompactEditor(tui, theme, bindings);
+      return commandEditor;
+    });
+  });
   install(
     new Proxy(pi, {
       get(target, key) {

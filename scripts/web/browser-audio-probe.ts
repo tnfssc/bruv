@@ -1,7 +1,6 @@
 /** Real Chromium + fake media. No provider calls or claim of audible speech. */
 import { strict as assert } from "node:assert";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { createAudioRelay, type AudioRelayData } from "../../src/web/audio-relay";
@@ -45,74 +44,82 @@ const executablePath = process.env.CHROMIUM_BIN;
 const modulePath = process.env.PLAYWRIGHT_CORE;
 if (!executablePath || !modulePath) throw new Error("Set CHROMIUM_BIN and PLAYWRIGHT_CORE to installed browser tools");
 const { chromium } = await import(pathToFileURL(resolve(modulePath)).href);
-const scratch = await mkdtemp(join(tmpdir(), "bruv-browser-audio-"));
-const entry = join(scratch, "entry.ts");
-const clientPath = resolve(import.meta.dir, "../../src/web/browser-audio.ts");
-await writeFile(
-  entry,
-  [
-    "import { connectBrowserAudio } from " + JSON.stringify(clientPath) + ";",
-    "window.tracks = []; window.contexts = []; window.states = [];",
-    "const gum = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);",
-    "navigator.mediaDevices.getUserMedia = async (...args) => { const stream = await gum(...args); window.tracks.push(...stream.getTracks()); return stream; };",
-    "const AC = window.AudioContext; window.AudioContext = class extends AC { constructor(...args) { super(...args); window.contexts.push(this); } };",
-    'window.requestVoice = async request => { try { window.audio = await connectBrowserAudio({token: "fixture", owner: "owner", url: location.origin.replace("http", "ws") + "/api/live/audio?role=browser&session=probe&request=" + request, onState: s => window.states.push(s)}); } catch(e) { window.failure = String(e); } };',
-  ].join("\n"),
-);
-const built = await Bun.build({ entrypoints: [entry], target: "browser" });
-assert(built.success, String(built.logs));
-const bundle = built.outputs[0];
-assert(bundle);
-const javascript = await bundle.text();
-const relay = createAudioRelay({
-  authorizeBrowser: (req, id) =>
-    req.headers.get("origin") === server.url.origin &&
-    id === "probe" &&
-    req.headers.get("cookie") === "probe=authorized"
-      ? "probe-owner"
-      : false,
-  requestBrowser: (_id, _owner, request) => {
-    void page.evaluate((request: string) => (window as ProbeWindow).requestVoice(request), request);
-    return true;
-  },
-});
-const secret = relay.registerSession("probe");
-const server = Bun.serve<AudioRelayData>({
-  hostname: "127.0.0.1",
-  port: 0,
-  fetch(request, server) {
-    if (relay.matches(request)) return relay.upgrade(request, server);
-    if (new URL(request.url).pathname === "/audio-worklet.js")
-      return new Response(CAPTURE_WORKLET, { headers: { "Content-Type": "text/javascript" } });
-    if (new URL(request.url).pathname === "/probe.js")
-      return new Response(javascript, { headers: { "Content-Type": "text/javascript" } });
-    return new Response(
-      '<label>Live command <input aria-label="Live command"></label><script src="/probe.js"></script>',
-      {
-        headers: { "Content-Type": "text/html", "Set-Cookie": "probe=authorized; SameSite=Strict; HttpOnly; Path=/" },
-      },
-    );
-  },
-  websocket: relay.websocket,
-});
-const browser = await chromium.launch({
-  executablePath,
-  headless: process.env.HEADLESS !== "0",
-  args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
-});
-const page: ProbePage = await browser.newPage();
-const errors: string[] = [];
-page.on("pageerror", (error: Error) => errors.push(String(error)));
+const scratchBase = resolve(import.meta.dir, "../../.tmp");
+await mkdir(scratchBase, { recursive: true });
+const scratch = await mkdtemp(join(scratchBase, "bruv-browser-audio-"));
+let ownedRelay: ReturnType<typeof createAudioRelay> | undefined;
+let ownedServer: Bun.Server<AudioRelayData> | undefined;
+let ownedBrowser: Awaited<ReturnType<typeof chromium.launch>> | undefined;
 let audio: BrowserLiveAudio | undefined;
-let captures = 0;
-let bytes = 0;
-let disconnected = false;
-const waitFor = async (check: () => boolean) => {
-  const deadline = Date.now() + 5000;
-  while (!check() && Date.now() < deadline) await Bun.sleep(20);
-  assert(check(), "timed out waiting for audio event");
-};
 try {
+  const entry = join(scratch, "entry.ts");
+  const clientPath = resolve(import.meta.dir, "../../src/web/browser-audio.ts");
+  await writeFile(
+    entry,
+    [
+      "import { connectBrowserAudio } from " + JSON.stringify(clientPath) + ";",
+      "window.tracks = []; window.contexts = []; window.states = [];",
+      "const gum = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);",
+      "navigator.mediaDevices.getUserMedia = async (...args) => { const stream = await gum(...args); window.tracks.push(...stream.getTracks()); return stream; };",
+      "const AC = window.AudioContext; window.AudioContext = class extends AC { constructor(...args) { super(...args); window.contexts.push(this); } };",
+      'window.requestVoice = async request => { try { window.audio = await connectBrowserAudio({token: "fixture", owner: "owner", url: location.origin.replace("http", "ws") + "/api/live/audio?role=browser&session=probe&request=" + request, onState: s => window.states.push(s)}); } catch(e) { window.failure = String(e); } };',
+    ].join("\n"),
+  );
+  const built = await Bun.build({ entrypoints: [entry], target: "browser" });
+  assert(built.success, String(built.logs));
+  const bundle = built.outputs[0];
+  assert(bundle);
+  const javascript = await bundle.text();
+  const relay = createAudioRelay({
+    authorizeBrowser: (req, id) =>
+      req.headers.get("origin") === server.url.origin &&
+      id === "probe" &&
+      req.headers.get("cookie") === "probe=authorized"
+        ? "probe-owner"
+        : false,
+    requestBrowser: (_id, _owner, request) => {
+      void page.evaluate((request: string) => (window as ProbeWindow).requestVoice(request), request);
+      return true;
+    },
+  });
+  ownedRelay = relay;
+  const secret = relay.registerSession("probe");
+  const server = Bun.serve<AudioRelayData>({
+    hostname: "127.0.0.1",
+    port: 0,
+    fetch(request, server) {
+      if (relay.matches(request)) return relay.upgrade(request, server);
+      if (new URL(request.url).pathname === "/audio-worklet.js")
+        return new Response(CAPTURE_WORKLET, { headers: { "Content-Type": "text/javascript" } });
+      if (new URL(request.url).pathname === "/probe.js")
+        return new Response(javascript, { headers: { "Content-Type": "text/javascript" } });
+      return new Response(
+        '<label>Live command <input aria-label="Live command"></label><script src="/probe.js"></script>',
+        {
+          headers: { "Content-Type": "text/html", "Set-Cookie": "probe=authorized; SameSite=Strict; HttpOnly; Path=/" },
+        },
+      );
+    },
+    websocket: relay.websocket,
+  });
+  ownedServer = server;
+  const browser = await chromium.launch({
+    executablePath,
+    headless: process.env.HEADLESS !== "0",
+    args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
+  });
+  ownedBrowser = browser;
+  const page: ProbePage = await browser.newPage();
+  const errors: string[] = [];
+  page.on("pageerror", (error: Error) => errors.push(String(error)));
+  let captures = 0;
+  let bytes = 0;
+  let disconnected = false;
+  const waitFor = async (check: () => boolean) => {
+    const deadline = Date.now() + 5000;
+    while (!check() && Date.now() < deadline) await Bun.sleep(20);
+    assert(check(), "timed out waiting for audio event");
+  };
   await page.goto(server.url.origin);
   assert.equal(await page.evaluate("window.tracks.length"), 0, "no mic on load");
   await page.getByRole("textbox", { name: "Live command" }).focus();
@@ -171,33 +178,39 @@ try {
       bytes,
       stoppedAndReconnected: true,
       browserDisconnectObserved: true,
-      providerCalls: 0,
+      providerScope: "injected fake Live provider; no paid-provider proof",
       media: "Chromium fake device, not audible speech",
     }),
   );
 } finally {
   audio?.close();
-  await browser.close();
-  relay.unregisterSession("probe");
-  server.stop(true);
-  await rm(scratch, { recursive: true, force: true });
+  try {
+    await ownedBrowser?.close();
+  } finally {
+    ownedRelay?.unregisterSession("probe");
+    ownedServer?.stop(true);
+    await rm(scratch, { recursive: true, force: true });
+  }
 }
 
 // Whole browser terminal path, with the actual Live extension and an injected fake provider.
 const { startWebServer } = await import("../../src/web/server");
 const { loadWebAssets } = await import("../../src/web/assets");
-const app = startWebServer({
-  command: [process.execPath, resolve(import.meta.dir, "../../tests/web/fixtures/audio-cli.ts"), "--commands"],
-  assets: await loadWebAssets(),
-  port: 0,
-});
-const liveBrowser = await chromium.launch({
-  executablePath,
-  headless: process.env.HEADLESS !== "0",
-  args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
-});
+let ownedApp: ReturnType<typeof startWebServer> | undefined;
+let liveBrowser: Awaited<ReturnType<typeof chromium.launch>> | undefined;
 const livePages: ProbePage[] = [];
 try {
+  const app = startWebServer({
+    command: [process.execPath, resolve(import.meta.dir, "../../tests/web/fixtures/audio-cli.ts"), "--commands"],
+    assets: await loadWebAssets(),
+    port: 0,
+  });
+  ownedApp = app;
+  liveBrowser = await chromium.launch({
+    executablePath,
+    headless: process.env.HEADLESS !== "0",
+    args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
+  });
   for (let i = 0; i < 2; i++) {
     const context = await liveBrowser.newContext();
     const p: ProbePage = await context.newPage();
@@ -336,7 +349,7 @@ try {
       activeOwnerNotStolen: true,
       stopRetry: true,
       autoplayOverride: false,
-      providerCalls: 0,
+      providerScope: "injected fake Live provider; no paid-provider proof",
     }),
   );
   await owner.evaluate(() => {
@@ -398,7 +411,7 @@ try {
       codingPidSurvives: true,
       denial: "injected NotAllowedError",
       autoplayOverride: false,
-      providerCalls: 0,
+      providerScope: "injected fake Live provider; no paid-provider proof",
       provider: "injected fake",
     }),
   );
@@ -409,6 +422,9 @@ try {
   }
   throw error;
 } finally {
-  await liveBrowser.close();
-  await app.stop();
+  try {
+    await liveBrowser?.close();
+  } finally {
+    await ownedApp?.stop();
+  }
 }
