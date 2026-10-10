@@ -1,0 +1,10 @@
+{
+  "name": "bruv-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "frames": "node scripts/frames.mjs \"$FRAMES\" scripts/plan.json replay-frames.json",
+    "record": "node scripts/record.mjs \"$CHROME\" http://127.0.0.1:8791/replay.html .frames 39 20 && ffmpeg -loglevel error -y -framerate 20 -i .frames/f%04d.png -vf \"scale=1200:-2:flags=lanczos,format=yuv420p\" -c:v libx264 -crf 18 -preset slow -movflags +faststart assets/done.mp4 && ffmpeg -loglevel error -y -framerate 20 -i .frames/f%04d.png -vf \"fps=8,scale=800:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle\" assets/done.gif && rm -rf .frames"
+  }
+}

@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>bruv: done means checked</title>
+    <meta
+      name="description"
+      content="A coding agent for your ChatGPT plan. GPT-6 Astra keeps going until the job is finished, a fresh agent checks the work, and you get a receipt."
+    />
+    <meta property="og:title" content="bruv: done means checked" />
+    <meta
+      property="og:description"
+      content="GPT-6 Astra keeps going until the job is finished. A fresh agent checks it before you hear done."
+    />
+    <meta property="og:image" content="https://bruv.sharath.page/assets/og.png" />
+    <meta property="og:url" content="https://bruv.sharath.page/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0d0d0d" />
+    <link rel="icon" href="assets/bruv-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./" aria-label="bruv home"><img src="assets/bruv-wordmark-light.svg" alt="bruv" /></a>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="https://github.com/tnfssc/bruv">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="pitch">
+          <p class="eyebrow">For people with a ChatGPT plan</p>
+          <h1>Done means<br />checked.</h1>
+          <p class="lede">
+            bruv keeps GPT-6 Astra working until the job is finished. Then a fresh agent tries the result before you
+            hear “done”, and you get a receipt.
+          </p>
+          <div class="install-box" id="hero-install">
+            <code>pi install git:github.com/tnfssc/bruv</code>
+            <button type="button" class="copy" data-copy="pi install git:github.com/tnfssc/bruv">Copy</button>
+          </div>
+          <p class="small">Needs <a href="https://pi.dev">Pi</a>. <a href="#install">Full setup</a> takes a minute.</p>
+        </div>
+        <figure class="term video">
+          <video src="assets/done.mp4" poster="assets/done-poster.png" autoplay muted loop playsinline aria-label="A real 38 minute bruv run, sped up: it works through every page of an app, a fresh agent finds two gaps, they get fixed, and a receipt appears"></video>
+          <figcaption>A real 38-minute run on GPT-6 Astra, sped up.</figcaption>
+        </figure>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>It doesn't stop halfway.</h2>
+          <p>
+            GPT models like to end with “Next I'll…” or “Want me to continue?”. In bruv a run only ends when the model
+            says the work is done, needs you, or is blocked. Until then it keeps going, so you can walk away.
+          </p>
+        </div>
+        <ul class="points">
+          <li><b>On by default for GPT.</b> <code>/keep-going off</code> if you'd rather drive turn by turn.</li>
+          <li><b>Still yours.</b> Type to steer it any time; Esc or Stop ends everything at once.</li>
+          <li><b>Goals on top.</b> <code>/goal</code> adds an objective and a token budget for the big jobs.</li>
+        </ul>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>A second agent checks before “done”.</h2>
+          <p>
+            The model that did the work is the worst judge of it. When it says done, bruv starts a fresh agent that sees
+            only what you asked for and what changed. It runs the thing, tries the cases you'd try, and sends back
+            what's missing.
+          </p>
+        </div>
+        <figure class="still">
+          <img src="assets/check-gap.png" alt="Check found 2 gaps: navigating away during settings save discards updates; live API changes not verified. Fixing, then checking again." />
+          <figcaption>From the run above: “done” wasn't done. Both gaps were fixed and checked again.</figcaption>
+        </figure>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>Then you get a receipt.</h2>
+          <p>
+            What you asked, what was actually checked, and what changed. In the terminal and in T3 Code. It's the first
+            thing you read when you come back.
+          </p>
+        </div>
+        <figure class="still">
+          <img src="assets/receipt.png" alt="Receipt: Done, 38 minutes, 300 calls, 5 agents. Production build succeeds, 62 browser tests pass, live signup and settings checked. Changed 47 files." />
+        </figure>
+      </section>
+
+      <section class="feature intent">
+        <div class="copytext">
+          <h2>It gets what you mean.</h2>
+          <p>
+            You type fast, maybe into a mic. bruv's instructions were rebuilt from 75 real moments where GPT models
+            misread their user: the safe half-job, the needless question, the literal reading. Replayed blind on
+            GPT-6 Astra, the new prompt won 41 to 9 against the old one.
+          </p>
+        </div>
+        <div class="chat">
+          <p class="you">the readme kinda reads like docs not like a product. people coming from codex shud get why this is better in like 10 secs. fix it</p>
+          <p class="bot">
+            Rewrote README.md around “Codex models. Less babysitting.” Goals, parallel work and racing now lead, then a
+            quick start. Moved the full reference to docs/USAGE.md. Checked the links.
+          </p>
+          <p class="you">go through every page of this app like an actual user, find everything thats broken or janky and fix all of it</p>
+          <p class="bot">
+            Finished the full audit and fixes, including the settings-save bug. 62 browser tests pass in development and
+            production. Checked live: signup, settings, publishing, editing, deleting, comments, favorites, follows,
+            logout.
+          </p>
+        </div>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>Long work runs in the background.</h2>
+          <p>
+            Tests, builds and agents run while the model keeps working. A live board shows what's running, and a
+            summary line tells you what a turn did. Walk away; a desktop notification tells you when it's done.
+          </p>
+        </div>
+        <figure class="term small-term" aria-label="The live board: two agents and a test run finish one by one">
+          <div class="term-body" id="board-demo"></div>
+        </figure>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>Know where your plan stands.</h2>
+          <p>
+            The footer shows your ChatGPT plan limits as you work. <code>/usage</code> has the details and reset times.
+            <code>/fast</code> turns on the priority tier for every model in your plan and remembers it.
+          </p>
+        </div>
+        <figure class="term small-term" aria-label="Output of the /usage command">
+          <pre class="term-body"><span class="dim">❯</span> /usage
+Plan: pro
+5h:   <span class="ok">23%</span> [<span class="ok">##</span>--------] · resets 16:40, in 2h 5m
+week: <span class="ok">41%</span> [<span class="ok">####</span>------] · resets Thu 14:12, in 4d 21h
+Credits: 1,250
+Session: 412,880 tokens
+
+<span class="dim">5h 23% · week 41% · fast</span></pre>
+        </figure>
+      </section>
+
+      <section class="feature">
+        <div class="copytext">
+          <h2>Coming from Codex takes a minute.</h2>
+          <p>
+            <code>/import-codex</code> brings your model, reasoning effort, fast setting, MCP servers, skills and
+            prompts. Your <code>AGENTS.md</code> already works. <code>/review</code> reviews your changes the way you're
+            used to.
+          </p>
+        </div>
+        <ul class="points">
+          <li><b>Goals.</b> <code>/goal</code> keeps working until it's done, with a token budget if you want one.</li>
+          <li><b>Scripts.</b> The model reads, edits and checks in one go instead of one tool call at a time.</li>
+          <li><b>Works in T3 Code.</b> Turn on T3's Pi provider. Nothing else to set up.</li>
+        </ul>
+      </section>
+
+      <section class="install" id="install">
+        <h2>Install</h2>
+        <ol>
+          <li>
+            <span>Install Pi</span>
+            <div class="install-box">
+              <code>curl -fsSL https://pi.dev/install.sh | sh</code>
+              <button type="button" class="copy" data-copy="curl -fsSL https://pi.dev/install.sh | sh">Copy</button>
+            </div>
+          </li>
+          <li>
+            <span>Add bruv</span>
+            <div class="install-box">
+              <code>pi install git:github.com/tnfssc/bruv</code>
+              <button type="button" class="copy" data-copy="pi install git:github.com/tnfssc/bruv">Copy</button>
+            </div>
+          </li>
+          <li><span>Start <code>pi</code>, run <code>/login</code> with your ChatGPT account, then <code>/bruv-setup</code>.</span></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="bottom">
+      <img src="assets/bruv-icon.svg" alt="" width="20" height="22" />
+      <span>bruv is MIT licensed and built on <a href="https://pi.dev">Pi</a>.</span>
+      <a href="https://github.com/tnfssc/bruv">github.com/tnfssc/bruv</a>
+    </footer>
+    <script src="app.js" defer></script>
+  </body>
+</html>

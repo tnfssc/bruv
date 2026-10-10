@@ -1,15 +1,27 @@
-import { expect, test } from "bun:test";
+import { expect, spyOn, test } from "bun:test";
+import { stripVTControlCharacters } from "node:util";
 import { fauxAssistantMessage } from "@earendil-works/pi-ai";
+import { initTheme } from "@earendil-works/pi-coding-agent";
+import { type Component, visibleWidth } from "@earendil-works/pi-tui";
 import { agentParser } from "../src/agents";
+import { WorkBoard } from "../src/board";
 import { Jobs, registerJobs } from "../src/jobs";
+import { setStatus } from "../src/status";
 import { registerUI } from "../src/ui";
 import { sdk } from "./sdk";
 
-test.each([false, true])("work display follows UI availability (%s)", async (hasUI) => {
+test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its timer (%s)", async (mode) => {
+  initTheme("dark", false);
   const jobs = new Jobs();
-  const widgets: unknown[] = [];
-  const statuses: (string | undefined)[] = [];
-  let refreshed: (() => void) | undefined;
+  let board: (Component & { dispose?: () => void }) | undefined;
+  let renders = 0;
+  let widgets = 0;
+  const statuses = new Map<string, string | undefined>();
+  const working: (string | undefined)[] = [];
+  const timers = spyOn(globalThis, "setInterval");
+  const cleared = spyOn(globalThis, "clearInterval");
+  const timeouts = spyOn(globalThis, "setTimeout");
+  const now = spyOn(Date, "now");
   const app = await sdk(
     [
       (pi) => {
@@ -17,54 +29,140 @@ test.each([false, true])("work display follows UI availability (%s)", async (has
         registerJobs(pi, jobs);
       },
     ],
-    hasUI
-      ? {
-          setWidget: (_key, content) => {
-            widgets.push(content);
-            refreshed?.();
-          },
-          setStatus: (_key, content) => {
-            statuses.push(content);
-          },
-        }
-      : undefined,
+    {
+      setStatus: (key, text) => {
+        statuses.set(key, text);
+      },
+      setWorkingMessage: (message) => {
+        working.push(message);
+      },
+      setWidget: (_key, content) => {
+        widgets++;
+        board =
+          typeof content === "function"
+            ? content({ requestRender: () => renders++ } as never, app.session.extensionRunner.createContext().ui.theme)
+            : undefined;
+      },
+    },
+    undefined,
+    mode,
   );
   try {
-    const item = jobs.create("agent", "fixture", app.dir);
-    const updates = widgets.length;
+    const runner = app.session.extensionRunner;
+    await runner.emit({
+      type: "tool_execution_start",
+      toolName: "wait",
+      toolCallId: "w1",
+      args: { ids: ["a1", "a2"] },
+    });
+    await runner.emit({ type: "tool_execution_start", toolName: "wait", toolCallId: "w2", args: { ids: ["j1"] } });
+    await runner.emit({ type: "tool_execution_end", toolName: "wait", toolCallId: "w1", result: {}, isError: true });
+    if (mode === "tui") {
+      expect(working[0]?.match(/a[12]/g)).toHaveLength(2);
+      expect(working.at(-1)?.match(/j1/g)).toHaveLength(1);
+    }
+    await runner.emit({ type: "tool_execution_end", toolName: "wait", toolCallId: "w2", result: {}, isError: false });
+    if (mode === "tui") expect(working.at(-1)).toBeUndefined();
+    else expect(working).toEqual([]);
+    const before = timers.mock.calls.length;
+    const item = jobs.create("agent", "界".repeat(100), app.dir);
     const parser = agentParser(jobs, item);
-    for (let i = 0; i < 10; i++) {
-      const chunk = `${JSON.stringify({ type: "tool_execution_start", toolName: "read" })}\n`;
-      jobs.append(item, chunk);
-      parser.push(chunk);
-    }
-    expect(widgets).toHaveLength(updates);
-    item.usage = { input: 1, output: 2, cost: 0.25 };
-    if (hasUI) {
-      await new Promise<void>((resolve) => {
-        refreshed = resolve;
-      });
-      expect(widgets.length).toBeGreaterThan(updates);
-      expect(widgets[widgets.length - 1]).toHaveLength(1);
-      expect(statuses[statuses.length - 1]).toBeDefined();
-      expect(app.session.extensionRunner.getMessageRenderer("bruv-report")).toBeDefined();
-      expect(app.session.extensionRunner.getMessageRenderer("bruv-answer")).toBeDefined();
-    }
-    await jobs.run(item, async () => 0);
-    if (hasUI) {
-      expect(widgets[widgets.length - 1]).toHaveLength(1);
+    parser.push(`${JSON.stringify({ type: "tool_execution_start", toolName: "read" })}\n`);
+    parser.push(`${JSON.stringify({ type: "message_update", usage: { input: 2, output: 3 } })}\n`);
+    expect(item.progress).toBe("read");
+    expect(item.tokens).toBe(5);
+    if (mode === "tui") {
+      expect(timers.mock.calls.length).toBe(before + 1);
+      const timer = timers.mock.results.at(-1)?.value;
+      const tick = timers.mock.calls.at(-1)?.[0] as () => void;
+      const previous = renders;
+      tick();
+      expect(renders).toBe(previous + 1);
+      expect(board?.render(30)).toHaveLength(1);
+      expect(visibleWidth((board as Component).render(30)[0])).toBeLessThanOrEqual(30);
+      await jobs.run(item, async () => 0);
+      expect(cleared.mock.calls.some(([value]) => value === timer)).toBe(true);
+      expect(board?.render(80)).toHaveLength(1);
+      const expire = timeouts.mock.calls.at(-1)?.[0] as () => void;
+      expect(timeouts.mock.calls.at(-1)?.[1]).toBeGreaterThan(29000);
+      now.mockReturnValue((item.endedAt as number) + 30000);
+      expire();
+      expect(board).toBeUndefined();
+      now.mockRestore();
+      for (const part of ["goal", "fast", "usage"] as const) setStatus(runner.createContext(), part, part);
+      expect([...statuses.keys()]).toEqual(["bruv"]);
+      expect(statuses.get("bruv")?.split(" · ").slice(0, 3)).toEqual(["usage", "fast", "goal"]);
+      setStatus(runner.createContext(), "fast", undefined);
+      expect(statuses.get("bruv")?.split(" · ")).toHaveLength(3);
       app.faux.setResponses([fauxAssistantMessage("ready")]);
       await app.session.prompt("next");
-      await new Promise<void>((resolve) => {
-        refreshed = resolve;
-      });
-      expect(widgets[widgets.length - 1]).toBeUndefined();
+      expect(board).toBeUndefined();
     } else {
-      expect(widgets).toEqual([]);
-      expect(statuses).toEqual([]);
+      await jobs.run(item, async () => 0);
+      expect(widgets).toBe(0);
+      expect(timers.mock.calls.length).toBe(before);
     }
   } finally {
+    for (const item of jobs.items.values()) if (item.status === "running") await jobs.run(item, async () => 0);
+    await app.close();
+    expect(statuses.get("bruv")).toBeUndefined();
+    now.mockRestore();
+    timeouts.mockRestore();
+    timers.mockRestore();
+    cleared.mockRestore();
+  }
+});
+
+test("board keeps running work, the latest three finishes and all recent finishes", async () => {
+  initTheme("dark", false);
+  const app = await sdk([]);
+  const jobs = new Jobs();
+  let now = 100000;
+  const theme = app.session.extensionRunner.createContext().ui.theme;
+  const board = new WorkBoard(
+    jobs,
+    theme,
+    () => {},
+    () => now,
+  );
+  try {
+    const ended = [60000, 67000, 61000, 68000, 62000, 66000, 63000, 64000];
+    for (const [i, time] of ended.entries()) {
+      const item = jobs.create("job", `task-${i}`, app.dir);
+      if (i === 4 || i === 7) item.stopped = true;
+      await jobs.run(item, async () => (i === 2 || i === 6 ? 1 : 0));
+      item.endedAt = time;
+    }
+    const running = Array.from({ length: 5 }, (_, i) => jobs.create("agent", `live-${i}`, app.dir));
+    board.update([...jobs.items.values()]);
+    const render = () => board.render(80).map(stripVTControlCharacters);
+    let rows = render();
+    expect(rows).toHaveLength(9);
+    for (const item of running) expect(rows.some((row) => row.includes(item.id))).toBe(true);
+    for (const id of ["j2", "j4", "j6"]) expect(rows.some((row) => row.includes(id))).toBe(true);
+    expect(rows.at(-1)?.match(/\d+/g)?.map(Number)).toEqual([1, 2, 2]);
+    expect(board.render(80).at(-1)).toBe(theme.fg("dim", rows.at(-1) as string));
+    now = 95000;
+    rows = render();
+    expect(rows).toHaveLength(9);
+    now = 93000;
+    rows = render();
+    expect(rows).toHaveLength(10);
+    expect(rows.some((row) => row.includes("j8"))).toBe(true);
+    expect(rows.some((row) => row.includes("j7"))).toBe(false);
+    for (const item of running) {
+      await jobs.run(item, async () => 0);
+      item.endedAt = 100000;
+    }
+    now = 129999;
+    board.update([...jobs.items.values()]);
+    expect(render()).toHaveLength(6);
+    now++;
+    expect(render()).toEqual([]);
+    expect(jobs.items.size).toBe(13);
+  } finally {
+    board.dispose();
+    for (const item of jobs.items.values()) if (item.status === "running") await jobs.run(item, async () => 0);
     await app.close();
   }
-  if (hasUI) expect(statuses[statuses.length - 1]).toBeUndefined();
 });

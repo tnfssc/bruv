@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { toolResult } from "./jobs";
+import { notify } from "./notify";
+import { setStatus } from "./status";
 
 const guidance = readFileSync(new URL("../prompts/goal.md", import.meta.url), "utf8").trim();
 const continuation = readFileSync(new URL("../prompts/goal-continue.md", import.meta.url), "utf8").trim();
@@ -12,7 +14,8 @@ const goalSchema = Type.Object({
   tokensUsed: Type.Number(),
   tokenBudget: Type.Optional(Type.Number()),
   progress: Type.Array(Type.String()),
-  evidence: Type.Optional(Type.String()),
+  evidence: Type.Optional(Type.Array(Type.String())),
+  gaps: Type.Optional(Type.Array(Type.String())),
   blocker: Type.Optional(Type.String()),
 });
 export type Goal = {
@@ -22,7 +25,8 @@ export type Goal = {
   tokensUsed: number;
   tokenBudget?: number;
   progress: string[];
-  evidence?: string;
+  evidence?: string[];
+  gaps?: string[];
   blocker?: string;
 };
 
@@ -65,8 +69,9 @@ const tokens = (n: number) =>
 const tokenStatus = (goal: Goal) =>
   `${tokens(goal.tokensUsed)} / ${goal.tokenBudget ? tokens(goal.tokenBudget) : "no limit"} tokens`;
 
-export function registerGoal(pi: ExtensionAPI): void {
+export function registerGoal(pi: ExtensionAPI, hasFinished = () => false) {
   let goal: Goal | undefined;
+  let savedStatus: Goal["status"] | undefined;
   let blocker: string | undefined;
   let repeated = 0;
   let reported: string | undefined;
@@ -76,16 +81,19 @@ export function registerGoal(pi: ExtensionAPI): void {
     reported = undefined;
   };
   const status = (ctx: ExtensionContext) => {
-    if (ctx.hasUI)
-      ctx.ui.setStatus(
-        "bruv-goal",
-        goal
-          ? `goal ${goal.status} ${tokens(goal.tokensUsed)}${goal.tokenBudget ? `/${tokens(goal.tokenBudget)}` : ""}`
-          : undefined,
-      );
+    setStatus(
+      ctx,
+      "goal",
+      goal
+        ? `goal ${goal.status} ${tokens(goal.tokensUsed)}${goal.tokenBudget ? `/${tokens(goal.tokenBudget)}` : ""}`
+        : undefined,
+    );
   };
   const save = (ctx: ExtensionContext) => {
     pi.appendEntry("bruv-goal", goal ? structuredClone(goal) : null);
+    if (savedStatus === "active" && goal?.status !== "active")
+      notify(ctx, goal?.status === "completed" ? "Goal done" : "Goal stopped");
+    savedStatus = goal?.status;
     status(ctx);
   };
   const budgetReached = (ctx: ExtensionContext) => {
@@ -100,6 +108,7 @@ export function registerGoal(pi: ExtensionAPI): void {
       .reverse()
       .find((e) => e.type === "custom" && e.customType === "bruv-goal");
     goal = entry?.type === "custom" ? (structuredClone(entry.data as Goal | null) ?? undefined) : undefined;
+    savedStatus = goal?.status;
     reset();
     status(ctx);
   };
@@ -119,6 +128,7 @@ export function registerGoal(pi: ExtensionAPI): void {
               `Status: ${goal.status} · ${tokenStatus(goal)}`,
               ...(goal.criteria.length ? [`Criteria: ${goal.criteria.join("; ")}`] : []),
               ...(goal.progress.length ? [`Last progress: ${goal.progress.at(-1)}`] : []),
+              ...(goal.gaps?.length ? [`Next: ${goal.gaps.join("; ")}`] : []),
               ...(goal.blocker ? [`Blocker: ${goal.blocker}`] : []),
             ]
           : ["No goal is set."];
@@ -136,29 +146,34 @@ export function registerGoal(pi: ExtensionAPI): void {
       }
       reset();
       save(ctx);
-      if (goal?.status === "active")
-        pi.sendUserMessage(
-          `${guidance}\n\nGoal: ${goal.objective}\nCriteria: ${goal.criteria.join("; ") || "None"}\nBudget: ${goal.tokenBudget ?? "No limit"} tokens`,
-          { deliverAs: "steer" },
+      if (goal?.status === "active") {
+        pi.sendMessage(
+          {
+            customType: "bruv-goal",
+            display: false,
+            content: `${guidance}\n\nGoal: ${goal.objective}\nCriteria: ${goal.criteria.join("; ") || "None"}\nBudget: ${goal.tokenBudget ?? "No limit"} tokens`,
+          },
+          { deliverAs: "nextTurn" },
         );
+        pi.sendUserMessage(`/goal ${args}`, { deliverAs: "steer" });
+      }
     },
   });
   pi.registerTool({
     name: "goal_update",
     label: "Goal",
-    description: "Record goal progress, a blocker, or completion with evidence.",
-    exposure: "codemode",
+    description: "Record goal progress or a blocker. Call finish with done to check completion.",
+    // Not listed: models only see it through the goal prompt, so they don't call it without a goal.
+    exposure: "deferred",
     parameters: Type.Object({
-      status: Type.Union([Type.Literal("active"), Type.Literal("blocked"), Type.Literal("completed")]),
+      status: Type.Union([Type.Literal("active"), Type.Literal("blocked")]),
       progress: Type.Optional(Type.String()),
-      evidence: Type.Optional(Type.String()),
       blocker: Type.Optional(Type.String()),
     }),
     outputSchema: Type.Object({ goal: goalSchema }),
     async execute(_id, args, _signal, _update, ctx) {
       if (!goal) throw new Error("No goal is set.");
       if (goal.status !== "active") throw new Error("Use /goal resume before updating this goal.");
-      if (args.status === "completed" && !args.evidence?.trim()) throw new Error("Completion requires evidence.");
       if (args.status === "blocked" && !args.blocker?.trim()) throw new Error("Describe the blocker.");
       if (args.progress?.trim() && !goal.progress.includes(args.progress.trim())) {
         goal.progress.push(args.progress.trim());
@@ -172,7 +187,6 @@ export function registerGoal(pi: ExtensionAPI): void {
         delete goal.blocker;
         goal.status = args.status;
       }
-      if (args.evidence?.trim()) goal.evidence = args.evidence.trim();
       save(ctx);
       return toolResult({ goal: structuredClone(goal) });
     },
@@ -183,18 +197,23 @@ export function registerGoal(pi: ExtensionAPI): void {
     if (budgetReached(ctx)) save(ctx);
     else status(ctx);
   });
-  pi.on("agent_settled", (_event, ctx) => {
+  const pause = (ctx: ExtensionContext) => {
+    if (goal?.status !== "active") return;
+    goal.status = "paused";
+    save(ctx);
+    ctx.ui.notify("Goal paused. /goal resume continues it.", "info");
+  };
+  pi.on("agent_settled", (event, ctx) => {
+    if (event.aborted) pause(ctx);
     if (goal) save(ctx);
   });
   pi.on("agent_before_settle", (event, ctx) => {
     if (goal?.status !== "active") return {};
     if (event.outcome === "aborted") {
-      goal.status = "paused";
-      save(ctx);
-      ctx.ui.notify("Goal paused. /goal resume continues it.", "info");
+      pause(ctx);
       return {};
     }
-    if (event.continue || event.entries.length) return {};
+    if (event.continue || event.entries.length || hasFinished()) return {};
     if (reported) {
       repeated = reported === blocker ? repeated + 1 : 1;
       blocker = reported;
@@ -210,11 +229,27 @@ export function registerGoal(pi: ExtensionAPI): void {
         {
           type: "custom_message" as const,
           customType: "bruv-goal",
-          content: `${continuation}\n\nGoal: ${goal.objective} · ${tokenStatus(goal)} · Last progress: ${goal.progress.at(-1) ?? "None"}`,
+          content: `${continuation}\n\nGoal: ${goal.objective} · ${tokenStatus(goal)} · Last progress: ${goal.progress.at(-1) ?? "None"}${goal.gaps?.length ? `\nNext: ${goal.gaps.join("; ")}` : ""}`,
           display: false,
         },
       ],
       continue: true,
     };
   });
+  return {
+    active: () => (goal?.status === "active" ? { objective: goal.objective, criteria: [...goal.criteria] } : undefined),
+    checked(result: { verdict: "pass" | "gaps"; checked: string[]; gaps: string[] }, ctx: ExtensionContext) {
+      if (goal?.status !== "active") return;
+      goal.gaps = [...result.gaps];
+      if (result.verdict === "pass") {
+        goal.status = "completed";
+        goal.evidence = [...result.checked];
+        delete goal.gaps;
+        delete goal.blocker;
+        reset();
+      }
+      save(ctx);
+    },
+  };
 }
+export type GoalControl = ReturnType<typeof registerGoal>;

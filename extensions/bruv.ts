@@ -1,25 +1,43 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerAgents } from "../src/agents";
+import { registerCheck } from "../src/check";
 import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
+import { registerCodexImport } from "../src/codex-import";
 import { registerFast } from "../src/fast";
+import { registerFinish } from "../src/finish";
+import { registerFinishRender } from "../src/finish-render";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
+import { registerNotifications } from "../src/notify";
 import { registerPrompt } from "../src/prompt";
 import { registerQuestions } from "../src/questions";
+import { registerRender } from "../src/render";
+import { registerReview } from "../src/review";
 import { registerSettle } from "../src/settle";
+import { registerTurn } from "../src/turn";
 import { registerUI } from "../src/ui";
+import { registerUsage } from "../src/usage";
 
 export default function bruv(pi: ExtensionAPI): void {
   const jobs = new Jobs();
   registerUI(pi, jobs);
-  registerSettle(pi, jobs);
+  registerRender(pi);
+  registerFinishRender(pi);
+  registerNotifications(pi);
+  registerSettle(pi, jobs, () => hasFinished());
   registerJobs(pi, jobs);
   const isFast = registerFast(pi);
-  registerAgents(pi, jobs, isFast);
+  const startAgents = registerAgents(pi, jobs, isFast);
+  const goal = registerGoal(pi, () => hasFinished());
+  const check = registerCheck(pi, jobs, startAgents, undefined, goal);
+  const usage = registerUsage(pi);
+  const summary = registerTurn(pi, jobs, usage);
   registerCodexCompaction(pi);
   registerQuestions(pi);
-  registerGoal(pi);
+  const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);
   registerPrompt(pi);
   registerCodemode(pi);
+  registerCodexImport(pi);
+  registerReview(pi);
 }

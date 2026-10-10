@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { promisify } from "node:util";
 import type { Jobs, Work } from "./jobs";
@@ -23,6 +24,7 @@ export async function createWorktree(jobs: Jobs, item: Work, cwd: string, sessio
   const code = await jobs.process(item, "git", ["worktree", "add", "-b", branch, "--", path, base], root);
   if (code !== 0) throw new Error("Could not create the worktree");
   item.worktree = { path, branch };
+  item.base = base;
   const configPath = join(root, "t3.json");
   const config: { scripts?: { command: string; runOnWorktreeCreate?: boolean }[] } = existsSync(configPath)
     ? JSON.parse(readFileSync(configPath, "utf8"))
@@ -34,4 +36,26 @@ export async function createWorktree(jobs: Jobs, item: Work, cwd: string, sessio
     if (result !== 0) throw new Error(`Worktree setup failed (${result})`);
   }
   return item.worktree;
+}
+
+export async function worktreeChanges(cwd: string, base: string) {
+  const git = async (args: string[], env = process.env) =>
+    (await exec("git", args, { cwd, env: { ...env, LC_ALL: "C" } })).stdout;
+  const directory = join(cwd, ".tmp");
+  mkdirSync(directory, { recursive: true });
+  const path = join(directory, `bruv-index-${randomUUID()}`);
+  const env = { ...process.env, GIT_INDEX_FILE: path };
+  try {
+    await git(["read-tree", "HEAD"], env);
+    // A literal .tmp exclusion fails when Git ignores that directory.
+    await git(["add", "-A", "--", ".", ":(exclude,glob)**/.tmp/**"], env);
+    const stat = await git(["diff", "--cached", "--shortstat", base], env);
+    return {
+      files: Number(/(\d+) files? changed/.exec(stat)?.[1] ?? 0),
+      added: Number(/(\d+) insertions?/.exec(stat)?.[1] ?? 0),
+      removed: Number(/(\d+) deletions?/.exec(stat)?.[1] ?? 0),
+    };
+  } finally {
+    rmSync(path, { force: true });
+  }
 }

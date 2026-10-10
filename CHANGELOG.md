@@ -1,5 +1,48 @@
 # Changelog
 
+## Unreleased
+
+- Tell the main agent to hand off separate pieces in worktrees and work elsewhere or wait. Update the script example to request worktrees.
+
+- Keep the board short: show running work, the latest three finishes and finishes from the last 30 seconds. Fold older results into counts and hide the board after work goes quiet.
+
+- Include plain-text receipts and gap lists in finish tool results for T3/RPC and model context.
+
+- Render finish gaps as a red count and wrapped list. Show the receipt in the accepted finish result once, and show notes for waiting and blocked results.
+
+- Complete goals through a passing fresh check and save its checked items as evidence. Keep gaps as next steps, remove completion from `goal_update`, and preserve budget, blocker and abort stops.
+
+- Show a framed terminal receipt after checked finishes: the request, what was tried, remaining gaps, file totals, time and usage.
+
+- Check changed work with a fresh agent before accepting `finish(done)`. Retry gaps twice, stop checks on abort, and add `/check on|off`.
+
+- Keep GPT runs going until they call `finish` with their reply. Add `/keep-going on|off|auto`, saved for sessions and child agents. Keep finish visible in codemode-only mode, respect Esc and Stop, and stop after two continuations without tools.
+
+- Removed `/race`.
+
+- Add `/review` for uncommitted changes, branch diffs and commits, with bug-focused guidance and no file edits unless asked.
+
+- Add `/import-codex` with a preview for models, thinking, fast mode, MCP servers, skills, prompts and trusted projects. Keep existing settings and leave sign-in tokens alone.
+
+- Show each pending script call once and update its row when it finishes.
+
+
+- Separate footer parts with dots in a fixed order: usage, fast, goal, then agent cost.
+- Fix worktree diff totals when `.tmp/` is ignored; count once at completion and keep totals visible beside long titles.
+- Shorten bash call rows to the first command line and 60 columns.
+- Clear inherited agent settings before tests so the suite also runs inside bruv agents.
+
+- Notify when long runs and goals finish; show a working title and pending wait IDs in the terminal. Keep terminal escapes out of RPC, JSON, and print modes.
+
+- Add a dim turn summary with tool and agent counts, elapsed time, and weekly plan use changes.
+
+- Render script calls and bash/wait output as readable lines, with full script and output on expansion.
+
+- Show running jobs and agents on a live board with tools, tokens, elapsed time, and finished worktree changes.
+
+- Save `/fast` globally for future sessions and agents, with a one-time cost confirmation.
+- Add `/usage` for ChatGPT plan limits, credits, and session usage, with footer status and limit warnings.
+
 ## 1.0.0
 
 - Rewrite bruv as a Pi package installed with `pi install`.

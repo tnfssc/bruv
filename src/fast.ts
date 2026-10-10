@@ -1,34 +1,28 @@
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
+import { readConfig, saveConfig } from "./config";
+import { setStatus } from "./status";
 
-export function registerFast(pi: ExtensionAPI) {
+export function registerFast(pi: ExtensionAPI, agentDir = getAgentDir()) {
+  let preferred = false;
   let on = false;
-  let confirmed = process.env.BRUV_FAST === "1";
+  let confirmed = false;
   const supported = (ctx: ExtensionContext) =>
     ctx.model?.api === "openai-responses" || ctx.model?.api === "openai-codex-responses";
   const show = (ctx: ExtensionContext) => {
-    if (ctx.hasUI) ctx.ui.setStatus("bruv-fast", on ? "fast" : undefined);
+    on = preferred && supported(ctx);
+    setStatus(ctx, "fast", on ? "fast" : undefined);
   };
   const restore = (_event: unknown, ctx: ExtensionContext) => {
-    const entry = ctx.sessionManager
-      .getBranch()
-      .reverse()
-      .find((e) => e.type === "custom" && e.customType === "bruv-fast");
-    on =
-      supported(ctx) && (entry?.type === "custom" ? (entry.data as { on: boolean }).on : process.env.BRUV_FAST === "1");
-    confirmed = process.env.BRUV_FAST === "1" || on;
+    const config = readConfig(agentDir);
+    preferred = config.fast ?? process.env.BRUV_FAST === "1";
+    confirmed = config.fastConfirmed === true || process.env.BRUV_FAST === "1";
     show(ctx);
   };
   pi.on("session_start", restore);
   pi.on("session_tree", restore);
-  pi.on("model_select", (_event, ctx) => {
-    if (on && !supported(ctx)) {
-      on = false;
-      pi.appendEntry("bruv-fast", { on });
-      show(ctx);
-    }
-  });
+  pi.on("model_select", (_event, ctx) => show(ctx));
   pi.registerCommand("fast", {
-    description: "Toggle the priority tier for OpenAI and Codex models.",
+    description: "Save the priority tier default for OpenAI and Codex models.",
     async handler(args, ctx) {
       const option = args.trim();
       if (option && option !== "on" && option !== "off") throw new Error("Use /fast, /fast on, or /fast off.");
@@ -37,6 +31,7 @@ export function registerFast(pi: ExtensionAPI) {
         ctx.ui.notify("Fast mode only works with OpenAI and Codex models.", "warning");
         return;
       }
+      confirmed ||= readConfig(agentDir).fastConfirmed === true;
       if (next && !confirmed) {
         confirmed = await ctx.ui.confirm(
           "Fast mode",
@@ -44,8 +39,8 @@ export function registerFast(pi: ExtensionAPI) {
         );
         if (!confirmed) return;
       }
-      on = next;
-      pi.appendEntry("bruv-fast", { on });
+      saveConfig({ fast: next, fastConfirmed: confirmed }, agentDir);
+      preferred = next;
       show(ctx);
     },
   });

@@ -3,10 +3,17 @@ import { join, resolve } from "node:path";
 import { fauxProvider, InMemoryCredentialStore } from "@earendil-works/pi-ai";
 import * as Pi from "@earendil-works/pi-coding-agent";
 
-export async function sdk(extensionFactories: Pi.ExtensionFactory[], ui?: Partial<Pi.ExtensionUIContext>) {
+export async function sdk(
+  extensionFactories: Pi.ExtensionFactory[],
+  ui?: Partial<Pi.ExtensionUIContext>,
+  cwd?: string,
+  mode: Pi.ExtensionContext["mode"] = "rpc",
+  agentsFiles: { path: string; content: string }[] = [],
+  api?: string,
+) {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/sdk-"));
-  const faux = fauxProvider();
+  const faux = fauxProvider({ api });
   const modelRuntime = await Pi.ModelRuntime.create({
     credentials: new InMemoryCredentialStore(),
     modelsPath: null,
@@ -21,7 +28,7 @@ export async function sdk(extensionFactories: Pi.ExtensionFactory[], ui?: Partia
     retry: { enabled: false },
   });
   const resourceLoader = new Pi.DefaultResourceLoader({
-    cwd: dir,
+    cwd: cwd ?? dir,
     agentDir: dir,
     settingsManager,
     extensionFactories: [Pi.createCodemodeExtension(), ...extensionFactories],
@@ -30,23 +37,25 @@ export async function sdk(extensionFactories: Pi.ExtensionFactory[], ui?: Partia
     noThemes: true,
     noPromptTemplates: true,
     noContextFiles: true,
+    agentsFilesOverride: () => ({ agentsFiles }),
   });
   await resourceLoader.reload();
   const { session } = await Pi.createAgentSession({
-    cwd: dir,
+    cwd: cwd ?? dir,
     agentDir: dir,
     modelRuntime,
     model: faux.getModel(),
     resourceLoader,
     settingsManager,
-    sessionManager: Pi.SessionManager.create(dir, dir),
+    sessionManager: Pi.SessionManager.create(cwd ?? dir, dir),
   });
   await session.bindExtensions({
-    mode: "rpc",
+    mode,
     uiContext: ui ? { ...session.extensionRunner.createContext().ui, ...ui } : undefined,
   });
   return {
     session,
+    resourceLoader,
     faux,
     dir,
     async close() {

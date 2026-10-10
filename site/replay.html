@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>bruv: verified done</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // A clock the recorder steps frame by frame, so the clip is the same every time.
+      (() => {
+        let now = 0;
+        let next = 0;
+        const timers = new Map();
+        const add = (fn, ms, every) => {
+          const id = ++next;
+          timers.set(id, { id, at: now + (ms || 0), fn, every });
+          return id;
+        };
+        window.setTimeout = (fn, ms) => add(fn, ms);
+        window.setInterval = (fn, ms) => add(fn, ms, ms);
+        window.clearTimeout = window.clearInterval = (id) => timers.delete(id);
+        let seed = 7;
+        Math.random = () => {
+          seed = (seed * 16807) % 2147483647;
+          return seed / 2147483647;
+        };
+        const yieldTask = () => new Promise((resolve) => {
+          const channel = new MessageChannel();
+          channel.port1.onmessage = resolve;
+          channel.port2.postMessage(0);
+        });
+        window.__advance = async (ms) => {
+          const end = now + ms;
+          for (;;) {
+            let due = null;
+            for (const t of timers.values()) if (t.at <= end && (!due || t.at < due.at)) due = t;
+            if (!due) break;
+            now = due.at;
+            if (due.every) due.at += due.every;
+            else timers.delete(due.id);
+            due.fn();
+            await yieldTask();
+          }
+          now = end;
+        };
+      })();
+    </script>
+    <style>
+      body { width: 1200px; height: 675px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; gap: 16px; padding: 26px 40px 30px; }
+      .head { display: flex; align-items: center; gap: 28px; }
+      .head img { height: 30px; }
+      #caption { margin: 0; font-size: 27px; font-weight: 650; letter-spacing: -0.01em; color: #fff; }
+      .term { box-shadow: 0 30px 80px -30px rgba(255, 199, 153, 0.25); }
+      #screen { margin: 0; padding: 12px 16px; height: 556px; overflow: hidden; font: 15.5px/1.28 var(--mono); color: #dcdcdc; white-space: pre; }
+    </style>
+  </head>
+  <body>
+    <div class="head"><img src="assets/bruv-wordmark-light.svg" alt="bruv" /><p id="caption"></p></div>
+    <figure class="term"><pre id="screen"></pre></figure>
+    <script>
+      fetch("replay-frames.json")
+        .then((r) => r.json())
+        .then((frames) => {
+          const screen = document.getElementById("screen");
+          const caption = document.getElementById("caption");
+          let i = 0;
+          const show = () => {
+            const f = frames[i % frames.length];
+            screen.innerHTML = f.html;
+            caption.textContent = f.caption;
+            i++;
+            setTimeout(show, f.ms);
+          };
+          show();
+        });
+    </script>
+  </body>
+</html>

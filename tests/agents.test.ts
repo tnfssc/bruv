@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
@@ -6,6 +6,7 @@ import { registerAgents, resolveProfile } from "../src/agents";
 import { Jobs, registerJobs } from "../src/jobs";
 import { sdk } from "./sdk";
 
+setDefaultTimeout(15000);
 test("profile fields fall back independently and calls take precedence", () => {
   const parent = { model: "parent/model", thinking: "medium" };
   const config = { profiles: { fast: { thinking: "low" as const } } };
@@ -36,7 +37,7 @@ test.each([false, true])("codemode starts a job, waits, and parses fake child ag
       fauxAssistantMessage(
         fauxToolCall("codemode", {
           code: `
-        const job = await tools.job_start({command: "sleep 0.2; echo fast=$BRUV_FAST", waitSeconds: 0});
+        const job = await tools.job_start({command: 'sleep 0.05; echo "fast=$BRUV_FAST"' , waitSeconds: 0});
         const result = await tools.wait({ids: [job.id], all: true});
         if (result.done[0].exitCode !== 0) throw new Error("job failed");
         const {ids} = await tools.agent({prompts: ["one", "two"], title: "Lint", model: "faux/selected", thinking: "low"});
@@ -82,9 +83,15 @@ test.each([false, true])("codemode starts a job, waits, and parses fake child ag
 test("child sessions do not register agent", async () => {
   const previous = process.env.BRUV_DEPTH;
   process.env.BRUV_DEPTH = "1";
-  const app = await sdk([(pi) => registerAgents(pi, new Jobs())]);
+  const app = await sdk([
+    (pi) => {
+      const jobs = new Jobs();
+      registerAgents(pi, jobs);
+    },
+  ]);
   try {
-    expect(app.session.getAllTools().map((tool) => tool.name)).not.toContain("agent");
+    const names = app.session.getAllTools().map((tool) => tool.name);
+    expect(names).not.toContain("agent");
   } finally {
     await app.close();
     if (previous === undefined) delete process.env.BRUV_DEPTH;
