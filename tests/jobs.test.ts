@@ -104,3 +104,14 @@ test("a log write failure completes the item with an error", async () => {
   expect(item.exitCode).toBe(1);
   expect(jobs.result(item).output.length).toBeGreaterThan(0);
 });
+
+test("shutdown after a stop does not wait for the kill timer", async () => {
+  const jobs = new Jobs();
+  const item = start(jobs, "sleep 30");
+  await Bun.sleep(50);
+  jobs.stop(item.id);
+  const began = performance.now();
+  await jobs.shutdown();
+  expect(item.status).toBe("failed");
+  expect(performance.now() - began).toBeLessThan(1000);
+});

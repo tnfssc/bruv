@@ -51,7 +51,7 @@ export function toolResult<T extends object>(value: T) {
 export class Jobs {
   items = new Map<string, Work>();
   listeners = new Set<() => void>();
-  private stops = new Set<Promise<void>>();
+  private kills = new Map<number, ReturnType<typeof setTimeout>>();
   private counts = { job: 0, agent: 0 };
 
   changed() {
@@ -181,17 +181,18 @@ export class Jobs {
     if (pid) {
       this.signal(pid, "SIGTERM");
       // Keep escalation even if the shell exits before its children.
-      const stopped = new Promise<void>((resolve) => {
-        setTimeout(() => {
-          this.signal(pid, "SIGKILL");
-          resolve();
-        }, 5000);
-      });
-      this.stops.add(stopped);
-      void stopped.then(() => this.stops.delete(stopped));
+      this.kills.set(
+        pid,
+        setTimeout(() => this.kill(pid), 5000),
+      );
     }
     this.changed();
     return this.summary(item);
+  }
+  private kill(pid: number) {
+    clearTimeout(this.kills.get(pid));
+    this.kills.delete(pid);
+    this.signal(pid, "SIGKILL");
   }
   private signal(pid: number, signal: NodeJS.Signals) {
     try {
@@ -203,7 +204,8 @@ export class Jobs {
   async shutdown() {
     for (const item of this.items.values()) this.stop(item.id);
     await Promise.all([...this.items.values()].map((item) => item.completion));
-    await Promise.all(this.stops);
+    // Pi is closing: kill what is left of each stopped group now instead of waiting.
+    for (const pid of [...this.kills.keys()]) this.kill(pid);
   }
   async reset() {
     await this.shutdown();
