@@ -58,7 +58,7 @@ export class T3LaunchIdentityLedger {
     try {
       file = await open(this.path, "r");
       const stats = await file.stat();
-      if (stats.size > MAX_LEDGER_BYTES) throw new Error("T3 launch identity ledger exceeds its size limit");
+      if (stats.size > MAX_LEDGER_BYTES) throw new Error("T3 launch identity ledger is too large");
       return parse(await file.readFile("utf8"));
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") return { version: VERSION, pending: [] };

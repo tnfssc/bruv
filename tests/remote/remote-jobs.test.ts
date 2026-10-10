@@ -126,7 +126,7 @@ test("SSH namespace reverses safely, session ownership is durable before launch 
   setOffline(true);
   await expect(client.launch("/repo", "prompt", "task_1", undefined, "session-A")).rejects.toThrow("outcome unknown");
   expect((await client.transcript("task_1")).jobSessionFile).toBe("session-A");
-  await expect(client.launch("/repo", "prompt", "task_1", undefined, "session-B")).rejects.toThrow("refusal to steal");
+  await expect(client.launch("/repo", "prompt", "task_1", undefined, "session-B")).rejects.toThrow("Cannot take it");
   expect(await adapter.list("session-B")).toEqual([]);
   expect((await adapter.list("session-A"))[0]?.status).toBe("unknown");
   await expect(adapter.stop("session-B", sshJobId("task_1"))).rejects.toThrow("Unknown SSH job");
@@ -163,10 +163,10 @@ test("JobService paginates local then SSH without duplicates, rejects unsupporte
     const local = (await call("shell", { command: "printf local", waitSeconds: 1 })) as { id: string };
     expect(await collectJobIds(call, 5)).toEqual([local.id, ...[0, 1, 2, 3].map((i) => sshJobId("id" + i))]);
     const id = sshJobId("id0");
-    await expect(call("jobs.input", { id, data: "x" })).rejects.toThrow("unsupported for SSH jobs");
-    await expect(call("jobs.closeInput", { id })).rejects.toThrow("unsupported for SSH jobs");
-    await expect(call("jobs.snooze", { id, minutes: 1 })).rejects.toThrow("unsupported for SSH jobs");
-    await expect(call("jobs.setWatch", { id, enabled: false })).rejects.toThrow("unsupported for SSH jobs");
+    await expect(call("jobs.input", { id, data: "x" })).rejects.toThrow("for SSH jobs");
+    await expect(call("jobs.closeInput", { id })).rejects.toThrow("for SSH jobs");
+    await expect(call("jobs.snooze", { id, minutes: 1 })).rejects.toThrow("for SSH jobs");
+    await expect(call("jobs.setWatch", { id, enabled: false })).rejects.toThrow("for SSH jobs");
   });
 });
 

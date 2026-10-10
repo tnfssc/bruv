@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promis
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
-import { waitForLiveTuiStartup } from "./live-tui-startup";
+import { liveTuiFailureDetails, waitForLiveTuiStartup } from "./live-tui-startup";
 import {
   capturePane,
   pasteAndSubmit,
@@ -75,7 +75,8 @@ for (const width of [80, 120])
         .join(" ");
       await writeFile(
         join(home, "tmux.conf"),
-        (await readFile(join(root, "scripts/tui/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
+        (await readFile(join(root, "scripts/tui/tmux.conf"), "utf8")) +
+          "\nset -g default-shell /bin/sh\nset -g remain-on-exit on\n",
       );
       expect(
         (await tmux("new-session", "-d", "-s", "ptt", "-x", String(width), "-y", "40", "-c", root, launch)).code,
@@ -152,6 +153,9 @@ for (const width of [80, 120])
       const messages = branch.filter((entry) => entry.type === "message").map((entry) => JSON.stringify(entry));
       expect(messages.filter((text) => text.includes("SPOKEN_INPUT_1")).length).toBe(1);
       expect(messages.filter((text) => text.includes("SPOKEN_REPLY_1")).length).toBe(1);
+    } catch (error) {
+      console.error(await liveTuiFailureDetails(tmux, "ptt"));
+      throw error;
     } finally {
       await tmux("kill-server");
       await rm(home, { recursive: true, force: true });

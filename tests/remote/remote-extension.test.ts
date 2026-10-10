@@ -375,7 +375,7 @@ for (const change of ["offline", "changed-owner"] as const) {
       },
     });
     expect(cancels).toBe(0);
-    expect(messages.some((m) => JSON.stringify(m).includes("no cancel sent"))).toBe(true);
+    expect(messages.some((m) => JSON.stringify(m).includes("No cancel sent"))).toBe(true);
   });
 }
 
@@ -398,7 +398,7 @@ test("many polls do not append routine progress; transitions and reconnect are s
   expect(poll()).toContain("offline");
   expect(poll()).toBe("");
   delete t.lastError;
-  expect(poll()).toContain("recovered");
+  expect(poll()).toContain("connection back");
   expect(poll()).toBe("");
   t.task.questions.push({
     status: "pending",
@@ -514,7 +514,7 @@ test("capability, delivery uncertainty, blocked, failure and integration review 
   expect(poll()).toContain("capability request");
   expect(poll()).toBe("");
   t.replyDelivery = { q: { replyId: "reply-1", status: "uncertain" } };
-  expect(poll()).toContain("delivery uncertain");
+  expect(poll()).toContain("delivery unknown");
   expect(poll()).toBe("");
   t.task.state = "unknown";
   expect(poll()).toContain("unknown");
@@ -579,7 +579,7 @@ test("attention deduplicates hundreds of polls, reconnects and volatile diagnost
     expect(attention.update(state, (key) => keys.push(key))).toEqual([]);
   }
   task.lastError = undefined;
-  expect(attention.update(state).join(" ")).toContain("recovered");
+  expect(attention.update(state).join(" ")).toContain("connection back");
   task.lastError = "ssh: reconnect timeout";
   expect(attention.update(state).join(" ")).toContain("offline");
   expect(attention.update(state)).toEqual([]);
@@ -664,10 +664,10 @@ test("each genuine outage and recovery is noticed once, including recovery after
   const restored = new RemoteAttention();
   restored.restore(saved);
   expect(restored.connection("owner", true, "different diagnostic", remember)).toEqual([]);
-  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("recovered");
+  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("connection back");
   expect(restored.connection("owner", false, undefined, remember)).toEqual([]);
   expect(restored.connection("owner", true, "new outage", remember)[0]).toContain("new outage");
-  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("recovered");
+  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("connection back");
   expect(saved).toHaveLength(4);
 });
 
@@ -950,7 +950,7 @@ test("review action exposes cached conflict artifact and leaves picker without c
   await extension.run("", { hasUI: true, ui: { custom: async () => ["task:review", "details"][picks++] } });
   expect(picks).toBe(2);
   expect(messages.at(-1).content).toContain("/safe/return.patch");
-  expect(messages.at(-1).content).toContain("Inspect local worktree before applying");
+  expect(messages.at(-1).content).toContain("Check local worktree before applying");
 });
 
 test("menu repository launch asks about untracked files before snapshot or transfer", async () => {
@@ -1040,7 +1040,7 @@ test("capability menu shows remote request details and refuses changed owner aft
       },
     },
   });
-  expect(messages.at(-1).content).toContain("no grant sent");
+  expect(messages.at(-1).content).toContain("No grant sent");
 });
 
 test("open remote menu signals snapshot freshness without rewriting the picker or transcript", async () => {
@@ -1246,7 +1246,7 @@ test("offline terminal menu revokes only the selected local grant; Escape and de
     await run(true);
     expect(localCapabilityGrants(client, "first")).toEqual([]);
     expect(localCapabilityGrants(client, "second")).toHaveLength(1);
-    expect(messages.at(-1).content).toContain("Owner not notified");
+    expect(messages.at(-1).content).toContain("Owner not told");
     expect(calls.filter((x) => x === "confirm")).toHaveLength(2);
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -1309,7 +1309,7 @@ test("changed-owner accepted task loses local grant without wrong-owner dispatch
       },
     });
     expect(localCapabilityGrants(client, "one")).toEqual([]);
-    expect(output.at(-1).content).toContain("Owner not notified");
+    expect(output.at(-1).content).toContain("Owner not told");
     expect(picks).toBe(5);
   } finally {
     await rm(dir, { recursive: true, force: true });

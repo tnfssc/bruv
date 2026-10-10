@@ -3,8 +3,9 @@
 T3 Code is the external host. Fix its Bruv integration in Bruv; do not change,
 bundle, or fork T3 Code to implement a fix.
 
-- web/launcher.ts prints external, unmodified T3 setup guidance. It does not start
-  a server, extract an embedded payload, seed settings or use a startup fallback.
+- web/launcher.ts retains external, unmodified T3 setup guidance via `bruv web --setup`.
+  The browser terminal lives in src/web; it runs Bruv itself, not bundled T3.
+  No T3 payload extraction, settings seeding or startup fallback.
 - tasks/ retains the owned native task bridge and server task ownership code.
   Its name is not evidence that it belongs to the obsolete bundled web build.
 - The old bundled T3 inputs, archive builder and optional validation gates were

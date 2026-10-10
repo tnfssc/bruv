@@ -47,7 +47,9 @@ compiledTest(
           return new Response("not found", { status: 404 });
         calls++;
         const body = (await request.json()) as { messages: Array<{ role: string; content: string }> };
-        const auxiliary = body.messages.some((m) => JSON.stringify(m.content).includes("Return only JSON matching"));
+        const auxiliary = body.messages.some((m) =>
+          JSON.stringify(m.content).includes("Only JSON. Match this schema:"),
+        );
         const longTurn = body.messages.some((m) => JSON.stringify(m.content).includes("hold until EOF"));
         if (longTurn) await Bun.sleep(300);
         return completionStream("loopback-only", "fixture-model", {
@@ -234,7 +236,7 @@ compiledTest(
         { ...environment, CLAUDE_CONFIG_DIR: undefined as any },
       );
       auxiliary.child.stdin.end("Write a title");
-      expect(await auxiliary.exit).toBe(0);
+      expect(await auxiliary.exit, auxiliary.stderr()).toBe(0);
       expect(auxiliary.frames()).toHaveLength(1);
       expect(auxiliary.frames()[0].structured_output).toEqual({ title: "Loopback title" });
       expect(calls).toBe(2);
@@ -266,7 +268,7 @@ compiledTest(
         { ...environment, CLAUDE_CONFIG_DIR: undefined as any },
       );
       expect(await unaligned.exit).toBe(1);
-      expect(unaligned.stderr()).toContain("explicit absolute CLAUDE_CONFIG_DIR");
+      expect(unaligned.stderr()).toContain("absolute CLAUDE_CONFIG_DIR");
       expect(unaligned.stdout()).toBe("");
       expect(calls).toBe(3);
       const failure = launch([
@@ -537,14 +539,14 @@ compiledTest(
           home: undefined,
           model: "fixture/exact-model",
           extra: ["--no-session-persistence"],
-          error: "explicit absolute CLAUDE_CONFIG_DIR",
+          error: "absolute CLAUDE_CONFIG_DIR",
         },
-        { home: "relative-home", model: "fixture/exact-model", error: "explicit absolute CLAUDE_CONFIG_DIR" },
+        { home: "relative-home", model: "fixture/exact-model", error: "absolute CLAUDE_CONFIG_DIR" },
         { home: join(root, "not-a-directory"), model: "fixture/exact-model", error: "not a directory" },
         { home: ordinary, model: "fixture/exact-model", error: "default Claude home" },
         { home: join(root, "claude-link", "nested"), model: "fixture/exact-model", error: "default Claude home" },
-        { home: sdkHome, model: undefined, error: "No selected Bruv model" },
-        { home: sdkHome, model: "fixture/missing-model", error: "Unknown configured Bruv model" },
+        { home: sdkHome, model: undefined, error: "No Bruv model selected" },
+        { home: sdkHome, model: "fixture/missing-model", error: "Unknown Bruv model" },
         { home: sdkHome, model: "", error: "exact provider/id" },
         { home: sdkHome, model: "anthropic/claude-sonnet-4-5", error: "No configured authentication" },
       ];

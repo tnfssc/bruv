@@ -644,7 +644,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       expect(subtype(f.frames, "task_started")).toHaveLength(0);
       expect(subtype(f.frames, "task_notification")).toHaveLength(0);
       expect(subtype(f.frames, "background_tasks_changed").at(-1).tasks).toEqual([]);
-      expect(f.diagnostics.some((message) => message.includes("No confirmed process spawn"))).toBe(true);
+      expect(f.diagnostics.some((message) => message.includes("Process spawn unconfirmed"))).toBe(true);
     } finally {
       await f.close();
     }

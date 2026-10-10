@@ -199,7 +199,7 @@ test("SSH requires human-pinned exact target, durable request/session, async opt
     ).rejects.toThrow();
   await expect(
     f.service().handle("subagent", { target: "box", prompt: "work" }, f.context(), new AbortController().signal),
-  ).rejects.toThrow("durable execute");
+  ).rejects.toThrow("saved execute");
   await expect(
     f
       .service()
@@ -209,7 +209,7 @@ test("SSH requires human-pinned exact target, durable request/session, async opt
         { cwd: f.dir, sessionManager: { getSessionFile: () => undefined } } as any,
         identity(),
       ),
-  ).rejects.toThrow("durable parent");
+  ).rejects.toThrow("saved parent");
   expect(f.requests).toHaveLength(0);
 });
 
@@ -409,7 +409,7 @@ test("explicit destination model/thinking overrides reach named placement and ne
     f
       .service()
       .handle("subagent", { prompt: "local", model: "server/explicit" }, f.context(), identity("local-override")),
-  ).rejects.toThrow("named SSH target");
+  ).rejects.toThrow("named SSH");
   await expect(
     f
       .service()

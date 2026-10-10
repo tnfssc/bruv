@@ -164,7 +164,9 @@ describe("goal durable state", () => {
   test("waiting accepts only currently owned running jobs", () => {
     const store = new GoalStore(() => {});
     store.set(input);
-    expect(() => store.update({ status: "waiting", pendingJobIds: ["foreign"] }, new Set(["mine"]))).toThrow("owned");
+    expect(() => store.update({ status: "waiting", pendingJobIds: ["foreign"] }, new Set(["mine"]))).toThrow(
+      "your running jobs",
+    );
     expect(store.update({ status: "waiting", pendingJobIds: ["mine"] }, new Set(["mine"]))).toMatchObject({
       status: "waiting",
       pendingJobIds: ["mine"],
@@ -362,9 +364,9 @@ test("model-facing updates reject runtime-owned waiting bookkeeping", () => {
   const h = harness();
   h.runtime.handle("goal.set", input);
 
-  expect(() => h.runtime.handle("goal.update", { status: "waiting" })).toThrow("waiting status is runtime-managed");
+  expect(() => h.runtime.handle("goal.update", { status: "waiting" })).toThrow("Runtime owns waiting status");
   expect(() => h.runtime.handle("goal.update", { status: "active", pendingJobIds: ["job_1"] })).toThrow(
-    "pendingJobIds is runtime-managed",
+    "Runtime owns pendingJobIds",
   );
   expect(h.runtime.get()?.status).toBe("active");
 });
@@ -642,7 +644,7 @@ test("goal guidance is conditional and accompanies every persisted status", () =
     expect(result.messages).toHaveLength(2);
     expect(result.messages[1]).toMatchObject({ role: "custom", customType: "bruv-goal-state", display: false });
     expect(result.messages[1].content).toContain("Goal guidance:\n- Keep working");
-    expect(result.messages[1].content).toContain("Persistent goal state (authoritative)");
+    expect(result.messages[1].content).toContain("Saved goal (current state)");
     expect(result.messages[1].content).toContain(`Status: ${status}`);
   }
 });
@@ -655,7 +657,7 @@ test("waiting job completion reactivates at the next turn boundary", () => {
 
   expect(h.runtime.get()?.status).toBe("active");
   const result = h.assembleContext([]);
-  expect(result.messages.at(-1).content).toContain("Persistent goal state");
+  expect(result.messages.at(-1).content).toContain("Saved goal (current state)");
   expect(result.messages.at(-1).content).toContain("Status: active");
 });
 
@@ -712,7 +714,7 @@ test("resumed waiting work that is no longer owned pauses visibly", () => {
   resumed.assembleContext([]);
   expect(resumed.runtime.get()).toMatchObject({
     status: "paused",
-    pauseReason: expect.stringContaining("unavailable"),
+    pauseReason: expect.stringContaining("jobs not here"),
   });
 });
 

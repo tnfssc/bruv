@@ -12,11 +12,11 @@ export function connectionFailure(event: unknown): string {
   const withDetail = (message: string) => (detail ? `${message} ${detail}` : message);
   switch (status) {
     case 401:
-      return withDetail("OpenAI WebSocket authentication rejected (HTTP 401). Check the configured API key.");
+      return withDetail("OpenAI WebSocket key rejected (HTTP 401). Check API key.");
     case 403:
-      return withDetail("OpenAI WebSocket access denied (HTTP 403). Check project and model access.");
+      return withDetail("OpenAI WebSocket denied (HTTP 403). Check project/model access.");
     case 404:
-      return withDetail("OpenAI WebSocket endpoint or model unavailable (HTTP 404).");
+      return withDetail("OpenAI WebSocket endpoint/model unavailable (HTTP 404).");
     case 429:
       return detail
         ? `OpenAI WebSocket rejected (HTTP 429). ${detail}`
@@ -33,6 +33,6 @@ export function connectionFailure(event: unknown): string {
   // the response's actual status. Do not guess 401, model access or billing from this.
   const message = typeof e.message === "string" ? e.message : typeof nested.message === "string" ? nested.message : "";
   if (message.includes("Expected 101 status code"))
-    return "OpenAI WebSocket upgrade rejected (HTTP status unavailable). Check key, model access, rate limits or network; see provider dashboard.";
-  return "OpenAI WebSocket connection failed (network or upgrade error; HTTP status unavailable).";
+    return "OpenAI WebSocket upgrade rejected. HTTP status unknown. Check key, model access, rate limit, network and provider dashboard.";
+  return "OpenAI WebSocket failed: network or upgrade error. HTTP status unknown.";
 }

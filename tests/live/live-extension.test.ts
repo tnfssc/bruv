@@ -160,6 +160,7 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
     },
   };
   const deps: LiveDependencies = {
+    editor: () => startup.getActiveCompactEditor(),
     local: () => true,
     config: { load: async () => ({ provider: "google", model: "gemini-3.8-live" }), save: async () => {} },
     speakerCheck: async () => "Test signal detected; compare mic/speaker route manually.",
@@ -515,7 +516,7 @@ describe("Live voice", () => {
     await hold.reached;
     expect(await t.stop()).toEqual({
       stopped: false,
-      errors: ["Audio startup has not finished; teardown is not yet observed"],
+      errors: ["Audio startup is not done; teardown not yet seen"],
       jobsUnchanged: true,
     });
     hold.resume();
@@ -547,7 +548,11 @@ describe("Live voice", () => {
       }),
     });
     await t.run("start");
-    expect(await t.stop()).toEqual({ stopped: false, errors: ["Provider socket close failed"], jobsUnchanged: true });
+    expect(await t.stop()).toEqual({
+      stopped: false,
+      errors: ["Provider socket failed to close"],
+      jobsUnchanged: true,
+    });
     expect(stopped).toBe(true);
   });
   test("self-stop reports audio teardown failure rather than claiming completion", async () => {
@@ -832,7 +837,7 @@ describe("Live voice", () => {
     t.voice.onAudio?.(Buffer.alloc(2_880_002).toString("base64"), 0);
     expect(t.status.at(-1)).toBeUndefined();
     expect(t.notices.at(-1)).toBe(
-      "Live stop requested: Local playback queue exceeds pending budget (2880000 bytes); audio incomplete. No agent work was cancelled.",
+      "Live stop requested: Playback queue over 2880000 bytes. Audio incomplete. No agent work was cancelled.",
     );
     expect(t.notices.join(" ")).not.toContain("Provider invalid_audio");
   });
@@ -1699,7 +1704,7 @@ test("voice failures render truthful warnings without stopping agent work", asyn
     const reason =
       source === "provider"
         ? "Provider invalid_audio: Invalid output audio chunk"
-        : "Local playback queue exceeds pending budget (2880000 bytes); audio incomplete";
+        : "Playback queue over 2880000 bytes. Audio incomplete";
     expect(rendered).toContain("Warning: Live stop requested: " + reason + ". No agent work was cancelled.");
     expect(cancelled).toBe(0);
     expect(closed).toBe(1);

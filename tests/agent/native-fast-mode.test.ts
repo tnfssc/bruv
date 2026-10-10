@@ -389,8 +389,8 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   await h.command.handler("on", h.ctx);
   expect(h.entries).toEqual([]);
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
-  expect(h.notices.at(-1).message).toContain("pinned Pi 1.1.0");
-  expect(() => h.registration.setWithCostConsent(true)).toThrow("pinned Pi 1.1.0");
+  expect(h.notices.at(-1).message).toContain("Pi 1.1.0 ModelRuntime");
+  expect(() => h.registration.setWithCostConsent(true)).toThrow("Pi 1.1.0 ModelRuntime");
   expect(h.entries).toEqual([]);
 
   h.entries.push({
@@ -409,7 +409,7 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   });
   await h.emit("session_start");
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
-  expect(h.notices.at(-1).message).toContain("compatibility seam is missing");
+  expect(h.notices.at(-1).message).toContain("ModelRuntime hook missing");
 
   const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
   const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
@@ -698,7 +698,7 @@ test("real AgentSession ModelRuntime guard survives swallowed hook throws and st
     expect(dispatches).toBe(0);
     const last = session.messages.at(-1) as any;
     expect(last.stopReason).toBe("error");
-    expect(last.errorMessage).toContain("late service-tier mutation");
+    expect(last.errorMessage).toContain("service tier changed after approval");
     const diagnostic = inspectDiagnostics(manager).records.at(-1)!;
     expect(diagnostic).toMatchObject({ code: FAST_GUARD_TIER_MUTATION, outcome: "blocked", dispatch: "none" });
     expect(
@@ -1312,7 +1312,7 @@ test("canonical OAuth guards reject resolved proxy endpoints, including official
         )
         .result();
       expect(response.stopReason).toBe("error");
-      expect(response.errorMessage).toContain("endpoint is not authorized");
+      expect(response.errorMessage).toContain("endpoint not approved");
     }
     expect(calls).toBe(0);
   } finally {

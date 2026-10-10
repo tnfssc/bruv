@@ -25,7 +25,7 @@ test("local preflight accepts only an explicit selection/default, never the firs
       modelRuntime: models,
       settingsManager: SettingsManager.inMemory({}, { projectTrusted: false }),
     };
-    await expect(preflightClaudeCompatModel(options)).rejects.toThrow("No selected Bruv model");
+    await expect(preflightClaudeCompatModel(options)).rejects.toThrow("No Bruv model selected");
     await expect(preflightClaudeCompatModel({ ...options, model: "" })).rejects.toThrow("exact Bruv provider/id");
     const settingsManager = SettingsManager.inMemory(
       { defaultProvider: "anthropic", defaultModel: "claude-sonnet-4-5" },
@@ -36,7 +36,7 @@ test("local preflight accepts only an explicit selection/default, never the firs
     // Invalid explicit selection cannot fall back to the valid configured default.
     await expect(
       preflightClaudeCompatModel({ ...options, settingsManager, model: "anthropic/nonexistent" }),
-    ).rejects.toThrow("Unknown configured Bruv model");
+    ).rejects.toThrow("Unknown Bruv model");
     expect(await readdir(agentDir)).toEqual(["auth.json"]);
   } finally {
     await rm(agentDir, { recursive: true, force: true });

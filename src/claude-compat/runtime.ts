@@ -238,11 +238,10 @@ export async function preflightClaudeCompatModel(options: ClaudeCompatRuntimeOpt
   await models.getAvailable();
   const resolveModel = (key: string): Model<Api> => {
     const separator = key.indexOf("/");
-    if (separator < 1)
-      throw new Error(`Select an exact Bruv provider/id in T3; Claude aliases are not supported: ${key}`);
+    if (separator < 1) throw new Error(`Use exact Bruv provider/id in T3. Claude aliases not supported: ${key}`);
     const model = models.getModel(key.slice(0, separator), key.slice(separator + 1));
     if (!model)
-      throw new Error(`Unknown configured Bruv model; select an exact provider/id from the selected Bruv home: ${key}`);
+      throw new Error(`Unknown Bruv model: ${key}. Use exact provider/id configured in the selected Bruv home.`);
     return model;
   };
   const configured =
@@ -252,14 +251,12 @@ export async function preflightClaudeCompatModel(options: ClaudeCompatRuntimeOpt
   const initialModel =
     options.model !== undefined ? resolveModel(options.model) : configured ? resolveModel(configured) : undefined;
   if (!initialModel)
-    throw new Error(
-      "No selected Bruv model. Select an exact provider/id in T3 or configure the default model in the explicitly selected Bruv home.",
-    );
+    throw new Error("No Bruv model selected. Pick exact provider/id in T3 or set a default in the selected Bruv home.");
   if (!models.hasConfiguredAuth(initialModel.provider))
     throw new Error(
       "No configured authentication for " +
         initialModel.provider +
-        ". Configure it with ordinary Bruv in the explicitly selected BRUV_CLAUDE_COMPAT_HOME; do not use T3 Claude login.",
+        ". Set auth in ordinary Bruv with the selected BRUV_CLAUDE_COMPAT_HOME. T3 Claude login cannot set it.",
     );
   assertNativeThinkingDisplay(initialModel, options.thinkingDisplay);
   return { settings, models, initialModel, resolveModel };
@@ -273,9 +270,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     process.env[T3_MCP_BEARER_ENV] !== undefined ||
     process.env.BRUV_WEB_TASK_EVENTS === "1"
   )
-    throw new Error(
-      "Legacy patched-T3 bridge environment must be removed before creating the Claude-compatible runtime",
-    );
+    throw new Error("Remove old patched-T3 bridge environment before starting the Claude-compatible runtime");
   const { settings, models, initialModel, resolveModel } = await preflightClaudeCompatModel(options);
   // Recheck local auth at initialize/admission; account:{} is never an auth indicator.
   const readiness = () => {
@@ -482,7 +477,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     noThemes: true,
     noContextFiles: options.auxiliary,
     systemPrompt: options.auxiliary
-      ? "Answer the user's request. Return only JSON matching the requested schema."
+      ? "Answer user request."
       : withBruvSystemPrompt([], {
           cwd: options.cwd,
           agentDir: options.agentDir,
@@ -987,12 +982,12 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   let auxiliaryUsed = false;
   async function runAuxiliary(text: string, schema: Record<string, unknown>) {
     checkOpen();
-    if (!options.auxiliary) throw new Error("Auxiliary requests require an isolated auxiliary runtime");
+    if (!options.auxiliary) throw new Error("Auxiliary requests need isolated runtime");
     if (auxiliaryUsed) throw new Error("Auxiliary runtime is single-use");
     auxiliaryUsed = true;
     readiness();
     const validator = Compile(schema as TSchema);
-    await session.prompt(`${text}\n\nReturn only JSON matching this JSON Schema:\n${JSON.stringify(schema)}`, {
+    await session.prompt(`${text}\n\nOnly JSON. Match this schema:\n${JSON.stringify(schema)}`, {
       expandPromptTemplates: false,
       source: "rpc",
     });
@@ -1000,7 +995,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     const output = JSON.parse(frontend.text());
     if (!validator.Check(output))
       throw new Error(
-        "Model output does not satisfy the requested JSON schema: " +
+        "Model output does not match JSON schema: " +
           validator
             .Errors(output)
             .map((e) => e.message)

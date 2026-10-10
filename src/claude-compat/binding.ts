@@ -227,7 +227,7 @@ export function permissionBinding(args: ConnectorArguments, request: ClaudeCompa
           };
         if (response.behavior !== "allow") throw new Error("Invalid native permission response");
         if (response.toolUseID !== undefined && response.toolUseID !== call.toolUseId)
-          throw new Error("Permission correlation mismatch");
+          throw new Error("Permission response did not match this tool call");
         const updatedInput = response.updatedInput;
         if (
           updatedInput !== undefined &&
@@ -255,13 +255,13 @@ export function mcpFactory(mcp: InjectedMcpSession): ExtensionFactory {
       pi.registerTool({
         name: tool.name,
         label: tool.name,
-        description: tool.description ?? tool.name,
+        description: tool.description ?? "",
         parameters: tool.inputSchema as TSchema,
         async execute(id, input, signal) {
           const result = await mcp.callTool(tool.name, input as Record<string, unknown>, { toolUseId: id, signal });
           if (result.isError)
             throw new Error(
-              "MCP tool reported an error: " +
+              "MCP tool error: " +
                 result.content
                   .filter((b) => b.type === "text")
                   .map((b) => b.text)

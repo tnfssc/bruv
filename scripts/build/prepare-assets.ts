@@ -1,3 +1,4 @@
+import { prepareWebAssets } from "./web-assets";
 import { preparePiHostWithRecovery } from "./pi-host-recovery";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -55,3 +56,5 @@ await writeIfChanged(
     2,
   )}\n`,
 );
+
+await prepareWebAssets(root, writeIfChanged);

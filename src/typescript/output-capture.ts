@@ -171,8 +171,7 @@ export class ExecuteOutputCapture {
 
   constructor(options: { sessionFile?: string; outputByteLimit?: number } = {}) {
     const limit = options.outputByteLimit ?? DEFAULT_EXECUTE_OUTPUT_BYTE_LIMIT;
-    if (!Number.isSafeInteger(limit) || limit < 0)
-      throw new RangeError("outputByteLimit must be a non-negative safe integer");
+    if (!Number.isSafeInteger(limit) || limit < 0) throw new RangeError("outputByteLimit needs a safe integer >=0");
     this.#outputByteLimit = limit;
     this.#sessionFile =
       typeof options.sessionFile === "string" && options.sessionFile.length ? resolve(options.sessionFile) : undefined;

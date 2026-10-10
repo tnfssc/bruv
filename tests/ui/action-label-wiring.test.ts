@@ -10,7 +10,6 @@ import { registerExecuteTool } from "../../src/typescript/extension";
 import { completionPreview } from "../../src/ui/execution-previews";
 import { completionDiagnosticDetails } from "../../src/agent/extension";
 import { formatCompletionNotification } from "../../src/tasks/completion-notification";
-import { executeGuidance } from "../../src/prompts";
 
 beforeAll(() => initTheme("dark", false));
 function registeredTool() {
@@ -40,8 +39,8 @@ test("registered execute exports an optional string label and action-not-finding
   expect(tool.parameters.properties.label).toEqual({ type: "string" });
   expect(tool.parameters.required).not.toContain("label");
   expect(tool.description).toContain("short plain");
-  expect(tool.description).toContain("not an unverified success finding");
-  expect(executeGuidance.join("\n")).toContain("Do not put unverified success findings in labels");
+  expect(tool.description).toContain("not a claim it worked");
+  expect(tool.promptGuidelines).toBeUndefined();
 });
 
 test("native Pi tool component uses labels pending/settled and expands full source/output", () => {

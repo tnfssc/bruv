@@ -157,9 +157,13 @@ test("navigation and stopWork pause discard queued wake; pending background resu
 test("tool answers and unsupported child/web operations fail closed", async () => {
   const h = harness();
   try {
-    await expect(h.runtime.handle(h.ctx, "questions.answer", {})).rejects.toThrow("targeted user reply");
+    await expect(h.runtime.handle(h.ctx, "questions.answer", {})).rejects.toThrow(
+      "User answers with /questions answer <id> <text>. Tool text and speech are not saved answers.",
+    );
     h.supported(false);
-    await expect(h.runtime.handle(h.ctx, "questions.ask", { text: "no" })).rejects.toThrow("not supported");
+    await expect(h.runtime.handle(h.ctx, "questions.ask", { text: "no" })).rejects.toThrow(
+      "Questions need parent CLI. Parent can save it. No web view or in-place child reply.",
+    );
     await expect(h.runtime.commands(h.ctx).handle("questions.list")).rejects.toThrow("parent CLI");
     expect(h.runtime.hasBlockingQuestions()).toBe(false);
   } finally {
@@ -204,7 +208,7 @@ test("explicit resume queue is bounded by pending-question capacity", async () =
     h.runtime.pause();
     for (const q of saved.slice(0, 20)) await h.runtime.commands(h.ctx).handle("questions.resume", { id: q.id });
     await expect(h.runtime.commands(h.ctx).handle("questions.resume", { id: saved[20]!.id })).rejects.toThrow(
-      "Too many queued",
+      "Answer queue full",
     );
     expect(h.sent).toHaveLength(0);
   } finally {
@@ -229,7 +233,9 @@ test("durable dispatch claim fences a restart after host acceptance but failed r
     expect(h.sent[0]!.message.display).toBe(false);
     expect(h.runtime.service.get(h.ctx, q.id).delivery).toBe("dispatching");
     const fresh = h.registerRuntime();
-    await expect(fresh.runtime.commands(h.ctx).handle("questions.resume", { id: q.id })).rejects.toThrow("uncertain");
+    await expect(fresh.runtime.commands(h.ctx).handle("questions.resume", { id: q.id })).rejects.toThrow(
+      "Delivery unknown",
+    );
     expect(fresh.sent).toHaveLength(0);
     expect(h.sent).toHaveLength(1);
   } finally {

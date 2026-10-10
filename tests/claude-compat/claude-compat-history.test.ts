@@ -461,7 +461,7 @@ describe("history boundaries", () => {
       history.child({ taskId: "../escape", sourceSessionId: "child-pi", sourceCallId: "call" }),
     ).rejects.toThrow("Invalid");
     await expect(NativeHistory.open({ ...options, sourceSessionId: "unrelated-pi" })).rejects.toThrow(
-      "not this Pi session",
+      "not from this Pi session",
     );
     expect((await readNativeHistory(options)).length).toBe(1);
   });

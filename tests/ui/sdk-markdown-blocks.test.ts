@@ -35,6 +35,8 @@ const lines = [
   "x  ",
   "\v",
 ];
+// 29^3 boundary cases plus large reference-regex inputs are CPU-heavy under CI workers.
+// This is an equivalence budget; the tests below enforce line-bounded work separately.
 test("line-bounded hooks preserve complete reference tokens and links", () => {
   const actual = fast(),
     expected = reference();
@@ -59,7 +61,7 @@ test("line-bounded hooks preserve complete reference tokens and links", () => {
     `${"deterministic pasted line\n".repeat(16000)}===`,
   ])
     expect(actual.lexer(source)).toEqual(expected.lexer(source));
-});
+}, 10_000);
 test("non-GFM and pedantic parsers retain their original rules", () => {
   for (const options of [{ gfm: false }, { pedantic: true }])
     for (const a of lines)

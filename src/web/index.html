@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"><title>Bruv terminal</title><link rel="icon" type="image/svg+xml" href="__BRUV_ICON__"><link rel="stylesheet" href="/terminal.css"><script type="module" src="/terminal.js"></script></head>
+<body>
+    <p id="workspace-reorder-help" hidden>Drag to reorder, or use Alt+Shift+Up or Down. Hold to drag on touch screens. Double-click, press F2 or use Workspace actions to rename.</p>
+    <p id="tab-reorder-help" hidden>Drag to reorder, or use Alt+Shift+Left or Right. Hold to drag on touch screens. Double-click, double-tap or press F2 to rename.</p>
+    <span id="reorder-status" class="visually-hidden" role="status"></span>
+  <div class="workspace-layout">
+    <button type="button" id="drawer-backdrop" aria-label="Close workspaces" hidden></button>
+    <aside id="workspace-sidebar" aria-label="Workspaces">
+      <div class="brand-row"><span class="brand"><!-- BRUV_WORDMARK --></span><button type="button" class="icon-button btn btn-ghost" id="add-workspace" aria-label="Open folder" title="Open folder">+</button><button type="button" class="icon-button drawer-close btn btn-ghost" id="close-drawer" aria-label="Close workspaces">×</button></div>
+      <nav id="workspace-list" aria-label="Choose workspace"></nav>
+      <div id="rail-entry"></div>
+    </aside>
+    <main class="terminal-area">
+      <div class="tab-bar">
+        <button type="button" id="open-drawer" aria-label="Open workspaces" aria-expanded="false" aria-controls="workspace-sidebar" class="btn btn-ghost"><span id="current-workspace">Folders</span><span aria-hidden="true">⌄</span></button>
+        <div id="tab-list" role="tablist" aria-label="Terminal tabs"></div>
+        <button type="button" class="icon-button btn btn-ghost" id="new-tab" aria-label="New tab" title="New tab">+</button>
+      </div>
+      <div id="sync-status" role="status"></div>
+      <div id="notice-row" hidden><span id="notice" role="alert"></span><button type="button" id="dismiss-notice" class="btn btn-ghost btn-square" aria-label="Dismiss error" title="Dismiss error">×</button></div>
+      <div id="terminal-status" hidden><span id="status" role="status"></span><button type="button" id="lost-new-tab" hidden class="btn btn-outline">New terminal</button></div>
+      <div id="voice-status" hidden><span id="audio-status" role="status"></span><button type="button" id="cancel-voice" hidden class="btn btn-outline">Cancel</button><button type="button" id="dismiss-voice" hidden class="btn btn-outline">Dismiss</button></div>
+      <div id="terminal"><div id="empty-terminal"><div id="empty-content"><span class="empty-brand"><!-- BRUV_WORDMARK --></span><h1 tabindex="-1">Open a folder</h1><p></p><div id="empty-entry"></div><button type="button" id="empty-action" class="btn btn-primary" hidden>New terminal</button></div></div></div>
+    </main>
+  </div>
+  <form id="folder-form" hidden><label for="folder-input">Folder on this server</label><input class="input" id="folder-input" autocomplete="off" spellcheck="false" aria-describedby="folder-error" placeholder="/path/to/folder" required><p id="folder-error" role="alert"></p><div class="folder-actions"><button type="button" id="cancel-folder" class="btn btn-outline">Cancel</button><button type="submit" id="open-folder" class="btn btn-primary">Open folder</button></div></form>
+  <div id="workspace-menu" popover role="menu" aria-label="Workspace actions"><button type="button" id="rename-workspace" class="btn btn-ghost" role="menuitem">Rename</button><button type="button" id="remove-workspace" class="btn btn-ghost" role="menuitem">Remove workspace…</button></div>
+  <dialog id="workspace-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description"><form id="dialog-form"><h2 id="dialog-title">Workspace</h2><p id="dialog-description"></p><div class="dialog-actions"><button type="button" id="dialog-cancel" class="btn btn-outline">Cancel</button><button type="submit" id="dialog-submit" class="btn btn-outline btn-error">Remove</button></div></form></dialog>
+</body>
+</html>

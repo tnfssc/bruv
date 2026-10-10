@@ -267,14 +267,14 @@ export class GoalStore {
       goal.pendingJobIds = strings(input.pendingJobIds, "pendingJobIds", true);
       const unknown = goal.pendingJobIds.filter((id) => !runningJobs.has(id));
       if (unknown.length > 0) {
-        throw new Error(`Waiting requires running jobs owned by this agent: ${unknown.join(", ")}`);
+        throw new Error(`Waiting needs your running jobs: ${unknown.join(", ")}`);
       }
     }
     if (status === "paused") {
       goal.pauseReason = optionalText(input.reason, "pause reason") ?? "Paused";
     }
     if (input.progress !== undefined) {
-      if (status !== "active") throw new Error("progress evidence requires active status");
+      if (status !== "active") throw new Error("progress evidence needs active status");
       const milestone = progressText(input.progress);
       const prior = goal.progress ?? [];
       if (!prior.includes(milestone)) goal.progress = [...prior, milestone].slice(-MAX_PROGRESS_ITEMS);

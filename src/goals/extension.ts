@@ -245,10 +245,7 @@ export function registerGoalMode(
     const statuses = pendingJobIds.map((id) => jobs.status(id));
     if (statuses.some((status) => status === "unavailable")) {
       const references = pendingJobIds.filter((id) => /^task_[A-Za-z0-9]{1,64}$/.test(id));
-      pause(
-        "Paused because waiting work is unavailable in this process" +
-          (references.length ? `. Job references: ${references.join(", ")}` : ""),
-      );
+      pause("Paused: waiting jobs not here" + (references.length ? `. Job references: ${references.join(", ")}` : ""));
     } else if (statuses.some((status) => status === "finished")) {
       requireStore().update({ status: "active" });
       reminders.invalidate();
@@ -332,7 +329,7 @@ export function registerGoalMode(
         {
           role: "custom" as const,
           customType: "bruv-goal-state",
-          content: `Goal guidance:\n${goalGuidance.trimEnd()}\n\nPersistent goal state (authoritative):\n${formatGoal(goal)}${controller.audit() ? `\nBlocker audit: ${JSON.stringify(controller.audit())}` : ""}${!canContinue() ? `\nGoal pursuit is suspended in the current mode. ${unavailable}` : ""}`,
+          content: `Goal guidance:\n${goalGuidance.trimEnd()}\n\nSaved goal (current state):\n${formatGoal(goal)}${controller.audit() ? `\nBlocker audit: ${JSON.stringify(controller.audit())}` : ""}${!canContinue() ? `\nGoal pursuit is suspended in the current mode. ${unavailable}` : ""}`,
           display: false,
           timestamp: Date.now(),
         },
@@ -485,11 +482,14 @@ export function registerGoalMode(
           throw new Error("Token usage is runtime-managed; only the user can change the budget with /goal budget");
         }
         if ("pendingJobIds" in input) {
-          throw new Error("goal.update pendingJobIds is runtime-managed; use handoff() to wait for owned running jobs");
+          throw new Error("Runtime owns pendingJobIds. handoff() waits for your running jobs.");
         }
-        if (input.status === "waiting" || input.status === "budget_exceeded") {
+        if (input.status === "waiting") {
+          throw new Error("Runtime owns waiting status. handoff() waits for your running jobs.");
+        }
+        if (input.status === "budget_exceeded") {
           throw new Error(
-            `goal.update ${input.status} status is runtime-managed; use handoff() to wait for owned running jobs`,
+            "Runtime owns budget_exceeded status. Only the user can change the budget with /goal budget.",
           );
         }
         const prior = requireStore().get();

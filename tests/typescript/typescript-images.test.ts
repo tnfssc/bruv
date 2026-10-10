@@ -117,7 +117,7 @@ describe("execute image output", () => {
       `await showImage(Buffer.from(${JSON.stringify(gif.toString("base64"))}, "base64"));`,
     );
     expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("supports PNG, JPEG, and WebP bytes");
+    expect(rejected.stderr).toContain("needs PNG/JPEG/WebP bytes and valid header");
     expect(rejected.images).toEqual([]);
   });
 
@@ -154,8 +154,8 @@ describe("execute image output", () => {
     }
     expect(result.stdout).toContain("input unchanged: true");
     expect(result.imageResizeNotes).toHaveLength(2);
-    expect(formatResult(result)).toContain("original 2400x900, displayed at 2000x750");
-    expect(formatResult(result)).toContain("Multiply coordinates by 1.20");
+    expect(formatResult(result)).toContain("original 2400x900, shown 2000x750");
+    expect(formatResult(result)).toContain("Original coordinates = shown coordinates × 1.20");
     expect((await readFile(join(directory, "oversized.png"))).equals(original)).toBe(true);
     expect(await readdir(directory)).toEqual(["oversized.png"]);
   }, 20_000);
@@ -256,7 +256,7 @@ describe("execute image output", () => {
     child.stdin.end();
     const [code, stderr] = await Promise.all([child.exited, new Response(child.stderr).text()]);
     expect(code).toBe(1);
-    expect(stderr).toContain("available only through the execute tool");
+    expect(stderr).toContain("showImage needs execute");
   });
 });
 
@@ -265,7 +265,7 @@ describe("image format detection", () => {
     expect(imageMimeType(png)).toBe("image/png");
     expect(imageMimeType(jpeg)).toBe("image/jpeg");
     expect(imageMimeType(webp)).toBe("image/webp");
-    expect(() => imageMimeType(gif)).toThrow("supports PNG, JPEG, and WebP bytes");
+    expect(() => imageMimeType(gif)).toThrow("needs PNG/JPEG/WebP bytes and valid header");
     expect(() => imageMimeType(Buffer.from("not an image"))).toThrow();
   });
 });
@@ -273,7 +273,7 @@ describe("image format detection", () => {
 describe("image channel validation", () => {
   test("validates untrusted record contents before accepting images", () => {
     expect(() => decodeImageChannel(record(gif.toString("base64"), "image/gif"))).toThrow(
-      "supports PNG, JPEG, and WebP bytes",
+      "needs PNG/JPEG/WebP bytes and valid header",
     );
     expect(() => decodeImageChannel(record(encoded, "image/jpeg"))).toThrow("mismatch");
     expect(() => decodeImageChannel(record("%%%"))).toThrow("base64");
@@ -321,13 +321,13 @@ describe("image channel validation", () => {
     expect(decodeImageChannel(channel)).toHaveLength(2);
     const overflow = Buffer.concat([channel, record()]);
     expect(overflow.length).toBeLessThan(MAX_IMAGE_CHANNEL_BYTES);
-    expect(() => decodeImageChannel(overflow)).toThrow("Image output exceeded its total byte limit");
+    expect(() => decodeImageChannel(overflow)).toThrow("Image output over total byte limit");
   });
 
   test("keeps channel framing and count checks ahead of record validation", () => {
     expect(decodeImageChannel(Buffer.alloc(0))).toEqual([]);
     expect(() => decodeImageChannel(Buffer.alloc(MAX_IMAGE_CHANNEL_BYTES + 1))).toThrow(
-      "Image output channel exceeded its byte limit",
+      "Image output channel over byte limit",
     );
     expect(() => decodeImageChannel(Buffer.from("{bad json}"))).toThrow("Incomplete image output record");
     expect(() => decodeImageChannel(Buffer.from("null\n".repeat(5)))).toThrow("Image output exceeds 4 images");

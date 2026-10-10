@@ -87,7 +87,7 @@ if (cliArgs[0] === "update") {
   }
 }
 if (cliArgs[0] === "web") {
-  const { runWeb } = await import("./t3/web/launcher");
+  const { runWeb } = await import("./web/launcher");
   process.exit(await runWeb(cliArgs.slice(1)));
 }
 if (cliArgs[0] === INTERNAL_TYPESCRIPT_RUNNER_ARG) {
@@ -114,7 +114,7 @@ for (const argument of cliArgs) {
   if (argument === "--") break;
   const option = argument.split("=", 1)[0];
   if (removedToolOptions.has(option)) {
-    console.error(`${option} is not supported by bruv; its core tool set is fixed by the current product phase.`);
+    console.error(`${option} not supported. Bruv fixes its core tool set.`);
     process.exit(1);
   }
 }
@@ -308,7 +308,7 @@ function filterHelp(text: string): string {
     if (line.includes(" update [source|self|pi]")) {
       filtered.push(
         "  update [--check]       Update/check bruv and bruv-claude-compat together",
-        "  web                    Show external T3 native-connector setup guidance",
+        "  web                    Run the real Bruv TUI in a browser (--setup for T3)",
       );
       continue;
     }

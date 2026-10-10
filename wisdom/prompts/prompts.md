@@ -6,6 +6,7 @@ Changing what model gets? Start here. Talk that led to a line may be gone. This 
 
 One prompt file is not whole input. Read built system instructions, tool definitions, and messages before saying an explanation is missing. Earlier text may explain a line. Some text comes only after a tool call. Can inspect what model gets. Need behavior tests to know what it understands.
 
+- [Closed sentence review](./sentence-review.md): source and sentence decisions, preserved data, complete-request checks and known failures.
 - [Source map](./system-instructions.md): sources, order, conditions, custom-prompt precedence, and runtime messages.
 - [Project wisdom history](../wisdom-system/project-history.md): recent decisions and the point where a review stopped.
 - [Historical validation](./prompt-validation-history.md): prior experiments and failures, not today's recommended wording.
@@ -25,16 +26,16 @@ bun run prompt:preview -- --goal "Representative objective"
 
 Command prints JSON with `systemPrompt`, `tools`, `messages`, and metadata about what it included or left out. Use `--message` for user message. Default mode is root orchestrator. `--role` picks depth-one child. `--mode` works only for roots.
 
-This runs real Pi session assembly and die extension hooks. It captures context at provider-stream boundary with fake local response. It does not join a guessed prompt by hand. It uses temporary agent directory and in-memory session, then cleans both up. It does not run model tools or launch jobs.
+This runs real Pi session assembly and Bruv extension hooks. It captures context at provider-stream boundary with fake local response. It does not join a guessed prompt by hand. It uses temporary agent directory and in-memory session, then cleans both up. It does not run model tools or launch jobs.
 
-Default is isolated: no project instruction files. `--project` includes instruction files Pi finds for project and ancestors (AGENTS.md and supported alternatives). It also includes `.die/SYSTEM.md` and `.die/APPEND_SYSTEM.md` when present. This opts into those prompt files. It does not replay saved project trust settings. It leaves out global configuration, project settings/packages, extensions, skills, themes, and templates. Read metadata before treating result as match for your case.
+Default is isolated: no project instruction files. `--project` includes instruction files Pi finds for project and ancestors (AGENTS.md and supported alternatives). It also includes `.bruv/SYSTEM.md` and `.bruv/APPEND_SYSTEM.md` when present. This opts into those prompt files. It does not replay saved project trust settings. It leaves out global configuration, project settings/packages, extensions, skills, themes, and templates. Read metadata before treating result as match for your case.
 
 `--goal` puts sample **paused** goal and API guidance through real goal-state context hook. It does not start automatic goal work. First-request preview does not make live completion/attention messages, tool-result handoffs, prior conversation, or compaction. See their conditions/producers in [source map](./system-instructions.md). Preview uses fixed Codex model identity for assembly. It does not use user's chosen live provider or wire transport. It shows input, not proof model understood or acted well.
 
 For delivery and offline-preview checks:
 
 ```sh
-bun test tests/prompt-preview.test.ts tests/prompt-delivery.test.ts tests/provider-prompt.test.ts
+bun test tests/prompts/prompt-preview.test.ts tests/prompts/prompt-delivery.test.ts tests/prompts/provider-prompt.test.ts
 bun run check
 ```
 
@@ -54,7 +55,7 @@ This helps reason together. It is not script for every edit. Keep small change s
 | --- | --- | --- |
 | Values and opinions | `src/prompts/system.md` | Help the agent exercise judgment; opinions state chosen defaults. |
 | Identity | `src/prompts/identity.md` | Explain its job and name the environment. |
-| Tool facts | `src/prompts/execute.md` and `execute-description.md` | Signatures, defaults, results, and what calling a function does. |
+| Tool facts | `src/prompts/execute-description.md` | Signatures, defaults, results, and what calling a function does. |
 | Conditional guidance | Role/mode, wisdom, handoff, goal, and compaction sources | Information needed in that particular situation. See the source map. |
 | Assembly | TypeScript consumers | Select and combine text. Static prose belongs in Markdown rather than hidden literals. |
 | Decisions and review position | Project wisdom | Preserve reasons, unresolved questions, and where to resume—not the full transcript. |

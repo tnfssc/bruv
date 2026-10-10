@@ -140,7 +140,7 @@ describe("Host authority and spoken results", () => {
       kind: "queued",
       id: "a",
       revision: 0,
-      commentary: "Passed your request to the current agent.",
+      commentary: "Your request is queued for the current agent.",
     });
     const failed = fixture(async () => {
       throw new Error("secret job output");
@@ -229,7 +229,7 @@ describe("Admission, reservation and replay", () => {
     for (let i = 0; i < 200; i++) bridge.addFragment({ startMs: i, endMs: i, text: "x".repeat(400) });
     expect(await bridge.handleCreated({ target: "client", id: "bounded", offsetMs: 200 })).toMatchObject({
       kind: "clarification",
-      commentary: "I couldn't retain the whole request. Please repeat it.",
+      commentary: "I lost part of your request. Please say it again.",
     });
     expect(captured).toHaveLength(0);
     for (let i = 0; i < 255; i++) await bridge.handleCreated({ target: "client", id: String(i), offsetMs: 0 });
@@ -364,13 +364,13 @@ describe("Retained evidence and loss settlement", () => {
     expect(await first).toEqual({ kind: "stale", id: "first" });
     expect(await bridge.handleCreated({ id: "still-pending", target: "client", offsetMs: 300 })).toMatchObject({
       kind: "clarification",
-      commentary: "I'm still checking whether the earlier request was accepted. Please try again in a moment.",
+      commentary: "Earlier request still being checked. Try again soon.",
     });
     secondAdmission.reject(new Error("Not admitted"));
     expect(await second).toEqual({ kind: "stale", id: "second" });
     expect(await bridge.handleCreated({ id: "lost", target: "client", offsetMs: 300 })).toMatchObject({
       kind: "clarification",
-      commentary: "I couldn't retain the whole request. Please repeat it.",
+      commentary: "I lost part of your request. Please say it again.",
     });
     expect(captured).toHaveLength(2);
     bridge.addFragment({ startMs: 300, endMs: 400, text: "repeat second request" });
@@ -398,7 +398,7 @@ describe("Retained evidence and loss settlement", () => {
     expect(await first).toEqual({ kind: "stale", id: "first" });
     expect(await bridge.handleCreated({ id: "incomplete", target: "client", offsetMs: 300 })).toMatchObject({
       kind: "clarification",
-      commentary: "I couldn't retain the whole request. Please repeat it.",
+      commentary: "I lost part of your request. Please say it again.",
     });
     expect(captured).toHaveLength(1);
     bridge.addFragment({ startMs: 300, endMs: 400, text: "whole request repeated" });

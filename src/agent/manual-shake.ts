@@ -302,7 +302,7 @@ export function buildShakePlan(
     ...(tooMany || tooLarge || invalidRecord
       ? {
           storageError:
-            "Shake cannot store a bounded projection for this active window. Compact or branch away old active history, then retry /shake.",
+            "Shake cannot save this active window within its size limit. Compact or branch away old history, then retry /shake.",
         }
       : {}),
   };
@@ -522,7 +522,7 @@ function assertNativeShakeContext(
   const d = checkpoint.details;
   if (!isNativeCodexCompactionDetails(d) || ctx.model?.api !== d.api || ctx.model?.provider !== d.provider) {
     throw new Error(
-      "Shake refused: unsupported or damaged opaque native checkpoint, or incompatible API/provider; no context was changed.",
+      "Shake refused: opaque checkpoint damaged, unsupported or from another API/provider. Context unchanged.",
     );
   }
   if (!incoming) return;
@@ -538,7 +538,7 @@ function assertNativeShakeContext(
     (rawIntact ? adapted : summary).some((m) => count(m) !== 0)
   ) {
     throw new Error(
-      "Shake refused: native checkpoint or runtime state changed or became ambiguous in context hooks; no context was changed.",
+      "Shake refused: context hooks changed or obscured the native checkpoint or runtime state. Context unchanged.",
     );
   }
 }
@@ -620,9 +620,7 @@ export function installShakeAccountingAdapter(): void {
   const originalCheck = prototype._checkCompaction;
   const originalUsage = prototype.getContextUsage;
   if (typeof originalCheck !== "function" || typeof originalUsage !== "function")
-    throw new Error(
-      "bruv manual shake is unsupported by this Pi runtime: required AgentSession accounting seams are unavailable",
-    );
+    throw new Error("This Pi runtime lacks the AgentSession accounting hooks Bruv shake needs.");
   // This predicate also runs from every footer context-usage read. Keep only its
   // boolean result, not the fully materialized history or a periodically expiring cache.
   const freshnessCache = new WeakMap<
@@ -845,7 +843,7 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
       );
     } catch {
       const failure = new Error(
-        "Manual-shake checkpoint could not be carried forward after compaction. Refusing to expose context until the session is reloaded or a checkpoint is persisted.",
+        "Compaction could not keep the shake checkpoint. Context blocked until session reload or checkpoint save.",
       );
       projectionFailures.set(ctx.sessionManager as object, { sessionId, error: failure });
       shakeDiagnostic(ctx, SHAKE_CARRY_FORWARD_PERSIST_FAILED, "failed", operationId);

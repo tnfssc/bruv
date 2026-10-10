@@ -80,7 +80,13 @@ async function fixture() {
   return { root, run, buildCount, installPair };
 }
 
-const expectedProbes = ["--version", "--help", "claude-compat --bruv-version", "claude-compat --version", "web"];
+const expectedProbes = [
+  "--version",
+  "--help",
+  "claude-compat --bruv-version",
+  "claude-compat --version",
+  "web --setup",
+];
 
 for (const reuse of [false, true]) {
   test(
@@ -119,7 +125,7 @@ for (const [name, source, lastProbe] of [
     bruv.replace('echo "Bruv connector"', 'echo "Bruv connector"; echo warning >&2'),
     "claude-compat --version",
   ],
-  ["web guidance mismatch", bruv.replace("Setup guide only.", "bundled web"), "web"],
+  ["web guidance mismatch", bruv.replace("Setup guide only.", "bundled web"), "web --setup"],
 ]) {
   test(`reuse rejects ${name} and cleans its temporary pair`, async () => {
     const { root, run, buildCount, installPair } = await fixture();

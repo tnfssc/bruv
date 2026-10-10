@@ -17,7 +17,7 @@ import { runAcceptance } from "../../scripts/claude-native-acceptance/run.mjs";
 const request = (selected) => ({
   model: modelId,
   tools: [{ type: "function", function: { name: "execute" } }],
-  messages: [{ role: "user", content: `Persistent goal state (authoritative):\nGoal: ${selected}\nStatus: active` }],
+  messages: [{ role: "user", content: `Saved goal (current state):\nGoal: ${selected}\nStatus: active` }],
 });
 
 test("native goal fixture requires authoritative state and real completion tool evidence", async () => {

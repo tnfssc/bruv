@@ -1,6 +1,5 @@
 import type { BuildSystemPromptOptions } from "@earendil-works/pi-coding-agent";
 import handoff from "./prompts/background-handoff.md" with { type: "text" };
-import reference from "./prompts/execute.md" with { type: "text" };
 import fast from "./prompts/fast.md" with { type: "text" };
 import identity from "./prompts/identity.md" with { type: "text" };
 import mainOrchestrator from "./prompts/main-orchestrator.md" with { type: "text" };
@@ -15,12 +14,6 @@ const bullets = (text: string): string[] =>
     .filter((line) => line.startsWith("- "))
     .map((line) => line.slice(2));
 export const workingValues = bullets(system);
-// Remove only list markers that Pi adds back; preserve wrapped lines and paragraphs.
-export const executeReference = reference
-  .trimEnd()
-  .split(/\n(?=- )/)
-  .map((item) => item.replace(/^- /, ""));
-export const executeGuidance = executeReference;
 
 export function collaborationGuidance(): string {
   return system.trimEnd();
@@ -34,7 +27,8 @@ export function backgroundHandoff(ids: string[]): string {
 
 export function subagentGuidance(role: string): string {
   const template = role === "fast" ? fast : role === "orchestrator" ? orchestrator : normal;
-  return template.trimEnd().replace("{{role}}", () => role);
+  const guidance = template.trimEnd().replace("{{role}}", () => role);
+  return role === "orchestrator" ? `${guidance}\n\n${mainOrchestrator.trimEnd()}` : guidance;
 }
 
 export const MAIN_AGENT_MODES = ["fast", "normal", "orchestrator"] as const;
@@ -65,7 +59,7 @@ export function replaceMainAgentGuidance(prompt: string, mode: MainAgentMode, ow
  * project context, skills, and cwd.
  */
 export function bruvSystemPrompt(): string {
-  return `${identity.trimEnd()}\n\nGuidelines:\n${reference.trimEnd()}`;
+  return identity.trimEnd();
 }
 
 /** Return true only for Bruv's injected base. All other custom prompts belong to the user. */

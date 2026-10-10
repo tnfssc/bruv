@@ -40,3 +40,6 @@ live.env
 /wisdom/tasks-ui/evidence/**/*.cpuprofile
 /wisdom/experiments/t3/ui-only-history-minimal/revision-*
 /wisdom/experiments/t3/ui-only-history-pr-link/rebase-provenance.txt
+
+# Worktree scratch
+.tmp/

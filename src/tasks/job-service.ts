@@ -167,8 +167,7 @@ type MixedListCursor = {
 const MIXED_CURSOR_PREFIX = "jobs-v2.";
 function encodeMixedCursor(cursor: MixedListCursor): string {
   const encoded = MIXED_CURSOR_PREFIX + Buffer.from(JSON.stringify(cursor)).toString("base64url");
-  if (encoded.length > 2048 || cursor.nativeCursor.length > 1024)
-    throw new Error("Native jobs.list cursor exceeds supported bounds");
+  if (encoded.length > 2048 || cursor.nativeCursor.length > 1024) throw new Error("Native jobs.list cursor too large");
   return encoded;
 }
 function decodeMixedCursor(value: string): MixedListCursor {
@@ -282,7 +281,7 @@ export class JobService {
 
   #launchLedger(ctx: ExtensionContext): T3LaunchIdentityLedger {
     const sessionFile = ctx.sessionManager?.getSessionFile();
-    if (!sessionFile) throw new Error("T3 native launch requires a durable parent session");
+    if (!sessionFile) throw new Error("T3 native launch needs a saved parent session");
     const path = `${sessionFile}.t3-launches-v1.json`;
     return new T3LaunchIdentityLedger(path);
   }
@@ -358,7 +357,7 @@ export class JobService {
     switch (method) {
       case "shell": {
         const params = z.parse(Shell, input);
-        if (!params.command.trim()) throw new Error("shell requires a nonempty command");
+        if (!params.command.trim()) throw new Error("shell needs a command");
         this.beforeLocalShellLaunch?.();
         const task = this.manager.spawn({
           launchIdentity: this.#launchIdentity(ctx, signal),
@@ -380,33 +379,26 @@ export class JobService {
         const params = z.parse(Agent, input);
         if (params.prompt && params.prompts) throw new Error("Use prompt or prompts, not both");
         const prompts = params.prompts ?? (params.prompt ? [params.prompt] : []);
-        if (!prompts.length || prompts.some((prompt) => !prompt.trim()))
-          throw new Error("subagent requires nonempty prompt(s)");
+        if (!prompts.length || prompts.some((prompt) => !prompt.trim())) throw new Error("subagent needs prompt(s)");
         const type = (params.type ?? "normal") as T3TaskProfile;
         const workspace = (params.workspace ?? { kind: "inherit" }) as WorkspaceRequest;
         if (prompts.length > 1 && workspace.kind === "worktree" && workspace.branch)
-          throw new Error("An explicit workspace branch is only valid for a single prompt");
+          throw new Error("Named workspace branch needs one prompt.");
         const bridge = t3BridgeEnvironment(this.environment);
         if (bridge.kind === "remote") {
-          if (params.source)
-            throw new Error("Scoped native subagents already own their source; cross-source inclusion is unsupported");
+          if (params.source) throw new Error("Scoped native source is fixed. No cross-source files.");
           if (params.model !== undefined || params.thinking !== undefined)
-            throw new Error("Explicit model/thinking overrides are unsupported for scoped native subagents");
+            throw new Error("Scoped native uses its own model/thinking. No overrides.");
           // A scoped backend owns policy. Placement must never escape it via a
           // laptop policy or a second SSH connection. "local" means this runtime.
           if (params.target !== undefined && params.target !== "local")
-            throw new Error("Explicit cross-placement is unsupported for scoped native subagents");
+            throw new Error("Scoped native stays here. No cross-placement.");
           if (params.waitSeconds !== undefined && params.waitSeconds !== 0)
-            throw new Error(
-              "Positive waitSeconds is unsupported for scoped native subagents; omit it or use 0 for asynchronous launch",
-            );
+            throw new Error("Scoped native returns at once. Omit waitSeconds or use 0.");
           if (params.timeoutSeconds !== undefined)
-            throw new Error(
-              "timeoutSeconds is unsupported for scoped native subagents; use jobs.stop(id) for cancellation",
-            );
+            throw new Error("No scoped native timeoutSeconds. Cancel with jobs.stop(id).");
           const requestIdentity = getJobRequestIdentity(signal);
-          if (!requestIdentity)
-            throw new Error("Scoped native launch requires durable execute invocation and call identity");
+          if (!requestIdentity) throw new Error("Scoped native launch needs saved execute and call IDs");
           const ledger = this.#launchLedger(ctx);
           const results = await this.#withNative(bridge, async (adapter) => {
             const launched: Record<string, unknown>[] = [];
@@ -459,35 +451,32 @@ export class JobService {
             } catch (error) {
               if (!launched.length) throw error;
               const ids = launched.map((item) => String(item.id)).join(", ");
-              throw new Error(`Native batch launch failed; retained launched task IDs: ${ids}`, { cause: error });
+              throw new Error(`Native batch launch failed. Started task IDs kept: ${ids}`, { cause: error });
             }
             return launched;
           });
           return params.prompts ? results : results[0];
         }
         const { depth, type: parentType } = this.policy();
-        if (depth >= 2) throw new Error("Delegation is limited to two levels below the root");
+        if (depth >= 2) throw new Error("Delegation depth: two levels below root");
         if (!canDelegate(depth, parentType)) throw new Error("Only orchestrator agents can delegate");
-        if (depth > 0 && type === "orchestrator")
-          throw new Error("Spawned orchestrators may only delegate to fast/normal workers");
+        if (depth > 0 && type === "orchestrator") throw new Error("Spawned orchestrators get fast/normal workers only");
         if (params.source && (params.target === undefined || params.target === "local"))
-          throw new Error("Untracked source inclusion applies to explicit cross-placement current-source handoff");
+          throw new Error("Untracked files need current source and explicit cross-placement.");
         if (params.source?.retryTaskId && prompts.length !== 1)
-          throw new Error("Source approval followup retries one pinned task at a time");
+          throw new Error("Source approval retry needs one pinned task.");
         if (params.target !== undefined && params.target !== "local") {
-          if (!this.remoteJobs) throw new Error("SSH subagent placement is unavailable in this session");
+          if (!this.remoteJobs) throw new Error("No SSH subagent placement in this session");
           if (params.waitSeconds !== undefined && params.waitSeconds !== 0)
-            throw new Error("SSH subagents are async-only; omit waitSeconds or use 0");
-          if (params.timeoutSeconds !== undefined)
-            throw new Error("timeoutSeconds is unsupported for SSH subagents; use jobs.stop(id)");
+            throw new Error("SSH returns at once. Omit waitSeconds or use 0.");
+          if (params.timeoutSeconds !== undefined) throw new Error("No SSH timeoutSeconds. Cancel with jobs.stop(id).");
           const requestIdentity = getJobRequestIdentity(signal);
-          if (!requestIdentity)
-            throw new Error("SSH subagent launch requires durable execute invocation and call identity");
+          if (!requestIdentity) throw new Error("SSH launch needs saved execute and call IDs");
           const sessionFile = ctx.sessionManager?.getSessionFile();
-          if (!sessionFile) throw new Error("SSH subagent launch requires a durable parent session");
+          if (!sessionFile) throw new Error("SSH launch needs a saved parent session");
           const branchId = ctx.sessionManager.getLeafId();
           const sessionId = ctx.sessionManager.getSessionId();
-          if (!branchId || !sessionId) throw new Error("SSH subagent launch requires a saved parent branch");
+          if (!branchId || !sessionId) throw new Error("SSH launch needs a saved parent branch");
           const ledger = this.#launchLedger(ctx);
           const launched: SshLaunchResult[] = [];
           try {
@@ -536,15 +525,13 @@ export class JobService {
           } catch (error) {
             if (!launched.length) throw error;
             const ids = launched.map((item) => item.id).join(", ");
-            throw new Error(`SSH batch launch failed; retained launched task IDs: ${ids}`, { cause: error });
+            throw new Error(`SSH batch launch failed. Started task IDs kept: ${ids}`, { cause: error });
           }
           this.#refresh();
           return params.prompts ? launched : launched[0];
         }
         if (params.model !== undefined || params.thinking !== undefined)
-          throw new Error(
-            "Per-task model/thinking overrides currently require a named SSH target; local tasks use configured profiles",
-          );
+          throw new Error("Model/thinking overrides need named SSH. Local tasks use profiles.");
         const { model, thinking } = resolveProfile(await loadProfiles(this.profilesPath), type, {
           model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
           thinking: ctx.thinkingLevel,
@@ -650,7 +637,7 @@ export class JobService {
         return {
           targets: [current, ...(!native && this.remoteJobs?.targets ? await this.remoteJobs.targets() : [])],
           default: "local",
-          observation: "Named targets reflect saved human authorization, not verified connectivity or provider access",
+          observation: "User approved these targets. Connection and provider access not checked.",
         };
       }
       case "jobs.list": {
@@ -800,10 +787,10 @@ export class JobService {
       }
       case "jobs.input": {
         const params = z.parse(Input, input);
-        if (isSshJobId(params.id)) throw new Error("jobs.input is unsupported for SSH jobs");
+        if (isSshJobId(params.id)) throw new Error("No jobs.input for SSH jobs");
         if (params.data === undefined && !params.closeInput) throw new Error("Provide data or closeInput: true");
         if (!this.#isLocalTask(params.id) && t3BridgeEnvironment(this.environment).kind === "remote")
-          throw new Error("Input is unsupported for scoped native tasks");
+          throw new Error("No input for scoped native tasks");
         return preview(
           params.data === undefined
             ? this.manager.closeInput(params.id)
@@ -812,9 +799,9 @@ export class JobService {
       }
       case "jobs.closeInput": {
         const params = z.parse(Id, input);
-        if (isSshJobId(params.id)) throw new Error("jobs.closeInput is unsupported for SSH jobs");
+        if (isSshJobId(params.id)) throw new Error("No jobs.closeInput for SSH jobs");
         if (!this.#isLocalTask(params.id) && t3BridgeEnvironment(this.environment).kind === "remote")
-          throw new Error("closeInput is unsupported for scoped native tasks");
+          throw new Error("No closeInput for scoped native tasks");
         return preview(this.manager.closeInput(params.id));
       }
       case "jobs.stopWork": {
@@ -898,7 +885,7 @@ export class JobService {
           }
         const sessionFile = ctx.sessionManager?.getSessionFile();
         if (this.remoteJobs && !sessionFile)
-          discoveryError = [discoveryError, "SSH jobs require a durable parent session for cancellation discovery"]
+          discoveryError = [discoveryError, "Finding SSH jobs to cancel needs a saved parent session"]
             .filter(Boolean)
             .join("; ");
         if (this.remoteJobs && sessionFile) {
@@ -947,9 +934,9 @@ export class JobService {
       }
       case "jobs.snooze": {
         const params = z.parse(Snooze, input);
-        if (isSshJobId(params.id)) throw new Error("jobs.snooze is unsupported for SSH jobs");
+        if (isSshJobId(params.id)) throw new Error("No jobs.snooze for SSH jobs");
         if (!this.#isLocalTask(params.id) && t3BridgeEnvironment(this.environment).kind === "remote")
-          throw new Error("snooze is unsupported for scoped native tasks");
+          throw new Error("No snooze for scoped native tasks");
         if (!this.attention) throw new Error("Job attention is unavailable");
         const result = this.attention.snooze(params.id, params.minutes);
         return {
@@ -960,9 +947,9 @@ export class JobService {
       }
       case "jobs.setWatch": {
         const params = z.parse(Watch, input);
-        if (isSshJobId(params.id)) throw new Error("jobs.setWatch is unsupported for SSH jobs");
+        if (isSshJobId(params.id)) throw new Error("No jobs.setWatch for SSH jobs");
         if (!this.#isLocalTask(params.id) && t3BridgeEnvironment(this.environment).kind === "remote")
-          throw new Error("watch is unsupported for scoped native tasks");
+          throw new Error("No watch for scoped native tasks");
         if (!this.attention) throw new Error("Job attention is unavailable");
         const result = this.attention.setWatch(params.id, params.enabled);
         return { ...preview(result), watchEnabled: params.enabled };

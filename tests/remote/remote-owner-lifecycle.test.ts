@@ -224,7 +224,7 @@ echo closed > "$task_directory/child-exited"`,
               ? { state: "cancelled" }
               : {
                   state: "unknown",
-                  error: "Cancellation acknowledged but native work exit is unconfirmed",
+                  error: "Cancel acknowledged. Native work exit not confirmed.",
                 },
           });
         });

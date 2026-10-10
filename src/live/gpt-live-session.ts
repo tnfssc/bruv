@@ -140,7 +140,7 @@ export class GPTLiveSession {
     try {
       const data = JSON.stringify(event);
       if ((this.socket.bufferedAmount ?? 0) + Buffer.byteLength(data) > MAX_BUFFERED) {
-        this.fail("Live send queue exceeded limit");
+        this.fail("Live send buffer limit exceeded");
         return false;
       }
       this.socket.send(data);
@@ -228,7 +228,7 @@ export class GPTLiveSession {
         (event.session.audio?.format != null &&
           (event.session.audio.format.type !== "audio/pcm" || event.session.audio.format.rate !== 24000))
       ) {
-        this.fail("Invalid Live session.started");
+        this.fail("Invalid Live session.started event");
         return;
       }
       this.phase = "ready";

@@ -16,8 +16,8 @@ export const summarizeRemoteTask = (task: RemoteTask) => ({
   events: undefined,
   cached: true,
   observation: task.lastError
-    ? `Current remote status unavailable; cached observation only: ${task.lastError}`
-    : "Last synchronized state, not live status",
+    ? `Remote status unavailable. Cached view only: ${task.lastError}`
+    : "Last synced state, not live status",
   eventCount: task.events.length,
 });
 
@@ -58,7 +58,7 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
       case "launchRepository":
       case "launch":
         throw new Error(
-          "Remote task launch uses subagent({ target: <authorized name>, ... }); legacy remote launch helpers cannot bypass delegation role/depth policy.",
+          "Use subagent({ target: <authorized name>, ... }). Role/depth limits apply. Old remote launch helpers cannot bypass them.",
         );
       case "requestCapability":
         return requestLocalCapability(args, signal);

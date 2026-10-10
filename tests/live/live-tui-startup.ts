@@ -23,3 +23,30 @@ export async function waitForLiveTuiStartup(
   }
   throw new Error("Missing " + fixture + " in actual terminal:\n" + (await frame()));
 }
+
+// Keep the real pane and process state before test cleanup removes the tmux server.
+export async function liveTuiFailureDetails(
+  tmux: (...args: string[]) => Promise<{ stdout: string; stderr: string; code: number }>,
+  target: string,
+): Promise<string> {
+  const pane = await tmux(
+    "list-panes",
+    "-t",
+    target,
+    "-F",
+    "pid=#{pane_pid} dead=#{pane_dead} exit=#{pane_dead_status} command=#{pane_current_command} start=#{pane_start_command}",
+  );
+  const history = await tmux("capture-pane", "-p", "-t", target, "-S", "-");
+  return (
+    "Pane (code " +
+    pane.code +
+    "):\n" +
+    pane.stdout +
+    pane.stderr +
+    "History (code " +
+    history.code +
+    "):\n" +
+    history.stdout +
+    history.stderr
+  );
+}

@@ -5,7 +5,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { parseConnectorArguments } from "../../src/claude-compat/arguments";
-import { nativeStorage } from "../../src/claude-compat/binding";
+import { mcpFactory, nativeStorage, permissionBinding } from "../../src/claude-compat/binding";
+import type { InjectedMcpSession } from "../../src/claude-compat/mcp";
+import type { ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { NativeHistory } from "../../src/claude-compat/history";
 
 const directories: string[] = [];
@@ -80,9 +82,56 @@ test("fresh import and reopened import branch through the same durable checkpoin
   const canonicalFile = imported.manager.getSessionFile()!;
   const leafBefore = SessionManager.open(canonicalFile).getLeafId();
   await expect(nativeStorage(args("--resume", sessionId, "--resume-session-at", invalid), options)).rejects.toThrow(
-    "incomplete tool exchange",
+    "Incomplete tool exchange",
   );
   expect(SessionManager.open(canonicalFile).getLeafId()).toBe(leafBefore);
   expect(imported.manager.getLeafId()).toBe(user.id);
   expect(await readFile(index, "utf8")).toBe(bindingBefore);
+});
+
+test("permission responses must match the actual tool call", async () => {
+  const gate = permissionBinding(args(), async () => ({ behavior: "allow", toolUseID: "another-call" }));
+  await expect(
+    gate.authorize({
+      toolName: "execute",
+      input: { code: "1" },
+      toolUseId: "actual-call",
+      effect: "arbitrary-typescript",
+      owner: "bruv",
+      signal: new AbortController().signal,
+    }),
+  ).rejects.toThrow("Permission response did not match this tool call");
+});
+
+test("MCP error envelope keeps the upstream text", async () => {
+  let tool: ToolDefinition | undefined;
+  const upstream = "Upstream task failed";
+  mcpFactory({
+    tools: () => [{ name: "mcp__peer__task", description: "Upstream tool text", inputSchema: { type: "object" } }],
+    callTool: async () => ({ isError: true, content: [{ type: "text", text: upstream }] }),
+  } as unknown as InjectedMcpSession)({
+    registerTool: (registered: ToolDefinition) => {
+      tool = registered;
+    },
+  } as unknown as ExtensionAPI);
+  expect(tool!.description).toBe("Upstream tool text");
+  await expect(tool!.execute("actual-call", {}, new AbortController().signal, undefined, {} as never)).rejects.toThrow(
+    "MCP tool error: " + upstream,
+  );
+});
+
+test("MCP registration leaves absent prose empty instead of repeating the wire name", () => {
+  const tools: ToolDefinition[] = [];
+  const schema = { type: "object", properties: { text: { type: "string", description: "EXTERNAL_SCHEMA" } } };
+  mcpFactory({
+    tools: () => [
+      { name: "mcp__peer__bare", inputSchema: schema },
+      { name: "mcp__peer__empty", description: "", inputSchema: schema },
+    ],
+  } as unknown as InjectedMcpSession)({
+    registerTool: (tool: ToolDefinition) => tools.push(tool),
+  } as unknown as ExtensionAPI);
+  expect(tools.map((tool) => tool.name)).toEqual(["mcp__peer__bare", "mcp__peer__empty"]);
+  expect(tools.map((tool) => tool.description)).toEqual(["", ""]);
+  for (const tool of tools) expect(tool.parameters).toBe(schema);
 });

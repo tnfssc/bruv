@@ -75,7 +75,7 @@ async function renewSnapshot(path: string, hash: string, now: number): Promise<b
 
 export async function retainTranscriptSnapshot(content: string): Promise<string> {
   const bytes = Buffer.byteLength(content);
-  if (bytes > SNAPSHOT_MAX_BYTES) throw new Error("Transcript snapshot exceeds 16 MiB limit; handoff not queued");
+  if (bytes > SNAPSHOT_MAX_BYTES) throw new Error("Transcript snapshot over 16 MiB. Handoff not queued.");
   const hash = createHash("sha256").update(content).digest("hex");
   const path = join(SNAPSHOT_DIR, `${hash}.json`);
   return withSnapshotLock(async () => {
@@ -84,7 +84,7 @@ export async function retainTranscriptSnapshot(content: string): Promise<string>
     // Reuse is allowed even at capacity: another handoff adds no stored content.
     if (await renewSnapshot(path, hash, now)) return path;
     if (retained.files >= SNAPSHOT_MAX_FILES || retained.bytes + bytes > SNAPSHOT_MAX_BYTES)
-      throw new Error("Transcript snapshot budget exhausted; handoff not queued");
+      throw new Error("Transcript snapshot budget used up. Handoff not queued.");
     try {
       await writeFile(path, content, { flag: "wx", mode: 0o600 });
     } catch (error) {

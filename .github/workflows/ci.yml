@@ -132,12 +132,24 @@ jobs:
         env:
           CI_TEST_SHARD: ${{ matrix.shard }}/3
         run: bun run ci
+      - name: Set up the pinned browser harness
+        if: ${{ matrix.shard == 1 }}
+        timeout-minutes: 5
+        shell: bash
+        run: bash scripts/release/setup-release-browser.sh
+      - name: Compiled browser gate (once on Linux)
+        if: ${{ matrix.shard == 1 }}
+        timeout-minutes: 6
+        shell: bash
+        run: bash scripts/ci/browser.sh
       - name: Upload failure logs
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ci-failure-logs-linux-${{ matrix.shard }}-of-3
-          path: artifacts/ci/
+          path: |
+            artifacts/ci/
+            artifacts/ghostty/
           if-no-files-found: warn
           retention-days: 14
 

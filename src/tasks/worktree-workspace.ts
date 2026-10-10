@@ -156,7 +156,7 @@ export async function createWorktree(
   const identity = createHash("sha256").update(source.commonGitDir).digest("hex").slice(0, 12);
   const root = resolve(options.root ?? process.env.BRUV_WORKTREE_ROOT ?? join(homedir(), ".bruv", "worktrees"));
   await mkdir(root, { recursive: true, mode: 0o700 });
-  if ((await realpath(root)) !== root) throw new Error("Managed worktree root must not be a symlink");
+  if ((await realpath(root)) !== root) throw new Error("No symlink at managed worktree root");
   const path = join(root, `${slug(basename(source.sourcePath))}-${identity}-${id}`);
   if (!isAbsolute(path) || dirname(path) !== root) throw new Error("Invalid managed worktree path");
   try {

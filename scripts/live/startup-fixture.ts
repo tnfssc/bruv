@@ -134,8 +134,7 @@ export async function generateNaturalFixture(key: string, adapter?: LiveAdapter)
     },
     adapter,
     {
-      instructions:
-        "Read the supplied text aloud exactly once in a natural conversational voice. No introduction, commentary or tools.",
+      instructions: "Read supplied text aloud once, in a natural voice. No intro, commentary or tools.",
       tools: [],
       execute: async () => ({ status: "denied" }),
     },

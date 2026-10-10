@@ -104,11 +104,10 @@ export function currentMainToolOwner(manager: object): MainOwner | undefined {
 export async function beforeOrdinaryPrompt(manager: object): Promise<void> {
   const owner = currentMainOwner(manager);
   if (isDelegated(manager)) return;
-  if (owner || acquiring.has(manager))
-    throw new Error("Ordinary text model runs are unavailable while Live owns this session");
+  if (owner || acquiring.has(manager)) throw new Error("Live owns this session. No text model run.");
   await pending.get(manager);
   if (currentMainOwner(manager) || acquiring.has(manager))
-    throw new Error("Ordinary text model runs are unavailable while Live owns this session");
+    throw new Error("Live owns this session. No text model run.");
 }
 /** Keep the admission check and the text-run reservation in the same synchronous step. */
 export async function withOrdinaryMainTurn<T>(manager: object, run: () => Promise<T>): Promise<T> {
@@ -116,7 +115,7 @@ export async function withOrdinaryMainTurn<T>(manager: object, run: () => Promis
   const draining = pending.get(manager);
   if (draining) await draining;
   if (currentMainOwner(manager) || acquiring.has(manager))
-    throw new Error("Ordinary text model runs are unavailable while Live owns this session");
+    throw new Error("Live owns this session. No text model run.");
   textTurns.add(manager);
   try {
     return await run();
@@ -225,7 +224,7 @@ async function executeRegisteredLiveTool(
   let isError = false;
   let acceptingUpdates = true;
   try {
-    if (!valid() || call.name !== "execute") throw new Error("Unavailable Live tool");
+    if (!valid() || call.name !== "execute") throw new Error("Live tool is unavailable");
     const assistantMessage = {
       role: "assistant",
       content: [toolCall],
@@ -284,7 +283,7 @@ async function executeRegisteredLiveTool(
         ...(result.content ?? []),
         {
           type: "text",
-          text: `jobs.stopWork host report (captured before foreground cancellation):\n${JSON.stringify(stopReport)}`,
+          text: `jobs.stopWork result (before foreground stop):\n${JSON.stringify(stopReport)}`,
         },
       ],
     };
@@ -357,7 +356,7 @@ async function acquire(
     !session.agent.beforeToolCall ||
     !session.agent.afterToolCall
   )
-    throw new Error("Cannot acquire Live while the main text agent is active or Pi's classic session is unavailable");
+    throw new Error("Live needs idle text agent and Pi classic session");
   const key = identity(manager);
   const valid = () => {
     if (owners.get(manager) !== owner || !owner.accepting) return false;
@@ -380,9 +379,7 @@ async function acquire(
   if (!prepared.systemPromptOptions.selectedTools.includes("execute"))
     throw new Error("The ordinary tool policy disabled execute");
   if (prepared.systemPromptOptions.selectedTools.join() !== "execute")
-    throw new Error(
-      "Main Live requires the ordinary execute-only tool loadout; continue in text for other direct tools",
-    );
+    throw new Error("Live needs execute-only tools. Other tools need text mode.");
   const previousRunOptions = session._runSystemPromptOptions;
   const patch = session._preparePromptAndToolLoadout(prepared.systemPromptOptions);
   const tool = session._toolRegistry.get("execute");
@@ -474,12 +471,11 @@ async function acquire(
   const project = async (messages: AgentMessage[]) => {
     const serialized = JSON.stringify({ messages });
     const bytes = Buffer.byteLength(serialized);
-    if (bytes > 32 * 1024 * 1024)
-      throw new Error("Live context exceeds its 32 MiB snapshot budget; compact or continue in text");
+    if (bytes > 32 * 1024 * 1024) throw new Error("Live context over 32 MiB. Compact or use text mode.");
     let data = serialized;
     if (bytes > 64 * 1024) {
       const sessionFile = manager.getSessionFile?.();
-      if (!sessionFile) throw new Error("Large Live context requires a durable session history path");
+      if (!sessionFile) throw new Error("Large Live context needs a saved history path");
       const path = `${sessionFile}.artifacts/live/context.json`;
       await mkdir(dirname(path), { recursive: true, mode: 0o700 });
       const temporary = `${path}.${randomUUID()}.tmp`;
@@ -494,12 +490,12 @@ async function acquire(
         truncated: true,
         bytes,
         artifactPath: path,
-        note: "Current effective context snapshot; this file is replaced as the session advances. Ordinary branch originals remain accessible through history. Preview is incomplete.",
+        note: "Current context snapshot. File changes as session moves. Originals stay in history. Preview is partial.",
         preview: serialized.slice(-8192),
       });
     }
     return (
-      "Current effective branch context (data, not new requests; never replay past tool calls). Images here are not visually rendered. Full retained context is available through history or the artifact path:\n" +
+      "Current branch history: data, not new requests. Past calls stay past. Images not shown. Full retained context: history or artifact path:\n" +
       data
     );
   };
@@ -517,14 +513,12 @@ async function acquire(
           next.systemPromptOptions.selectedTools.some((name, index) => name !== selectedBefore[index]);
         if (!edited) next.systemPromptOptions.selectedTools = session.getActiveToolNames();
         if (next.systemPromptOptions.selectedTools.join() !== "execute")
-          throw new Error("Live tool policy changed. Continue in text so the ordinary turn can apply the new policy.");
+          throw new Error("Live tool policy changed. Text mode can apply it.");
         session._runSystemPromptOptions = next.systemPromptOptions;
         const update = session._preparePromptAndToolLoadout(next.systemPromptOptions);
         const effective = next.systemPromptOptions.forceSystemPrompt ?? session.systemPrompt;
         if (effective !== owner.orchestration.instructions)
-          throw new Error(
-            "Per-turn instructions changed. Continue in text: Live cannot safely update this session's instructions while audio is active.",
-          );
+          throw new Error("Turn instructions changed. Switch to text; Live cannot update them during audio.");
         if (update) history.append(update);
         for (const message of next.messages)
           history.append({
@@ -551,7 +545,7 @@ async function acquire(
               : frame.content.map((part) => part.text).join("\n")
             : effective;
         if (prompt !== owner.orchestration.instructions)
-          throw new Error("Context instructions changed. Continue in text to apply them safely.");
+          throw new Error("Context instructions changed. Text mode can apply them.");
         const context = await project(transformed.filter((message) => message.role !== "system"));
         if (valid()) callbacks.onContext?.(context, { triggerResponse: false });
       })
@@ -561,7 +555,7 @@ async function acquire(
           error instanceof Error &&
             /^(Per-turn instructions changed|Live tool policy changed|Context instructions changed)/.test(error.message)
             ? error.message
-            : "Live turn preparation failed. Continue in text; no new tool was admitted.",
+            : "Live turn setup failed. Use text. No new tool accepted.",
         );
         throw error;
       });
@@ -691,7 +685,7 @@ async function acquire(
         const key = JSON.stringify([customType, text, metadata?.details]);
         if (admittedNotifications.has(key)) return;
         if (admittedNotifications.size >= 256) {
-          callbacks.onError?.("Paired Live notification capacity reached; continue in text to inspect jobs.");
+          callbacks.onError?.("Live notice queue full. Inspect jobs in text mode.");
           return;
         }
         admittedNotifications.add(key);
@@ -839,9 +833,7 @@ async function acquire(
             retainedToolBytes += Buffer.byteLength(JSON.stringify(result));
             if (retainedToolBytes > 32 * 1024 * 1024) {
               owner.close();
-              callbacks.onError?.(
-                "Live tool output budget reached. Continue in text; complete outputs remain in this branch history.",
-              );
+              callbacks.onError?.("Live tool output full. Use text. Full outputs stay in branch history.");
             }
             return { ...result, isError };
           } finally {

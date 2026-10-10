@@ -98,7 +98,7 @@ describe("app-owned call preparation and revalidation", () => {
 
   test("missing policy and normal workers cannot launch app tasks or threads", () => {
     for (const policy of [undefined, { role: "normal", depth: 1 } as const, { role: "normal", depth: 2 } as const]) {
-      expect(() => prepareAppWorkerCall(policy, call)).toThrow("normal workers cannot delegate");
+      expect(() => prepareAppWorkerCall(policy, call)).toThrow("Normal workers cannot delegate");
       for (const tool of ["create_threads", "t3_thread_launch"])
         expect(() => prepareAppWorkerCall(policy, { ...call, toolName: "mcp__t3-code__" + tool })).toThrow();
     }
@@ -122,7 +122,7 @@ describe("normal native launch profile binding", () => {
   test("pins CLI model/thinking without inheriting root settings", async () => {
     await withWorkerDirectory(async (dir) => {
       const path = join(dir, "cli.json");
-      await expect(loadNormalAppWorkerProfile(path)).rejects.toThrow("explicit CLI");
+      await expect(loadNormalAppWorkerProfile(path)).rejects.toThrow("from CLI subagents.json");
       await writeFile(path, JSON.stringify({ normal: { model: "worker/test", thinking: "medium" } }));
       const profile = await loadNormalAppWorkerProfile(path);
       expect(bindNormalAppWorker(profile, {})).toEqual(profile); // local initialize probe

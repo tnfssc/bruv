@@ -36,7 +36,7 @@ export async function reply(body, { state, signal, emit }) {
   const messages = body.messages ?? [];
   if (messages.some((message) => message.role === "user" && text(message).includes("NATIVE_GOAL_POST_COMPLETION")))
     return content("GOAL_POST_COMPLETION_REAL");
-  const stateText = messages.map(text).findLast((value) => value.includes("Persistent goal state (authoritative):"));
+  const stateText = messages.map(text).findLast((value) => value.includes("Saved goal (current state):"));
   const selected = stateText?.includes(budgetObjective)
     ? budgetObjective
     : stateText?.includes(objective)

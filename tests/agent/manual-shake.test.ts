@@ -269,9 +269,7 @@ describe("manual shake marker validation and bounds", () => {
     const valid = buildShakePlan(manager.buildContextEntries(), manager.getSessionId()).record;
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, valid);
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, { ...valid, version: 99 });
-    expect(() => latestShakeRecord(manager.buildContextEntries(), manager.getSessionId())).toThrow(
-      "unsupported version",
-    );
+    expect(() => latestShakeRecord(manager.buildContextEntries(), manager.getSessionId())).toThrow("unsupported");
     expect(isShakeRecord({ ...valid, assistantEntryIds: ["x", "x"] })).toBe(false);
     expect(isShakeRecord({ ...valid, shakenAt: Number.POSITIVE_INFINITY })).toBe(false);
     expect(isShakeRecord({ ...valid, extra: true })).toBe(false);
@@ -438,7 +436,7 @@ describe("manual command safeguards", () => {
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, { ...record, assistantEntryIds: ["duplicate", "duplicate"] });
     const h = harness(manager);
     expect(() => h.handlers.get("context")?.[0]?.({ messages: manager.buildSessionContext().messages }, h.ctx)).toThrow(
-      "Refusing to expose unprojected context",
+      "Hidden context stays hidden.",
     );
   });
 
@@ -525,7 +523,7 @@ describe("manual command safeguards", () => {
     const h2 = harness(native);
     await h2.command.handler("", h2.ctx);
     expect(h2.appended).toEqual([]);
-    expect(h2.notices[0]![0]).toContain("unsupported or damaged opaque native checkpoint");
+    expect(h2.notices[0]![0]).toContain("opaque checkpoint damaged, unsupported");
   });
 });
 
@@ -606,9 +604,9 @@ describe("manual shake diagnostic persistence guards", () => {
     const priorLeaf = manager.getLeafId();
     handlers.get("session_compact")![0]!({}, ctx);
     expect(manager.getLeafId()).toBe(priorLeaf);
-    expect(notices.at(-1)).toContain("Refusing to expose context");
+    expect(notices.at(-1)).toContain("Context blocked");
     expect(() => handlers.get("context")![0]!({ messages: manager.buildSessionContext().messages }, ctx)).toThrow(
-      "Refusing to expose context",
+      "Context blocked",
     );
     expect(inspectDiagnostics(manager).records.at(-1)?.code).toBe(SHAKE_CARRY_FORWARD_PERSIST_FAILED);
     expect(JSON.stringify(inspectDiagnostics(manager))).not.toContain("private disk path");

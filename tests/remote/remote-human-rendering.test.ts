@@ -20,9 +20,9 @@ test("preparation-only status preserves both recovery states, without pretending
     ],
   );
   expect(text).toContain("snap · snapshot incomplete");
-  expect(text).toContain("inspect local preparation");
-  expect(text).toContain("prepared · prepared, launch not confirmed");
-  expect(text).toContain("reconcile with owner before retrying same task ID");
+  expect(text).toContain("check local preparation");
+  expect(text).toContain("prepared · prepared; launch unconfirmed");
+  expect(text).toContain("Check owner before retrying same task ID");
   expect(text).toContain("/local/prepared");
   expect(text).not.toContain("No saved tasks");
   expect(text).not.toContain("private prompt");
@@ -39,7 +39,7 @@ test("uncertain answer identifies question and saved reply in task and status", 
   const t = { ...task(), replyDelivery: { "q-1": { replyId: "reply-7", status: "uncertain" as const } } };
   expect(taskLine(t)).toContain("answer delivery uncertain: q-1");
   for (const text of [status([t]), renderHuman(t)]) {
-    expect(text).toContain("Answer q-1 (reply reply-7): delivery uncertain");
+    expect(text).toContain("Answer q-1 (reply reply-7): delivery unknown");
     expect(text).toContain("/remote sync task-1 before retrying");
     expect(text).not.toContain('{"replyId"');
   }
@@ -60,8 +60,8 @@ test.each([
   for (const text of [status([t]), renderHuman(t)]) {
     expect(text).toContain("Cancellation: " + label);
     expect(text).toContain("observed task state: " + (terminal === "terminal" ? "cancelled" : "running"));
-    if (terminal === "not terminal") expect(text).toContain("/remote sync task-1 for terminal truth");
-    else expect(text).not.toContain("for terminal truth");
+    if (terminal === "not terminal") expect(text).toContain("/remote sync task-1 to check if task ended");
+    else expect(text).not.toContain("to check if task ended");
   }
 });
 
@@ -170,7 +170,7 @@ test("conflict details identify the retained artifact without implying automatic
   });
   expect(text).toContain("local file changed");
   expect(text).toContain("/safe/return.patch");
-  expect(text).toContain("Inspect local worktree before applying");
+  expect(text).toContain("Check local worktree before applying");
 });
 
 test("saved task details describe capability waits without granting access", () => {
@@ -201,11 +201,11 @@ test("human capability outcomes are readable scoped receipts, not protocol JSON"
     expect(grant).toContain(value);
   expect(grant).not.toContain('"grant":');
   expect(renderHuman({ revoked: true, grantId: "g", ownerNotified: true })).toBe(
-    "Local capability revoked · g\nOwner acknowledged revocation.",
+    "Local capability revoked · g\nOwner got revoke notice.",
   );
   for (const ownerNotified of [false, undefined]) {
     expect(renderHuman({ revoked: true, grantId: "g", ownerNotified })).toBe(
-      "Local capability revoked · g\nOwner not notified; local authority has ended.",
+      "Local capability revoked · g\nOwner not told; local grant ended.",
     );
   }
 });

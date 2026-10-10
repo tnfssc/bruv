@@ -748,7 +748,7 @@ export function installDiskBackedSessionManager(): void {
         !("content" in replacement) ||
         (typeof replacement.content !== "string" && !Array.isArray(replacement.content)))
     )
-      throw new Error("Context edit replacement must be null or contain string/array content");
+      throw new Error("Context edit replacement needs null or string/array content");
     const target = owned.store.byId.get(targetId);
     if (!target) throw new Error(`Entry ${targetId} not found`);
     let onBranch = false;
@@ -987,7 +987,7 @@ export function getDiskBackedBranch(
   const entries: SessionEntry[] = [];
   walkMetadata(owned.store, fromId ?? internals(manager as SessionManager).leafId, (meta) => {
     if (select(meta)) {
-      if (entries.length >= maxEntries) throw new Error(`Active history branch exceeds the ${maxEntries}-entry limit`);
+      if (entries.length >= maxEntries) throw new Error(`Active history branch over ${maxEntries}-entry limit`);
       entries.push(metadataSkeleton(meta));
     }
   });

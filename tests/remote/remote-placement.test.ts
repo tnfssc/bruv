@@ -40,7 +40,7 @@ test("a spawned fast, normal or unidentified parent cannot place any child role"
   for (const profile of ["fast", "normal", "orchestrator"] as const) {
     for (const parentType of ["normal", "fast", undefined] as const) {
       expect(() => validatePlacement({ profile, parentDepth: 1, parentType, workspace: { kind: "inherit" } })).toThrow(
-        "Only root or orchestrator agents below depth 2 can delegate",
+        "Delegation needs root/orchestrator at depth <2",
       );
     }
   }
@@ -56,7 +56,7 @@ test("placement distinguishes exhausted delegation depth from malformed depth", 
     };
     for (const parentDepth of [2, 3])
       expect(() => validatePlacement({ ...placement, parentDepth })).toThrow(
-        "Only root or orchestrator agents below depth 2 can delegate",
+        "Delegation needs root/orchestrator at depth <2",
       );
     for (const parentDepth of [-1, 0.5, NaN, Infinity])
       expect(() => validatePlacement({ ...placement, parentDepth })).toThrow("Invalid remote task role/depth");

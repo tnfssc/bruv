@@ -62,7 +62,7 @@ test("orphan snapshot omits history; chunk replay is idempotent and result is te
     expect(git(checkout, "ls-tree", "-r", "--name-only", "HEAD")).toBe("file");
     expect(() =>
       repositoryRequest(taskDir, { op: "repository-result", taskId: "task1", offset: 0 }, "running"),
-    ).toThrow("completion");
+    ).toThrow("confirmed task success");
     writeFileSync(join(checkout, "file"), "remote result\n");
     const result = repositoryRequest(taskDir, { op: "repository-result", taskId: "task1", offset: 0 }, "done") as {
       result: { snapshot: string };
@@ -176,7 +176,7 @@ test("trusted approved snapshot transfers pinned bytes, rejects tampering, and k
     ).toBe(repo);
     expect(launches).toBe(1);
     writeFileSync(snapshot.bundle, "tampered");
-    await expect(launchPreparedRepository(client, args)).rejects.toThrow("changed after human approval");
+    await expect(launchPreparedRepository(client, args)).rejects.toThrow("changed after user approval");
     expect(launches).toBe(1);
   } finally {
     rmSync(dir, { recursive: true, force: true });

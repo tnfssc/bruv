@@ -97,7 +97,7 @@ describe("GPT-Live bounded queue and local interruption", () => {
     expect(h.playback.suppressed).toBe(true);
     expect(h.playback.scheduler.state.pendingBytes).toBe(0);
     expect(h.flushed).toEqual([1]);
-    expect(h.errors.some((e) => e.includes("pending budget"))).toBe(true);
+    expect(h.errors.some((e) => e.includes("Playback queue over"))).toBe(true);
     h.playback.close();
   });
 

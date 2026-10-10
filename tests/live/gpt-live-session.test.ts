@@ -101,7 +101,7 @@ describe("Admission and microphone transport", () => {
       session: { id: "live_1", model: "gpt-realtime-2.1", delegation: { type: "client" } },
     });
     await start;
-    expect(errors).toEqual(["Invalid Live session.started"]);
+    expect(errors).toEqual(["Invalid Live session.started event"]);
     expect(session.appendMicrophone(new Uint8Array(640))).toBe(false);
   });
 
@@ -116,7 +116,7 @@ describe("Admission and microphone transport", () => {
     socket.fire("open");
     socket.event({ type: "error", error: { message: "SECRET key", code: "invalid_api_key" } });
     await start;
-    expect(errors).toEqual(["OpenAI rejected the API key for gpt-live-1. Use /login to configure an OpenAI API key."]);
+    expect(errors).toEqual(["OpenAI key rejected for gpt-live-1. Set API key with /login."]);
     expect(closed).toEqual([{ finalized: false, usage: undefined }]);
   });
 
@@ -307,7 +307,7 @@ describe("Transport closure and usage", () => {
     });
     socket.bufferedAmount = 192_000;
     expect(session.appendMicrophone(new Uint8Array(640))).toBe(false);
-    expect(errors).toEqual(["Live send queue exceeded limit"]);
+    expect(errors).toEqual(["Live send buffer limit exceeded"]);
     expect(closed).toEqual([false]);
     expect(session.state).toBe("closed");
     socket.event({ type: "session.closed" });

@@ -42,7 +42,7 @@ connector_identity="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$
 [ ! -s "$tmp_dir/connector-version.stderr" ]
 [ ! -e "$tmp_dir/connector-home/.bruv" ]
 [ ! -e "$tmp_dir/connector-home/.claude" ]
-web="$(env -i HOME="$tmp_dir/web-home" PATH=/nonexistent "$tmp_dir/bruv" web)"
+web="$(env -i HOME="$tmp_dir/web-home" PATH=/nonexistent "$tmp_dir/bruv" web --setup)"
 printf '%s\n' "$web" | grep -q 'Setup guide only.'
 [ ! -e "$tmp_dir/web-home/.bruv" ]
 [ ! -e "$tmp_dir/web-home/.claude" ]

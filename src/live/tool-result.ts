@@ -9,7 +9,7 @@ export async function voiceToolResult(result: unknown, artifactDirectory?: strin
   try {
     serialized = JSON.stringify({ output: result ?? null });
   } catch {
-    return { error: "Tool result could not be serialized" };
+    return { error: "Could not serialize tool result." };
   }
   const bytes = Buffer.byteLength(serialized);
   // Function responses are JSON, not a visual modality: do not suggest that the
@@ -33,9 +33,9 @@ export async function voiceToolResult(result: unknown, artifactDirectory?: strin
       bytes,
       preview: serialized.slice(0, 8192),
       artifactPath: path,
-      note: "Complete JSON tool result is in artifactPath; use execute to inspect it. Preview may end mid-value. Image bytes are retained in the artifact but JSON function output is not a visually rendered image.",
+      note: "Full JSON: artifactPath, via execute. Preview may cut a value. Image bytes in file, not shown here.",
     };
   } catch {
-    return { error: "Tool result could not be delivered or saved", bytes };
+    return { error: "Could not deliver or save tool result.", bytes };
   }
 }

@@ -16,7 +16,9 @@ An opinionated coding agent. Built on [Pi](https://pi.dev).
 
 ### Install
 
-> Want a graphical frontend? Follow the [T3 Code setup guide](wisdom/docs/t3-code/README.md).
+> Want shared Bruv terminals in a browser? Run `bruv web` and open its printed token URL on each device. Workspaces and tabs update live.
+> Type `/live` in the terminal and allow browser microphone access. [Remote setup and limits](src/web/README.md).
+> For the separate graphical T3 frontend, use `bruv web --setup` or the [T3 Code setup guide](wisdom/docs/t3-code/README.md).
 
 ```sh
 curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh

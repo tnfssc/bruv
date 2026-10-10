@@ -316,8 +316,7 @@ async function git(root: string, args: string[], signal?: AbortSignal): Promise<
     timeout: 2000,
     maxBuffer: 16384,
   });
-  if (config.exitCode !== 1)
-    throw Error("Local Git filters or unreadable configuration are not allowed for read-only capabilities");
+  if (config.exitCode !== 1) throw Error("Read-only access blocked: local Git filters or unreadable config");
   return new Promise((resolveValue, reject) => {
     const child = spawn(
       "git",

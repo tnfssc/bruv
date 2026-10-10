@@ -74,9 +74,11 @@ test("real offline assembly changes only messages across goal set, update, and c
       "await goal.clear()",
     ];
     const scripted = (_model: any, context: TranscriptContext) => {
+      const tools = getCurrentTools(context.messages);
       contexts.push({
         systemPrompt: getCurrentSystemPrompt(context.messages),
-        tools: JSON.stringify(getCurrentTools(context.messages)),
+        tools: JSON.stringify(tools),
+        executeDescription: tools.find((tool) => tool.name === "execute")?.description,
         messages: JSON.stringify(context.messages),
       });
       const index = contexts.length - 1;
@@ -125,11 +127,16 @@ test("real offline assembly changes only messages across goal set, update, and c
     expect(systems[0]).toContain(bruvSystemPrompt());
     expect(new Set(systems).size).toBe(1);
     expect(new Set(tools).size).toBe(1);
-    for (const systemPrompt of systems) expect(systemPrompt).toContain("Goal API (inside execute)");
+    for (const { executeDescription } of contexts) {
+      expect(executeDescription).toContain("goal.set({objective");
+      expect(executeDescription).toContain("goal.get()");
+      expect(executeDescription).toContain("goal.update({status");
+      expect(executeDescription).toContain("goal.clear()");
+    }
 
     const messages = contexts.map((context) => context.messages);
     expect(messages[0]).not.toContain("Goal guidance:");
-    expect(messages[0]).not.toContain("Persistent goal state (authoritative)");
+    expect(messages[0]).not.toContain("Saved goal (current state)");
     expect(messages[1]).toContain("Goal guidance:");
     expect(messages[1]).toContain("Keep working toward the saved objective");
     expect(messages[1]).toContain("Status: active");
@@ -137,7 +144,7 @@ test("real offline assembly changes only messages across goal set, update, and c
     expect(messages[2]).toContain("Status: completed");
     expect(messages[2]).toContain("Focused fixture verified");
     expect(messages[3]).not.toContain("Goal guidance:");
-    expect(messages[3]).not.toContain("Persistent goal state (authoritative)");
+    expect(messages[3]).not.toContain("Saved goal (current state)");
   } finally {
     session?.dispose();
     await rm(dir, { recursive: true, force: true });

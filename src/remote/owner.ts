@@ -223,10 +223,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
       !existsSync(location(req.taskId)) &&
       readdirSync(tasks).length >= 100
     )
-      return error(
-        "task_limit",
-        "Remote task retention limit (100) reached; preserve artifacts and retire old task directories before launching more",
-      );
+      return error("task_limit", "Remote task store full (100). Save artifacts, then retire old task dirs.");
     if (req.op === "artifact") {
       const dir = location(req.taskId);
       if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown artifact task");
@@ -309,8 +306,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           return false;
         }
       }).length;
-      if (active >= 8)
-        return error("active_limit", "Remote active task limit (8) reached; sync or cancel existing tasks first");
+      if (active >= 8) return error("active_limit", "8 remote tasks active. Sync or cancel some first.");
       if (!isAbsolute(req.repoPath) || !statSync(req.repoPath).isDirectory() || !existsSync(join(req.repoPath, ".git")))
         return error("invalid_repo", "repoPath must be an existing absolute Git repository");
       if (typeof req.prompt !== "string" || !req.prompt.trim() || Buffer.byteLength(req.prompt) > 128 * 1024)
@@ -341,15 +337,14 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
       if (existsSync(taskDirectory)) {
         const prepared = join(taskDirectory, "repository-ready.json");
         if (!existsSync(prepared) || read<{ checkout: string }>(prepared).checkout !== req.repoPath)
-          return error("repository_incomplete", "Existing task directory is not the verified prepared checkout");
+          return error("repository_incomplete", "Task dir is not the verified checkout");
         if (req.placement) {
           const preparedWorkspace = read<{ workspace?: unknown }>(prepared).workspace;
           if (JSON.stringify(preparedWorkspace) !== JSON.stringify(req.placement.workspace))
-            return error("workspace_conflict", "Prepared snapshot does not match requested workspace isolation");
+            return error("workspace_conflict", "Snapshot does not match workspace isolation");
         }
       } else {
-        if (req.placement)
-          return error("repository_required", "Placed tasks require a verified isolated repository snapshot");
+        if (req.placement) return error("repository_required", "Placed tasks need a verified isolated repo snapshot");
         mkdirSync(taskDirectory, { mode: 0o700 });
       }
       const tasksFd = openSync(tasks, "r");
@@ -410,7 +405,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         }
         if (!alive) {
           value.task.state = "unknown";
-          value.task.error = "Owner exited without durable completion; task will not be relaunched";
+          value.task.error = "Owner exited with no saved completion. No relaunch.";
           persist(req.taskId, value);
         }
       }
@@ -505,7 +500,7 @@ class NativeAnswerDelivery {
         );
       })
     )
-      return error("stale_question", "Question is not pending at this owner/version; sync before answering");
+      return error("stale_question", "Question not pending at this owner/version. Sync first.");
     const path = this.slotPath;
     if (existsSync(path)) {
       const prior = read<typeof req>(path);
@@ -758,12 +753,12 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       const outcome = cancellation.poll(send, record);
       if (outcome === "settled" || outcome === "unconfirmed") {
         cancelled = outcome === "settled";
-        if (!cancelled) failure = "Cancellation acknowledged but native work exit is unconfirmed";
+        if (!cancelled) failure = "Cancel acknowledged. Native work exit not confirmed.";
         stopChild(true);
         return;
       }
       if (outcome === "timed-out") {
-        fail("Cancellation outcome unknown: native checkpoint unavailable");
+        fail("Cancel outcome unknown: no native checkpoint");
         return;
       }
       if (failure || nativeSettled || !promptSent) return;
@@ -784,7 +779,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         effective?.id !== model.slice(slash + 1) ||
         event.data?.thinkingLevel !== thinking
       ) {
-        fail("Remote CLI selected a different or unavailable model/thinking configuration; prompt was not sent", true);
+        fail("Remote model/thinking changed or unavailable. Prompt not sent.", true);
         return;
       }
       if (promptSent || existsSync(join(location(taskId), "cancel.json"))) return;
@@ -917,7 +912,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       modelError ||
       (pendingQuestion
         ? "Native question unresolved when remote session exited"
-        : `RPC exited without verified native settlement (exit ${exitCode})`);
+        : `RPC exited; native work end unverified (exit ${exitCode})`);
   try {
     await publishTerminal(taskId, taskSnapshot);
   } catch (error) {

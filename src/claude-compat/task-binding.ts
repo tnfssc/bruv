@@ -173,7 +173,7 @@ export function bindNativeTasks(
   const link = (task: TaskSummary): TaskLink | undefined => {
     const launch = task.launchIdentity;
     if (!launch || launch.sourceSessionId !== owner.sourceSessionId) {
-      gap(task.id, `Job ${task.id} has no owner-bound causal launch identity; not projected.`);
+      gap(task.id, `Job ${task.id} lacks owner-bound launch ID. Not projected.`);
       return;
     }
     const base = {
@@ -191,7 +191,7 @@ export function bindNativeTasks(
       !launch.prompt ||
       !launch.profile
     ) {
-      gap(task.id, `Worker ${task.id} lacks actual child/parent journal or launch prompt/profile; not projected.`);
+      gap(task.id, `Worker ${task.id} lacks child/parent journal or launch prompt/profile. Not projected.`);
       return;
     }
     return {
@@ -207,8 +207,7 @@ export function bindNativeTasks(
   const replayChildJournal = async (task: TaskSummary, cursor: Cursor) => {
     const frames: ChildFrame[] = [];
     if (cursor.link.kind !== "worker") return frames;
-    if (!options.writeChildFrame)
-      gap("history", "No native child history writer bound; SDK child replay is unavailable.");
+    if (!options.writeChildFrame) gap("history", "No native child history writer. No SDK child replay.");
     const seen = new Set(cursor.childEntries);
     try {
       for await (const { entry, endOffset } of childJournalEntries(
@@ -229,7 +228,7 @@ export function bindNativeTasks(
               const written = await options.writeChildFrame?.(source, frame);
               if (written !== false) frames.push(frame);
             }
-          } else gap("translator", "No child journal translator bound; exact child frames/history are unavailable.");
+          } else gap("translator", "No child journal translator. Exact child frames/history unavailable.");
           const message = entry.message;
           if (message.role === "assistant") {
             const usage = message.usage;
@@ -250,7 +249,7 @@ export function bindNativeTasks(
       delete cursor.legacyCursorId;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-      gap(`child:${task.id}`, `Child journal unavailable for ${task.id}; no child messages inferred from stdout.`);
+      gap(`child:${task.id}`, `Child journal missing for ${task.id}. No guessed messages from stdout.`);
     }
     return frames;
   };
@@ -284,11 +283,11 @@ export function bindNativeTasks(
     let cursor = cursors.get(task.id);
     if (!cursor) {
       if (task.status === "running" && task.pid === undefined) {
-        gap(`spawn:${task.id}`, `No confirmed process spawn for ${task.id}; no native launch announced.`);
+        gap(`spawn:${task.id}`, `Process spawn unconfirmed for ${task.id}. No native launch announced.`);
         return;
       }
       if (task.status !== "running") {
-        gap(`historical:${task.id}`, `Unregistered historical terminal job ${task.id}; no launch reconstructed.`);
+        gap(`historical:${task.id}`, `Old terminal job ${task.id} unregistered. No rebuilt launch.`);
         return;
       }
       cursor = {

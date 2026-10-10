@@ -8,6 +8,6 @@ export function setupProbeOrchestration(): VoiceOrchestration {
   return {
     tools: [{ name, description, parametersJsonSchema: parameters }],
     instructions: bruvSystemPrompt(),
-    execute: async () => ({ status: "denied", reason: "Setup-only diagnostic; no agent work" }),
+    execute: async () => ({ status: "denied", reason: "Setup check only; no agent work." }),
   };
 }

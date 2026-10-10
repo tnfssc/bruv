@@ -65,7 +65,7 @@ test("handoff without a bridge retains the unavailable rejection", async () => {
     executablePath: binary,
   });
   expect(result.exitCode).not.toBe(0);
-  expect(result.stderr).toContain("bridge is unavailable");
+  expect(result.stderr).toContain("No job bridge");
 });
 
 test("handoff unwinds cleanup but does not swallow cleanup errors", async () => {

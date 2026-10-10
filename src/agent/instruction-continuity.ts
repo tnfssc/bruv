@@ -138,7 +138,7 @@ export function installCurrentConversationAdapter(): void {
   const buildRuntime = prototype._buildRuntime;
   if (typeof runAgentPrompt !== "function" || typeof buildRuntime !== "function") {
     throw new Error(
-      "bruv instruction continuity is unsupported by this Pi runtime: required private AgentSession._runAgentPrompt/_buildRuntime seams are unavailable",
+      "This Pi runtime lacks AgentSession._runAgentPrompt/_buildRuntime. Bruv cannot keep its instruction frame.",
     );
   }
   classicAdapterInstalled = true;

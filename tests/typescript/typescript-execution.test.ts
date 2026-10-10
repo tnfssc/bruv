@@ -116,7 +116,7 @@ describe("execute process lifecycle and output", () => {
     expect(result.capturedOutputBytes).toBe(6_000);
     expect(result.outputTruncated).toBe(true);
     expect((result.stdoutCapturedBytes ?? 0) + (result.stderrCapturedBytes ?? 0)).toBe(6_000);
-    expect(formatResult(result)).toContain("Output capture limit reached: retained 6000 of 10000");
+    expect(formatResult(result)).toContain("Output limit hit: kept 6000/10000");
     const capturedFiles = await Promise.all(
       [result.stdoutPath, result.stderrPath]
         .filter((path): path is string => path !== undefined)
@@ -472,7 +472,7 @@ describe("registered execute tool", () => {
       outputTruncated: true,
     });
     const content = result.content as Array<{ type: string; text?: string }>;
-    expect(content[0]!.text).toContain("Output capture limit reached");
+    expect(content[0]!.text).toContain("Output limit hit");
     expect(content[0]!.text).not.toContain("complete output:");
     expect(content[0]!.text).toContain("xxx");
     expect(content[0]!.text).not.toContain("Capture large output");
