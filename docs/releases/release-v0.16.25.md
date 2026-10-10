@@ -1,0 +1,94 @@
+# v0.16.25
+
+- Merge pull request #75 from tnfssc/t3/improve-goal-mode
+- Remove added AGENTS.md
+- Merge develop and preserve goal controls
+- Improve goal controls and enforce token budgets
+- Merge pull request #71 from tnfssc/t3/6c093fbb
+- Fix paired Live CI assertions at the provider boundary
+- Merge pull request #64 from tnfssc/bruv/web-workspaces-tabs
+- Synchronize browser reorder probe with completed writes
+- Clarify contextual connection and voice status in the browser guide
+- Keep drag destinations visible and allow the next intentional gesture
+- Finish shared workspace ordering and refine the browser workspace
+- Complete whole-input prose review and preserve source decisions
+- Rewrite model-facing prose in grug voice
+- test(web): prove offline replay and bound browser fixture cleanup
+- Gate compiled browser probes once in Linux CI
+- web: admit only terminal reports outside human input
+- web: scope submit capture and report evicted replies honestly
+- test(web): replace fake page and pixel recipes with Chromium UI gate
+- Fix browser voice ownership at real editor boundaries
+- web: require the shipped audio credentials and document UI owners
+- Fix drawer focus and shared browser audio teardown
+- web: keep only shipped renderer and admission contracts
+- Cut unused web dispatch and async audio admission
+- fix(web): dedupe terminal replies outside human input ownership
+- web: keep paste framed and stop expired credential retries
+- docs: keep current browser contracts and retire old recipes
+- fix(web): route tracked touch and drop legacy mouse overflow
+- Rewrite prompt facts in plain voice
+- docs: record combined Ghostty and develop proof
+- web: clear remaining strict Biome warnings
+- web: reuse pinned Ghostty workspace renderer
+- Fix browser backend strict lint warnings
+- Merge develop into PR #71 and keep prompt ownership
+- Merge develop and retain browser Live diagnostics
+- Merge pull request #73 from tnfssc/t3/99d85e51
+- Resolve remaining Biome lint warnings
+- Audit all instruction surfaces and trim repeated guidance
+- Remove remaining repeats from combined model requests
+- Give execute help one home in the combined request
+- Keep prompt meaning and record the full line review
+- Shorten missed model-facing result text
+- web: keep component spacing compact and consistent
+- Rebuild browser spacing with selective daisyUI controls
+- Shorten model-facing remote prose after per-line reviews
+- Use plain facts in agent task and session context
+- Write model-facing tool prose in plain voice
+- Compress model prompt prose around shared values
+- docs: trace prompt line boundary gaps
+- Clarify model-facing compat errors after per-line review
+- Tighten live model prose after per-line review
+- web: finish surface review and combined proof
+- docs(web): record integrated surface gate
+- test(web): preserve temp path and record final surface proof
+- web: cancel held terminal touch when pane hides
+- web: retain rename drafts until their save succeeds
+- web: keep row focus and tab reveal within their owners
+- test(web): reveal clipped inactive close targets
+- web: restore close invokers after shared tab edits
+- web: contain shared terminal and accessibility geometry
+- web: keep retry, access and touch proof states truthful
+- web: put workspace entry, terminal tabs and recovery first
+- web: adapt browser probes to direct folder and row controls
+- Reuse browser workspaces by resolved folder and refresh live help
+- fix(ci): await tmux child completion and budget markdown equivalence
+- Keep inline tab typography and focus geometry consistent
+- Fix duplicate screenshot options blocking web CI
+- Rename terminal tabs directly in the tab strip
+- Align browser workspace components and verify shared geometry
+- test(web): preserve caret when reviewing focused terminal captures
+- feat(web): add compact Chrome-style terminal tabs
+- fix(web): repair CI markup and font notice fixtures
+- fix(web): use canonical Bruv wordmark and favicon
+- test(web): verify integrated Live UI in independent browser tabs
+- feat(web): acquire browser audio from command-owned Live requests
+- Test command-driven browser microphone lifecycle
+- test: cover command-owned browser audio requests
+- test(web): align Vesper fixture with font-ready startup
+- feat(web): embed regular JetBrainsMono Nerd Font Mono
+- Use pure-black Vesper colors for browser workspace and web TUI
+- feat(web): redesign shared terminal workspace shell
+- feat(web): finish multiplayer browser integration and acceptance
+- Share tab PTYs across clients with ordered state and scoped voice ownership
+- Add multiplayer browser state, shared sizing and voice ownership
+- test(web): scaffold independent-browser multiplayer acceptance
+- docs: record parent workspace tabs acceptance
+- test(web): prove workspace tabs and explicit voice ownership
+- Add web workspace multiplexer and single audio owner
+- Add workspace sidebar and persistent terminal tabs in browser
+- feat(web): connect browser microphone to terminal Live sessions
+- feat(web): run the real Bruv TUI in an authenticated browser PTY
+- Bridge CLI Live devices to authenticated session browser audio
+- docs: record browser terminal Live experiment
