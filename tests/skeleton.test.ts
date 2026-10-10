@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import { fauxAssistantMessage, fauxProvider, InMemoryCredentialStore } from "@earendil-works/pi-ai";
 import * as Pi from "@earendil-works/pi-coding-agent";
 import bruv from "../extensions/bruv";
+import { enableCodemode } from "../src/codemode";
 import { type Config, readConfig } from "../src/config";
 
 mkdirSync(".tmp", { recursive: true });
@@ -91,4 +92,26 @@ test("profiles use the Pi agent directory and accept missing fields", () => {
   const config: Config = { profiles: { fast: { model: "faux/faux-1" }, normal: { thinking: "high" } } };
   writeFileSync(join(dir, "bruv.json"), JSON.stringify(config));
   expect(readConfig()).toEqual(config);
+});
+
+test("setup preserves explicit and relative tool lists", () => {
+  for (const [before, after] of [
+    [
+      ["read", "bash"],
+      ["read", "bash", "codemode"],
+    ],
+    [
+      ["+read", "-bash"],
+      ["+read", "-bash", "+codemode"],
+    ],
+    [["+codemode"], ["+codemode"]],
+    [
+      ["codemode", "read"],
+      ["codemode", "read"],
+    ],
+  ]) {
+    writeFileSync(join(dir, "settings.json"), JSON.stringify({ defaultTools: before }));
+    enableCodemode(dir);
+    expect(JSON.parse(readFileSync(join(dir, "settings.json"), "utf8")).defaultTools).toEqual(after);
+  }
 });
