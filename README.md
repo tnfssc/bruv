@@ -69,6 +69,7 @@ The model calls these through `tools.<name>(...)` in Pi's scripting tool.
 
 The terminal board shows each job and agent, its elapsed time, and live agent tools and tokens.
 Finished rows show the result and worktree change totals, and stay until your next prompt.
+Script results list the tool calls and show plain output. Expand a result to see the full script and output.
 
 ## Configuration
 

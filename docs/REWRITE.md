@@ -213,6 +213,7 @@ bruv/
     codex-compaction.ts   Codex native compaction (~350)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
+    render.ts             readable codemode calls and output (~200)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
   prompts/
     system.md
@@ -540,7 +541,11 @@ Only when `ctx.hasUI`.
 - Finished rows stay until the next prompt. Truncate each row to terminal width using theme colors.
 - Animate every 100 ms while work runs; stop the timer when idle or disposed. Clear the widget
   and agent cost status at shutdown. Fast and goal set their own status keys.
-- Register renderers only in UI sessions. `bruv-report` and `bruv-answer` show the first content
+- Codemode rendering (`src/render.ts`) lists nested calls from Pi records and live events, followed
+  by plain output. Unwrap bash and wait JSON, strip ANSI, and cap collapsed output at 12 screen
+  lines with an omitted-line count. Expansion shows the full script and output available from Pi.
+  Unknown result shapes and images use Pi rendering. Restore saved calls on session changes.
+- Register job and message renderers only in TUI sessions. `bruv-report` and `bruv-answer` show the first content
   line when collapsed and all content when expanded. `agent` and `wait` show one status line per
   item; expanded results include recent output or the final answer, output path, and session path.
   Tool errors without result items keep their text.

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Render script calls and bash/wait output as readable lines, with full script and output on expansion.
+
 - Show running jobs and agents on a live board with tools, tokens, elapsed time, and finished worktree changes.
 
 - Add `/race` and the `race` tool: compare agents in separate worktrees, pick a result, and bring its changes back uncommitted.
