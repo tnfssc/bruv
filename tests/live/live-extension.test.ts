@@ -160,6 +160,7 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
     },
   };
   const deps: LiveDependencies = {
+    editor: () => startup.getActiveCompactEditor(),
     local: () => true,
     config: { load: async () => ({ provider: "google", model: "gemini-3.8-live" }), save: async () => {} },
     speakerCheck: async () => "Test signal detected; compare mic/speaker route manually.",

@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promis
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-test("compiled web guidance does not launch overrides or modify existing CLI/Claude/T3 state", async () => {
+test("compiled web --setup guidance does not launch overrides or modify existing CLI/Claude/T3 state", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-external-web-"));
   try {
     for (const directory of [".claude", ".bruv/agent", ".bruv/web"]) {
@@ -12,7 +12,7 @@ test("compiled web guidance does not launch overrides or modify existing CLI/Cla
     }
     const override = join(home, "old-server");
     await writeFile(override, '#!/bin/sh\ntouch "$HOME/launched"\n', { mode: 0o755 });
-    const child = Bun.spawn([resolve(import.meta.dir, "../../dist/bruv"), "web"], {
+    const child = Bun.spawn([resolve(import.meta.dir, "../../dist/bruv"), "web", "--setup"], {
       env: { HOME: home, PATH: "/nonexistent", BRUV_WEB_SERVER: override },
       stdout: "pipe",
       stderr: "pipe",

@@ -88,8 +88,23 @@ export class PresentationTerminal {
 
   async detach(label: string, caption: string, t: number) {
     this.key("C-d");
-    await wait("detach", () => this.tmux("display-message", "-p", "-t", "root-placement", "#{pane_dead}") === "1");
-    assert.equal(this.tmux("display-message", "-p", "-t", "root-placement", "#{pane_dead_status}"), "0");
+    let status = "",
+      signal = "";
+    await wait("detach completion", () => {
+      // PTY EOF can precede SIGCHLD. Read one snapshot and wait for the child result.
+      const [dead, code, killedBy] = this.tmux(
+        "display-message",
+        "-p",
+        "-t",
+        "root-placement",
+        "#{pane_dead}:#{pane_dead_status}:#{pane_dead_signal}",
+      ).split(":");
+      status = code;
+      signal = killedBy;
+      return dead === "1" && (status !== "" || signal !== "");
+    });
+    assert.equal(signal, "", "Detach child was killed by signal " + signal);
+    assert.equal(status, "0");
     // Preserve the last actual terminal view before removing the detached pane.
     this.capture(label, caption, t);
     this.tmux("kill-session", "-t", "root-placement");

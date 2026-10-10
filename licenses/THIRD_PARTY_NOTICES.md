@@ -25,3 +25,17 @@ license compliance. Review applicable obligations before redistribution.
 Both paired executables carry the same runtime/dependency attribution. T3 Code is
 an independently installed, unmodified external application, not a bundled Bruv
 release component. Its own distribution supplies its licenses.
+
+The browser terminal embeds JetBrainsMono Nerd Font Mono Regular (Nerd Fonts
+3.5.1, JetBrains Mono 2.304), licensed under OFL-1.1. Its source, conversion,
+copyright and icon notices live in third-party/jetbrains-mono-nerd-font and
+are reproduced in THIRD_PARTY_LICENSES.txt. Only its WOFF2 container changed.
+
+Browser buttons and fields use the selective native DOM CSS from daisyUI 5.7.47
+(MIT). Bun bundles only button.css and input.css, without Tailwind, React,
+or the full daisyUI stylesheet. The production dependency graph includes its
+complete MIT license in THIRD_PARTY_LICENSES.txt.
+
+Workspace and tab dragging use SortableJS 1.15.7 (MIT), bundled locally. Its
+complete packaged MIT license is included by the same production dependency
+notice generator.

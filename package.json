@@ -36,14 +36,18 @@
     "@earendil-works/pi-tui": "1.1.0",
     "@google/genai": "2.27.0",
     "@modelcontextprotocol/sdk": "1.32.1",
+    "daisyui": "5.7.47",
     "es-module-lexer": "^3.0.3",
+    "ghostty-web": "0.4.0",
     "resolve.exports": "2.0.3",
+    "sortablejs": "1.15.7",
     "ws": "8.22.0",
     "zod": "4.6.5"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
     "@types/bun": "1.4.2",
+    "@types/sortablejs": "1.15.9",
     "@types/ws": "8.18.2",
     "typescript": "7.0.2"
   },
@@ -53,6 +57,7 @@
   "license": "MIT",
   "patchedDependencies": {
     "@earendil-works/pi-coding-agent@1.1.0": "patches/@earendil-works%2Fpi-coding-agent@1.1.0.patch",
-    "@earendil-works/pi-tui@1.1.0": "patches/@earendil-works%2Fpi-tui@1.1.0.patch"
+    "@earendil-works/pi-tui@1.1.0": "patches/@earendil-works%2Fpi-tui@1.1.0.patch",
+    "ghostty-web@0.4.0": "patches/ghostty-web@0.4.0.patch"
   }
 }

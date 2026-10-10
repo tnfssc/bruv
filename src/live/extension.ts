@@ -1,3 +1,4 @@
+import { createBrowserRequestInput } from "./browser-request";
 import { stripVTControlCharacters } from "node:util";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { TranscriptLog } from "../session/transcript";
@@ -27,6 +28,7 @@ import { PlaybackScheduler } from "./playback";
 import { LIVE_PROVIDERS, type LiveModelId, OPENAI_LIVE_MODEL, OPENAI_REALTIME_MODELS } from "./providers";
 import { VoiceSession } from "./session";
 import { runLiveSetup } from "./setup";
+import { BrowserLiveAudio, browserAudioEnvironment } from "./browser-audio";
 import { compactLiveStatus, liveLocalOnly } from "./status";
 import type { VoiceCallbacks, VoiceOrchestration, VoiceProvider } from "./types";
 
@@ -51,6 +53,7 @@ function stopWarning(errors: readonly string[]): string {
 
 export interface LiveDependencies {
   local(mode: string): boolean;
+  editor: typeof getActiveCompactEditor;
   /** Local-only bounded test; result is a sanitized human-readable summary, never PCM. */
   speakerCheck(args: { audio: LiveDependencies["audio"]; signal: AbortSignal }): Promise<string>;
   key(signal: AbortSignal, provider?: LiveProviderId): Promise<string>;
@@ -71,19 +74,21 @@ export interface LiveDependencies {
   audio(
     callbacks: AudioCallbacks,
     signal: AbortSignal,
+    request?: string,
   ): Promise<
     Pick<LiveAudio, "start" | "play" | "flush" | "stop" | "close" | "diagnostics"> &
       Partial<Pick<LiveAudio, "setCaptureGate">>
   >;
 }
 const defaults: LiveDependencies = {
+  editor: () => getActiveCompactEditor(),
   speakerCheck: async (args) => {
     const { runSpeakerCheck } = await import("./speaker-check");
     const { speakerCheckSummary } = await import("./speaker-summary");
     return speakerCheckSummary(await runSpeakerCheck(args.audio, args.signal));
   },
   local: (mode) =>
-    (process.platform === "darwin" || process.platform === "linux") &&
+    (Boolean(process.env.BRUV_LIVE_RELAY_URL) || process.platform === "darwin" || process.platform === "linux") &&
     liveLocalOnly(mode, process.env, Boolean(process.stdin.isTTY && process.stdout.isTTY)),
   credentials: createDefaultLiveCredentialService,
   key: async (signal, provider = "google") =>
@@ -112,7 +117,12 @@ const defaults: LiveDependencies = {
       : new VoiceSession(callbacks, undefined, orchestration, model, { inputMode });
   },
   owner: acquireMainOwner,
-  audio: (callbacks, signal) => LiveAudio.launch({ callbacks, signal }),
+  audio: (callbacks, signal, request) => {
+    const relay = browserAudioEnvironment();
+    return relay
+      ? BrowserLiveAudio.launch({ ...relay, callbacks, signal, request })
+      : LiveAudio.launch({ callbacks, signal });
+  },
 };
 
 type NativeAudio = Awaited<ReturnType<LiveDependencies["audio"]>>;
@@ -205,7 +215,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     outputBytes = 0;
     turns = 0;
     queuedMs = 0;
-    constructor(readonly ctx: ExtensionContext) {
+    constructor(
+      readonly ctx: ExtensionContext,
+      readonly browserRequest?: string,
+    ) {
       this.sessionId = ctx.sessionManager?.getSessionId?.();
       const playbackOptions: ConstructorParameters<typeof PlaybackScheduler>[0] = {
         send: (frame, epoch) => {
@@ -258,7 +271,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     }
     private syncTalkInput() {
       if (!this.alive || this.state !== "running" || this.inputMode !== "push-to-talk") return;
-      const editor = getActiveCompactEditor();
+      const editor = deps.editor();
       if (editor === this.talkEditor) return;
       const detach = this.detachTalkInput;
       this.detachTalkInput = undefined;
@@ -494,7 +507,9 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
               ? "Cannot start main Live. Wait for the text turn to finish, then retry /live. If it persists, restart Bruv; the ordinary prompt/runtime could not be acquired."
               : this.audio
                 ? `Voice startup failed [${stage}]; details withheld`
-                : audioLaunchDiagnostic(),
+                : process.env.BRUV_LIVE_RELAY_URL
+                  ? "Browser audio could not connect. Check browser microphone access, then type /live to retry."
+                  : audioLaunchDiagnostic(),
           );
       }
     }
@@ -557,12 +572,15 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
               this.render();
             }
           },
-          error: (code, _message, detail) => this.fail(audioDiagnostic(code, detail)),
+          error: (code, message, detail) =>
+            this.fail(code === "browser_request" ? message : audioDiagnostic(code, detail)),
           closed: () => {
-            if (this.alive) this.fail(audioDiagnostic("helper_failure"));
+            if (this.alive)
+              this.fail(audioDiagnostic(process.env.BRUV_LIVE_RELAY_URL ? "browser_disconnected" : "helper_failure"));
           },
         },
         this.controller.signal,
+        this.browserRequest,
       );
       this.audioLaunchPending = false;
       if (!this.alive) {
@@ -779,6 +797,8 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       return { stopped: false, errors: ["No Live voice session belongs to this agent session"], jobsUnchanged: true };
     return run.stopObserved();
   });
+  const browserInput = createBrowserRequestInput();
+  let removeBrowserInput: (() => void) | undefined;
   pi.registerCommand("live", {
     description: "Voice (paid): start, stop, status, model, provider, setup, input, mic-check, speaker-check.",
     getArgumentCompletions: (prefix) => {
@@ -796,6 +816,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       return matches.length ? matches.map((value) => ({ value, label: value })) : null;
     },
     handler: async (args, ctx) => {
+      const request = browserInput.take(deps.editor());
       if (!loaded) {
         try {
           if (!loading) loading = deps.config.load();
@@ -1025,10 +1046,12 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         confirmation = owner;
         let consent = false;
         try {
-          consent = await ctx.ui.confirm(
-            "Mic check",
-            "Open microphone and speakers briefly? No playback, provider or agent tools. Audio is discarded, not saved or sent. macOS may ask for microphone access.",
-          );
+          consent =
+            Boolean(process.env.BRUV_LIVE_RELAY_URL) ||
+            (await ctx.ui.confirm(
+              "Mic check",
+              "Open microphone and speakers briefly? No playback, provider or agent tools. Audio is discarded, not saved or sent. macOS may ask for microphone access.",
+            ));
         } catch {
           /* dialog closed */
         }
@@ -1040,15 +1063,18 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         let audio: NativeAudio | undefined;
         let code: string | undefined;
         let setup: AudioSetupError | undefined;
+        let requestError: string | undefined;
         try {
           audio = await deps.audio(
             {
-              error: (value, _message, detail) => {
+              error: (value, message, detail) => {
+                if (value === "browser_request") requestError = message;
                 code = value;
                 setup = detail;
               },
             },
             controller.signal,
+            request,
           );
           if (controller.signal.aborted) return;
           await audio.start();
@@ -1061,11 +1087,12 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           if (!controller.signal.aborted)
             ctx.ui.notify(
               "Mic check: " +
-                (code
-                  ? audioDiagnostic(code, setup)
-                  : audio
-                    ? audioDiagnostic("helper_failure")
-                    : audioLaunchDiagnostic()),
+                (requestError ??
+                  (code
+                    ? audioDiagnostic(code, setup)
+                    : audio
+                      ? audioDiagnostic("helper_failure")
+                      : audioLaunchDiagnostic())),
               "warning",
             );
         } finally {
@@ -1090,7 +1117,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         try {
           consent = await ctx.ui.confirm(
             "Speaker check",
-            "Play a quiet test sound and briefly open the microphone? Lower speaker volume and stay quiet. Local only: no provider or agent tools. Audio stays in memory and is discarded.",
+            "Play a quiet test sound and briefly open the microphone? Lower speaker volume and stay quiet. No provider or agent tools. Device audio stays in memory and is discarded; browser audio crosses the session relay.",
           );
         } catch {
           /* dialog closed */
@@ -1101,7 +1128,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         const controller = new AbortController();
         speakerProbe = controller;
         try {
-          const summary = await deps.speakerCheck({ audio: deps.audio, signal: controller.signal });
+          const summary = await deps.speakerCheck({
+            audio: (callbacks, signal) => deps.audio(callbacks, signal, request),
+            signal: controller.signal,
+          });
           if (!controller.signal.aborted && speakerProbe === controller)
             ctx.ui.notify(
               "Speaker check (local; provider not connected): " +
@@ -1134,7 +1164,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         );
       } else if (action === "start" || action === "setup") {
         if (!deps.local(ctx.mode)) {
-          ctx.ui.notify("Live requires a local interactive macOS or Linux terminal.", "warning");
+          ctx.ui.notify(
+            "Live requires a local interactive terminal or an explicitly configured browser audio relay.",
+            "warning",
+          );
           return;
         }
         if (current || stoppingRun || entry || confirmation !== undefined || probe || speakerProbe || saving) {
@@ -1188,7 +1221,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           }
           if (!alive()) return;
           entry = undefined;
-          const run = new Run(ctx);
+          const run = new Run(ctx, request);
           current = run;
           run.render(true);
           await run.start(key);
@@ -1219,6 +1252,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
   pi.on("session_before_fork", stopForNavigation);
   pi.on("session_before_switch", stopForNavigation);
   pi.on("session_shutdown", async () => {
+    removeBrowserInput?.();
     sequence++;
     entry?.abort();
     entry = undefined;
@@ -1228,6 +1262,17 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     await stopForNavigation();
   });
   pi.on("session_start", (_event, ctx) => {
+    removeBrowserInput?.();
+    removeBrowserInput = undefined;
+    if (process.env.BRUV_LIVE_RELAY_URL) {
+      const removeInput = ctx.ui.onTerminalInput(browserInput.observe);
+      const editor = deps.editor();
+      const detachEditor = editor ? browserInput.attach(editor) : undefined;
+      removeBrowserInput = () => {
+        removeInput();
+        detachEditor?.();
+      };
+    }
     conversationCtx = ctx;
     sequence++;
     entry?.abort();

@@ -33,3 +33,10 @@ test("human root facet authority is absent from all model-directed tool environm
   expect(childAgentEnvironment(parent)).toEqual({ HOME: "/server" });
   expect(parent.BRUV_ROOT_RUNTIME_TOKEN).toBe("human-authority");
 });
+
+test("browser relay stays with root Live, not execute or delegated child environments", () => {
+  const root = { HOME: "/owner", BRUV_LIVE_RELAY_URL: "ws://127.0.0.1/relay", BRUV_LIVE_RELAY_SECRET: "private-voice" };
+  expect(scrubT3BridgeEnvironment(root)).toEqual({ HOME: "/owner" });
+  expect(childAgentEnvironment(root)).toEqual({ HOME: "/owner" });
+  expect(root.BRUV_LIVE_RELAY_SECRET).toBe("private-voice");
+});

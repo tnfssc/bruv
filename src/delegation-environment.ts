@@ -15,6 +15,9 @@ function isRootControl(name: string): boolean {
 export function scrubT3BridgeEnvironment(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   const scrubbed = { ...env };
   for (const name of Object.keys(scrubbed)) if (isRootControl(name)) delete scrubbed[name];
+  // Browser voice is a root-session capability, not a worker/tool credential.
+  delete scrubbed.BRUV_LIVE_RELAY_URL;
+  delete scrubbed.BRUV_LIVE_RELAY_SECRET;
   return scrubbed;
 }
 

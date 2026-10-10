@@ -349,7 +349,7 @@ test("shared Linux gate bounds a stalled runner without accepting incomplete che
   expect(gate["continue-on-error"]).toBeUndefined();
   const logs = step(ci.jobs.test!, "Upload failure logs");
   expect(logs.if).toBe("failure()");
-  expect(logs.with?.path).toBe("artifacts/ci/");
+  expect(String(logs.with?.path).trim().split("\n")).toEqual(["artifacts/ci/", "artifacts/ghostty/"]);
   expect(ci.jobs.test!.steps.indexOf(logs)).toBeGreaterThan(ci.jobs.test!.steps.indexOf(gate));
 });
 
@@ -369,4 +369,26 @@ test("ordinary Linux matrix uses all three native shards with separate failure a
   expect(ci.jobs.required!.needs).toContain("test");
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(aggregate.env?.LINUX).toBe("${{ needs.test.result }}");
+});
+
+test("compiled browser gate reuses the pinned harness once after the Linux build", () => {
+  const job = ci.jobs.test!;
+  const setup = step(job, "Set up the pinned browser harness");
+  const browser = step(job, "Compiled browser gate (once on Linux)");
+  const build = job.steps.find((step) => step.run === "bun run ci")!;
+  for (const action of [setup, browser]) {
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    expect(action.if).toBe("${{ matrix.shard == 1 }}");
+    expect(action["continue-on-error"]).toBeUndefined();
+  }
+  expect(setup.run).toBe("bash scripts/release/setup-release-browser.sh");
+  expect(browser.run).toBe("bash scripts/ci/browser.sh");
+  expect(job.steps.indexOf(setup)).toBeGreaterThan(job.steps.indexOf(build));
+  expect(job.steps.indexOf(browser)).toBeGreaterThan(job.steps.indexOf(setup));
+  const script = readFileSync(new URL("../../scripts/ci/browser.sh", import.meta.url), "utf8");
+  expect(script).toContain("RELEASE_BOOT_PLAYWRIGHT");
+  expect(script).toContain("browser-ui browser-transport browser-workspaces-smoke browser-multiplayer-smoke");
+  expect(script).toContain("--voice-only");
+  expect(script).toContain("set -euo pipefail");
+  expect(script).not.toContain("install chromium");
 });

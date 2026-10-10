@@ -1,5 +1,6 @@
 import { expect, spyOn, test } from "bun:test";
-import { externalT3Guide, runWeb } from "../../src/t3/web/launcher";
+import { externalT3Guide } from "../../src/t3/web/launcher";
+import { runWeb } from "../../src/web/launcher";
 
 test("terminal guide follows install-to-chat steps with absolute isolated paths", () => {
   const guide = externalT3Guide("/opt/bruv/bin/bruv", "/home/alice");
@@ -64,34 +65,53 @@ test("guide retains history limitations and safe paired updates without parent w
   expect(guide).toContain("Update T3 separately");
 });
 
-test("web only prints setup for accepted flags", async () => {
+test("web --setup retains the external guide", async () => {
   const log = spyOn(console, "log").mockImplementation(() => {});
-  const error = spyOn(console, "error").mockImplementation(() => {});
   try {
-    for (const args of [[], ["--help"], ["-h"], ["--setup"]]) {
-      log.mockClear();
-      expect(await runWeb(args)).toBe(0);
-      expect(log).toHaveBeenCalledTimes(1);
-      expect(log).toHaveBeenCalledWith(externalT3Guide());
-    }
-    expect(error).not.toHaveBeenCalled();
+    expect(await runWeb(["--setup"])).toBe(0);
+    expect(log).toHaveBeenCalledWith(externalT3Guide());
   } finally {
     log.mockRestore();
+  }
+});
+
+test("web help describes a real browser terminal", async () => {
+  const log = spyOn(console, "log").mockImplementation(() => {});
+  try {
+    for (const flag of ["--help", "-h"]) {
+      expect(await runWeb([flag])).toBe(0);
+      const help = log.mock.calls.at(-1)?.[0] as string;
+      expect(help).toContain("real Bruv TUI");
+      expect(help).toContain("Type /live");
+      expect(help).toContain("/live stop");
+      expect(help).toContain("owner browser");
+      expect(help).toContain("Folders and CLIs are on this server");
+      expect(help).toContain("localhost SSH tunnel");
+      expect(help).not.toMatch(/Enable microphone|Disable microphone/i);
+    }
+  } finally {
+    log.mockRestore();
+  }
+});
+
+test("web rejects unsafe bind and invalid port options", async () => {
+  const error = spyOn(console, "error").mockImplementation(() => {});
+  try {
+    expect(await runWeb(["--host", "0.0.0.0"])).toBe(2);
+    expect(await runWeb(["--port", "oops"])).toBe(2);
+    expect(await runWeb(["--port", "65536"])).toBe(2);
+    expect(await runWeb(["--unknown"])).toBe(2);
+  } finally {
     error.mockRestore();
   }
 });
 
-test("web rejects former server flags without printing setup", async () => {
-  const log = spyOn(console, "log").mockImplementation(() => {});
-  const error = spyOn(console, "error").mockImplementation(() => {});
-  try {
-    expect(await runWeb(["--port", "3773"])).toBe(2);
-    expect(log).not.toHaveBeenCalled();
-    expect(error).toHaveBeenCalledWith(
-      "bruv web no longer launches a bundled server. Run bruv web for provider Settings setup, then start official T3 normally.",
-    );
-  } finally {
-    log.mockRestore();
-    error.mockRestore();
-  }
+test("browser README uses command-driven voice and server-side folders", async () => {
+  const readme = await Bun.file(new URL("../../src/web/README.md", import.meta.url)).text();
+  expect(readme).toContain("Type `/live` in the terminal");
+  expect(readme).toContain("`/live stop`");
+  expect(readme).toContain("not on the browser device");
+  expect(readme).toContain("same hostname and port");
+  expect(readme).toContain("Only the owner browser captures and plays audio");
+  expect(readme).not.toMatch(/Enable microphone|Disable microphone/i);
 });
