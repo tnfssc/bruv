@@ -195,8 +195,15 @@ export function registerRace(pi: ExtensionAPI, jobs: Jobs, startAgents: StartAge
     current = undefined;
     active = true;
   });
-  pi.on("session_shutdown", () => {
+  pi.on("session_shutdown", async () => {
     active = false;
+    // Shutdown stops the agents, so an unpicked race can't finish. Leave nothing behind.
+    const race = current;
+    if (!race || race.closed || race.applying) return;
+    await Promise.all(race.items.map((item) => item.completion));
+    // Let a scoreboard that already started finish its git commands first.
+    await race.scoring;
+    await remove(race);
   });
   pi.registerTool({
     name: "race",

@@ -63,8 +63,8 @@ function fromHeaders(headers: Record<string, string>): PlanUsage | undefined {
     plan_type: plan,
     rate_limits: { primary, secondary, limit_reached: [primary, secondary].some((w) => w && w.used_percent >= 100) },
     credits: {
-      has_credits: headers["x-codex-credits-has-credits"] === "true",
-      unlimited: headers["x-codex-credits-unlimited"] === "true",
+      has_credits: headers["x-codex-credits-has-credits"]?.toLowerCase() === "true",
+      unlimited: headers["x-codex-credits-unlimited"]?.toLowerCase() === "true",
       balance: headers["x-codex-credits-balance"] || null,
     },
   };

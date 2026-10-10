@@ -58,8 +58,10 @@ test.each(["stream", "headers"])(
           headers[`x-codex-${key}-window-minutes`] = `${w?.window_minutes ?? 0}`;
           headers[`x-codex-${key}-reset-at`] = `${w?.reset_at ?? ""}`;
         }
+        // The server sends booleans as "True" and "False".
         for (const [key, value] of Object.entries(data.credits))
-          headers[`x-codex-credits-${key.replaceAll("_", "-")}`] = `${value}`;
+          headers[`x-codex-credits-${key.replaceAll("_", "-")}`] =
+            typeof value === "boolean" ? (value ? "True" : "False") : `${value}`;
         await runner.emit({ type: "after_provider_response", status: 200, headers });
       }
     };

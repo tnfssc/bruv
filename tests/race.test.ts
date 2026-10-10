@@ -177,3 +177,32 @@ test("snapshot uses the linked worktree's branch, files, and separate index", as
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("closing the session removes an unpicked race", async () => {
+  const { dir, git } = repo();
+  const previousCommand = process.env.BRUV_PI_COMMAND;
+  process.env.BRUV_PI_COMMAND = resolve("tests/fixtures/pi-child.ts");
+  const jobs = new Jobs();
+  const app = await sdk(
+    [
+      (pi) => {
+        registerJobs(pi, jobs);
+        registerRace(pi, jobs, registerAgents(pi, jobs));
+      },
+    ],
+    { select: async () => undefined },
+    dir,
+  );
+  try {
+    await app.session.prompt(`/race --n 2 ${editTask}`);
+    await Promise.all([...jobs.items.values()].map((item) => item.completion));
+    expect(git("worktree", "list").split("\n")).toHaveLength(3);
+  } finally {
+    await app.close();
+    if (previousCommand === undefined) delete process.env.BRUV_PI_COMMAND;
+    else process.env.BRUV_PI_COMMAND = previousCommand;
+  }
+  expect(git("worktree", "list").split("\n")).toHaveLength(1);
+  expect(git("branch", "--list", "bruv/*")).toBe("");
+  rmSync(dir, { recursive: true, force: true });
+});
