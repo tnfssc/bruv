@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import http from "node:http";
 
-import { modelId } from "./model.mjs";
+import { modelId, nativePermissionContext } from "./model.mjs";
 
 function textResponse(content) {
   return { role: "assistant", content };
@@ -29,7 +29,7 @@ function executeResponse(code, sequence) {
 // session's progress or root authority; the child must inspect its own authority.
 function historyReply(body, counter, nextToolSequence) {
   const messages = body.messages ?? [];
-  const lastUser = messages.findLastIndex((m) => m.role === "user");
+  const lastUser = messages.findLastIndex((m) => m.role === "user" && !nativePermissionContext(m));
   const user = JSON.stringify(messages[lastUser]?.content ?? "");
   const results = messages
     .slice(lastUser + 1)

@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
-import { modelId, modelsConfig } from "./model.mjs";
+import { modelId, modelsConfig, nativePermissionContext } from "./model.mjs";
 export const workerProvider = "bruv-worker-acceptance",
   workerId = "local-normal-v1",
   workerSlug = `${workerProvider}/${workerId}`;
@@ -56,7 +56,7 @@ function objects(messages) {
 export async function reply(body, { state }) {
   if (!body.tools?.length) return content("Local delegation acceptance");
   const messages = body.messages ?? [];
-  const lastUser = messages.findLastIndex((m) => m.role === "user");
+  const lastUser = messages.findLastIndex((m) => m.role === "user" && !nativePermissionContext(m));
   const user = text(messages[lastUser] ?? {});
   const tools = messages.slice(lastUser + 1).filter((m) => m.role === "tool");
 
@@ -78,7 +78,7 @@ async function checkNormalWorkerScopeAndWait(body, state, tools, scenario) {
   const results = tools.map(text).join("\n");
   if (!tools.length)
     return tool(body, "__delegate_task", { task: "Worker must be denied", clientRequestId: "worker-denied" });
-  if (!results.includes("normal workers cannot delegate"))
+  if (!results.includes("App delegation needs root orchestrator. Normal workers cannot delegate."))
     throw Error(`Worker delegation was not denied: ${results.slice(0, 250)}`);
   if (tools.length === 1)
     return tool(body, "execute", {

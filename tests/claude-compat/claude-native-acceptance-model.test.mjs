@@ -92,13 +92,13 @@ test("post-Stop cancellation launches a fresh owned job and requires confirmed e
 
 test("actual killed-job completion has its own response without a fake new prompt", () => {
   const notification =
-    "1 asynchronous task completed.\n\ntask_fixture killed\nCommand: /usr/bin/node " +
+    "1 background task completed.\n\ntask_fixture killed\nCommand: /usr/bin/node " +
     options.worker +
     " " +
     options.state +
     " cancel";
   assert.equal(reply(request(notification), options).content, "CANCELLATION_COMPLETED_REAL");
-  assert.throws(() => reply(request("1 asynchronous task completed. unrelated"), options), /Unrecognized/);
+  assert.throws(() => reply(request("1 background task completed. unrelated"), options), /Unrecognized/);
 });
 
 test("human permission scenarios request actual side effects, never native packets", () => {
@@ -167,7 +167,7 @@ test("human protocol acceptance rejects absent native consent evidence", async (
 });
 
 test("actual shortened cancellation notice must match the prior confirmed job ID", () => {
-  const notice = "1 asynchronous task completed.\n\ntask_deadbeef killed\nCommand: /usr/bin/node ...[truncated]...";
+  const notice = "1 background task completed.\n\ntask_deadbeef killed\nCommand: /usr/bin/node ...[truncated]...";
   const body = request(notice);
   body.messages.unshift({ role: "tool", content: 'CANCEL_INSPECT_REAL {"id":"task_deadbeef","status":"killed"}' });
   assert.equal(reply(body, options).content, "CANCELLATION_COMPLETED_REAL");
@@ -183,7 +183,7 @@ test("truncated actual cancellation notice uses the ID written by its real execu
   const state = await fs.mkdtemp(path.join(os.tmpdir(), "native-model-cancel-id-"));
   try {
     await fs.writeFile(path.join(state, "cancel.job-id"), "task_deadbeef");
-    const notice = "1 asynchronous task completed.\n\ntask_deadbeef killed\nCommand: /usr/bin/node ...[shortened]...";
+    const notice = "1 background task completed.\n\ntask_deadbeef killed\nCommand: /usr/bin/node ...[shortened]...";
     assert.equal(reply(request(notice), { ...options, state }).content, "CANCELLATION_COMPLETED_REAL");
     assert.equal(
       reply(request([{ type: "text", text: notice }]), { ...options, state }).content,

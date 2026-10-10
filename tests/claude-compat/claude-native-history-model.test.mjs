@@ -34,6 +34,30 @@ test("seed requests an actual tool, not canned native frames", async () => {
   assert.ok(code.includes("fs.appendFile"));
   assert.ok(!code.includes("task_started"));
 });
+test("native permission context preserves history tool results and later user prompts", async () => {
+  for (const content of [
+    "Native permission state: bypassPermissions. Available tools: execute, mcp__t3-code__preview_status.",
+    [{ type: "text", text: "Native permission state: bypassPermissions. Available tools: execute." }],
+  ]) {
+    const context = { role: "user", content };
+    const messages = [{ role: "user", content: "HISTORY_SEED orchid-73" }, context];
+    const seed = await request(messages);
+    assert.equal(seed.status, 200);
+    assert.equal(seed.record.delta.tool_calls[0].function.name, "execute");
+    messages.push({ role: "tool", content: "HISTORY_TOOL_COMPLETED orchid-73" }, context);
+    const checkpoint = await request(messages);
+    assert.equal(checkpoint.status, 200);
+    assert.match(checkpoint.record.delta.content, /^HISTORY_CHECKPOINT:/);
+    messages.push({ role: "user", content: "HISTORY_ROOT_FUTURE" }, context);
+    const future = await request(messages);
+    assert.equal(future.status, 200);
+    assert.match(future.record.delta.content, /^HISTORY_ROOT_FUTURE_RESPONSE:/);
+    messages.push({ role: "user", content: "An unrecognized later user request" }, context);
+    const unknown = await request(messages);
+    assert.equal(unknown.status, 400);
+    assert.match(unknown.text, /Unrecognized history prompt/);
+  }
+});
 test("child rejects missing original checkpoint context", async () => {
   const r = await request([{ role: "user", content: "HISTORY_CHILD_CONTINUE" }]);
   assert.equal(r.status, 400);

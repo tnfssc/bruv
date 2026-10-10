@@ -31,7 +31,8 @@ function text(m) {
   return typeof m.content === "string" ? m.content : JSON.stringify(m.content ?? "");
 }
 
-function nativePermissionContext(message) {
+// Runtime permission updates carry user role but do not start a new fixture turn.
+export function nativePermissionContext(message) {
   const content =
     typeof message.content === "string"
       ? message.content
@@ -40,7 +41,7 @@ function nativePermissionContext(message) {
 }
 
 function isCancellationNotice(user, messages, worker, state) {
-  if (!user.includes("asynchronous task completed.") || !user.includes(" killed")) return false;
+  if (!user.includes("background task completed.") || !user.includes(" killed")) return false;
   // A full command identifies isolated inputs; actual job notices may shorten it.
   if (user.includes(worker) && user.includes(" cancel")) return true;
   const killedId = user.match(/(task_[a-z0-9]+) killed\b/)?.[1];

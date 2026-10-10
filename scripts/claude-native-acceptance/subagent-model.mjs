@@ -1,7 +1,7 @@
 // Deterministic loopback model. Both root connector and real normal Bruv use this exact identity.
 import http from "node:http";
 import path from "node:path";
-import { provider, modelId, modelSlug, modelsConfig } from "./model.mjs";
+import { provider, modelId, modelSlug, modelsConfig, nativePermissionContext } from "./model.mjs";
 export { provider, modelId, modelSlug, modelsConfig };
 export const cancelTitle = "Actual local cancelled normal worker";
 export const stopTitle = "Actual local Stop-owned normal worker";
@@ -10,7 +10,7 @@ const text = (m) => (typeof m?.content === "string" ? m.content : JSON.stringify
 export function reply(body, { state }) {
   if (body.model !== modelId) throw Error(`Wrong model identity: ${body.model}`);
   const messages = body.messages ?? [],
-    last = messages.findLastIndex((m) => m.role === "user");
+    last = messages.findLastIndex((m) => m.role === "user" && !nativePermissionContext(m));
   const user = text(messages[last]),
     results = messages
       .slice(last + 1)
@@ -30,7 +30,7 @@ export function reply(body, { state }) {
     ],
   });
   // Actual async notification, including killed jobs: never discard a real terminal wake.
-  if (user.includes("asynchronous task completed.")) {
+  if (user.includes("background task completed.")) {
     if (user.includes("CHILD_ANSWER_REAL")) return answer("ROOT_COMPLETION_ONCE_REAL");
     if (/killed|cancelled/.test(user)) return answer("ROOT_KILLED_COMPLETION_REAL");
     throw Error(`Unexpected real completion: ${user.slice(0, 200)}`);

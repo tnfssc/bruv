@@ -56,16 +56,44 @@ test("root background ACK requires real result; child answer requires its actual
     /Child tool failed/,
   );
 });
+test("native permission context preserves actual child launch, tool results, and later root turns", () => {
+  for (const content of [
+    "Native permission state: bypassPermissions. Available tools: execute, mcp__t3-code__preview_status.",
+    [{ type: "text", text: "Native permission state: bypassPermissions. Available tools: execute." }],
+  ]) {
+    const context = { role: "user", content };
+    const body = request("ACCEPT_LOCAL_SUBAGENT", [context]);
+    assert.match(code(reply(body, options)), /await subagent/);
+    body.messages.push({ role: "tool", content: '{"id":"task_fixture","background":true}' }, context);
+    assert.equal(reply(body, options).content, "ROOT_BACKGROUND_RETURN_REAL");
+    body.messages.push({ role: "user", content: "ACCEPT_LOCAL_FOLLOWUP" }, context);
+    assert.equal(reply(body, options).content, "ROOT_FOLLOWUP_REAL");
+    body.messages.push({ role: "user", content: "An unrecognized later user request" }, context);
+    assert.throws(() => reply(body, options), /Unknown local-subagent request/);
+
+    const child = request("CHILD_LOCAL_REAL", [context]);
+    assert.match(code(reply(child, options)), /child.ready/);
+    child.messages.push({ role: "tool", content: "CHILD_TOOL_RESULT_REAL" }, context);
+    assert.equal(reply(child, options).content, "CHILD_ANSWER_REAL");
+  }
+});
 test("actual completion and killed-job notifications get distinct continuations", () => {
-  assert.equal(
-    reply(request("1 asynchronous task completed. task_fixture completed CHILD_ANSWER_REAL"), options).content,
-    "ROOT_COMPLETION_ONCE_REAL",
-  );
-  assert.equal(
-    reply(request("1 asynchronous task completed. task_fixture killed"), options).content,
-    "ROOT_KILLED_COMPLETION_REAL",
-  );
-  assert.throws(() => reply(request("1 asynchronous task completed. unknown"), options), /Unexpected real completion/);
+  const completed =
+    "1 background task completed.\n\ntask_fixture completed\n" +
+    `Title: ${title}\nCommand: bruv agent [normal]: ${title}\n` +
+    "Exit code: 0\nFinal output preview:\nCHILD_ANSWER_REAL";
+  const killed =
+    "1 background task completed.\n\ntask_fixture killed\n" +
+    `Title: ${cancelTitle}\nCommand: bruv agent [normal]: ${cancelTitle}\n` +
+    "Signal: SIGTERM\nNo output.";
+  for (const content of [(text) => text, (text) => [{ type: "text", text }]]) {
+    assert.equal(reply(request(content(completed)), options).content, "ROOT_COMPLETION_ONCE_REAL");
+    assert.equal(reply(request(content(killed)), options).content, "ROOT_KILLED_COMPLETION_REAL");
+    assert.throws(
+      () => reply(request(content("1 background task completed. unknown")), options),
+      /Unexpected real completion/,
+    );
+  }
 });
 test("cancellation requires confirmed inspection and Stop leaves teardown with the owner", () => {
   const cancel = code(reply(request("ACCEPT_LOCAL_CANCEL"), options));

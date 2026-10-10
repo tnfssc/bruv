@@ -136,6 +136,40 @@ test("root launch checks capabilities, preserves request identity, and records o
   }
 });
 
+test("native permission context preserves app delegation results and the next cancel turn", async (t) => {
+  const state = await stateDirectory(t);
+  for (const content of [
+    "Native permission state: bypassPermissions. Available tools: execute, mcp__t3-code__delegate_task.",
+    [{ type: "text", text: "Native permission state: bypassPermissions. Available tools: execute." }],
+  ]) {
+    const context = { role: "user", content };
+    let body = request(modelId, "APP_DELEGATE_CANCEL");
+    body.messages.push(context);
+    assert.equal(called(await reply(body, { state })).name, "mcp__t3-code__orchestrator_capabilities");
+    body = withToolResult(body, `${workerInstance} ${workerSlug}`);
+    body.messages.push(context);
+    const launch = called(await reply(body, { state }));
+    assert.equal(launch.name, "mcp__t3-code__delegate_task");
+    assert.equal(launch.input.clientRequestId, "actual-native-cancel");
+    const task = { taskId: "fixture-permission-cancel", childThreadId: "fixture-child" };
+    body = withToolResult(body, task);
+    body.messages.push(context);
+    assert.equal((await reply(body, { state })).content, "APP_TASK_PENDING_REAL_cancel");
+    body.messages.push({ role: "user", content: "APP_CANCEL" }, context);
+    assert.deepEqual(called(await reply(body, { state })), {
+      name: "mcp__t3-code__task_cancel",
+      input: { taskId: task.taskId },
+    });
+
+    const child = request(workerId, "APP_CHILD_CANCEL");
+    child.messages.push(context);
+    assert.equal(called(await reply(child, { state })).name, "mcp__t3-code__delegate_task");
+    const denied = withToolResult(child, "App delegation needs root orchestrator. Normal workers cannot delegate.");
+    denied.messages.push(context);
+    assert.match(called(await reply(denied, { state })).input.code, /await subagent/);
+  }
+});
+
 test("normal worker must pass both delegation denials and scope checks before release and result", async (t) => {
   const state = await stateDirectory(t);
   for (const scenario of ["done", "cancel"]) {
@@ -147,7 +181,7 @@ test("normal worker must pass both delegation denials and scope checks before re
       input: { task: "Worker must be denied", clientRequestId: "worker-denied" },
     });
     await assert.rejects(reply(withToolResult(body, "Admitted"), { state }), /Worker delegation was not denied/);
-    body = withToolResult(body, "normal workers cannot delegate");
+    body = withToolResult(body, "App delegation needs root orchestrator. Normal workers cannot delegate.");
     assert.match(called(await reply(body, { state })).input.code, /await subagent/);
     await assert.rejects(
       reply(withToolResult(body, "unexpected admission"), { state }),
