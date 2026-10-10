@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep the board short: show running work, the latest three finishes and finishes from the last 30 seconds. Fold older results into counts and hide the board after work goes quiet.
+
 - Include plain-text receipts and gap lists in finish tool results for T3/RPC and model context.
 
 - Render finish gaps as a red count and wrapped list. Show the receipt in the accepted finish result once, and show notes for waiting and blocked results.

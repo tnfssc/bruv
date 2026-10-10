@@ -113,8 +113,11 @@ A notice offers the import once when Codex settings are found.
 
 ## What you see
 
-The terminal board shows each job and agent, its elapsed time, and live agent tools and tokens.
-Finished rows show the result and worktree change totals (`+85 −3 · 4 files`), and stay until your next prompt.
+The terminal board shows every running job and agent, its elapsed time, and live agent tools and tokens.
+Finished rows show the result and worktree change totals (`+85 −3 · 4 files`). Only the three most
+recent finishes or those from the last 30 seconds stay visible; older rows fold into done, failed
+and stopped counts. The board hides when nothing is running and no finish is less than 30 seconds
+old. Your next prompt also clears finished rows.
 Totals are counted once against the starting commit, including committed and uncommitted edits and new files.
 Titles shorten to leave room for totals and elapsed time.
 The footer shows usage, fast mode, goal, then agent cost, separated by ` · `. Only active parts appear.

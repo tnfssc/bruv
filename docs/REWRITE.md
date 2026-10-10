@@ -216,6 +216,7 @@ bruv/
     review.ts             diff review command and pickers (~100)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
+    board.ts              short work board and row display (~120)
     status.ts             shared footer parts (~30)
     render.ts             readable codemode calls and output (~200)
     turn.ts               turn counts and non-context summary (~100)
@@ -617,8 +618,12 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
   against the starting commit, including committed edits and uncommitted new or changed files,
   without changing staging. Exclude scratch under `.tmp/`, whether Git ignores it or not.
   Shorten titles to leave room for change totals and elapsed time.
-- Finished rows stay until the next prompt. Truncate each row to terminal width using theme colors.
-- Animate every 100 ms while work runs; stop the timer when idle or disposed. Clear the widget
+- Show every running row. Keep the three most recent finished rows and every row finished in
+  the last 30 seconds; fold older rows into one dim line of done, failed and stopped counts.
+  Hide the board when nothing runs and no finish is less than 30 seconds old. Expire rows with
+  a timer even when work is idle. The next prompt clears finished rows. Truncate each row to
+  terminal width using theme colors.
+- Animate every 100 ms while work runs; stop the animation timer when idle or disposed. Clear the widget
   and footer at shutdown. `status.ts` sets one `bruv` footer key: usage, fast, goal, then agent
   cost, separated by ` · `. Hide missing parts without removing the others.
 - Codemode rendering (`src/render.ts`) lists nested calls from Pi records and live events, followed

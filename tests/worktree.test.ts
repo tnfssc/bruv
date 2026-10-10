@@ -5,8 +5,8 @@ import { join, resolve } from "node:path";
 import { stripVTControlCharacters } from "node:util";
 import { initTheme } from "@earendil-works/pi-coding-agent";
 import { registerAgents, type StartAgents } from "../src/agents";
+import { WorkBoard } from "../src/board";
 import { Jobs } from "../src/jobs";
-import { WorkBoard } from "../src/ui";
 import { sdk } from "./sdk";
 
 setDefaultTimeout(15000);
