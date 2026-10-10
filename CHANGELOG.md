@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Tell the main agent to hand off separate pieces in worktrees and work elsewhere or wait. Update the script example to request worktrees.
+
 - Keep the board short: show running work, the latest three finishes and finishes from the last 30 seconds. Fold older results into counts and hide the board after work goes quiet.
 
 - Include plain-text receipts and gap lists in finish tool results for T3/RPC and model context.

@@ -105,6 +105,7 @@ A notice offers the import once when Codex settings are found.
 
 ## How background work behaves
 
+- Give agents big, separate pieces of work, each in its own worktree when editing files. Work on something else or wait once you hand a piece to an agent.
 - Agents return an ID at once. Use `waitSeconds: 0` for jobs to return at once; jobs otherwise wait up to three seconds.
 - `wait` blocks until a result, timeout, or new message.
 - Esc in the terminal or Stop in T3 ends the run and stops every job and agent it left running. The model hears about it with your next message.
