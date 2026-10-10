@@ -208,6 +208,7 @@ bruv/
     settle.ts             reports results and reminds the model to wait (~150)
     goal.ts               /goal command, state, continuation, budget (~350)
     fast.ts               /fast priority tier (~100)
+    usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
@@ -471,6 +472,15 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - `before_provider_request`: set `payload.service_tier = "priority"`.
 - Child agents get `BRUV_FAST=1` and start with fast on, no confirmation.
 - The footer shows `fast` while on.
+
+### 3.10.1 `/usage` (`src/usage.ts`)
+
+- Read ChatGPT plan limits from Codex stream events or response headers. Keep the latest
+  snapshot per session and in `~/.pi/agent/bruv-usage.json` for startup.
+- Show each window's used percentage in the footer. `/usage` adds bars, local and relative
+  reset times, limit and credit status, rounded credits, and session tokens and cost.
+- Warn once per session for each window at 90% and once when a limit is reached.
+- Other models show session usage and explain that plan limits require a ChatGPT plan model.
 
 ### 3.11 Codex native compaction (`src/codex-compaction.ts`)
 

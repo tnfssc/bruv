@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add `/usage` for ChatGPT plan limits, credits, and session usage, with footer status and limit warnings.
+
 ## 1.0.0
 
 - Rewrite bruv as a Pi package installed with `pi install`.

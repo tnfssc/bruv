@@ -36,7 +36,7 @@ test.each([false, true])("codemode starts a job, waits, and parses fake child ag
       fauxAssistantMessage(
         fauxToolCall("codemode", {
           code: `
-        const job = await tools.job_start({command: "sleep 0.2; echo fast=$BRUV_FAST", waitSeconds: 0});
+        const job = await tools.job_start({command: 'sleep 0.05; echo "fast=$BRUV_FAST"' , waitSeconds: 0});
         const result = await tools.wait({ids: [job.id], all: true});
         if (result.done[0].exitCode !== 0) throw new Error("job failed");
         const {ids} = await tools.agent({prompts: ["one", "two"], title: "Lint", model: "faux/selected", thinking: "low"});
