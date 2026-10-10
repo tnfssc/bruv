@@ -1,6 +1,6 @@
 # bruv rewrite: from a patched Pi distribution to a Pi package
 
-Status: approved direction, implementation in progress on branch `rewrite/pi-package`.
+Status: Implemented on branch rewrite/pi-package.
 Date: 2026-10-10.
 
 This document is the spec for the rewrite. Part 1 explains why. Part 2 lists the decisions that are
@@ -178,7 +178,8 @@ Read from the installed T3 server (`0.0.46-nightly.20261005.2702`):
 - T3 injects its own MCP tools (`delegate_task`, etc.) into Pi through that extension.
 - **T3 stops the Pi session if Pi starts agent work outside an active T3 turn**:
   `"Pi started agent work outside an active T3 turn. The session was stopped to prevent invisible
-  tool execution."` So bruv must never start a turn on its own (`triggerTurn`) in T3.
+  tool execution."` So background results must never start a turn on their own (`triggerTurn`) in T3.
+  An explicit `/goal <objective>` or `/goal resume` command starts work with `sendUserMessage`.
 - T3 supports steering during a turn, queued messages, structured questions (Pi extension UI
   dialogs over RPC), and fork/rollback.
 
@@ -257,10 +258,10 @@ is truly needed. Prompts are Markdown files read at load time relative to `impor
 
 ### 3.2 Prompts
 
-`before_agent_start` adds bruv's guidance. Prefer editing the structured `systemPromptOptions`
-(identity/guidelines sections) so Pi keeps its context files (`AGENTS.md`), skills and tool sections.
-Use `systemPrompt`/`forceSystemPrompt` only if sections cannot express it. **Verify first** (V4) that
-the framing survives continuation requests made through `agent_before_settle`.
+`before_agent_start` adds bruv's guidance to `systemPromptOptions.sections.bruv`, preserving Pi's
+context files (`AGENTS.md`), skills and tool sections. When codemode is active, the same section
+includes the scripting examples. Pi keeps these sections during requests continued through
+`agent_before_settle`. Goal state never changes the system prompt.
 
 `prompts/system.md` (final wording may be tuned, keep it under 250 words):
 
@@ -282,9 +283,8 @@ You're working with the user on their code, inside bruv.
   unless the user asks.
 ```
 
-`prompts/codemode.md` is appended to the codemode tool description through the `codemode` tool's
-`prepareLoadout` description override or as namespace instructions (see 3.3). It contains three
-short examples and nothing else:
+`prompts/codemode.md` is included in the bruv system prompt section when codemode is active.
+It contains three short examples and nothing else:
 
 ```js
 // Read several files at once
@@ -314,15 +314,11 @@ callable from scripts only.
 Pi does this with settings `"defaultTools": ["+codemode"]` and `"codemode": { "mode": "only" }`.
 Extensions can read settings (`pi.getSettings()`) but cannot write them.
 
-Implementation order (pick the first that works, **verify first**, V2):
-
-1. On `session_start`, if codemode is not active or `codemode.mode` is not `"only"`, show one notice:
-   "bruv works best with codemode only. Run /bruv-setup to turn it on." `/bruv-setup` asks for
-   confirmation, then writes those two keys into `~/.pi/agent/settings.json` (merge, keep everything
-   else) and tells the user to `/reload`. In RPC mode (T3) the notice goes through `ctx.ui.notify`.
-2. If Pi allows re-registering a built-in tool name, re-register `read`/`edit`/`write`/`bash` with
-   `exposure: "codemode"` delegating to Pi's exported tool factories. Only do this if (1) is not
-   enough and the factories are public exports.
+On `session_start`, if codemode is not active or `codemode.mode` is not `"only"`, show one notice:
+"bruv works best with codemode only. Run /bruv-setup to turn it on." `/bruv-setup` asks for
+confirmation, then writes `codemode.mode: "only"` and adds codemode to `defaultTools` in
+`~/.pi/agent/settings.json`. It preserves other settings and existing explicit or relative tool
+lists, then tells the user to `/reload`. In RPC mode (T3), the notice uses `ctx.ui.notify`.
 
 bruv's own tools register with `exposure: "codemode"` (listed in the codemode description) or
 `"deferred"` (callable, not listed). Rule: tools used often are `codemode`; rare tools and anything
@@ -429,17 +425,26 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - `/goal <objective>` sets a goal. Optional flags: `--criteria "a; b"`, `--budget 2m` (tokens, accepts
   `k`/`m`). `/goal` shows status. `/goal pause`, `/goal resume`, `/goal clear`.
 - State: `{ objective, criteria[], status: "active" | "paused" | "blocked" | "completed" |
-  "budget_exceeded", tokensUsed, tokenBudget?, progress[], evidence?, blocker? }`, saved with
-  `pi.appendEntry("bruv-goal", state)` on every change, restored from the branch on `session_start`.
-- Token use is counted from assistant message usage while the goal is active.
-- While the goal is active and no work is pending, `settle.ts` continues the run with the
-  `goal-continue.md` message.
+  "budget_exceeded", tokensUsed, tokenBudget?, progress[], evidence?, blocker? }`. Save with
+  `pi.appendEntry("bruv-goal", state)` when setting or clearing a goal, when its status changes,
+  on `goal_update`, and once on `agent_settled`. Restore from the branch on `session_start` and
+  `session_tree`.
+- Count token use from assistant message usage while the goal is active. Update it in memory on
+  `message_end`, refresh the status display, and save immediately only if the budget is reached.
+- Setting or resuming an active goal sends `goal.md` plus the objective, criteria, and budget as
+  plain lines through `pi.sendUserMessage`. This starts work directly from the command. If a run
+  is already active, the message steers it. Resuming a spent budget does not start work.
+- While the goal is active, its `agent_before_settle` handler continues after the earlier handlers
+  have no entries or continuation to add. It sends a hidden `bruv-goal` custom message containing
+  `goal-continue.md` and one status line: objective, tokens used / budget, and last progress.
 - Stop continuing when: status is not active; budget reached (set `budget_exceeded`, tell the user);
   the model reports `blocked` with the same blocker three continuations in a row; or the run was
   aborted (pause the goal, tell the user `/goal resume` continues).
 - The model calls `goal_update` to record progress, block, or complete. `completed` requires
   `evidence`.
-- The goal prompt (`goal.md`) is added to the system prompt only while a goal is active.
+- Goal instructions and changing state stay in conversation messages, preserving the system
+  prompt and its cache. `/goal` shows plain lines for objective, status and token use, plus criteria,
+  last progress, and blocker when present.
 
 ### 3.9 Async questions (`src/questions.ts`)
 
@@ -469,14 +474,17 @@ Port the essential behavior of `src/agent/native-compaction.ts` (read it with
 `git show develop:src/agent/native-compaction.ts`). Budget 350 lines.
 
 - Applies only when `ctx.model.api === "openai-codex-responses"`. Other models use Pi's default.
-- In `context`/`before_provider_headers`/`before_provider_request`, remember the last request
-  (messages, payload, headers) for the current model.
+- In `before_provider_request`, capture the current Codex model and a copy of the rewritten
+  request payload. In `before_provider_headers`, capture its headers. Do not copy conversation
+  messages.
+- Keep the latest Codex compaction entry in memory. Set it on `session_compact`; scan the branch
+  once on `session_start` or `session_tree` to restore it. A later text compaction clears it.
 - In `session_before_compact`, call the Codex responses endpoint with the remembered payload to get a
   `{ type: "compaction", id, encrypted_content }` item, exactly as the current code does (same URL
   resolution, headers, event parsing). Return a compaction with a short plain summary and
   `details: { strategy: "codex-native", version: 1, provider, model, item }`.
-- In `before_provider_request`, when the branch contains a codex-native compaction for the same
-  provider and model, put the item into `payload.input` where the summary text would be.
+- In `before_provider_request`, when the saved compaction matches the current provider and model,
+  put its item into `payload.input` where the summary text would be. Do not rescan the branch.
 - If the model or provider changed since that compaction, use the plain summary and tell the user once.
 - If the endpoint fails, cancel that compaction attempt, keep history, notify the user, and let Pi's
   default compaction run next time. No hidden retries.
@@ -486,11 +494,16 @@ Port the essential behavior of `src/agent/native-compaction.ts` (read it with
 Only when `ctx.hasUI`.
 
 - Widget `bruv` above the editor: one line per running job or agent: `a2 Fix lint in foo.ts · 3m12s ·
-  edit`. Completed items stay visible until the next prompt. Hide the widget when no items remain.
-- This module sets only the agent cost status. Fast and goal set their own status keys.
-- Update the widget on creation, completion, stop and a one-second timer, never on output chunks.
-- Renderers for `bruv-report`, `bruv-answer` and the `agent`/`wait` results: one line per item,
-  expandable.
+  edit`. Agent progress shows the last tool or current token count. Completed items show their
+  status and stay visible until the next prompt; hide them on the next widget update. Hide the
+  widget when no items remain.
+- This module sets only the total agent cost status. Fast and goal set their own status keys.
+- Update the widget on creation, completion, stop, session reset, and a one-second timer, never on
+  output chunks. Clear the widget, cost status, and timer at shutdown.
+- Register renderers only in UI sessions. `bruv-report` and `bruv-answer` show the first content
+  line when collapsed and all content when expanded. `agent` and `wait` show one status line per
+  item; expanded results include recent output or the final answer, output path, and session path.
+  Tool errors without result items keep their text.
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,
   bounded, seam, authority).
 
@@ -540,7 +553,7 @@ README install section:
 ```sh
 # Install Pi (see https://pi.dev), then:
 pi install git:github.com/tnfssc/bruv
-pi            # then /bruv-setup once
+pi            # then /bruv-setup once and /reload
 ```
 
 For development: `pi install /path/to/bruv/checkout` (local packages load from the path, no copy).
@@ -577,7 +590,7 @@ Migration for the user (README section "Coming from bruv 0.x"):
 | V1 | Does codemode `wait` return on completion, steering and abort, with abort ending the run within 1 s? | Keep all waiting in tools; settle only reports or reminds (3.4). |
 | V2 | How can a package turn on codemode-only mode? | `/bruv-setup` writes settings (3.3). |
 | V3 | Does a non-awaited `ctx.ui.select` dialog work during a run, in TUI and over RPC? | `ask` blocks the script until answered. |
-| V4 | Does system-prompt framing from `before_agent_start` survive `continue: true` requests? | Rewrite the system message in `context_with_system`. |
+| V4 | Does system-prompt framing from `before_agent_start` survive `continue: true` requests? | Keep static guidance in structured system prompt sections. |
 | V5 | Does `pi --mode json --session <new path>` create and keep the child session file, and does the child load bruv from the global install? | Pass `--extension <package path>` explicitly. |
 
 ### 4.2 Phases
@@ -596,8 +609,8 @@ Each phase ends with a commit on `rewrite/pi-package` and green `bunx biome ci .
    pass.
 4. **Finish.** README (install, commands, tools, config, migration), `CHANGELOG.md` with one entry
    for 1.0.0, `t3.json` updated (setup script: `bun install --frozen-lockfile`), final size check
-   against budgets. Acceptance: total source within ~10% of 2,300 lines; one real smoke run in T3
-   done by the reviewer.
+   against budgets. Acceptance: total source no more than ~10% above 2,300 lines; smaller is fine.
+   One real smoke run in T3 is done by the reviewer.
 
 ### 4.3 Risks
 
@@ -607,4 +620,4 @@ Each phase ends with a commit on `rewrite/pi-package` and green `bunx biome ci .
   through `tools.bash`. The usage data says that is rare.
 - Losing auto-wake after the user's turn ends is a deliberate trade for T3 compatibility.
 - Pi upstream gaps worth filing as issues (not blockers): a hook to write settings from a package;
-  system prompt options for extension-continued requests; `before_provider_request` able to block.
+  `before_provider_request` able to block.

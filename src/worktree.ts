@@ -5,7 +5,7 @@ import { promisify } from "node:util";
 import type { Jobs, Work } from "./jobs";
 
 const exec = promisify(execFile);
-export interface WorktreeOptions {
+interface WorktreeOptions {
   branch?: string;
   baseRef?: string;
 }

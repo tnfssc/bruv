@@ -10,7 +10,7 @@ import { registerQuestions } from "../src/questions";
 import { registerSettle } from "../src/settle";
 import { registerUI } from "../src/ui";
 
-export default async function bruv(pi: ExtensionAPI): Promise<void> {
+export default function bruv(pi: ExtensionAPI): void {
   const jobs = new Jobs();
   registerUI(pi, jobs);
   registerSettle(pi, jobs);
@@ -21,5 +21,5 @@ export default async function bruv(pi: ExtensionAPI): Promise<void> {
   registerQuestions(pi);
   registerGoal(pi);
   registerPrompt(pi);
-  await registerCodemode(pi);
+  registerCodemode(pi);
 }

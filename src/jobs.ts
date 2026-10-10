@@ -5,8 +5,8 @@ import { finished } from "node:stream/promises";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
 
-export const StatusSchema = Type.Union([Type.Literal("running"), Type.Literal("done"), Type.Literal("failed")]);
-export const SummarySchema = Type.Object({
+const StatusSchema = Type.Union([Type.Literal("running"), Type.Literal("done"), Type.Literal("failed")]);
+const SummarySchema = Type.Object({
   id: Type.String(),
   kind: Type.Union([Type.Literal("job"), Type.Literal("agent")]),
   title: Type.String(),
@@ -16,7 +16,7 @@ export const SummarySchema = Type.Object({
   outputPath: Type.String(),
   worktree: Type.Optional(Type.Object({ path: Type.String(), branch: Type.String() })),
 });
-export const ResultSchema = Type.Object({
+const ResultSchema = Type.Object({
   ...SummarySchema.properties,
   exitCode: Type.Optional(Type.Number()),
   output: Type.String(),
@@ -26,7 +26,7 @@ export const ResultSchema = Type.Object({
 });
 export type Summary = Static<typeof SummarySchema>;
 export type Result = Static<typeof ResultSchema>;
-export interface Work extends Result {
+export interface Work extends Omit<Result, "output" | "elapsedSeconds"> {
   tail: Buffer;
   outputStream: WriteStream;
   outputDone: Promise<undefined | Error>;
@@ -39,7 +39,7 @@ export interface Work extends Result {
   completion: Promise<void>;
   finish: () => void;
 }
-export const seconds = (fallback: number) => Type.Optional(Type.Number({ minimum: 0, default: fallback }));
+const seconds = (fallback: number) => Type.Optional(Type.Number({ minimum: 0, default: fallback }));
 export function toolResult<T extends object>(value: T) {
   return {
     content: [{ type: "text" as const, text: JSON.stringify(value) }],
@@ -73,9 +73,7 @@ export class Jobs {
       title,
       status: "running",
       startedAt: Date.now(),
-      elapsedSeconds: 0,
       outputPath: join(directory, `${id}.log`),
-      output: "",
       tail: Buffer.alloc(0),
       outputStream,
       outputDone: finished(outputStream).then(
