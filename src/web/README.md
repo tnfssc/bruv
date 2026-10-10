@@ -28,7 +28,7 @@ Use **+** to open a terminal tab. Double-click a title, or focus it and press F2
 
 Drag workspace titles vertically or tab titles horizontally to reorder. On touchscreens, hold briefly before dragging; a normal swipe still scrolls. Focus a title and press **Alt+Shift+↑/↓** for workspaces or **Alt+Shift+←/→** for tabs. Escape or dropping outside the list cancels a drag. Ordering is shared; everyone's selected terminal, running work and voice owner stay put.
 
-On phones, open the workspace drawer from the left end of the tab strip. Escape closes drawers and dialogs. Arrow keys, Home and End navigate the tab strip. Connection and voice details appear on hover or keyboard focus.
+On phones, open the workspace drawer from the left end of the tab strip. Escape closes drawers and dialogs. Arrow keys, Home and End navigate the tab strip. Connection problems and active voice appear above the terminal when relevant.
 
 ## Shared terminals
 
