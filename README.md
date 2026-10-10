@@ -1,53 +1,23 @@
-<div align="center">
-<p>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="site/assets/brand/bruv-wordmark-light.svg">
-    <img src="site/assets/brand/bruv-wordmark.svg" width="318" height="113" alt="bruv CLI">
-  </picture>
-</p>
+# bruv
 
-An opinionated coding agent. Built on [Pi](https://pi.dev).
+bruv is a Pi package for working on code with scripting, background work, subagents, and goals. The rewrite currently adds prompt guidance and codemode setup; the other features come in later phases.
 
-| ![bruv delegates a fix to a subagent in its own Git worktree](site/assets/demos/delegate.gif) | ![bruv runs tests in the background while answering another question](site/assets/demos/background.gif) |
-| --- | --- |
-| ![bruv reads project wisdom, finishes a regression test, and saves the next steps](site/assets/demos/wisdom.gif) | ![Live mode starts, listens while Space is held, then speaks a reply and shows its transcript](site/assets/demos/live.gif) |
-
-</div>
-
-### Install
-
-> Want shared Bruv terminals in a browser? Run `bruv web` and open its printed token URL on each device. Workspaces and tabs update live.
-> Type `/live` in the terminal and allow browser microphone access. [Remote setup and limits](src/web/README.md).
-> For the separate graphical T3 frontend, use `bruv web --setup` or the [T3 Code setup guide](wisdom/docs/t3-code/README.md).
+## Install
 
 ```sh
-curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh
+# Install Pi (see https://pi.dev), then:
+pi install git:github.com/tnfssc/bruv
+pi            # then /bruv-setup once
 ```
 
-Supports Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64 (API 28+).
-Requires curl and either sha256sum or shasum.
+For development: `pi install /path/to/bruv/checkout`.
 
-Put `~/.local/bin` on your PATH, then start Bruv in your project:
+## Coming from bruv 0.x
 
-```sh
-bruv
-```
+- Sign in again with `/login` in Pi, or copy `~/.bruv/agent/auth.json` to `~/.pi/agent/auth.json`.
+- Old sessions under `~/.bruv/agent/sessions` are not migrated.
+- Move `~/.bruv/subagents.json` profiles to `~/.pi/agent/bruv.json` using the format in `docs/REWRITE.md`, section 3.7.
+- In T3, enable the Pi provider with binary `pi` and disable the "bruv (not Claude)" provider.
+- Remove `~/.local/bin/bruv` and `~/.local/bin/bruv-claude-compat`.
 
-Configure your provider with `/login` and choose a model with `/model`.
-Credentials and model access come from your provider; they are not included.
-
-### Updates
-
-```sh
-bruv update --check           # Check without changing files
-bruv update                   # Update the sibling CLI and connector together
-```
-
-### Commands
-
-```sh
-bruv                          # Start the interactive terminal
-bruv -p "Describe this tree"  # Run one prompt and exit
-bruv -c                       # Continue the latest session
-bruv -r                       # Pick a saved session to resume
-```
+More docs coming.
