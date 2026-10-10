@@ -62,7 +62,10 @@ function parseGoal(args: string): Goal {
 const tokens = (n: number) =>
   n >= 1000000 ? `${+(n / 1000000).toFixed(1)}m` : n >= 1000 ? `${+(n / 1000).toFixed(1)}k` : `${n}`;
 
-export function registerGoal(pi: ExtensionAPI) {
+const tokenStatus = (goal: Goal) =>
+  `${tokens(goal.tokensUsed)} / ${goal.tokenBudget ? tokens(goal.tokenBudget) : "no limit"} tokens`;
+
+export function registerGoal(pi: ExtensionAPI): void {
   let goal: Goal | undefined;
   let blocker: string | undefined;
   let repeated = 0;
@@ -89,6 +92,7 @@ export function registerGoal(pi: ExtensionAPI) {
     if (goal?.status !== "active" || goal.tokenBudget === undefined || goal.tokensUsed < goal.tokenBudget) return;
     goal.status = "budget_exceeded";
     ctx.ui.notify("Goal token budget reached.", "warning");
+    return true;
   };
   const restore = (_event: unknown, ctx: ExtensionContext) => {
     const entry = ctx.sessionManager
@@ -109,7 +113,16 @@ export function registerGoal(pi: ExtensionAPI) {
     async handler(args, ctx) {
       const text = args.trim();
       if (!text) {
-        ctx.ui.notify(goal ? JSON.stringify(goal, null, 2) : "No goal is set.", "info");
+        const lines = goal
+          ? [
+              `Goal: ${goal.objective}`,
+              `Status: ${goal.status} · ${tokenStatus(goal)}`,
+              ...(goal.criteria.length ? [`Criteria: ${goal.criteria.join("; ")}`] : []),
+              ...(goal.progress.length ? [`Last progress: ${goal.progress.at(-1)}`] : []),
+              ...(goal.blocker ? [`Blocker: ${goal.blocker}`] : []),
+            ]
+          : ["No goal is set."];
+        ctx.ui.notify(lines.join("\n"), "info");
         return;
       }
       if (text === "clear") goal = undefined;
@@ -123,6 +136,11 @@ export function registerGoal(pi: ExtensionAPI) {
       }
       reset();
       save(ctx);
+      if (goal?.status === "active")
+        pi.sendUserMessage(
+          `${guidance}\n\nGoal: ${goal.objective}\nCriteria: ${goal.criteria.join("; ") || "None"}\nBudget: ${goal.tokenBudget ?? "No limit"} tokens`,
+          { deliverAs: "steer" },
+        );
     },
   });
   pi.registerTool({
@@ -162,8 +180,11 @@ export function registerGoal(pi: ExtensionAPI) {
   pi.on("message_end", (event, ctx) => {
     if (goal?.status !== "active" || event.message.role !== "assistant") return;
     goal.tokensUsed += event.message.usage.totalTokens;
-    budgetReached(ctx);
-    save(ctx);
+    if (budgetReached(ctx)) save(ctx);
+    else status(ctx);
+  });
+  pi.on("agent_settled", (_event, ctx) => {
+    if (goal) save(ctx);
   });
   pi.on("agent_before_settle", (event, ctx) => {
     if (goal?.status !== "active") return {};
@@ -189,12 +210,11 @@ export function registerGoal(pi: ExtensionAPI) {
         {
           type: "custom_message" as const,
           customType: "bruv-goal",
-          content: `${continuation}\n\n${JSON.stringify(goal)}`,
+          content: `${continuation}\n\nGoal: ${goal.objective} · ${tokenStatus(goal)} · Last progress: ${goal.progress.at(-1) ?? "None"}`,
           display: false,
         },
       ],
       continue: true,
     };
   });
-  return () => (goal?.status === "active" ? `${guidance}\n\n${JSON.stringify(goal)}` : "");
 }

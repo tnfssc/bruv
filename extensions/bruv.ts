@@ -19,7 +19,7 @@ export default async function bruv(pi: ExtensionAPI): Promise<void> {
   registerAgents(pi, jobs, isFast);
   registerCodexCompaction(pi);
   registerQuestions(pi);
-  const goalPrompt = registerGoal(pi);
-  registerPrompt(pi, goalPrompt);
+  registerGoal(pi);
+  registerPrompt(pi);
   await registerCodemode(pi);
 }
