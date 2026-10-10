@@ -163,7 +163,8 @@ export function registerGoal(pi: ExtensionAPI, hasFinished = () => false) {
     name: "goal_update",
     label: "Goal",
     description: "Record goal progress or a blocker. Call finish with done to check completion.",
-    exposure: "codemode",
+    // Not listed: models only see it through the goal prompt, so they don't call it without a goal.
+    exposure: "deferred",
     parameters: Type.Object({
       status: Type.Union([Type.Literal("active"), Type.Literal("blocked")]),
       progress: Type.Optional(Type.String()),
