@@ -40,7 +40,15 @@ export function registerSettle(pi: ExtensionAPI, jobs: Jobs) {
   pi.on("tool_call", (event) => {
     if (["wait", "job_start", "agent"].includes(event.toolName)) reminded = false;
   });
-  pi.on("agent_settled", () => flush());
+  pi.on("agent_settled", (event) => {
+    flush();
+    if (!event.aborted) return;
+    // Esc in the terminal and Stop in T3 both end everything the session started.
+    // Report once the processes have exited; the run has settled by then.
+    const running = [...jobs.items.values()].filter((item) => item.status === "running");
+    for (const item of running) jobs.stop(item.id);
+    void Promise.all(running.map((item) => item.completion)).then(() => flush());
+  });
   pi.on("agent_before_settle", (event) => {
     if (event.outcome === "aborted") return {};
     const items = [...jobs.items.values()].filter((item) => !item.detached);

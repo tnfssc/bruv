@@ -57,9 +57,10 @@ The model calls these through `tools.<name>(...)` in Pi's scripting tool.
 ## How background work behaves
 
 - Agents return an ID at once. Use `waitSeconds: 0` for jobs to return at once; jobs otherwise wait up to three seconds.
-- `wait` blocks until a result, timeout, or new message. Esc or Stop ends the wait and leaves the work running.
+- `wait` blocks until a result, timeout, or new message.
+- Esc in the terminal or Stop in T3 ends the run and stops every job and agent it left running. The model hears about it with your next message.
 - At the end of a turn, the model gets unseen results or one reminder to wait. Detached jobs do not cause reminders.
-- Work left running reports with your next message. Closing Pi stops all jobs and agents, including detached jobs.
+- Work left running at the end of a turn reports with your next message. Closing Pi stops all jobs and agents.
 
 ## Configuration
 

@@ -330,7 +330,11 @@ hold the details.
 - Jobs and agents start work and return IDs. The model keeps working, then calls `tools.wait`
   for results before ending its turn unless the work was detached.
 - Only `wait` and `job_start` with `waitSeconds` block. Their abort signal ends the wait at once
-  on Esc or T3 Stop. They also return when `ctx.hasPendingMessages()` is true. Work keeps running.
+  on Esc or T3 Stop. They also return when `ctx.hasPendingMessages()` is true.
+- Esc in the terminal and Stop in T3 behave the same: the run ends and every job and agent the
+  session started is stopped, detached ones included. T3 restarts Pi after Stop, so its jobs end
+  there anyway; the terminal does the same on purpose. On `agent_settled` with `aborted`, stop
+  everything; the stopped results reach the model with the next message.
 - `agent_before_settle` never waits. If `event.outcome` is `"aborted"`, it returns `{}`.
   Otherwise, it reports finished, unseen, non-detached items with one `bruv-report` entry per
   item and `continue: true`, marking each seen.
@@ -533,7 +537,7 @@ into the new tree "for reference".
 - Integration tests: create a Pi SDK session (`docs/sdk.md`) with the faux provider from
   `@earendil-works/pi-ai` and the bruv extension loaded. Cover: a codemode script calling
   `job_start` then `wait`; a finished unseen job reported through a continuation; one reminder for running work; a
-  queued user message releasing `wait`; abort leaving the job running and delivering its result
+  queued user message releasing `wait`; abort stopping the job and reporting it
   next turn; goal continuation stopping on budget.
 - Agents: test with `BRUV_PI_COMMAND` pointing to a tiny fake script that prints a valid JSON event
   stream.

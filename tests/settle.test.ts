@@ -165,7 +165,7 @@ test("a steer message promptly releases codemode wait", async () => {
   }
 });
 
-test("abort ends codemode wait within one second and delivers the job next prompt", async () => {
+test("abort ends codemode wait within one second, stops the job and reports it next prompt", async () => {
   const app = await setup();
   try {
     app.faux.setResponses([start(), script("return await tools.wait();")]);
@@ -177,12 +177,9 @@ test("abort ends codemode wait within one second and delivers the job next promp
     await run;
     expect(performance.now() - began).toBeLessThan(1000);
     const item = app.jobs.get("j1");
-    expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("running");
-    expect(item.stopped).toBe(false);
-    expect(app.reports()).toHaveLength(0);
-    app.release();
+    expect(item.stopped).toBe(true);
     await item.completion;
-    expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("done");
+    expect(item.status, JSON.stringify(app.jobs.result(item))).toBe("failed");
     expect(app.faux.state.callCount).toBe(2);
     await app.nextPrompt();
     expect(app.reports()).toHaveLength(1);
