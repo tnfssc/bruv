@@ -23,6 +23,7 @@ Disable the old "bruv (not Claude)" provider.
 ## Commands
 
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
+- `/race <task>` starts three agents from your current changes, each in its own worktree. Use `--n 2` through `--n 5` to change the count. `/race` shows results; pick in the dialog or with `/race pick a2`. `/race pick none` discards the race.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
 - `/bruv-setup` turns on scripting for all tool calls; run `/reload` afterward.
@@ -51,6 +52,7 @@ The model calls these through `tools.<name>(...)` in Pi's scripting tool.
 | `wait` | Wait for one or all jobs or agents, or until you send a message. |
 | `jobs` | List the jobs and agents started in this session. |
 | `job_stop` | Stop a job or agent and its child processes. |
+| `race` | Start competing agents from your current changes; return a race ID and agent IDs to use with `wait`. You choose the result. |
 | `agent` | Start one or several agents, with optional git worktrees. |
 | `goal_update` | Record progress, a blocker, or completion with evidence. |
 | `ask` | Ask you a question while work continues; your answer arrives as a message. |
@@ -77,7 +79,10 @@ Set agent profiles in `~/.pi/agent/bruv.json`:
 ```
 
 Missing fields use the parent model and thinking level. The model can override either for a single agent.
-Agent worktrees and branches stay on disk after the agent finishes.
+Ordinary agent worktrees and branches stay on disk after the agent finishes.
+A race includes your uncommitted and untracked files. Picking a result applies only that agent's changes to your current worktree, without committing or changing your staging choices.
+Successful picks and "Keep none" remove all race worktrees and branches. On a conflict,
+the worktrees stay available and Git leaves conflict markers for you to resolve.
 
 ## Coming from bruv 0.x
 

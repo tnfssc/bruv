@@ -38,7 +38,7 @@ export function registerSettle(pi: ExtensionAPI, jobs: Jobs) {
     jobs.listeners.delete(changed);
   });
   pi.on("tool_call", (event) => {
-    if (["wait", "job_start", "agent"].includes(event.toolName)) reminded = false;
+    if (["wait", "job_start", "agent", "race"].includes(event.toolName)) reminded = false;
   });
   pi.on("agent_settled", (event) => {
     flush();

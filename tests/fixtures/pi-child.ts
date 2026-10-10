@@ -6,6 +6,9 @@ const args = process.argv.slice(2);
 const sessionPath = args[args.indexOf("--session") + 1];
 const header = { type: "session", version: 3, id: "fixture", timestamp: new Date().toISOString(), cwd: process.cwd() };
 writeFileSync(sessionPath, `${JSON.stringify(header)}\n`);
+const task = args.at(-1)?.split("\n")[0] ?? "";
+const edits = task.startsWith("fixture-edit ") ? (JSON.parse(task.slice(13)) as Record<string, string>) : undefined;
+if (edits) for (const [path, content] of Object.entries(edits)) writeFileSync(path, content);
 const message = fauxAssistantMessage(
   JSON.stringify({
     args,
@@ -13,7 +16,7 @@ const message = fauxAssistantMessage(
     depth: process.env.BRUV_DEPTH,
     fast: process.env.BRUV_FAST,
     separator: "one\u2028two",
-  }),
+  }) + (edits ? "\n\nchecks pass" : ""),
 );
 message.usage = {
   input: 7,

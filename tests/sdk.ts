@@ -3,7 +3,11 @@ import { join, resolve } from "node:path";
 import { fauxProvider, InMemoryCredentialStore } from "@earendil-works/pi-ai";
 import * as Pi from "@earendil-works/pi-coding-agent";
 
-export async function sdk(extensionFactories: Pi.ExtensionFactory[], ui?: Partial<Pi.ExtensionUIContext>) {
+export async function sdk(
+  extensionFactories: Pi.ExtensionFactory[],
+  ui?: Partial<Pi.ExtensionUIContext>,
+  cwd?: string,
+) {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/sdk-"));
   const faux = fauxProvider();
@@ -21,7 +25,7 @@ export async function sdk(extensionFactories: Pi.ExtensionFactory[], ui?: Partia
     retry: { enabled: false },
   });
   const resourceLoader = new Pi.DefaultResourceLoader({
-    cwd: dir,
+    cwd: cwd ?? dir,
     agentDir: dir,
     settingsManager,
     extensionFactories: [Pi.createCodemodeExtension(), ...extensionFactories],
@@ -33,13 +37,13 @@ export async function sdk(extensionFactories: Pi.ExtensionFactory[], ui?: Partia
   });
   await resourceLoader.reload();
   const { session } = await Pi.createAgentSession({
-    cwd: dir,
+    cwd: cwd ?? dir,
     agentDir: dir,
     modelRuntime,
     model: faux.getModel(),
     resourceLoader,
     settingsManager,
-    sessionManager: Pi.SessionManager.create(dir, dir),
+    sessionManager: Pi.SessionManager.create(cwd ?? dir, dir),
   });
   await session.bindExtensions({
     mode: "rpc",

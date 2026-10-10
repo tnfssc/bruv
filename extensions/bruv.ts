@@ -7,6 +7,7 @@ import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerPrompt } from "../src/prompt";
 import { registerQuestions } from "../src/questions";
+import { registerRace } from "../src/race";
 import { registerSettle } from "../src/settle";
 import { registerUI } from "../src/ui";
 import { registerUsage } from "../src/usage";
@@ -17,7 +18,8 @@ export default function bruv(pi: ExtensionAPI): void {
   registerSettle(pi, jobs);
   registerJobs(pi, jobs);
   const isFast = registerFast(pi);
-  registerAgents(pi, jobs, isFast);
+  const startAgents = registerAgents(pi, jobs, isFast);
+  registerRace(pi, jobs, startAgents);
   registerUsage(pi);
   registerCodexCompaction(pi);
   registerQuestions(pi);

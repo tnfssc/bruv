@@ -205,6 +205,7 @@ bruv/
     jobs.ts               background commands: registry, output files, stop (~350)
     agents.ts             subagent launch, profiles, result parsing (~350)
     worktree.ts           git worktree create + setup scripts (~120)
+    race.ts               competing agents and result selection (~300)
     settle.ts             reports results and reminds the model to wait (~150)
     goal.ts               /goal command, state, continuation, budget (~350)
     fast.ts               /fast priority tier (~100)
@@ -344,10 +345,10 @@ hold the details.
   results, tools.job_stop to stop it, or end your turn again to leave it running; its results
   will come with the next message." Ending the turn again settles.
 - Keep one `seen` flag per item and one `reminded` flag per session. Calling `wait`, `job_start`
-  or `agent` resets the reminder. Results returned by `wait` or `job_start` count as seen.
+  `agent` or `race` resets the reminder. Results returned by `wait` or `job_start` count as seen.
 - After settlement, new results are sent with `deliverAs: "nextTurn"` and shown in the UI.
   Detached jobs never cause reminders and deliver their results with the next message.
-  bruv never uses `triggerTurn`.
+  bruv never sets `triggerTurn` to true.
 - Result reports use `customType: "bruv-report"`, are rendered by `ui.ts`, and are capped at
   4,000 characters with output file paths for the rest.
 
@@ -364,6 +365,7 @@ so scripts get objects, not text.
 |---|---|---|---|
 | `job_start` | codemode | `{ command: string, cwd?: string, title?: string, waitSeconds?: number = 3, timeoutSeconds?: number, detach?: boolean }` | `{ id, status: "running" \| "done" \| "failed" \| "stopped", exitCode?, output, outputPath }` |
 | `agent` | codemode | `{ prompt?: string, prompts?: string[], profile?: "fast" \| "normal" = "normal", model?: string, thinking?: string, worktree?: boolean \| { branch?: string, baseRef?: string }, title?: string }` | `{ ids: string[] }` |
+| `race` | codemode | `{ task: string, n?: number = 3 }` (2–5 agents) | `{ id, ids: string[] }` |
 | `wait` | codemode | `{ ids?: string[], all?: boolean = false, timeoutSeconds?: number = 600 }` | `{ done: Result[], running: Summary[], userMessagePending: boolean }` |
 | `jobs` | codemode | `{}` | `{ items: Summary[] }` |
 | `job_stop` | codemode | `{ id: string }` | `{ id, status }` |
@@ -420,8 +422,31 @@ There is no `handoff`. In codemode the model ends its turn by replying.
   Default branch name `bruv/<session short id>-<agent id>`. Add `.bruv/` to `.git/info/exclude` once.
   If `t3.json` in the repo root has scripts with `runOnWorktreeCreate: true`, run them in the new
   worktree before starting the agent, and fail the agent with their output if they fail.
-- Worktrees and branches are never removed automatically. The result includes the path and branch.
+- Ordinary agent worktrees and branches are never removed automatically. The result includes the path and branch.
 - Cost: add each agent's usage into a session total shown in the footer.
+
+### 3.7.1 `/race` (`src/race.ts`)
+
+- `/race <task>` starts three agents; `--n 2` through `--n 5` changes the count. The codemode
+  tool `race({ task, n? })` returns the race ID and agent IDs for `wait`. Children cannot start races.
+- Snapshot the current branch's working tree, including uncommitted and non-ignored untracked
+  files, with a temporary index found through `git rev-parse --git-path`. `git commit-tree`
+  makes the base commit without changing the user's files, index, or branch.
+- Each agent uses the existing launcher and a worktree from that commit. Ask it to run the
+  project's checks, report the result, and avoid merging.
+- `/race` shows aligned status, files and added/deleted lines against the snapshot, elapsed time,
+  cost, and the last paragraph of each agent's answer. Check results are agent reports.
+  Count changes using a temporary index in each agent worktree so status reads do not change its staging.
+- Once all agents finish, append a report without starting a model turn and open a selection
+  dialog when UI is available, including over RPC. The user can also run `/race pick <agent id>`
+  or `/race pick none`. Dismissing the dialog keeps the results available. One race at a time.
+- Commit the winner's worktree, then apply its binary diff against the snapshot with
+  `git apply --3way`. A temporary index prepared from the user's current files lets Git merge
+  newer edits while leaving the user's real index and branch unchanged.
+- Successful picks and "Keep none" remove all race worktrees and branches. Failed applies name
+  conflicts or Git errors and keep all worktrees. Git may leave conflict markers and apply
+  clean parts of the diff; the user resolves those files. Race status lives in this session's
+  memory; closing or reloading Pi stops agents but keeps unpicked worktrees for recovery.
 
 ### 3.8 Goal mode (`src/goal.ts`)
 

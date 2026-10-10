@@ -1,8 +1,8 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ExtensionAPI, JsonAgentSessionEvent } from "@earendil-works/pi-coding-agent";
-import { Type } from "typebox";
+import type { ExtensionAPI, ExtensionContext, JsonAgentSessionEvent } from "@earendil-works/pi-coding-agent";
+import { type Static, Type } from "typebox";
 import { type Config, readConfig } from "./config";
 import { type Jobs, toolResult, type Work, workDirectory } from "./jobs";
 import { createWorktree } from "./worktree";
@@ -61,71 +61,79 @@ export function agentParser(jobs: Jobs, item: Work) {
   };
 }
 
-export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boolean = () => false) {
-  if (process.env.BRUV_DEPTH) return;
-  pi.registerTool({
-    name: "agent",
-    label: "Agent",
-    description: "Start one or more agents, optionally in separate worktrees.",
-    exposure: "codemode",
-    parameters: Type.Object({
-      prompt: Type.Optional(Type.String()),
-      prompts: Type.Optional(Type.Array(Type.String(), { minItems: 1 })),
-      profile: Type.Optional(Type.Union([Type.Literal("fast"), Type.Literal("normal")], { default: "normal" })),
-      model: Type.Optional(Type.String()),
-      thinking: Type.Optional(Type.String()),
-      title: Type.Optional(Type.String()),
-      worktree: Type.Optional(
-        Type.Union([
-          Type.Boolean(),
-          Type.Object({ branch: Type.Optional(Type.String()), baseRef: Type.Optional(Type.String()) }),
-        ]),
-      ),
-    }),
-    outputSchema: Type.Object({ ids: Type.Array(Type.String()) }),
-    async execute(_id, args, _signal, _update, ctx) {
-      if ((args.prompt === undefined) === (args.prompts === undefined)) throw new Error("Give prompt or prompts");
-      const prompts = args.prompt !== undefined ? [args.prompt] : (args.prompts ?? []);
-      const profile = args.profile ?? "normal";
-      const selected = resolveProfile(
-        readConfig(),
-        profile,
-        { model: ctx.model && `${ctx.model.provider}/${ctx.model.id}`, thinking: pi.getThinkingLevel() },
-        args,
+const parameters = Type.Object({
+  prompt: Type.Optional(Type.String()),
+  prompts: Type.Optional(Type.Array(Type.String(), { minItems: 1 })),
+  profile: Type.Optional(Type.Union([Type.Literal("fast"), Type.Literal("normal")], { default: "normal" })),
+  model: Type.Optional(Type.String()),
+  thinking: Type.Optional(Type.String()),
+  title: Type.Optional(Type.String()),
+  worktree: Type.Optional(
+    Type.Union([
+      Type.Boolean(),
+      Type.Object({ branch: Type.Optional(Type.String()), baseRef: Type.Optional(Type.String()) }),
+    ]),
+  ),
+});
+export type StartAgents = (args: Static<typeof parameters>, ctx: ExtensionContext) => string[];
+
+export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boolean = () => false): StartAgents {
+  const start: StartAgents = (args, ctx) => {
+    if ((args.prompt === undefined) === (args.prompts === undefined)) throw new Error("Give prompt or prompts");
+    const prompts = args.prompt !== undefined ? [args.prompt] : (args.prompts ?? []);
+    const profile = args.profile ?? "normal";
+    const selected = resolveProfile(
+      readConfig(),
+      profile,
+      { model: ctx.model && `${ctx.model.provider}/${ctx.model.id}`, thinking: pi.getThinkingLevel() },
+      args,
+    );
+    const directory = workDirectory(ctx);
+    const sessions = join(directory, "agents");
+    mkdirSync(sessions, { recursive: true });
+    const promptPath = fileURLToPath(new URL(`../prompts/agent-${profile}.md`, import.meta.url));
+    const ids = prompts.map((prompt, index) => {
+      const item = jobs.create(
+        "agent",
+        args.title ? (prompts.length > 1 ? `${args.title} ${index + 1}` : args.title) : prompt.slice(0, 100),
+        directory,
       );
-      const directory = workDirectory(ctx);
-      const sessions = join(directory, "agents");
-      mkdirSync(sessions, { recursive: true });
-      const promptPath = fileURLToPath(new URL(`../prompts/agent-${profile}.md`, import.meta.url));
-      const ids = prompts.map((prompt, index) => {
-        const item = jobs.create(
-          "agent",
-          args.title ? (prompts.length > 1 ? `${args.title} ${index + 1}` : args.title) : prompt.slice(0, 100),
-          directory,
-        );
-        const sessionPath = join(sessions, `${item.id}.jsonl`);
-        item.sessionPath = sessionPath;
-        const parser = agentParser(jobs, item);
-        void jobs.run(item, async () => {
-          let cwd = ctx.cwd;
-          if (args.worktree) {
-            const options = typeof args.worktree === "object" ? { ...args.worktree } : {};
-            if (options.branch && prompts.length > 1) options.branch += `-${index + 1}`;
-            cwd = (await createWorktree(jobs, item, cwd, ctx.sessionManager.getSessionId(), options)).path;
-          }
-          const command = ["--mode", "json", "--session", sessionPath, "--append-system-prompt", promptPath];
-          if (selected.model) command.push("--model", selected.model);
-          if (selected.thinking) command.push("--thinking", selected.thinking);
-          command.push("--", prompt);
-          const code = await jobs.process(item, process.env.BRUV_PI_COMMAND ?? "pi", command, cwd, {
-            env: { ...process.env, BRUV_DEPTH: "1", BRUV_FAST: isFast() ? "1" : undefined },
-            stdout: parser.push,
-          });
-          return parser.finish() ? 1 : code;
+      const sessionPath = join(sessions, `${item.id}.jsonl`);
+      item.sessionPath = sessionPath;
+      const parser = agentParser(jobs, item);
+      void jobs.run(item, async () => {
+        let cwd = ctx.cwd;
+        if (args.worktree) {
+          const options = typeof args.worktree === "object" ? { ...args.worktree } : {};
+          if (options.branch && prompts.length > 1) options.branch += `-${index + 1}`;
+          cwd = (await createWorktree(jobs, item, cwd, ctx.sessionManager.getSessionId(), options)).path;
+        }
+        const command = ["--mode", "json", "--session", sessionPath, "--append-system-prompt", promptPath];
+        if (selected.model) command.push("--model", selected.model);
+        if (selected.thinking) command.push("--thinking", selected.thinking);
+        command.push("--", prompt);
+        const code = await jobs.process(item, process.env.BRUV_PI_COMMAND ?? "pi", command, cwd, {
+          env: { ...process.env, BRUV_DEPTH: "1", BRUV_FAST: isFast() ? "1" : undefined },
+          stdout: parser.push,
         });
-        return item.id;
+        return parser.finish() ? 1 : code;
       });
-      return toolResult({ ids });
-    },
-  });
+      return item.id;
+    });
+
+    return ids;
+  };
+  if (!process.env.BRUV_DEPTH)
+    pi.registerTool({
+      name: "agent",
+      label: "Agent",
+      description: "Start one or more agents, optionally in separate worktrees.",
+      exposure: "codemode",
+      parameters,
+      outputSchema: Type.Object({ ids: Type.Array(Type.String()) }),
+      async execute(_id, args, _signal, _update, ctx) {
+        return toolResult({ ids: start(args, ctx) });
+      },
+    });
+  return start;
 }
