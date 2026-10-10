@@ -42,6 +42,20 @@ test("registry records output, exit codes, previews, waits and IDs", async () =>
   expect(() => jobs.get("missing")).toThrow();
 });
 
+test("output previews strip ANSI codes before truncating while logs stay raw", async () => {
+  const jobs = new Jobs();
+  const text = "x".repeat(4100);
+  const raw = `\x1b[31m${text}\x1b[0m\n\x1b]8;;https://example.com\x07link\x1b]8;;\x07\n`;
+  const item = start(
+    jobs,
+    `printf '\\033[31m${text}\\033[0m\\n\\033]8;;https://example.com\\007link\\033]8;;\\007\\n'`,
+  );
+  const result = (await jobs.wait([item.id], true)).done[0];
+  expect(result.exitCode).toBe(0);
+  expect(result.output).toBe(`${text}\nlink\n`.slice(-4000));
+  expect(readFileSync(result.outputPath, "utf8")).toBe(raw);
+});
+
 test("wait returns on timeout, a user message, and abort without stopping work", async () => {
   const jobs = new Jobs();
   const item = start(jobs, "sleep 0.2");

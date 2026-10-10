@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { createWriteStream, mkdirSync, type WriteStream } from "node:fs";
 import { join } from "node:path";
 import { finished } from "node:stream/promises";
+import { stripVTControlCharacters } from "node:util";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
 
@@ -109,7 +110,7 @@ export class Jobs {
   result(item: Work): Result {
     return {
       ...this.summary(item),
-      output: item.tail.toString("utf8").slice(-4000),
+      output: stripVTControlCharacters(item.tail.toString("utf8")).slice(-4000),
       exitCode: item.exitCode,
       ...(item.kind === "agent" ? { answer: item.answer, usage: item.usage, sessionPath: item.sessionPath } : {}),
     };
