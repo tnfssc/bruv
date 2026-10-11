@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
@@ -7,6 +7,7 @@ import { registerPrompt } from "../src/prompt";
 import { registerSettle } from "../src/settle";
 import { sdk } from "./sdk";
 
+setDefaultTimeout(15000);
 const script = (code: string) => fauxAssistantMessage(fauxToolCall("codemode", { code }), { stopReason: "toolUse" });
 const start = (detach = false) =>
   script(

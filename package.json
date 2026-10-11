@@ -31,5 +31,8 @@
     "check": "tsc --noEmit",
     "lint": "biome ci .",
     "test": "bun test"
+  },
+  "dependencies": {
+    "smol-toml": "^1.9.1"
   }
 }

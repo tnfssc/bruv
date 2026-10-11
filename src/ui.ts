@@ -1,6 +1,8 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Text } from "@earendil-works/pi-tui";
-import type { Jobs, Result, Summary } from "./jobs";
+import { visibleWork, WorkBoard } from "./board";
+import type { Jobs, Result, Summary, Work } from "./jobs";
+import { clearStatus, setStatus } from "./status";
 
 const oneLine = (text: string) => text.replace(/[\r\n\t]+/g, " ");
 const duration = (seconds: number) => (seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m${seconds % 60}s`);
@@ -9,40 +11,73 @@ const line = (item: Summary) => `${item.id} ${oneLine(item.title)} · ${item.sta
 export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
   let ctx: ExtensionContext | undefined;
   let renderers = false;
-  let lastPromptAt = 0;
-  let timer: ReturnType<typeof setInterval> | undefined;
+  const hidden = new Set<Work>();
+  let board: WorkBoard | undefined;
+  let expiry: ReturnType<typeof setTimeout> | undefined;
   const update = () => {
-    if (!ctx?.hasUI) return;
-    const visible = jobs
-      .list()
-      .filter((item) => item.status === "running" || (jobs.get(item.id).endedAt ?? 0) > lastPromptAt);
-    ctx.ui.setWidget(
-      "bruv",
-      visible.length
-        ? visible.map((item) => {
-            if (item.status !== "running") return line(item);
-            const progress = jobs.get(item.id).progress;
-            return `${item.id} ${oneLine(item.title)} · ${duration(item.elapsedSeconds)}${progress ? ` · ${oneLine(progress)}` : ""}`;
-          })
-        : undefined,
-      { placement: "aboveEditor" },
-    );
-    const cost = [...jobs.items.values()].reduce((sum, item) => sum + (item.usage?.cost ?? 0), 0);
-    ctx.ui.setStatus(
-      "bruv-agents",
-      [...jobs.items.values()].some((item) => item.kind === "agent") ? `agents $${cost.toFixed(2)}` : undefined,
-    );
+    if (!ctx?.hasUI || ctx.mode !== "tui") return;
+    clearTimeout(expiry);
+    const visible = [...jobs.items.values()].filter((item) => !hidden.has(item));
+    const deadlines = visible
+      .filter((item) => item.status !== "running")
+      .map((item) => (item.endedAt as number) + 30000 - Date.now())
+      .filter((delay) => delay > 0);
+    if (deadlines.length) {
+      expiry = setTimeout(update, Math.min(...deadlines));
+      expiry.unref();
+    }
+    if (!visibleWork(visible).length) {
+      board?.dispose();
+      board = undefined;
+      ctx.ui.setWidget("bruv", undefined);
+    } else if (board) board.update(visible);
+    else
+      ctx.ui.setWidget(
+        "bruv",
+        (tui, theme) => {
+          board = new WorkBoard(jobs, theme, () => tui.requestRender());
+          board.update(visible);
+          return board;
+        },
+        { placement: "aboveEditor" },
+      );
   };
+  const waiting = new Map<string, string[]>();
+  const working = (context: ExtensionContext) => {
+    if (!context.hasUI || context.mode !== "tui") return;
+    const ids = [...new Set([...waiting.values()].flat())];
+    context.ui.setWorkingMessage(waiting.size ? `Waiting for ${ids.join(", ")}…` : undefined);
+  };
+  pi.on("tool_execution_start", (event, context) => {
+    if (event.toolName !== "wait") return;
+    waiting.set(
+      event.toolCallId,
+      event.args.ids ??
+        jobs
+          .list()
+          .filter((item) => item.status === "running")
+          .map((item) => item.id),
+    );
+    working(context);
+  });
+  pi.on("tool_execution_end", (event, context) => {
+    if (!waiting.delete(event.toolCallId)) return;
+    working(context);
+  });
   jobs.listeners.add(update);
   pi.on("session_start", (_event, context) => {
-    clearInterval(timer);
+    clearTimeout(expiry);
+    board?.dispose();
+    board = undefined;
     ctx = context;
-    lastPromptAt = 0;
-    if (!ctx.hasUI) return;
+    clearStatus(ctx);
+    hidden.clear();
+    waiting.clear();
+    if (!ctx.hasUI || ctx.mode !== "tui") return;
     if (!renderers) {
       renderers = true;
       for (const customType of ["bruv-report", "bruv-answer"]) {
-        pi.registerMessageRenderer(customType, (message, options) => {
+        pi.registerMessageRenderer(customType, (message, options, theme) => {
           const content =
             typeof message.content === "string"
               ? message.content
@@ -50,7 +85,12 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
                   .filter((block) => block.type === "text")
                   .map((block) => block.text)
                   .join("\n");
-          return new Text(options.expanded ? content : content.split("\n")[0], 0, 0);
+          if (options.expanded) return new Text(content, options.outputPad, 0);
+          const status = (message.details as { status?: Work["status"] } | undefined)?.status;
+          const mark = status && { running: "↗", done: "✓", failed: "✗", stopped: "■" }[status];
+          const color = status === "done" ? "success" : status === "failed" ? "error" : "dim";
+          const first = theme.fg("dim", content.split("\n")[0]);
+          return new Text(mark ? `${theme.fg(color, mark)} ${first}` : first, options.outputPad, 0);
         });
       }
       pi.registerToolRenderer((name, next) => {
@@ -86,19 +126,22 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
         };
       });
     }
-    timer = setInterval(update, 1000);
-    timer.unref();
     update();
   });
   pi.on("before_agent_start", () => {
-    lastPromptAt = Date.now();
+    for (const item of jobs.items.values()) if (item.status !== "running") hidden.add(item);
+    update();
   });
   pi.on("session_shutdown", () => {
-    clearInterval(timer);
-    if (ctx?.hasUI) {
+    clearTimeout(expiry);
+    waiting.clear();
+    if (ctx) working(ctx);
+    board?.dispose();
+    board = undefined;
+    if (ctx?.hasUI && ctx.mode === "tui") {
       ctx.ui.setWidget("bruv", undefined);
-      ctx.ui.setStatus("bruv-agents", undefined);
     }
+    if (ctx) clearStatus(ctx);
     ctx = undefined;
   });
 }

@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
-import { registerQuestions } from "../src/questions";
+import { answerText, registerQuestions } from "../src/questions";
 import { sdk } from "./sdk";
 
 const ask = (choices?: string[]) =>
@@ -16,7 +16,7 @@ test("ask returns while the dialog is open and steers its answer into the run", 
   const afterTool = Promise.withResolvers<void>();
   const answering = Promise.withResolvers<void>();
   let choices: string[] = [];
-  const app = await sdk([registerQuestions], {
+  const app = await sdk([(pi) => void registerQuestions(pi)], {
     select: (_question, options) => {
       choices = options;
       return dialog.promise;
@@ -67,7 +67,7 @@ test.each(["answer-781", undefined])(
   async (value) => {
     const dialog = Promise.withResolvers<string | undefined>();
     let opened = false;
-    const app = await sdk([registerQuestions], {
+    const app = await sdk([(pi) => void registerQuestions(pi)], {
       input: () => {
         opened = true;
         return dialog.promise;
@@ -100,7 +100,7 @@ test.each(["answer-781", undefined])(
 );
 
 test("ask fails without UI", async () => {
-  const app = await sdk([registerQuestions]);
+  const app = await sdk([(pi) => void registerQuestions(pi)]);
   try {
     await app.session.bindExtensions({ mode: "print" });
     app.faux.setResponses([
@@ -117,4 +117,52 @@ test("ask fails without UI", async () => {
   } finally {
     await app.close();
   }
+});
+
+test("in the terminal a question waits above the input and the next typed message answers it", async () => {
+  const widgets: (string[] | undefined)[] = [];
+  const app = await sdk(
+    [(pi) => void registerQuestions(pi)],
+    {
+      setWidget: ((_key: string, content: unknown) => {
+        const theme = { fg: (_color: string, text: string) => text };
+        widgets.push(
+          typeof content === "function"
+            ? (content({}, theme) as { render(width: number): string[] }).render(120)
+            : undefined,
+        );
+      }) as never,
+      select: () => {
+        throw new Error("no dialog in the terminal");
+      },
+    },
+    undefined,
+    "tui",
+  );
+  try {
+    let seen = "";
+    app.faux.setResponses([
+      ask(["choice-a", "choice-b"]),
+      fauxAssistantMessage("finished"),
+      (context) => {
+        seen = JSON.stringify(context.messages.at(-1));
+        return fauxAssistantMessage("thanks");
+      },
+    ]);
+    await app.session.prompt("go");
+    expect(widgets.at(-1)?.join("\n")).toContain("choice-b");
+    await app.session.prompt("2");
+    expect(seen).toContain("choice-b");
+    expect(seen).toContain("q1");
+    expect(widgets.at(-1)).toBeUndefined();
+  } finally {
+    await app.close();
+  }
+});
+
+test("a typed number picks that choice; other text passes through", () => {
+  const question = { id: "q3", question: "which", choices: ["one", "two"] };
+  expect(answerText(question, " 2 ")).toContain("two");
+  expect(answerText(question, "7")).toContain("7");
+  expect(answerText({ id: "q4", question: "free" }, "words-781")).toContain("words-781");
 });

@@ -163,8 +163,8 @@ Release notes: `docs/releases/release-v0.16.20.md` is 895 lines, 263 of them the
 | D1 | bruv becomes a **pure Pi package**: extensions plus prompts, installed with `pi install`. No bruv binary, no compiled build, no `bruv update`, no install script, no Pi patches. |
 | D2 | In T3, bruv runs through **T3's built-in Pi driver**. claude-compat and the "bruv (not Claude)" provider are deleted. |
 | D3 | Scripting runs on **Pi codemode**. bruv's own Bun `execute` runtime is deleted. |
-| D4 | v1 keeps: background jobs, subagents with optional worktrees, goal mode, `/fast`, Codex native compaction, async questions. |
-| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, cross-session history search, cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, `wisdom/`, `site/`, release tooling, perf harnesses. |
+| D4 | v1 keeps: background jobs, subagents with optional worktrees, goal mode, keep-going, `/fast`, Codex native compaction, async questions. |
+| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, the cross-session history search tool (the prompt names the session folder and the model searches it with rg), cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, this repo's old `wisdom/` folder (the idea returns as project notes, 3.18), `site/`, release tooling, perf harnesses. |
 | D6 | One large PR from `rewrite/pi-package` into `develop`. Git history keeps everything deleted; nothing is archived as copies. |
 | D7 | Prompts and all text use plain, short, normal English. Not "grug" grammar. |
 
@@ -207,11 +207,31 @@ bruv/
     worktree.ts           git worktree create + setup scripts (~120)
     settle.ts             reports results and reminds the model to wait (~150)
     goal.ts               /goal command, state, continuation, budget (~350)
+    finish.ts             explicit finish and keep-going continuation (~150)
+    check.ts              fresh checker, Git snapshots and verdicts (~250)
     fast.ts               /fast priority tier (~100)
+    usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
+    codex-import.ts       confirmed Codex settings import (~200)
+    migrate.ts            confirmed bruv 0.x import (~170)
+    notes.ts              project notes: prompt, index, receipt line, moving wisdom/ (~150)
+    review.ts             diff review command and pickers (~100)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
+    board.ts              short work board and row display (~120)
+    status.ts             shared footer parts (~30)
+    render.ts             readable codemode calls and output (~200)
+    activity.ts           one line per run of tool calls, click to open (~200)
+    editor.ts             borderless input with the spinner in the prompt mark (~90)
+    footer.ts             one-line footer, cache countdown, quiet start (~130)
+    ps.ts                 /ps: read and stop jobs and agents (~70)
+    turn.ts               turn counts and non-context summary (~100)
+    receipt.ts            completion receipt text (~50)
+    finish-render.ts      finish results and receipt frame (~100)
+    notify.ts             desktop alerts and terminal title (~100)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
+  scripts/
+    install.sh            installs Pi and bruv; the old 0.x install URL points here
   prompts/
     system.md
     codemode.md           guidance + examples appended to the codemode tool description
@@ -219,6 +239,8 @@ bruv/
     agent-normal.md
     goal.md
     goal-continue.md
+    review.md             review guidance, under 150 words
+    checker.md            fresh check guidance, under 130 words
   tests/
   docs/
     REWRITE.md            this file
@@ -230,7 +252,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 2,300 lines. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 3,670 lines, including Codex import, review and the terminal layout. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -261,7 +283,8 @@ is truly needed. Prompts are Markdown files read at load time relative to `impor
 `before_agent_start` adds bruv's guidance to `systemPromptOptions.sections.bruv`, preserving Pi's
 context files (`AGENTS.md`), skills and tool sections. When codemode is active, the same section
 includes the scripting examples. Pi keeps these sections during requests continued through
-`agent_before_settle`. Goal state never changes the system prompt.
+`agent_before_settle`. Goal state never changes the system prompt. The finish guidance line in `prompts/system.md` is
+included only when `finish` is active at `before_agent_start`, and stays unchanged through continuations.
 
 `prompts/system.md` (final wording may be tuned, keep it under 250 words):
 
@@ -269,8 +292,8 @@ includes the scripting examples. Pi keeps these sections during requests continu
 You're working with the user on their code, inside bruv.
 
 - Clear request? Do it. Need a fact? Look it up before asking. Ask only for what you can't find.
-- Do as much as makes sense in one script: read several files at once, edit and then run the
-  check, start agents and wait for them together.
+- Do as much as makes sense in one script: read several files at once, edit then run the check, wait for jobs and agents together.
+- Use agents for big, separate pieces of work, each in its own worktree when they edit files. Once you hand a piece to an agent, don't do it yourself: work on something else or wait for it.
 - Long work goes in the background (jobs and agents). Keep working while it runs, and call
   tools.wait for the results before you end your turn, unless you started it with detach.
 - Prefer the simplest change that works. Each extra part, state or fallback is one more thing to
@@ -279,8 +302,8 @@ You're working with the user on their code, inside bruv.
 - Have opinions. Recommend one path and say why. Push back when there's a better way.
 - Don't keep old behavior just because it exists. Rebuild if that's simpler.
 - Write like the surrounding code and docs: short, plain, no repetition.
-- Scratch files go in `.tmp/` in the working directory. Don't write notes or logs into the repo
-  unless the user asks.
+- Scratch files go in `.tmp/` in the working directory. What the team should know goes in the
+  project's notes.
 ```
 
 `prompts/codemode.md` is included in the bruv system prompt section when codemode is active.
@@ -294,8 +317,8 @@ const [a, b] = await Promise.all([tools.read({ path: "src/a.ts" }), tools.read({
 await tools.edit({ path: "src/a.ts", oldText, newText });
 return (await tools.bash({ command: "bun test tests/a.test.ts" })).output.slice(-2000);
 
-// Start agents and wait for all of them
-const { ids } = await tools.agent({ prompts: files.map((f) => `Fix lint errors in ${f}`) });
+// Hand separate pieces to agents in their own worktrees, then wait for all of them
+const { ids } = await tools.agent({ prompts: files.map((f) => `Fix lint errors in ${f}`), worktree: true });
 return await tools.wait({ ids, all: true });
 ```
 
@@ -308,8 +331,8 @@ Delete all other prompt files.
 
 ### 3.3 Codemode-only setup
 
-Goal: the model sees one tool, `codemode`. `read`, `edit`, `write`, `bash` and bruv's tools are
-callable from scripts only.
+The model sees `codemode`, plus `finish` while keep-going is active. `read`, `edit`, `write`,
+`bash` and the remaining bruv tools are callable from scripts only.
 
 Pi does this with settings `"defaultTools": ["+codemode"]` and `"codemode": { "mode": "only" }`.
 Extensions can read settings (`pi.getSettings()`) but cannot write them.
@@ -320,7 +343,7 @@ confirmation, then writes `codemode.mode: "only"` and adds codemode to `defaultT
 `~/.pi/agent/settings.json`. It preserves other settings and existing explicit or relative tool
 lists, then tells the user to `/reload`. In RPC mode (T3), the notice uses `ctx.ui.notify`.
 
-bruv's own tools register with `exposure: "codemode"` (listed in the codemode description) or
+Except for `finish` (`model-only`), bruv's own tools register with `exposure: "codemode"` (listed in the codemode description) or
 `"deferred"` (callable, not listed). Rule: tools used often are `codemode`; rare tools and anything
 registered after session start are `deferred`, grouped under a `namespace` whose `instructions`
 hold the details.
@@ -329,7 +352,7 @@ hold the details.
 
 - Jobs and agents start work and return IDs. The model keeps working, then calls `tools.wait`
   for results before ending its turn unless the work was detached.
-- Only `wait` and `job_start` with `waitSeconds` block. Their abort signal ends the wait at once
+- `finish` also blocks while its checker runs. `wait` and `job_start` with `waitSeconds` block. Their abort signal ends the wait at once
   on Esc or T3 Stop. They also return when `ctx.hasPendingMessages()` is true.
 - Esc in the terminal and Stop in T3 behave the same: the run ends and every job and agent the
   session started is stopped, detached ones included. T3 restarts Pi after Stop, so its jobs end
@@ -341,12 +364,12 @@ hold the details.
 - If no result needs reporting but non-detached work still runs, continue once with a single
   `bruv-report` listing it and saying: "This work is still running. Call tools.wait to get the
   results, tools.job_stop to stop it, or end your turn again to leave it running; its results
-  will come with the next message." Ending the turn again settles.
+  will come with the next message." Goal or keep-going may still continue the run.
 - Keep one `seen` flag per item and one `reminded` flag per session. Calling `wait`, `job_start`
   or `agent` resets the reminder. Results returned by `wait` or `job_start` count as seen.
 - After settlement, new results are sent with `deliverAs: "nextTurn"` and shown in the UI.
   Detached jobs never cause reminders and deliver their results with the next message.
-  bruv never uses `triggerTurn`.
+  Background reports never start a turn.
 - Result reports use `customType: "bruv-report"`, are rendered by `ui.ts`, and are capped at
   4,000 characters with output file paths for the rest.
 
@@ -354,20 +377,21 @@ hold the details.
 it and the run within one second while the job keeps running. Its result arrives with the next
 prompt. Pi awaits settle handlers even after abort, so settle must not wait.
 
-### 3.5 Tools (all called from codemode scripts)
+### 3.5 Tools
 
 All parameters use TypeBox schemas. All tools declare `outputSchema` and return `structuredContent`
 so scripts get objects, not text.
 
 | Tool | Exposure | Input | Output |
 |---|---|---|---|
+| `finish` | model-only while keep-going or a goal is active; hidden otherwise | `{ status: "done" \| "need_you" \| "blocked", note?: string }` | Status and note, plus gap list or receipt details; text carries the gaps or receipt, accepted finishes return `terminate: true` |
 | `job_start` | codemode | `{ command: string, cwd?: string, title?: string, waitSeconds?: number = 3, timeoutSeconds?: number, detach?: boolean }` | `{ id, status: "running" \| "done" \| "failed" \| "stopped", exitCode?, output, outputPath }` |
 | `agent` | codemode | `{ prompt?: string, prompts?: string[], profile?: "fast" \| "normal" = "normal", model?: string, thinking?: string, worktree?: boolean \| { branch?: string, baseRef?: string }, title?: string }` | `{ ids: string[] }` |
 | `wait` | codemode | `{ ids?: string[], all?: boolean = false, timeoutSeconds?: number = 600 }` | `{ done: Result[], running: Summary[], userMessagePending: boolean }` |
 | `jobs` | codemode | `{}` | `{ items: Summary[] }` |
 | `job_stop` | codemode | `{ id: string }` | `{ id, status }` |
 | `ask` | deferred, namespace `bruv_questions` | `{ question: string, choices?: string[] }` | `{ id }` |
-| `goal_update` | codemode | `{ status: "active" \| "blocked" \| "completed", progress?: string, evidence?: string, blocker?: string }` | `{ goal }` |
+| `goal_update` | codemode | `{ status: "active" \| "blocked", progress?: string, blocker?: string }` | `{ goal }` |
 
 `Summary`: `{ id, kind: "job" \| "agent", title, status, startedAt, elapsedSeconds, outputPath, worktree? }`.
 `Result`: `Summary` plus `exitCode?`, `output` (last 4,000 chars), and for agents `answer` (final
@@ -376,7 +400,7 @@ assistant text), `usage` (`{ input, output, cost }`), `sessionPath`.
 `wait` returns as soon as one listed item finishes (or all, with `all: true`), when the timeout hits,
 or when the user has sent a message. With no `ids`, it waits on everything this session started.
 
-There is no `handoff`. In codemode the model ends its turn by replying.
+There is no `handoff`. With keep-going active, the model replies and calls `finish` directly.
 
 ### 3.6 Jobs (`src/jobs.ts`)
 
@@ -414,12 +438,21 @@ There is no `handoff`. In codemode the model ends its turn by replying.
 
   Missing profile fields fall back to the parent's current model and thinking level. `model` and
   `thinking` on the call override the profile.
+- Models agents may use: `agentModels` in `bruv.json`, picked with `/subagents` (a checklist of the
+  main model and signed-in models). Unset, it is the profile models. The main model is always
+  allowed and is the default. The main agent's prompt lists them once per session with price and
+  context size, so it can pick a cheap one for lookups and the main one for hard work. Pi has no
+  release dates, so the user's list, not the model, keeps old models out. A `model` outside the
+  list is refused with the list.
 - `prompts` launches one agent per prompt. With `worktree`, each gets its own worktree.
 - Worktree: `git worktree add -b <branch> <repo root>/.bruv/worktrees/<session short id>-<agent id> <baseRef or HEAD>`.
   Default branch name `bruv/<session short id>-<agent id>`. Add `.bruv/` to `.git/info/exclude` once.
   If `t3.json` in the repo root has scripts with `runOnWorktreeCreate: true`, run them in the new
   worktree before starting the agent, and fail the agent with their output if they fail.
-- Worktrees and branches are never removed automatically. The result includes the path and branch.
+- `/ps` lists jobs and agents, running first. Picking one offers Read (status, progress, tokens,
+  cost, changes, worktree, output and session paths, then the answer or latest output) and, while
+  it runs, Stop.
+- Ordinary agent worktrees and branches are never removed automatically. The result includes the path and branch.
 - Cost: add each agent's usage into a session total shown in the footer.
 
 ### 3.8 Goal mode (`src/goal.ts`)
@@ -429,48 +462,161 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - `/goal <objective>` sets a goal. Optional flags: `--criteria "a; b"`, `--budget 2m` (tokens, accepts
   `k`/`m`). `/goal` shows status. `/goal pause`, `/goal resume`, `/goal clear`.
 - State: `{ objective, criteria[], status: "active" | "paused" | "blocked" | "completed" |
-  "budget_exceeded", tokensUsed, tokenBudget?, progress[], evidence?, blocker? }`. Save with
+  "budget_exceeded", tokensUsed, tokenBudget?, progress[], evidence?: string[], gaps?: string[], blocker? }`. Save with
   `pi.appendEntry("bruv-goal", state)` when setting or clearing a goal, when its status changes,
   on `goal_update`, and once on `agent_settled`. Restore from the branch on `session_start` and
   `session_tree`.
 - Count token use from assistant message usage while the goal is active. Update it in memory on
   `message_end`, refresh the status display, and save immediately only if the budget is reached.
-- Setting or resuming an active goal sends `goal.md` plus the objective, criteria, and budget as
-  plain lines through `pi.sendUserMessage`. This starts work directly from the command. If a run
-  is already active, the message steers it. Resuming a spent budget does not start work.
+- Setting or resuming an active goal queues `goal.md` plus objective, criteria and budget as a
+  hidden custom message, then sends the user's `/goal` command through `pi.sendUserMessage`.
+  This starts work directly or steers an active run. Keeping guidance separate preserves the
+  user's text for the checker. Resuming a spent budget does not start work.
 - While the goal is active, its `agent_before_settle` handler continues after the earlier handlers
   have no entries or continuation to add. It sends a hidden `bruv-goal` custom message containing
   `goal-continue.md` and one status line: objective, tokens used / budget, and last progress.
 - Stop continuing when: status is not active; budget reached (set `budget_exceeded`, tell the user);
   the model reports `blocked` with the same blocker three continuations in a row; or the run was
   aborted (pause the goal, tell the user `/goal resume` continues).
-- The model calls `goal_update` to record progress, block, or complete. `completed` requires
-  `evidence`.
+- `goal_update` records progress or a blocker; it cannot complete the goal. `finish(done)` runs
+  the fresh checker with the objective and criteria even without file changes. A pass completes
+  the goal and saves the checked list as evidence. Gaps stay on the active goal as next steps.
+  If checking is off, fails, or reaches the two-round limit, accepted finish ends the run but
+  leaves the goal active. A later user message can resume work and get a fresh check.
+- Active goals enable finish for every model. When a goal run stops at its budget or blocker
+  limit, keep-going must not restart it. Abort during a tool can reach `agent_settled` without
+  an aborted settle boundary, so that event also pauses an active goal.
 - Goal instructions and changing state stay in conversation messages, preserving the system
   prompt and its cache. `/goal` shows plain lines for objective, status and token use, plus criteria,
   last progress, and blocker when present.
 
+### 3.8.1 Finish loop (`src/finish.ts`)
+
+- `keepGoing` in `bruv.json` is `"auto"` by default, or `"on"` or `"off"`. Auto enables it for
+  `openai-codex-responses` and `openai-responses`. `/keep-going` shows it; an argument saves it
+  globally while preserving the other settings. Children read the same file.
+- Recheck on session start/tree, model changes, run start and user messages. Register `finish` with
+  `exposure: "model-only"` when keep-going or a goal is active, and `"hidden"` otherwise. Pi cannot unregister tools.
+  Codemode's `prepareLoadout` hides callable direct tools, so finish remains declared even in
+  `codemode.mode: "only"`. It is called directly, outside scripts.
+- `finish({ status: "done" | "need_you" | "blocked", note? })` records that the model finished
+  since the latest user message. For done, it first runs the fresh check when needed; only an accepted
+  finish returns `terminate: true`. Write the user reply in the same
+  message. Call finish alone after other tools return: every tool in a batch must agree to stop.
+- Register `agent_before_settle` handlers in this order: job reports and reminders, goal,
+  keep-going. Each yields if `event.continue` is true or `event.entries` is nonempty.
+  After an explicit finish, job and goal handlers also yield. Unseen job results wait for
+  the next message; a saved active goal can continue when the user replies.
+- Keep-going does nothing after abort, while off, or after finish. Otherwise append a hidden
+  `bruv-keep-going` custom message and return `continue: true`. The message asks the model to
+  keep working or write its reply and call finish when done, needing the user, or blocked.
+- Stop after two keep-going continuations in a row with no tool calls. Reset on any tool call
+  or new user message. Esc and T3 Stop still stop everything immediately.
+- SDK tests with the faux provider inspect model tool declarations in codemode-only mode,
+  hidden continuation entries, exact request counts after finish, all three finish statuses,
+  prompt stability, the empty-turn limit, abort, API selection, saved settings and settle order.
+  Tests make no network or paid model calls.
+
+### 3.8.2 Fresh check (`src/check.ts`)
+
+- With keep-going or a goal active, `finish(done)` checks work if a goal is active or HEAD or tracked/untracked content changed
+  since the latest user message. No Git repo means no change detection. Scratch under `.tmp/`
+  is excluded. Capture raw user text and the snapshot at the input event, before prompt expansion.
+  Snapshots use a separate index, preserving staging and pre-existing changes. New input during
+  a check stops that child and discards its result so the updated request is checked.
+- `checkWork` defaults to true in bruv.json. `/check on|off` saves the setting.
+- Finish waits for one child launched through `agents.ts`, using the parent model and thinking.
+  Its board title is "Checking the work". Abort stops the child. Checkers are not counted as agents
+  in the receipt or the run summary.
+- The child gets checker.md as its system prompt and a JSON payload: verbatim user messages
+  for this run, active goal objective and criteria when present, the final reply (text written after the last
+  working step, so a table followed by a closing line counts as one reply), and diff stat plus patch since the snapshot, capped at 40,000
+  characters. It starts a fresh session without extensions, skills, context files, prompt
+  templates or MCP servers. Built-in read, bash, grep, find and ls tools let it try the result.
+- Parse its final fenced JSON verdict and checked/skipped/gaps lists. Skipped holds checks the user's own
+  instructions ruled out (such as running the app without installing); they show as `– … (not checked)`,
+  never as gaps. An answer to the agent's own question continues the same request: its messages and
+  snapshot carry over. Pass accepts finish. Gaps return
+  to the model to fix them. After two checker rounds per user message, accept the next finish
+  with the latest gaps saved. Failed checks accept finish and report that the check did not complete.
+- Checker jobs count as seen because finish consumes their result; settle does not send it again.
+- In the terminal, unless the user set `hideThinkingBlock: false`, requests omit the reasoning summary.
+  Summaries only became a title row and a blank row per step; the activity line already says what is
+  happening, and the reasoning itself is still kept for the model.
+
 ### 3.9 Async questions (`src/questions.ts`)
 
-- `ask({ question, choices? })` opens a dialog without awaiting it (`ctx.ui.select` with choices,
-  otherwise `ctx.ui.input`) and returns `{ id }` at once.
-- When answered, the answer is delivered as a `bruv-answer` custom message: steer if the run is
+- `ask({ question, choices? })` is listed in the codemode tools, and the prompt says to use it only
+  for choices that are really the user's, with the model's pick, while other work goes on. It
+  returns `{ id }` at once.
+- In the terminal it opens no dialog, so typing is never blocked. Open questions show above the
+  input with numbered choices. The next typed message (not a command) answers the oldest one: it
+  shows and reaches the model as one row, "q1: answer" (the model asked it, so the ID is enough),
+  and a bare number picks that choice.
+- In T3 and other RPC clients it opens their question prompt without awaiting it (`select` with
+  choices, else `input`). The answer arrives as a `bruv-answer` message: steer if the run is
   active, otherwise next turn.
-- Unanswered questions do not make settle wait. Their answers arrive as described above.
+- Unanswered questions do not make settle wait.
 - Without UI (`ctx.hasUI` false, print mode), `ask` fails with "No one can answer questions in this
   mode."
 - **Verify first** (V3): a non-awaited dialog works during a run in the TUI and over RPC in T3.
 
 ### 3.10 `/fast` (`src/fast.ts`)
 
-- `/fast` toggles, `/fast on`, `/fast off`. Saved with `appendEntry("bruv-fast", { on })`.
-- First time it is turned on in a session, confirm: "Fast mode uses the priority tier. It is faster
-  and uses more of your quota, including subagents. Turn it on?"
+- `/fast` toggles, `/fast on`, `/fast off`. Save `fast: true|false` in `~/.pi/agent/bruv.json`,
+  preserving other config fields. The default applies to future sessions and child agents.
+- First time it is turned on, confirm: "Fast mode uses the priority tier. It is faster
+  and uses more of your quota, including subagents. Turn it on?" Save `fastConfirmed: true` once accepted.
 - Supported when the current model's API is OpenAI or Codex Responses. Otherwise: "Fast mode only
-  works with OpenAI and Codex models." and stay off.
+  works with OpenAI and Codex models." and stay off for that model without changing the saved default.
 - `before_provider_request`: set `payload.service_tier = "priority"`.
 - Child agents get `BRUV_FAST=1` and start with fast on, no confirmation.
 - The footer shows `fast` while on.
+
+### 3.10.1 `/usage` (`src/usage.ts`)
+
+- Read ChatGPT plan limits from Codex stream events or response headers. Keep the latest
+  snapshot per session and in `~/.pi/agent/bruv-usage.json` for startup.
+- Show each window's used percentage in the footer. `/usage` adds bars, local and relative
+  reset times, limit and credit status, rounded credits, and session tokens and cost.
+- Warn once per session for each window at 90% and once when a limit is reached.
+- Other models show session usage and explain that plan limits require a ChatGPT plan model.
+
+### 3.10.2 `/import-codex` (`src/codex-import.ts`)
+
+- Parse `CODEX_HOME/config.toml` (default `~/.codex`) with `smol-toml`, a runtime dependency.
+  Show a list of changes and skipped fields with `ctx.ui.confirm` before writing.
+- Import known `openai-codex` models into `defaultProvider` and `defaultModel`; map minimal,
+  low, medium, high and xhigh to `defaultThinkingLevel`. Report unknown models and levels.
+- A `fast` or `priority` service tier saves `fast: true` and `fastConfirmed: true` in bruv.json.
+- Merge MCP servers into Pi's `mcp.json` under `mcpServers`; skip existing names, including
+  trusted project entries and Pi's equivalent hyphen/underscore names. Copy command, args,
+  env, cwd, url, headers (`http_headers` in Codex), and enabled state.
+- Add the Codex skills directory to settings `skills`. Copy direct Markdown files from its
+  prompts directory into Pi's prompts directory, skipping existing files and symlinks.
+- Save trusted projects through Pi's exported `ProjectTrustStore`; keep other decisions.
+- Preserve unrelated settings, MCP fields and bruv config. Never read or copy `auth.json`.
+  Call `ctx.reload()` after writing, or tell the user to `/reload` when unavailable.
+- On session start with UI, offer `/import-codex` once if config.toml exists, saving
+  `codexImportOffered: true` in bruv.json. Child agents do not offer the import.
+- Tests use fake Codex and Pi directories under `.tmp/`, check cancel and merge behavior,
+  and reject attempts to read sign-in tokens. No servers or models are contacted.
+
+### 3.10.3 `/review` (`src/review.ts`)
+
+- Without arguments, choose uncommitted changes, a local branch, or one of the last 20 commits.
+  Put the remote default branch first when it exists locally, preferring origin; fall back to
+  main or master. Cancellation does nothing.
+- `/review <branch or commit>` skips pickers. Resolve the ref to a commit before sending it.
+  Git uses argument arrays with end-of-options for user refs; never run a shell or fetch.
+- Send `prompts/review.md` plus the target through `pi.sendUserMessage` exactly once. This
+  starts a turn in TUI and RPC because the user explicitly requested it.
+- Uncommitted reviews include staged, unstaged and untracked files. Branch reviews compare
+  the current tree with the merge base. Commit reviews examine just that commit's changes.
+- Guidance stays under 150 words: real bugs first, each with file:line, impact and a fix;
+  at most a few important simplifications, no style nits, no file changes unless asked.
+- SDK tests use a local Git repo and the faux provider to cover pickers, refs, cancellation,
+  invalid refs, and exactly one RPC run, with no network or paid model calls.
 
 ### 3.11 Codex native compaction (`src/codex-compaction.ts`)
 
@@ -493,21 +639,79 @@ Port the essential behavior of `src/agent/native-compaction.ts` (read it with
 - If the endpoint fails, cancel that compaction attempt, keep history, notify the user, and let Pi's
   default compaction run next time. No hidden retries.
 
-### 3.12 UI (`src/ui.ts`)
+### 3.12 UI (`src/ui.ts`, `src/render.ts`, `src/turn.ts`, `src/notify.ts`)
 
-Only when `ctx.hasUI`.
+Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved in every mode.
 
-- Widget `bruv` above the editor: one line per running job or agent: `a2 Fix lint in foo.ts · 3m12s ·
-  edit`. Agent progress shows the last tool or current token count. Completed items show their
-  status and stay visible until the next prompt; hide them on the next widget update. Hide the
-  widget when no items remain.
-- This module sets only the total agent cost status. Fast and goal set their own status keys.
-- Update the widget on creation, completion, stop, session reset, and a one-second timer, never on
-  output chunks. Clear the widget, cost status, and timer at shutdown.
-- Register renderers only in UI sessions. `bruv-report` and `bruv-answer` show the first content
+- Only in TUI mode, widget `bruv` above the editor uses a component with one row per job or agent.
+  Running rows show a spinner, ID, title, agent tool and tokens, and elapsed time. Finished rows
+  show a green check, red failure mark, or dim stop mark, plus worktree changes counted once
+  against the starting commit, including committed edits and uncommitted new or changed files,
+  without changing staging. Exclude scratch under `.tmp/`, whether Git ignores it or not.
+  Shorten titles to leave room for change totals and elapsed time.
+- Show every running row. Keep the three most recent finished rows and every row finished in
+  the last 30 seconds; fold older rows into one dim line of done, failed and stopped counts.
+  Hide the board when nothing runs and no finish is less than 30 seconds old. Expire rows with
+  a timer even when work is idle. The next prompt clears finished rows. Truncate each row to
+  terminal width using theme colors.
+- Animate every 100 ms while work runs; stop the animation timer when idle or disposed. Clear the widget
+  and footer at shutdown. `status.ts` sets one `bruv` footer key: usage, fast and goal, separated by ` · `. Hide missing parts without removing the others.
+- Codemode rendering (`src/render.ts`) lists nested calls from Pi records and live events, followed
+  by plain output. Unwrap bash and wait JSON, strip ANSI, and cap collapsed output at 12 screen
+  lines with an omitted-line count. Expansion shows the full script and output available from Pi.
+  Each nested call has one row, moving from pending to done; match Pi's temporary script IDs
+  to live call IDs without combining separate calls.
+  Bash call rows show only the first command line, cut to 60 terminal columns with `…`.
+  Unknown result shapes and images use Pi rendering. Restore saved calls on session changes.
+- Register job and message renderers only in TUI sessions. `bruv-report` and `bruv-answer` show the first content
   line when collapsed and all content when expanded. `agent` and `wait` show one status line per
   item; expanded results include recent output or the final answer, output path, and session path.
   Tool errors without result items keep their text.
+- After a non-aborted run that used tools settles, append one `bruv-turn` custom entry. Its dim
+  single-line renderer shows scripts, calls, agents started, and elapsed time, plus weekly plan
+  use gained during the run when both readings cover the same window. Automatic continuations
+  belong to the same run. This entry never enters model context.
+- The `finish` result renders gaps as a red count followed by every wrapped gap and a dim
+  “Fixing, then checking again.” Need-you and blocked results show a label and note.
+  Expansion also shows the raw note.
+- Accepted checked finishes carry the receipt in their result details and suppress `bruv-turn`.
+  There is no separate receipt entry. The accent frame in the finish tool result contains Done,
+  time, calls, agents, weekly use change, the first request line (70 chars),
+  up to five checked items, every unfixed gap, and changed file/insertion/deletion totals from
+  Git shortstat against the snapshot, including new files. Failed checks show “Check didn't
+  complete.” The result content carries the plain-text receipt in every mode, including T3/RPC
+  and model context. Gap results carry the full gap list as text too; structured fields remain
+  available to the terminal renderer.
+- In interactive TUI mode on a real stdout TTY, notify with OSC 777 or Kitty OSC 99 plus BEL
+  after non-aborted runs longer than 30 seconds settle, and when
+  an active goal completes or stops. Use `bruv` as the title and one short body line. Strip terminal
+  controls from notification text. Never write escapes in RPC, JSON, or print modes, even with UI.
+- Animate the terminal title while a run is active, keep it through continuations, and restore
+  the project folder name at settle or shutdown. Stop the title timer when idle.
+- While `wait` blocks in the TUI, set the working message to the pending IDs. Parallel waits share
+  the message; completing or failing one wait leaves the other waits visible.
+- Terminal layout, ported from bruv 0.x with public Pi hooks only (`src/activity.ts`, `src/editor.ts`,
+  `src/footer.ts`):
+  - Consecutive tool calls show as one dim line, “N tools called”, counting nested script calls.
+    Prose, user messages, reports, summaries and `finish` start a new line. While the run is
+    active, the latest line adds what the newest script is doing: its opening comment (the
+    codemode prompt asks for one), else its latest call. Failed scripts add “· N failed”.
+    Clicking the line opens every call in it; Ctrl+O opens all. Lines are rebuilt from the
+    branch on session start and tree changes.
+  - The input has no borders. A prompt mark sits in a two-column gutter and becomes Pi's working
+    spinner; retries and compaction show their message on a line above. Pi reserves three rows
+    for the input, so blank rows go above it and the input sits on the footer. Keep an editor
+    installed by another extension.
+  - One-line footer: folder and branch, the `bruv` status, the session's cost at API prices with agents
+    included (`api` suffix on a subscription),
+    context percent (warning above 70, error above 90), other statuses as a count, and model and
+    thinking level on the right. Narrow terminals drop parts in a fixed order. `cache 42m` counts
+    down from the last answer by the current model (from saved messages after a restart) using
+    `cacheTtlMinutes` (default 60): warning at 15 minutes, error at 5, then `cache expired`. It
+    redraws every 30 seconds. The startup banner is hidden; `/bruv-setup` also sets
+    `quietStartup` so Pi skips its resource list.
+  - `finish` draws no call line, only its result. Reports and summaries are indented like the
+    transcript; collapsed reports start with a colored status mark.
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,
   bounded, seam, authority).
 
@@ -520,7 +724,7 @@ src/                      (all current code; the new src/ is written from scratc
 tests/                    (all current tests)
 wisdom/
 docs/PRODUCT.md docs/ARCHITECTURE.md docs/historical/ docs/releases/ docs/README.md
-site/ native/ patches/ licenses/ scripts/
+site/ native/ patches/ licenses/ scripts/ (except scripts/install.sh, rewritten)
 .github/workflows/dependency-updates.yml .github/workflows/live.yml .github/workflows/release.yml
 bun.lock (regenerate)  bunfig.toml (recreate only if needed)  CONTRIBUTING.md (fold into README)
 ```
@@ -531,6 +735,9 @@ into the new tree "for reference".
 ### 3.14 Tests
 
 - Runner: `bun test`. Target under 60 seconds locally, total test code no larger than source code.
+  Allow 15 seconds for tests that run several SDK turns or child processes on busy hosts.
+  A test preload clears `BRUV_DEPTH` and `BRUV_FAST` so runs inside agents work too. Tests that
+  change either variable restore it afterward.
 - Unit tests: job registry and stop, report formatting caps, profile resolution, worktree creation in
   a temporary git repo, goal state transitions and budget, fast payload change, codex payload
   rewrite (given a branch with a codex compaction entry, assert the request payload contains the item).
@@ -552,36 +759,61 @@ No release workflow: users install from git (3.16).
 
 ### 3.16 Install and migration
 
-README install section:
+`scripts/install.sh` stays at the path bruv 0.x was installed from, so the old command now
+installs the new bruv. The site build also serves it as `https://bruv.sharath.page/install.sh`. It installs Pi with Pi's own installer when `pi` is missing (piped through
+`cat` so that installer does not start Pi), runs `pi install git:github.com/tnfssc/bruv`
+(`BRUV_PACKAGE` overrides it for testing), and, when a 0.x binary is in `~/.local/bin`, asks
+before moving `bruv` and `bruv-claude-compat` to `~/.bruv/0.x` and writing a `bruv` script that
+runs `pi`. It ends with next steps: `/bruv-migrate` for 0.x users, `/login` and `/bruv-setup`
+for new users, and the T3 provider switch.
 
-```sh
-# Install Pi (see https://pi.dev), then:
-pi install git:github.com/tnfssc/bruv
-pi            # then /bruv-setup once and /reload
-```
+`/bruv-migrate` (`src/migrate.ts`) previews and asks before copying from `~/.bruv`
+(`BRUV_OLD_HOME` overrides it):
+
+- Sign-ins Pi lacks, merged into `auth.json` with mode 600. Existing Pi sign-ins are never replaced.
+- `defaultProvider`, `defaultModel`, `defaultThinkingLevel`, `theme` and `hideThinkingBlock` when Pi has none.
+- `subagents.json` fast and normal models into `bruv.json` profiles, when unset.
+- Sessions whose folder still exists, into Pi's session folders, never overwriting. A custom
+  session folder receives them flat.
+- Codemode only and quiet start, as `/bruv-setup` does.
+
+It then reloads. The reloaded extension switches to the copied default model (Pi chose its model
+before the sign-in existed) and shows what was copied. The first session start with `~/.bruv/agent`
+present suggests `/bruv-migrate` once. Nothing under `~/.bruv` is changed.
 
 For development: `pi install /path/to/bruv/checkout` (local packages load from the path, no copy).
-
-Migration for the user (README section "Coming from bruv 0.x"):
-
-- Sign in again with `/login` in Pi, or copy `~/.bruv/agent/auth.json` to `~/.pi/agent/auth.json`.
-- Old sessions under `~/.bruv/agent/sessions` are not migrated.
-- Move `~/.bruv/subagents.json` profiles into `~/.pi/agent/bruv.json` (format in 3.7).
-- T3: enable the Pi provider (binary `pi`), disable the "bruv (not Claude)" provider.
-- Remove the old binaries: `~/.local/bin/bruv`, `~/.local/bin/bruv-claude-compat`.
 
 ### 3.17 Repo rules for agents (`AGENTS.md`, under 60 lines)
 
 - Read `docs/REWRITE.md` (until merged) and the module you touch.
 - Module line budgets are in `docs/REWRITE.md` 3.1. Over budget needs a reason in the PR.
-- Do not write notes, logs, evidence or "proof" files into the repo. Decisions go in the PR
-  description. Scratch goes in `.tmp/` (ignored).
+- Team notes go in `.agents/notes/` (3.18). Scratch goes in `.tmp/` (ignored).
 - Tests follow 3.14. No wording assertions.
 - Plain English. Banned in code identifiers, comments and user-facing text: owner, ownership,
   authority, seam, projection, durable, bounded, canonical, opaque, admission, "not proof".
 - No prototype patching of Pi. If Pi lacks a hook, open an upstream issue and work around it in the
   extension.
 - Squash-merge PRs. Commit messages: one imperative line, optional short body.
+
+### 3.18 Project notes (`src/notes.ts`, `prompts/notes.md`)
+
+The team's knowledge lives in the repo, in `.agents/notes/` next to `.agents/skills/`, shared
+through git. Code can be rebuilt from notes; the reasons behind code can't be rebuilt from code.
+
+- The main agent's system prompt gets `prompts/notes.md` with the folder and an index of the
+  notes (path and first heading; folders with counts above 60 files), computed once per session
+  so the prompt stays the same between turns. It asks the model to read notes that touch the
+  task and to write as work moves: choices and why, what was tried, what didn't work, where work
+  stopped. `values.md` holds the principles, the user's words first. Nothing limits what or how
+  much is written.
+- Agents started by bruv get no notes guidance; they report choices in their answer and the main
+  agent records them.
+- The fresh check compares changed notes with the code; a note that is now false is a gap. The
+  receipt lists changed notes, or says none changed.
+- Projects from bruv 0.x keep working: with no `.agents/notes/`, a `wisdom/` folder is used, and
+  a trusted `.bruv/settings.json` `wisdomDir` still wins. The first session in such a project
+  suggests `/notes move` once; it moves the folder with `git mv` when tracked (keeping history),
+  then lists files that still mention `wisdom/`. `/notes` lists the notes.
 
 ---
 
@@ -613,7 +845,7 @@ Each phase ends with a commit on `rewrite/pi-package` and green `bunx biome ci .
    pass.
 4. **Finish.** README (install, commands, tools, config, migration), `CHANGELOG.md` with one entry
    for 1.0.0, `t3.json` updated (setup script: `bun install --frozen-lockfile`), final size check
-   against budgets. Acceptance: total source no more than ~10% above 2,300 lines; smaller is fine.
+   against budgets. Acceptance: total source stays within the section 3.1 budget; smaller is fine.
    One real smoke run in T3 is done by the reviewer.
 
 ### 4.3 Risks

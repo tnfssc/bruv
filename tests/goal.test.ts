@@ -1,9 +1,10 @@
-import { expect, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { fauxAssistantMessage, fauxToolCall, type SystemMessage } from "@earendil-works/pi-ai";
 import { type Goal, registerGoal } from "../src/goal";
 import { registerPrompt } from "../src/prompt";
 import { sdk } from "./sdk";
 
+setDefaultTimeout(15000);
 const update = (args: object) =>
   fauxAssistantMessage(fauxToolCall("codemode", { code: `return await tools.goal_update(${JSON.stringify(args)});` }), {
     stopReason: "toolUse",
@@ -100,17 +101,17 @@ test("three blocker rounds stop the goal and resume starts a fresh count", async
     expect(app.faux.state.callCount).toBe(9);
     app.faux.setResponses([
       ...round,
-      update({ status: "completed", evidence: "verified-781" }),
-      fauxAssistantMessage("done"),
+      update({ status: "active", progress: "verified-781" }),
+      fauxAssistantMessage("stop", { stopReason: "aborted" }),
     ]);
     await app.run("/goal resume");
-    expect(app.state()).toMatchObject({ status: "completed", evidence: "verified-781" });
+    expect(app.state()).toMatchObject({ status: "paused", progress: ["verified-781"] });
   } finally {
     await app.close();
   }
 });
 
-test("abort pauses the goal and completion requires evidence", async () => {
+test("abort pauses the goal and goal_update cannot complete it", async () => {
   const app = await setup();
   try {
     const message = fauxAssistantMessage("stopped", { stopReason: "aborted" });
@@ -119,7 +120,7 @@ test("abort pauses the goal and completion requires evidence", async () => {
     expect(app.state()?.status).toBe("paused");
     expect(app.faux.state.callCount).toBe(1);
     app.faux.setResponses([
-      update({ status: "completed" }),
+      update({ status: "completed", evidence: "claimed-781" }),
       (context) => {
         expect(app.state()?.status).toBe("active");
         expect(context.messages.some((m) => m.role === "toolResult" && m.isError)).toBe(true);

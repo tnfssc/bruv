@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="530" height="188" viewBox="0 0 530 188" role="img" aria-labelledby="title desc">
+  <title id="title">bruv</title>
+  <desc id="desc">Custom lowercase bruv wordmark with forward-leaning letters and cut corners.</desc>
+  <g fill="#171717" transform="matrix(1 0 -.15 1 27 0)">
+    <path d="M20 20H52V68H106L134 94V138L106 164H20Z M52 96V136H92L102 126V106L92 96Z" fill-rule="evenodd"/>
+    <path d="M154 68H186V81L199 68H236V100H210L186 124V164H154Z"/>
+    <path d="M254 68H286V124L294 132H314L322 124V68H354V138L328 164H280L254 138Z"/>
+    <path d="M374 68H410L434 124L458 68H494L450 164H418Z"/>
+  </g>
+</svg>

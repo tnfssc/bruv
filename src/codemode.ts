@@ -14,6 +14,8 @@ export function enableCodemode(agentDir = getAgentDir()): void {
     ...settings,
     defaultTools,
     codemode: { ...settings.codemode, mode: "only" },
+    // bruv draws its own quiet screen; Pi's banner and resource list only push it down.
+    quietStartup: settings.quietStartup ?? true,
   };
   mkdirSync(agentDir, { recursive: true });
   writeFileSync(path, `${JSON.stringify(updated, null, 2)}\n`);
@@ -27,9 +29,10 @@ export function registerCodemode(pi: ExtensionAPI): void {
   });
 
   pi.registerCommand("bruv-setup", {
-    description: "Use codemode for all tool calls",
+    description: "Use codemode for all tool calls and start without Pi's banner",
     handler: async (_args, ctx) => {
-      if (!(await ctx.ui.confirm("Set up bruv?", "Enable codemode only in your Pi settings?"))) return;
+      if (!(await ctx.ui.confirm("Set up bruv?", "Turn on codemode only and a quiet start in your Pi settings?")))
+        return;
       enableCodemode();
       ctx.ui.notify("Codemode only is saved. Run /reload to use it.", "info");
     },

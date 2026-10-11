@@ -37,9 +37,14 @@ export interface Work extends Omit<Result, "output" | "elapsedSeconds"> {
   outputStream: WriteStream;
   outputDone: Promise<undefined | Error>;
   detached: boolean;
+  /** A fresh check of finished work, not an agent the model started. */
+  checker?: boolean;
   seen: boolean;
   stopped: boolean;
   progress?: string;
+  tokens?: number;
+  base?: string;
+  changes?: { added: number; removed: number; files: number };
   pid?: number;
   endedAt?: number;
   completion: Promise<void>;
@@ -260,6 +265,18 @@ export class Jobs {
       userMessagePending: pending(),
     };
   }
+}
+
+/** Tokens and API-price cost of every agent this session started, checkers included. */
+export function agentTotals(jobs: Jobs) {
+  let tokens = 0;
+  let cost = 0;
+  for (const item of jobs.items.values()) {
+    if (item.kind !== "agent" || !item.usage) continue;
+    tokens += item.usage.input + item.usage.output;
+    cost += item.usage.cost;
+  }
+  return { tokens, cost };
 }
 
 export function workDirectory(ctx: ExtensionContext) {
