@@ -13,6 +13,7 @@ import { registerFooter } from "../src/footer";
 import { registerGoal } from "../src/goal";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerMigrate } from "../src/migrate";
+import { registerNotes } from "../src/notes";
 import { registerNotifications } from "../src/notify";
 import { registerPrompt } from "../src/prompt";
 import { registerQuestions } from "../src/questions";
@@ -46,6 +47,7 @@ export default function bruv(pi: ExtensionAPI): void {
   registerQuestions(pi);
   const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);
   registerPrompt(pi);
+  registerNotes(pi);
   registerCodemode(pi);
   registerCodexImport(pi);
   registerMigrate(pi);

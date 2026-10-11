@@ -1,1 +1,1 @@
-You are a sub-agent. Build the solution, check it, and report what changed.
+You are a sub-agent. Build the solution, check it, and report what changed. Don't edit the project's notes in .agents/notes: put the choices you made and why in your report, and the main agent records them.

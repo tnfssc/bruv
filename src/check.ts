@@ -1,13 +1,14 @@
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { promisify } from "node:util";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
 import type { StartAgents } from "./agents";
 import { readConfig, saveConfig } from "./config";
 import type { GoalControl } from "./goal";
 import type { Jobs } from "./jobs";
+import { notesDir } from "./notes";
 
 const exec = promisify(execFile);
 type Snapshot = { cwd: string; head: string; tree: string };
@@ -17,6 +18,8 @@ export type CheckReport = {
   gaps: string[];
   failed: boolean;
   changes?: { files: number; added: number; removed: number };
+  /** Notes this work changed, relative to the repository. */
+  notes?: string[];
 };
 type Verdict = { verdict: "pass" | "gaps"; checked: string[]; gaps: string[] };
 export type Checker = ReturnType<typeof registerCheck>;
@@ -180,6 +183,11 @@ export function registerCheck(
             added: Number(/(\d+) insertions?/.exec(stat)?.[1] ?? 0),
             removed: Number(/(\d+) deletions?/.exec(stat)?.[1] ?? 0),
           };
+          const folder = relative(base.cwd, notesDir(ctx.cwd, ctx.isProjectTrusted()));
+          if (folder && !folder.startsWith(".."))
+            report.notes = (await git(base.cwd, [...args, "--name-only", "--", folder], signal))
+              .split("\n")
+              .filter(Boolean);
           diff = (await git(base.cwd, [...args, "--stat", "--patch"], signal)).slice(0, 40000);
         }
         if (changed()) return retry();

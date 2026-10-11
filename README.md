@@ -14,6 +14,7 @@ bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, not a pl
 - **Keep working without “continue.”** GPT runs keep going by default. `/keep-going on|off|auto` changes this; `/goal` adds an objective, criteria and an optional token budget.
 - **See what was checked.** The terminal receipt lists the request, checks, remaining gaps, changed files, time and usage. `/check on|off` controls the fresh check.
 - **Don't wait on one thing at a time.** Run tests in the background while agents investigate bugs or build separate parts in their own copies of your repo.
+- **Keep what the team learns.** bruv reads and writes the project's notes in `.agents/notes/`: choices, reasons, what was tried. They're shared through git, and the next session starts from them.
 - **Do more per turn.** The model can read files, make edits, and run checks in one script, filtering long logs before they fill the conversation.
 
 ## Get started
@@ -49,7 +50,7 @@ Parallel agents use more quota too.
 
 ## Commands
 
-`/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/status` · `/bruv-setup` · `/bruv-migrate`
+`/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/notes` · `/status` · `/bruv-setup` · `/bruv-migrate`
 
 Coming from Codex? `/import-codex` previews your model, MCP servers, skills, prompts and trusted projects, then asks before importing. Sign in to Pi with `/login`; Codex sign-in tokens stay separate.
 

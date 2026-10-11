@@ -13,6 +13,8 @@ export interface Config {
   keepGoing?: "auto" | "on" | "off";
   codexImportOffered?: boolean;
   migrateOffered?: boolean;
+  /** Projects already told about moving wisdom/ to .agents/notes. */
+  notesMoveOffered?: string[];
   /** Message to show once the reload after /bruv-migrate finishes. */
   migrated?: { message: string; model: boolean };
   fast?: boolean;

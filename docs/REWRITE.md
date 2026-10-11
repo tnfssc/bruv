@@ -164,7 +164,7 @@ Release notes: `docs/releases/release-v0.16.20.md` is 895 lines, 263 of them the
 | D2 | In T3, bruv runs through **T3's built-in Pi driver**. claude-compat and the "bruv (not Claude)" provider are deleted. |
 | D3 | Scripting runs on **Pi codemode**. bruv's own Bun `execute` runtime is deleted. |
 | D4 | v1 keeps: background jobs, subagents with optional worktrees, goal mode, keep-going, `/fast`, Codex native compaction, async questions. |
-| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, cross-session history search, cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, `wisdom/`, `site/`, release tooling, perf harnesses. |
+| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, cross-session history search, cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, this repo's old `wisdom/` folder (the idea returns as project notes, 3.18), `site/`, release tooling, perf harnesses. |
 | D6 | One large PR from `rewrite/pi-package` into `develop`. Git history keeps everything deleted; nothing is archived as copies. |
 | D7 | Prompts and all text use plain, short, normal English. Not "grug" grammar. |
 
@@ -214,6 +214,7 @@ bruv/
     codex-compaction.ts   Codex native compaction (~350)
     codex-import.ts       confirmed Codex settings import (~200)
     migrate.ts            confirmed bruv 0.x import (~170)
+    notes.ts              project notes: prompt, index, receipt line, moving wisdom/ (~150)
     review.ts             diff review command and pickers (~100)
     questions.ts          async ask tool (~120)
     ui.ts                 widget, status, tool renderers (~200)
@@ -250,7 +251,7 @@ bruv/
   t3.json
 ```
 
-Line numbers are budgets, not targets. Total source budget: about 3,520 lines, including Codex import, review and the terminal layout. Going over a module
+Line numbers are budgets, not targets. Total source budget: about 3,670 lines, including Codex import, review and the terminal layout. Going over a module
 budget needs a sentence in the PR description saying why.
 
 `package.json`:
@@ -300,8 +301,8 @@ You're working with the user on their code, inside bruv.
 - Have opinions. Recommend one path and say why. Push back when there's a better way.
 - Don't keep old behavior just because it exists. Rebuild if that's simpler.
 - Write like the surrounding code and docs: short, plain, no repetition.
-- Scratch files go in `.tmp/` in the working directory. Don't write notes or logs into the repo
-  unless the user asks.
+- Scratch files go in `.tmp/` in the working directory. What the team should know goes in the
+  project's notes.
 ```
 
 `prompts/codemode.md` is included in the bruv system prompt section when codemode is active.
@@ -760,14 +761,33 @@ For development: `pi install /path/to/bruv/checkout` (local packages load from t
 
 - Read `docs/REWRITE.md` (until merged) and the module you touch.
 - Module line budgets are in `docs/REWRITE.md` 3.1. Over budget needs a reason in the PR.
-- Do not write notes, logs, evidence or "proof" files into the repo. Decisions go in the PR
-  description. Scratch goes in `.tmp/` (ignored).
+- Team notes go in `.agents/notes/` (3.18). Scratch goes in `.tmp/` (ignored).
 - Tests follow 3.14. No wording assertions.
 - Plain English. Banned in code identifiers, comments and user-facing text: owner, ownership,
   authority, seam, projection, durable, bounded, canonical, opaque, admission, "not proof".
 - No prototype patching of Pi. If Pi lacks a hook, open an upstream issue and work around it in the
   extension.
 - Squash-merge PRs. Commit messages: one imperative line, optional short body.
+
+### 3.18 Project notes (`src/notes.ts`, `prompts/notes.md`)
+
+The team's knowledge lives in the repo, in `.agents/notes/` next to `.agents/skills/`, shared
+through git. Code can be rebuilt from notes; the reasons behind code can't be rebuilt from code.
+
+- The main agent's system prompt gets `prompts/notes.md` with the folder and an index of the
+  notes (path and first heading; folders with counts above 60 files), computed once per session
+  so the prompt stays the same between turns. It asks the model to read notes that touch the
+  task and to write as work moves: choices and why, what was tried, what didn't work, where work
+  stopped. `values.md` holds the principles, the user's words first. Nothing limits what or how
+  much is written.
+- Agents started by bruv get no notes guidance; they report choices in their answer and the main
+  agent records them.
+- The fresh check compares changed notes with the code; a note that is now false is a gap. The
+  receipt lists changed notes, or says none changed.
+- Projects from bruv 0.x keep working: with no `.agents/notes/`, a `wisdom/` folder is used, and
+  a trusted `.bruv/settings.json` `wisdomDir` still wins. The first session in such a project
+  suggests `/notes move` once; it moves the folder with `git mv` when tracked (keeping history),
+  then lists files that still mention `wisdom/`. `/notes` lists the notes.
 
 ---
 

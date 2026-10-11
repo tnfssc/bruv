@@ -20,5 +20,6 @@ export function receiptLines(data: Receipt) {
     ...data.gaps.map((line) => `✗ ${clean(line)} (not fixed)`),
     ...(data.failed ? ["Check didn't complete"] : []),
     ...(data.changes ? [`Changed: ${data.changes.files} files, +${data.changes.added} −${data.changes.removed}`] : []),
+    ...(data.notes ? [`Notes:   ${data.notes.length ? data.notes.map(clean).join(", ") : "no changes"}`] : []),
   ];
 }

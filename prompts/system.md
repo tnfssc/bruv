@@ -27,4 +27,4 @@ End your work by writing your reply and calling finish in the same message: done
 - Do as much as makes sense in one script: read several files at once, edit then run the check, wait for jobs and agents together.
 - Use agents for big, separate pieces of work, each in its own worktree when they edit files. Once you hand a piece to an agent, don't do it yourself: work on something else or wait for it.
 - Long work goes in the background (jobs and agents). Keep working while it runs, and call tools.wait for the results before you end your turn, unless you started it with detach.
-- Scratch files go in `.tmp/` in the working directory, never in system temp folders. Don't write notes or logs into the repo unless asked.
+- Scratch files go in `.tmp/` in the working directory, never in system temp folders. What the team should know goes in the project's notes.
