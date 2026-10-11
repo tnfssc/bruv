@@ -147,8 +147,10 @@ export function registerCheck(
         ctx.ui.notify(`Could not snapshot work: ${String(error)}`, "warning");
       },
     );
-    return capture;
   });
+  // Pi shows the message only after input handlers finish, so the snapshot runs in the background
+  // and tools wait for it instead: the start point is still taken before the model changes files.
+  pi.on("tool_call", () => capture);
   pi.on("message_end", (event) => {
     if (event.message.role !== "assistant") return;
     // The final reply can span several messages (a table, then a closing line with finish), so

@@ -246,7 +246,9 @@ bruv/
     checker.md            fresh check guidance, under 130 words
   tests/
   docs/
-    REWRITE.md            this file
+    USAGE.md
+  .agents/notes/
+    rewrite.md            this file
   .github/workflows/ci.yml
   AGENTS.md
   README.md
@@ -524,7 +526,8 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 
 - With keep-going or a goal active, `finish(done)` checks work if a goal is active or HEAD or tracked/untracked content changed
   since the latest user message. No Git repo means no change detection. Scratch under `.tmp/`
-  is excluded. Capture raw user text and the snapshot at the input event, before prompt expansion.
+  is excluded. Capture raw user text and start the snapshot at the input event, before prompt expansion.
+  The message must not wait for the snapshot; tool calls wait for it so it is taken before any edit.
   Snapshots use a separate index, preserving staging and pre-existing changes. New input during
   a check stops that child and discards its result so the updated request is checked.
 - `checkWork` defaults to true in bruv.json. `/check on|off` saves the setting.
@@ -805,8 +808,8 @@ For development: `pi install /path/to/bruv/checkout` (local packages load from t
 
 ### 3.17 Repo rules for agents (`AGENTS.md`, under 60 lines)
 
-- Read `docs/REWRITE.md` (until merged) and the module you touch.
-- Module line budgets are in `docs/REWRITE.md` 3.1. Over budget needs a reason in the PR.
+- Read `.agents/notes/rewrite.md` (until merged) and the module you touch.
+- Module line budgets are in `.agents/notes/rewrite.md` 3.1. Over budget needs a reason in the PR.
 - Team notes go in `.agents/notes/` (3.18). Scratch goes in `.tmp/` (ignored).
 - Tests follow 3.14. No wording assertions.
 - Plain English. Banned in code identifiers, comments and user-facing text: owner, ownership,

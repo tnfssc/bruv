@@ -1,6 +1,6 @@
 # Live mode (voice): planned, not started
 
-The user wants a good live mode back. It was cut in the rewrite (`docs/REWRITE.md` D5) because the
+The user wants a good live mode back. It was cut in the rewrite (`.agents/notes/rewrite.md` D5) because the
 0.x versions were attempts to talk to the agent from another device, and none of them reached SSH or
 T3 Code. The user still wants voice; that reason was about the old design, not about voice.
 
