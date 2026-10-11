@@ -148,7 +148,8 @@ export async function build(raw = process.env.BASE_URL ?? "https://bruv.sharath.
   await mkdir(resolve(out, "assets"), { recursive: true });
   await cp(resolve(root, "assets/brand"), resolve(out, "assets/brand"), { recursive: true });
   await cp(resolve(root, "assets/bruv-prompt.woff2"), resolve(out, "assets/bruv-prompt.woff2"));
-  await cp(resolve(root, "node_modules/ghostty-web/ghostty-vt.wasm"), resolve(out, "ghostty-vt.wasm"));
+  // Workspace installs may hoist ghostty-web to the repo root.
+  await cp(Bun.resolveSync("ghostty-web/ghostty-vt.wasm", root), resolve(out, "ghostty-vt.wasm"));
   await cp(resolve(root, "licenses"), resolve(out, "licenses"), { recursive: true });
   // The installer is also served from the site, for a short install command.
   await cp(resolve(root, "../scripts/install.sh"), resolve(out, "install.sh"));

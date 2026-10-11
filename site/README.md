@@ -11,10 +11,11 @@ including `install.sh`, a copy of [scripts/install.sh](../scripts/install.sh), s
 
 ## Run locally
 
-Use Bun 1.4.2. From `site/`:
+Use Bun 1.4.2. The site is a Bun workspace of the repo, so install from the repo root, then work in `site/`:
 
 ```sh
-bun install --frozen-lockfile
+bun install --frozen-lockfile   # at the repo root; one lockfile for everything
+cd site
 bun run build
 bun run preview
 ```
@@ -65,7 +66,8 @@ bun run test            # unit, build, HTML, scroll, startup, installer UI, then
 bun run test:animation  # plays complete loops; slower
 ```
 
-These aren't part of the root `bun test` or CI. Browser checks write evidence to the ignored `artifacts/landing-page/`
+CI runs only the checks that need no browser: `bun run test:site` from the root (`bun run test:unit` here) and
+`bun run check`, which type-checks the site with `site/tsconfig.json`. Browser checks write evidence to the ignored `artifacts/landing-page/`
 folder at the repo root. Look at desktop, 390px and 320px, a full loop, hover, focus and touch controls, and the
 HTML view.
 
@@ -73,11 +75,12 @@ HTML view.
 
 | Setting | Value |
 | --- | --- |
-| Root directory | `site` |
-| Build command | `bun run build` |
-| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` (the repo root, where the lockfile is) |
+| Build command | `bun run --cwd site build` |
+| Deploy command | `npx wrangler deploy -c site/wrangler.jsonc` |
 | Build environment variable | `BUN_VERSION=1.4.2` |
 
+All site packages are dev dependencies, so `pi install` from git doesn't download them.
 [wrangler.jsonc](wrangler.jsonc) names the Worker `bruv` and serves `./dist`. The build adds canonical URLs,
 `og:url`, `og:image`, `robots.txt` and `sitemap.xml` for https://bruv.sharath.page. Set `BASE_URL` to build for
 another address, or to an empty value to leave them out. Serve `ghostty-vt.wasm` as

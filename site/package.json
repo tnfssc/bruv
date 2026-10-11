@@ -6,13 +6,12 @@
     "build": "bun scripts/build.ts",
     "preview": "bun scripts/preview.ts",
     "test": "bun test demos.test.ts scripts/build.test.ts scripts/scroll.test.ts scripts/html-animation.test.ts scripts/startup.test.ts scripts/install-ui.test.ts && bun scripts/validate.ts",
-    "test:animation": "bun scripts/animation.ts"
+    "test:animation": "bun scripts/animation.ts",
+    "test:unit": "bun test demos.test.ts scripts/build.test.ts scripts/scroll.test.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.11.1",
+    "ghostty-web": "0.4.0",
     "playwright-core": "1.63.0"
-  },
-  "dependencies": {
-    "ghostty-web": "0.4.0"
   }
 }

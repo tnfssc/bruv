@@ -233,6 +233,7 @@ bruv/
     config.ts             reads ~/.pi/agent/bruv.json (~60)
   scripts/
     install.sh            installs Pi and bruv; the old 0.x install URL points here
+  site/                   the website, a Bun workspace (site/README.md)
   prompts/
     system.md
     codemode.md           guidance + examples appended to the codemode tool description
@@ -755,9 +756,12 @@ into the new tree "for reference".
 ### 3.15 CI
 
 One workflow, `.github/workflows/ci.yml`, on pull requests and pushes to `develop`:
-`bun install --frozen-lockfile`, `bunx biome ci .`, `bunx tsc --noEmit`, `bun test`. Linux only.
+`bun install --frozen-lockfile`, `bunx biome ci .`, `bun run check` (root and site types), `bun test`,
+`bun run test:site` (site checks that need no browser). Linux only.
 No release workflow: users install from git (3.16).
 Root `bun test` runs `tests/` only. The site's browser checks need Chromium and run locally (`site/README.md`).
+The repo root stays the Pi package: Pi clones git packages and installs at the root, so site packages are all dev
+dependencies.
 
 ### 3.16 Install and migration
 

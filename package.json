@@ -2,6 +2,9 @@
   "name": "bruv",
   "version": "1.0.0",
   "type": "module",
+  "workspaces": [
+    "site"
+  ],
   "keywords": [
     "pi-package"
   ],
@@ -28,9 +31,10 @@
     "@types/bun": "1.4.2"
   },
   "scripts": {
-    "check": "tsc --noEmit",
+    "check": "tsc --noEmit && tsc --noEmit -p site",
     "lint": "biome ci .",
-    "test": "bun test"
+    "test": "bun test",
+    "test:site": "bun run --cwd site test:unit"
   },
   "dependencies": {
     "smol-toml": "^1.9.1"
