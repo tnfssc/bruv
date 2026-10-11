@@ -40,6 +40,9 @@ async function setup(repo = true) {
   process.env.BRUV_PI_COMMAND = resolve("tests/fixtures/pi-child.ts");
   const jobs = new Jobs();
   let check: Checker;
+  // Models change files only through tools, so test edits run at the next tool call.
+  const edits: (() => unknown)[] = [];
+  const edit = (change: () => unknown) => edits.push(change);
   const app = await sdk(
     [
       (pi) => {
@@ -49,6 +52,11 @@ async function setup(repo = true) {
         check = registerCheck(pi, jobs, registerAgents(pi, jobs), dir, goal);
         const summary = registerTurn(pi, jobs, () => undefined);
         const hasFinished = registerFinish(pi, dir, check, () => !!goal.active(), summary);
+      },
+      (pi) => {
+        pi.on("tool_call", () => {
+          for (const change of edits.splice(0)) change();
+        });
       },
     ],
     undefined,
@@ -66,10 +74,13 @@ async function setup(repo = true) {
     args,
     check: () => check.report(),
     fixture: (value: object) => writeFileSync(join(cwd, ".tmp/checker.json"), JSON.stringify(value)),
-    change: () => {
-      writeFileSync(join(cwd, "file.txt"), "after-781\n");
-      writeFileSync(join(cwd, "new.txt"), "new-781\n");
-    },
+    edit,
+    write: (name: string, text: string) => edit(() => writeFileSync(join(cwd, name), text)),
+    change: () =>
+      edit(() => {
+        writeFileSync(join(cwd, "file.txt"), "after-781\n");
+        writeFileSync(join(cwd, "new.txt"), "new-781\n");
+      }),
     async close() {
       await app.close();
       rmSync(dir, { recursive: true, force: true });
@@ -197,7 +208,7 @@ test("two gaps continue, the third finish accepts them, and a new message resets
     app.fixture({ answer: answer() });
     app.faux.setResponses([
       () => {
-        writeFileSync(join(app.cwd, "new.txt"), "again-781\n");
+        app.write("new.txt", "again-781\n");
         return finish();
       },
     ]);
@@ -268,7 +279,18 @@ test("moving HEAD alone starts a check and a large diff is capped", async () => 
   try {
     app.faux.setResponses([
       () => {
-        app.git("-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "--allow-empty", "-qm", "Move");
+        app.edit(() =>
+          app.git(
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "--allow-empty",
+            "-qm",
+            "Move",
+          ),
+        );
         return finish();
       },
     ]);
@@ -276,7 +298,7 @@ test("moving HEAD alone starts a check and a large diff is capped", async () => 
     expect(app.children()).toHaveLength(1);
     app.faux.setResponses([
       () => {
-        writeFileSync(join(app.cwd, "large.txt"), "line\n".repeat(20000));
+        app.write("large.txt", "line\n".repeat(20000));
         return finish();
       },
     ]);
@@ -480,13 +502,16 @@ test("steering keeps both user messages and refreshes the snapshot", async () =>
   try {
     const requests = ["first-781\n  whitespace", "steer-781\n  more whitespace"];
     app.faux.setResponses([
-      async () => {
+      () => {
         app.change();
+        return fauxAssistantMessage(fauxToolCall("codemode", { code: "text(1)" }), { stopReason: "toolUse" });
+      },
+      async () => {
         await app.session.steer(requests[1]);
         return fauxAssistantMessage("private-781");
       },
       () => {
-        writeFileSync(join(app.cwd, "new.txt"), "steered-781\n");
+        app.write("new.txt", "steered-781\n");
         return finish();
       },
     ]);
@@ -515,7 +540,7 @@ test("a message arriving during a check stops it and checks the updated request"
         return finish();
       },
       () => {
-        writeFileSync(join(app.cwd, "new.txt"), "steered-781\n");
+        app.write("new.txt", "steered-781\n");
         return finish();
       },
     ]);
@@ -529,6 +554,32 @@ test("a message arriving during a check stops it and checks the updated request"
     expect(JSON.parse(args.at(-1)).messages).toEqual(["first-781", "second-781"]);
     expect(app.receipts()).toHaveLength(1);
     expect(app.receipts()[0].failed).toBe(false);
+  } finally {
+    await app.close();
+  }
+});
+
+test("a sent message shows before its snapshot finishes and tools wait for the snapshot", async () => {
+  const app = await setup();
+  try {
+    // Hold the snapshot inside Git until the user message has started.
+    const release = join(app.configDir, "release");
+    const hook = join(app.configDir, "fsmonitor.sh");
+    writeFileSync(hook, `#!/bin/sh\nwhile [ ! -f "${release}" ]; do sleep 0.01; done\nexit 1\n`, { mode: 0o755 });
+    app.git("config", "core.fsmonitor", hook);
+    app.session.subscribe((event) => {
+      if (event.type === "message_start" && event.message.role === "user") writeFileSync(release, "");
+    });
+    app.faux.setResponses([
+      () => {
+        app.change();
+        return finish();
+      },
+    ]);
+    await app.session.prompt("go");
+    const prompt = JSON.parse(app.args().at(-1) as string);
+    expect(prompt.diff).toContain("+after-781");
+    expect(prompt.diff).toContain("+new-781");
   } finally {
     await app.close();
   }

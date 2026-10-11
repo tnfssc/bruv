@@ -524,7 +524,8 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 
 - With keep-going or a goal active, `finish(done)` checks work if a goal is active or HEAD or tracked/untracked content changed
   since the latest user message. No Git repo means no change detection. Scratch under `.tmp/`
-  is excluded. Capture raw user text and the snapshot at the input event, before prompt expansion.
+  is excluded. Capture raw user text and start the snapshot at the input event, before prompt expansion.
+  The message must not wait for the snapshot; tool calls wait for it so it is taken before any edit.
   Snapshots use a separate index, preserving staging and pre-existing changes. New input during
   a check stops that child and discards its result so the updated request is checked.
 - `checkWork` defaults to true in bruv.json. `/check on|off` saves the setting.
