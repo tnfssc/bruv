@@ -164,7 +164,7 @@ Release notes: `docs/releases/release-v0.16.20.md` is 895 lines, 263 of them the
 | D2 | In T3, bruv runs through **T3's built-in Pi driver**. claude-compat and the "bruv (not Claude)" provider are deleted. |
 | D3 | Scripting runs on **Pi codemode**. bruv's own Bun `execute` runtime is deleted. |
 | D4 | v1 keeps: background jobs, subagents with optional worktrees, goal mode, keep-going, `/fast`, Codex native compaction, async questions. |
-| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, cross-session history search, cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, this repo's old `wisdom/` folder (the idea returns as project notes, 3.18), `site/`, release tooling, perf harnesses. |
+| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, the cross-session history search tool (the prompt names the session folder and the model searches it with rg), cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, this repo's old `wisdom/` folder (the idea returns as project notes, 3.18), `site/`, release tooling, perf harnesses. |
 | D6 | One large PR from `rewrite/pi-package` into `develop`. Git history keeps everything deleted; nothing is archived as copies. |
 | D7 | Prompts and all text use plain, short, normal English. Not "grug" grammar. |
 
@@ -223,7 +223,8 @@ bruv/
     render.ts             readable codemode calls and output (~200)
     activity.ts           one line per run of tool calls, click to open (~200)
     editor.ts             borderless input with the spinner in the prompt mark (~90)
-    footer.ts             one-line footer, /status, quiet start (~110)
+    footer.ts             one-line footer, cache countdown, quiet start (~130)
+    ps.ts                 /ps: read and stop jobs and agents (~70)
     turn.ts               turn counts and non-context summary (~100)
     receipt.ts            completion receipt text (~50)
     finish-render.ts      finish results and receipt frame (~100)
@@ -437,11 +438,20 @@ There is no `handoff`. With keep-going active, the model replies and calls `fini
 
   Missing profile fields fall back to the parent's current model and thinking level. `model` and
   `thinking` on the call override the profile.
+- Models agents may use: `agentModels` in `bruv.json`, picked with `/subagents` (a checklist of the
+  main model and signed-in models). Unset, it is the profile models. The main model is always
+  allowed and is the default. The main agent's prompt lists them once per session with price and
+  context size, so it can pick a cheap one for lookups and the main one for hard work. Pi has no
+  release dates, so the user's list, not the model, keeps old models out. A `model` outside the
+  list is refused with the list.
 - `prompts` launches one agent per prompt. With `worktree`, each gets its own worktree.
 - Worktree: `git worktree add -b <branch> <repo root>/.bruv/worktrees/<session short id>-<agent id> <baseRef or HEAD>`.
   Default branch name `bruv/<session short id>-<agent id>`. Add `.bruv/` to `.git/info/exclude` once.
   If `t3.json` in the repo root has scripts with `runOnWorktreeCreate: true`, run them in the new
   worktree before starting the agent, and fail the agent with their output if they fail.
+- `/ps` lists jobs and agents, running first. Picking one offers Read (status, progress, tokens,
+  cost, changes, worktree, output and session paths, then the answer or latest output) and, while
+  it runs, Stop.
 - Ordinary agent worktrees and branches are never removed automatically. The result includes the path and branch.
 - Cost: add each agent's usage into a session total shown in the footer.
 
@@ -681,8 +691,10 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
     installed by another extension.
   - One-line footer: folder and branch, the `bruv` status, cost only when not on a subscription,
     context percent (warning above 70, error above 90), other statuses as a count, and model and
-    thinking level on the right. Narrow terminals drop parts in a fixed order. `/status` switches
-    to Pi's full footer and back. The startup banner is hidden; `/bruv-setup` also sets
+    thinking level on the right. Narrow terminals drop parts in a fixed order. `cache 42m` counts
+    down from the last answer by the current model (from saved messages after a restart) using
+    `cacheTtlMinutes` (default 60): warning at 15 minutes, error at 5, then `cache expired`. It
+    redraws every 30 seconds. The startup banner is hidden; `/bruv-setup` also sets
     `quietStartup` so Pi skips its resource list.
   - `finish` draws no call line, only its result. Reports and summaries are indented like the
     transcript; collapsed reports start with a colored status mark.

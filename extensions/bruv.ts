@@ -16,6 +16,7 @@ import { registerMigrate } from "../src/migrate";
 import { registerNotes } from "../src/notes";
 import { registerNotifications } from "../src/notify";
 import { registerPrompt } from "../src/prompt";
+import { registerPs } from "../src/ps";
 import { registerQuestions } from "../src/questions";
 import { registerRender } from "../src/render";
 import { registerReview } from "../src/review";
@@ -30,6 +31,7 @@ export default function bruv(pi: ExtensionAPI): void {
   const activity = new Activity();
   registerActivity(pi, activity);
   registerUI(pi, jobs);
+  registerPs(pi, jobs);
   activity.scripts = registerRender(pi);
   registerEditor(pi);
   registerFooter(pi);

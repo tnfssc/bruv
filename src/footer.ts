@@ -6,6 +6,7 @@ import type {
   Theme,
 } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+import { readConfig } from "./config";
 
 const oneLine = (text: string) => text.replace(/\s+/g, " ").trim();
 
@@ -30,12 +31,22 @@ function costTracker(ctx: ExtensionContext) {
   };
 }
 
+/** Time left on the provider's prompt cache, counted from the last answer from this model. */
+export function cacheBadge(last: number | undefined, ttlMinutes: number, now: number, theme: Theme) {
+  if (last === undefined) return "";
+  const left = last + ttlMinutes * 60_000 - now;
+  if (left <= 0) return theme.fg("error", "cache expired");
+  const minutes = Math.ceil(left / 60_000);
+  return theme.fg(minutes <= 5 ? "error" : minutes <= 15 ? "warning" : "dim", `cache ${minutes}m`);
+}
+
 export function compactFooter(
   ctx: ExtensionContext,
   data: ReadonlyFooterDataProvider,
   theme: Theme,
   width: number,
   cost: number,
+  cache = "",
 ): string[] {
   if (width < 1) return [];
   const project = basename(ctx.sessionManager.getCwd()) || "/";
@@ -58,11 +69,11 @@ export function compactFooter(
   const accent = (text: string) => (text ? theme.fg("accent", text) : "");
   const tries: [string[], string][] = [
     [
-      [branch ? `${project}:${oneLine(branch)}` : project, accent(bruv), price, context("ctx "), extra],
+      [branch ? `${project}:${oneLine(branch)}` : project, accent(bruv), price, context("ctx "), cache, extra],
       name + thinking,
     ],
-    [[project, accent(bruv), price, context("ctx "), extra], name + thinking],
-    [[accent(bruv), price, context("ctx ")], name],
+    [[project, accent(bruv), price, context("ctx "), cache, extra], name + thinking],
+    [[accent(bruv), price, context("ctx "), cache], name],
     [[context("ctx ")], name],
   ];
   for (const [parts, right] of tries) {
@@ -73,32 +84,42 @@ export function compactFooter(
   return [truncateToWidth(theme.fg("dim", name), width, "…")];
 }
 
-/** One-line footer and no startup banner. /status switches to Pi's full footer. */
+/** One-line footer with the cache countdown, and no startup banner. */
 export function registerFooter(pi: ExtensionAPI) {
-  let detailed = false;
-  const install = (ctx: ExtensionContext) => {
-    if (ctx.mode !== "tui") return;
-    if (detailed) return ctx.ui.setFooter(undefined);
-    const cost = costTracker(ctx);
-    ctx.ui.setFooter((tui, theme, data) => {
-      const stop = data.onBranchChange(() => tui.requestRender());
-      return {
-        render: (width) => compactFooter(ctx, data, theme, width, cost()),
-        invalidate() {},
-        dispose: stop,
-      };
-    });
-  };
+  // When each provider/model last answered; the cache countdown starts there.
+  const answered = new Map<string, number>();
+  const key = (model: { provider: string; id?: string; model?: string }) =>
+    `${model.provider}/${model.id ?? model.model}`;
   pi.on("session_start", (_event, ctx) => {
+    answered.clear();
+    for (const entry of ctx.sessionManager.getBranch())
+      if (entry.type === "message" && entry.message.role === "assistant" && entry.message.stopReason !== "error")
+        answered.set(key(entry.message), entry.message.timestamp);
     if (ctx.mode !== "tui") return;
     ctx.ui.setHeader(() => ({ render: () => [], invalidate() {} }));
-    install(ctx);
+    const cost = costTracker(ctx);
+    const ttl = readConfig().cacheTtlMinutes ?? 60;
+    ctx.ui.setFooter((tui, theme, data) => {
+      const stop = data.onBranchChange(() => tui.requestRender());
+      // The countdown moves by the minute; nothing else redraws an idle screen.
+      const timer = setInterval(() => tui.requestRender(), 30_000);
+      timer.unref();
+      return {
+        render: (width) => {
+          const model = ctx.model;
+          const cache = model ? cacheBadge(answered.get(key(model)), ttl, Date.now(), theme) : "";
+          return compactFooter(ctx, data, theme, width, cost(), cache);
+        },
+        invalidate() {},
+        dispose() {
+          stop();
+          clearInterval(timer);
+        },
+      };
+    });
   });
-  pi.registerCommand("status", {
-    description: "Switch between the short footer and Pi's full footer",
-    handler: async (_args, ctx) => {
-      detailed = !detailed;
-      install(ctx);
-    },
+  pi.on("message_end", (event) => {
+    if (event.message.role === "assistant" && event.message.stopReason !== "error")
+      answered.set(key(event.message), Date.now());
   });
 }

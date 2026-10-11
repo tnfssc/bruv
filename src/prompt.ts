@@ -7,8 +7,13 @@ const withoutFinish = guidance.replace(/^End your work by writing your reply and
 const examples = readFileSync(new URL("../prompts/codemode.md", import.meta.url), "utf8").trim();
 
 export function registerPrompt(pi: ExtensionAPI): void {
+  let history = "";
+  pi.on("session_start", (_event, ctx) => {
+    // Old sessions are plain JSONL; telling the model where they are is enough to search them.
+    history = `\n- Earlier sessions in this project are saved as JSONL files in \`${ctx.sessionManager.getSessionDir()}\`. When the user refers to past work that isn't in this conversation, search them with rg.`;
+  });
   pi.on("before_agent_start", (event) => {
-    const text = pi.getActiveTools().includes("finish") ? guidance : withoutFinish;
+    const text = (pi.getActiveTools().includes("finish") ? guidance : withoutFinish) + history;
     event.systemPromptOptions.sections.bruv = pi.getActiveTools().includes("codemode")
       ? `${text}\n\n${examples}`
       : text;

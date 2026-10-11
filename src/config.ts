@@ -20,6 +20,10 @@ export interface Config {
   fast?: boolean;
   fastConfirmed?: boolean;
   profiles?: Partial<Record<"fast" | "normal", Profile>>;
+  /** Models agents may use, as provider/id. Unset: the main model plus the profile models. */
+  agentModels?: string[];
+  /** Minutes the provider keeps the prompt cache, for the footer countdown. Default 60. */
+  cacheTtlMinutes?: number;
 }
 
 export function readJson<T>(path: string, fallback: T): T {

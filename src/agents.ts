@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI, ExtensionContext, JsonAgentSessionEvent } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
-import { type Config, readConfig } from "./config";
+import { type Config, readConfig, saveConfig } from "./config";
 import { type Jobs, toolResult, type Work, workDirectory } from "./jobs";
 import { createWorktree, worktreeChanges } from "./worktree";
 
@@ -18,6 +18,30 @@ export function resolveProfile(
     model: overrides.model ?? chosen?.model ?? parent.model,
     thinking: overrides.thinking ?? chosen?.thinking ?? parent.thinking,
   };
+}
+
+const ref = (model: { provider: string; id: string }) => `${model.provider}/${model.id}`;
+
+/** Models agents may use: the ones picked with /subagents, else the main model and the profile models. Signed-in only. */
+export function agentModels(ctx: ExtensionContext, config = readConfig()) {
+  const main = ctx.model && ref(ctx.model);
+  const wanted = new Set(config.agentModels ?? [config.profiles?.fast?.model, config.profiles?.normal?.model]);
+  const others = ctx.modelRegistry.getAvailable().filter((model) => ref(model) !== main && wanted.has(ref(model)));
+  // The main model is always allowed: agents default to it.
+  return [...(ctx.model ? [ctx.model] : []), ...others];
+}
+
+function describeModels(ctx: ExtensionContext) {
+  const main = ctx.model && ref(ctx.model);
+  const lines = agentModels(ctx).map((model) => {
+    const price =
+      model.cost.input || model.cost.output
+        ? ` · $${model.cost.input}/$${model.cost.output} per million tokens in/out`
+        : "";
+    return `- ${ref(model)}${ref(model) === main ? " (yours, the default)" : ""}${price} · ${Math.round(model.contextWindow / 1000)}k context`;
+  });
+  if (lines.length < 2) return undefined;
+  return `Agents can use these models; pass one as model to tools.agent:\n${lines.join("\n")}\nUse a cheaper one for searching, reading and lookups, and yours for building and hard problems.`;
 }
 
 export function agentParser(jobs: Jobs, item: Work) {
@@ -35,10 +59,17 @@ export function agentParser(jobs: Jobs, item: Work) {
       item.tokens = usage.input + usage.output + value.usage.input + value.usage.output;
     if (value.type === "message_end" && value.message.role === "assistant") {
       const message = value.message;
-      item.answer = message.content
+      // The answer is the last reply with words in it; a closing finish call carries only a note.
+      const text = message.content
         .filter((block) => block.type === "text")
         .map((block) => block.text)
-        .join("\n");
+        .join("\n")
+        .trim();
+      const finish = message.content.find((block) => block.type === "toolCall" && block.name === "finish");
+      const note =
+        finish?.type === "toolCall" && typeof finish.arguments.note === "string" ? finish.arguments.note : "";
+      if (text) item.answer = text;
+      else if (note && !item.answer) item.answer = note;
       usage.input += message.usage.input;
       usage.output += message.usage.output;
       usage.cost += message.usage.cost.total;
@@ -85,6 +116,11 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
     if ((args.prompt === undefined) === (args.prompts === undefined)) throw new Error("Give prompt or prompts");
     const prompts = args.prompt !== undefined ? [args.prompt] : (args.prompts ?? []);
     const profile = args.profile ?? "normal";
+    if (!checker && args.model) {
+      const allowed = agentModels(ctx).map(ref);
+      if (!allowed.includes(args.model))
+        throw new Error(`Agents can use ${allowed.join(", ")}. The user picks this list with /subagents.`);
+    }
     const selected = resolveProfile(
       readConfig(),
       profile,
@@ -153,7 +189,38 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
 
     return ids;
   };
-  if (!process.env.BRUV_DEPTH)
+  if (!process.env.BRUV_DEPTH) {
+    // Listed once per session so the prompt stays the same between turns.
+    let models: string | undefined;
+    pi.on("session_start", (_event, ctx) => {
+      models = describeModels(ctx);
+    });
+    pi.on("before_agent_start", (event) => {
+      if (models) event.systemPromptOptions.sections.agent_models = models;
+    });
+    pi.registerCommand("subagents", {
+      description: "Choose which models agents may use",
+      handler: async (_args, ctx) => {
+        const main = ctx.model && ref(ctx.model);
+        const available = [
+          ...(ctx.model ? [ctx.model] : []),
+          ...ctx.modelRegistry.getAvailable().filter((model) => ref(model) !== main),
+        ];
+        const chosen = new Set(agentModels(ctx).map(ref));
+        const save = "Save";
+        for (;;) {
+          const options = available.map((model) => `${chosen.has(ref(model)) ? "✓" : " "} ${ref(model)}`);
+          const picked = await ctx.ui.select("Models agents may use (pick to switch, then Save)", [save, ...options]);
+          if (picked === undefined) return;
+          if (picked === save) break;
+          const name = picked.slice(2);
+          if (!chosen.delete(name)) chosen.add(name);
+        }
+        saveConfig({ agentModels: [...chosen] });
+        models = describeModels(ctx);
+        ctx.ui.notify(`Agents may use: ${agentModels(ctx).map(ref).join(", ")}.`, "info");
+      },
+    });
     pi.registerTool({
       name: "agent",
       label: "Agent",
@@ -165,5 +232,6 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
         return toolResult({ ids: start(args, ctx) });
       },
     });
+  }
   return start;
 }

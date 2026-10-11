@@ -19,7 +19,8 @@ Disable the old "bruv (not Claude)" provider.
 - `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
 - `/notes` lists the project's notes in `.agents/notes/`. `/notes move` moves a bruv 0.x `wisdom/` folder there, keeping git history.
-- `/status` switches between bruv's one-line footer and Pi's full footer with token and cache details.
+- `/ps` lists this session's jobs and agents. Pick one to read its output or answer, see its worktree and session file, or stop it.
+- `/subagents` picks which of your signed-in models agents may use. The model chooses among them per task; your own model is always allowed and is the default.
 - `/bruv-migrate` brings your sign-in, settings, agent models and sessions over from bruv 0.x after showing what it will copy. It never changes `~/.bruv`.
 - `/bruv-setup` turns on scripting for all tool calls and a quiet start; run `/reload` afterward.
 
@@ -131,7 +132,7 @@ old. Your next prompt also clears finished rows.
 Totals are counted once against the starting commit, including committed and uncommitted edits and new files.
 Titles shorten to leave room for totals and elapsed time.
 The footer shows usage, fast mode, goal, then agent cost, separated by ` · `. Only active parts appear.
-Cost appears only when you are not on a subscription.
+Cost appears only when you are not on a subscription. `cache 42m` counts down the time left on the provider's prompt cache since your model last answered: yellow under 15 minutes, red under 5. Coming back after it expires costs more. Set `cacheTtlMinutes` in `~/.pi/agent/bruv.json` if your provider keeps it longer or shorter than 60 minutes.
 Script results list the tool calls and show plain output. Bash call rows show the first command line, cut to 60 columns.
 Expand a result to see the full script and output.
 When a check finds gaps, the finish result shows a red count and every gap, wrapped to fit,
