@@ -9,10 +9,10 @@ const marks = { running: "↗", done: "✓", failed: "✗", stopped: "■" } as 
 /** Everything about one job or agent, for reading in a dialog. */
 export function details(jobs: Jobs, item: Work) {
   const result = jobs.result(item);
-  const lines = [`${item.id} · ${oneLine(item.title)}`, `${item.status} · ${duration(result.elapsedSeconds)}`];
+  const lines = [`${item.status} · ${duration(result.elapsedSeconds)}`];
   if (item.kind === "agent") {
     if (item.progress) lines.push(`Now: ${item.progress}`);
-    if (item.tokens) lines.push(`Tokens: ${item.tokens}`);
+    if (item.tokens) lines.push(`Tokens: ${item.tokens.toLocaleString()}`);
     if (item.usage?.cost) lines.push(`Cost: $${item.usage.cost.toFixed(2)}`);
   }
   if (item.exitCode !== undefined && item.kind === "job") lines.push(`Exit code: ${item.exitCode}`);

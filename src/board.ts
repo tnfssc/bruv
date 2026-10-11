@@ -64,7 +64,7 @@ export class WorkBoard {
         const tokens = item.tokens ?? (item.usage?.input ?? 0) + (item.usage?.output ?? 0);
         parts.push(`${tokens < 1000 ? tokens : `${Math.round(tokens / 1000)}k`} tokens`);
       }
-      if (!running && item.changes) {
+      if (!running && item.changes?.files) {
         const { added, removed, files } = item.changes;
         parts.push(`+${added} −${removed}`, `${files} files`);
       }
