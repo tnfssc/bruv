@@ -22,6 +22,18 @@ export function outputLines(text: string, expanded: boolean): string[] {
     .flatMap((line) => {
       if (/^==> text \d+\/\d+ <==$/.test(line)) return [];
       const value = json(line);
+      // Promise.allSettled results: show each value or error, not the wrapper.
+      if (
+        Array.isArray(value) &&
+        value.length &&
+        value.every((item) => record(item) && typeof item.status === "string")
+      )
+        return value.flatMap((item) => {
+          const shown =
+            item.status === "fulfilled" ? item.value : `Error: ${String(item.reason?.message ?? item.reason)}`;
+          const text = typeof shown === "string" ? shown : JSON.stringify(shown);
+          return plain(text).trimEnd().split("\n");
+        });
       if (!record(value)) return plain(line).split("\n");
       if (typeof value.output === "string") return plain(value.output).trimEnd().split("\n");
       if (!Array.isArray(value.done) || !Array.isArray(value.running)) return [plain(line)];

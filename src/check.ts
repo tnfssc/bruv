@@ -223,7 +223,7 @@ export function registerCheck(
             prompt: JSON.stringify({ messages, ...(objective ? { goal: objective } : {}), reply, diff }, null, 2),
             model: ctx.model && `${ctx.model.provider}/${ctx.model.id}`,
             thinking: pi.getThinkingLevel(),
-            title: `check · ${report.asked}`,
+            title: "Checking the work",
           },
           ctx,
           true,

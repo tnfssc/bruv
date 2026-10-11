@@ -16,6 +16,13 @@ import { type Config, readConfig, readJson, saveConfig } from "./config";
 
 type Settings = ReturnType<ExtensionAPI["getSettings"]>;
 const SETTINGS = ["defaultProvider", "defaultModel", "defaultThinkingLevel", "theme", "hideThinkingBlock"] as const;
+const LABELS: Record<string, string> = {
+  defaultProvider: "Provider",
+  defaultModel: "Model",
+  defaultThinkingLevel: "Thinking",
+  theme: "Theme",
+  hideThinkingBlock: "Hide thinking",
+};
 const save = (path: string, data: unknown) => writeFileSync(path, `${JSON.stringify(data, null, 2)}\n`);
 const oldHome = () => process.env.BRUV_OLD_HOME ?? join(homedir(), ".bruv");
 
@@ -73,7 +80,9 @@ export async function migrate(ctx: ExtensionContext, agentDir = getAgentDir(), h
   const setup = piSettings.codemode?.mode !== "only" || piSettings.quietStartup === undefined;
   const preview = [
     ...found.signIns.map((provider) => `Sign-in: ${provider}`),
-    ...Object.entries(found.changes).map(([key, value]) => `Setting: ${key} = ${String(value)}`),
+    ...Object.entries(found.changes).map(
+      ([key, value]) => `${LABELS[key] ?? key}: ${value === true ? "on" : String(value)}`,
+    ),
     ...Object.entries(found.profiles ?? {}).map(([name, profile]) => `Agent model (${name}): ${profile.model}`),
     ...(found.sessions.length ? [`Sessions: ${found.sessions.length}, for folders that still exist`] : []),
     ...(setup ? ["Codemode only and a quiet start (same as /bruv-setup)"] : []),

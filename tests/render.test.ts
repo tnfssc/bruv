@@ -17,6 +17,16 @@ test("JSON output becomes plain lines and unknown data stays intact", () => {
   });
   expect(outputLines(wait, false)).toHaveLength(2);
   expect(outputLines(wait, true)).toHaveLength(4);
+  const settled = outputLines(
+    JSON.stringify([
+      { status: "fulfilled", value: "value-781" },
+      { status: "rejected", reason: { message: "reason-782" } },
+    ]),
+    false,
+  );
+  expect(settled).toHaveLength(2);
+  expect(settled[0]).toBe("value-781");
+  expect(settled[1]).toContain("reason-782");
   for (const value of ['{"unknown":3}', '{"done":[null],"running":[]}', "{bad"])
     expect(outputLines(value, false)).toEqual([value]);
 });

@@ -526,15 +526,23 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
   a check stops that child and discards its result so the updated request is checked.
 - `checkWork` defaults to true in bruv.json. `/check on|off` saves the setting.
 - Finish waits for one child launched through `agents.ts`, using the parent model and thinking.
-  Its board title is `check · <first request line>`. Abort stops the child.
+  Its board title is "Checking the work". Abort stops the child. Checkers are not counted as agents
+  in the receipt or the run summary.
 - The child gets checker.md as its system prompt and a JSON payload: verbatim user messages
-  for this run, active goal objective and criteria when present, final reply text, and diff stat plus patch since the snapshot, capped at 40,000
+  for this run, active goal objective and criteria when present, the final reply (text written after the last
+  working step, so a table followed by a closing line counts as one reply), and diff stat plus patch since the snapshot, capped at 40,000
   characters. It starts a fresh session without extensions, skills, context files, prompt
   templates or MCP servers. Built-in read, bash, grep, find and ls tools let it try the result.
-- Parse its final fenced JSON verdict and checked/gaps lists. Pass accepts finish. Gaps return
+- Parse its final fenced JSON verdict and checked/skipped/gaps lists. Skipped holds checks the user's own
+  instructions ruled out (such as running the app without installing); they show as `– … (not checked)`,
+  never as gaps. An answer to the agent's own question continues the same request: its messages and
+  snapshot carry over. Pass accepts finish. Gaps return
   to the model to fix them. After two checker rounds per user message, accept the next finish
   with the latest gaps saved. Failed checks accept finish and report that the check did not complete.
 - Checker jobs count as seen because finish consumes their result; settle does not send it again.
+- In the terminal, unless the user set `hideThinkingBlock: false`, requests omit the reasoning summary.
+  Summaries only became a title row and a blank row per step; the activity line already says what is
+  happening, and the reasoning itself is still kept for the model.
 
 ### 3.9 Async questions (`src/questions.ts`)
 
@@ -543,7 +551,8 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
   returns `{ id }` at once.
 - In the terminal it opens no dialog, so typing is never blocked. Open questions show above the
   input with numbered choices. The next typed message (not a command) answers the oldest one: it
-  reaches the model as "Answer to q1 (question): text", and a bare number picks that choice.
+  shows and reaches the model as one row, "q1: answer" (the model asked it, so the ID is enough),
+  and a bare number picks that choice.
 - In T3 and other RPC clients it opens their question prompt without awaiting it (`select` with
   choices, else `input`). The answer arrives as a `bruv-answer` message: steer if the run is
   active, otherwise next turn.
