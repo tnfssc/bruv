@@ -655,8 +655,7 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
   a timer even when work is idle. The next prompt clears finished rows. Truncate each row to
   terminal width using theme colors.
 - Animate every 100 ms while work runs; stop the animation timer when idle or disposed. Clear the widget
-  and footer at shutdown. `status.ts` sets one `bruv` footer key: usage, fast, goal, then agent
-  cost, separated by ` · `. Hide missing parts without removing the others.
+  and footer at shutdown. `status.ts` sets one `bruv` footer key: usage, fast and goal, separated by ` · `. Hide missing parts without removing the others.
 - Codemode rendering (`src/render.ts`) lists nested calls from Pi records and live events, followed
   by plain output. Unwrap bash and wait JSON, strip ANSI, and cap collapsed output at 12 screen
   lines with an omitted-line count. Expansion shows the full script and output available from Pi.
@@ -703,7 +702,8 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
     spinner; retries and compaction show their message on a line above. Pi reserves three rows
     for the input, so blank rows go above it and the input sits on the footer. Keep an editor
     installed by another extension.
-  - One-line footer: folder and branch, the `bruv` status, cost only when not on a subscription,
+  - One-line footer: folder and branch, the `bruv` status, the session's cost at API prices with agents
+    included (`api` suffix on a subscription),
     context percent (warning above 70, error above 90), other statuses as a count, and model and
     thinking level on the right. Narrow terminals drop parts in a fixed order. `cache 42m` counts
     down from the last answer by the current model (from saved messages after a restart) using

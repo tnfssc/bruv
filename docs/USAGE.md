@@ -131,8 +131,8 @@ and stopped counts. The board hides when nothing is running and no finish is les
 old. Your next prompt also clears finished rows.
 Totals are counted once against the starting commit, including committed and uncommitted edits and new files.
 Titles shorten to leave room for totals and elapsed time.
-The footer shows usage, fast mode, goal, then agent cost, separated by ` · `. Only active parts appear.
-Cost appears only when you are not on a subscription. `cache 42m` counts down the time left on the provider's prompt cache since your model last answered: yellow under 15 minutes, red under 5. Coming back after it expires costs more. Set `cacheTtlMinutes` in `~/.pi/agent/bruv.json` if your provider keeps it longer or shorter than 60 minutes.
+The footer shows usage, fast mode and goal, separated by ` · `. Only active parts appear.
+The footer's dollar amount is what the session, agents included, would cost at API prices (`api` marks it on a subscription, where it is only a price); it moves after each model response. `cache 42m` counts down the time left on the provider's prompt cache since your model last answered: yellow under 15 minutes, red under 5. Coming back after it expires costs more. Set `cacheTtlMinutes` in `~/.pi/agent/bruv.json` if your provider keeps it longer or shorter than 60 minutes.
 Script results list the tool calls and show plain output. Bash call rows show the first command line, cut to 60 columns.
 Expand a result to see the full script and output.
 When a check finds gaps, the finish result shows a red count and every gap, wrapped to fit,
