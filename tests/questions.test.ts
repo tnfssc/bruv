@@ -16,7 +16,7 @@ test("ask returns while the dialog is open and steers its answer into the run", 
   const afterTool = Promise.withResolvers<void>();
   const answering = Promise.withResolvers<void>();
   let choices: string[] = [];
-  const app = await sdk([registerQuestions], {
+  const app = await sdk([(pi) => void registerQuestions(pi)], {
     select: (_question, options) => {
       choices = options;
       return dialog.promise;
@@ -67,7 +67,7 @@ test.each(["answer-781", undefined])(
   async (value) => {
     const dialog = Promise.withResolvers<string | undefined>();
     let opened = false;
-    const app = await sdk([registerQuestions], {
+    const app = await sdk([(pi) => void registerQuestions(pi)], {
       input: () => {
         opened = true;
         return dialog.promise;
@@ -100,7 +100,7 @@ test.each(["answer-781", undefined])(
 );
 
 test("ask fails without UI", async () => {
-  const app = await sdk([registerQuestions]);
+  const app = await sdk([(pi) => void registerQuestions(pi)]);
   try {
     await app.session.bindExtensions({ mode: "print" });
     app.faux.setResponses([
@@ -122,10 +122,15 @@ test("ask fails without UI", async () => {
 test("in the terminal a question waits above the input and the next typed message answers it", async () => {
   const widgets: (string[] | undefined)[] = [];
   const app = await sdk(
-    [registerQuestions],
+    [(pi) => void registerQuestions(pi)],
     {
       setWidget: ((_key: string, content: unknown) => {
-        widgets.push(Array.isArray(content) ? content : undefined);
+        const theme = { fg: (_color: string, text: string) => text };
+        widgets.push(
+          typeof content === "function"
+            ? (content({}, theme) as { render(width: number): string[] }).render(120)
+            : undefined,
+        );
       }) as never,
       select: () => {
         throw new Error("no dialog in the terminal");

@@ -116,20 +116,25 @@ test("finish checks only the request, final reply and changes using the parent m
     app.faux.setResponses([
       () => {
         app.change();
-        return fauxAssistantMessage("private-parent-781");
+        // Narration written while working is not part of the reply.
+        return fauxAssistantMessage([fauxText("private-parent-781"), fauxToolCall("codemode", { code: "text(1)" })], {
+          stopReason: "toolUse",
+        });
       },
+      fauxAssistantMessage("table-781"),
       finish(),
     ]);
     const request = "request-781\n  preserve spacing é";
     await app.session.prompt(request);
-    expect(app.faux.state.callCount).toBe(2);
+    expect(app.faux.state.callCount).toBe(3);
     expect(app.children()).toHaveLength(1);
     expect(app.children()[0]).toMatchObject({ kind: "agent", status: "done", seen: true });
     const args = app.args();
     const prompt = JSON.parse(args.at(-1) as string);
     expect(Object.keys(prompt).sort()).toEqual(["diff", "messages", "reply"]);
     expect(prompt.messages).toEqual([request]);
-    expect(prompt.reply).toBe("reply-781");
+    // A reply that spans a text-only message and the closing finish message reaches the checker whole.
+    expect(prompt.reply).toBe("table-781\n\nreply-781");
     expect(prompt.diff).toContain("-before-781");
     expect(prompt.diff).toContain("+after-781");
     expect(prompt.diff).toContain("+new-781");
@@ -338,7 +343,7 @@ test("RPC receives the receipt in the finish result once and the next model requ
     expect(app.receipts()[0]).toMatchObject({
       asked: "receipt-request-781",
       calls: 1,
-      agents: 1,
+      agents: 0,
       checked: ["used-781"],
     });
     expect(

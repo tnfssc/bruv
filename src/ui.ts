@@ -45,7 +45,11 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
     setStatus(
       ctx,
       "agents",
-      [...jobs.items.values()].some((item) => item.kind === "agent") ? `agents $${cost.toFixed(2)}` : undefined,
+      // On a subscription the dollars are only a price-list estimate; the week % says what it cost.
+      [...jobs.items.values()].some((item) => item.kind === "agent") &&
+        !(ctx.model && ctx.modelRegistry.isUsingOAuth(ctx.model))
+        ? `agents $${cost.toFixed(2)}`
+        : undefined,
     );
   };
   const waiting = new Map<string, string[]>();

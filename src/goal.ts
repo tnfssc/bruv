@@ -131,7 +131,7 @@ export function registerGoal(pi: ExtensionAPI, hasFinished = () => false) {
               ...(goal.gaps?.length ? [`Next: ${goal.gaps.join("; ")}`] : []),
               ...(goal.blocker ? [`Blocker: ${goal.blocker}`] : []),
             ]
-          : ["No goal is set."];
+          : ["No goal yet. Start one with /goal <what should be done>."];
         ctx.ui.notify(lines.join("\n"), "info");
         return;
       }

@@ -47,12 +47,19 @@ export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: Extensio
       const elapsed = seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m${seconds % 60}s`;
       const parts = (["scripts", "calls", "agents"] as const)
         .filter((key) => data[key] > 0)
-        .map((key) => `${data[key]} ${key}`);
+        .map((key) => `${data[key]} ${data[key] === 1 ? key.slice(0, -1) : key}`);
       if (seconds >= 1) parts.push(elapsed);
       if (data.weekPercent !== undefined && data.weekPercent > 0) parts.push(`+${data.weekPercent}% week`);
       return [` ${truncateToWidth(theme.fg("dim", parts.join(" · ")), Math.max(0, width - 1))}`];
     },
   }));
+  // Reasoning summaries become one title row plus a blank row per step in the terminal, and the
+  // activity line already says what is happening. Skip them unless the user chose to see thinking.
+  pi.on("before_provider_request", (event, ctx) => {
+    if (ctx.mode !== "tui" || pi.getSettings().hideThinkingBlock === false) return;
+    const reasoning = (event.payload as { reasoning?: { summary?: unknown } }).reasoning;
+    if (reasoning && typeof reasoning === "object") delete reasoning.summary;
+  });
   pi.on("message_end", (event) => {
     if (event.message.role !== "assistant") return;
     const message = dropDraft(event.message);
@@ -93,7 +100,9 @@ export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: Extensio
     return {
       scripts: finished.scripts,
       calls: finished.calls,
-      agents: [...jobs.items.values()].filter((item) => item.kind === "agent" && !finished.agents.has(item.id)).length,
+      agents: [...jobs.items.values()].filter(
+        (item) => item.kind === "agent" && !item.checker && !finished.agents.has(item.id),
+      ).length,
       elapsedSeconds: Math.floor((Date.now() - finished.start) / 1000),
       ...(delta > 0 ? { weekPercent: delta } : {}),
     };

@@ -14,10 +14,13 @@ const parameters = Type.Object({
 const output = Type.Object({
   ...parameters.properties,
   gaps: Type.Optional(Type.Array(Type.String())),
+  /** Whether the message that called finish also had a written reply. */
+  replied: Type.Optional(Type.Boolean()),
   receipt: Type.Optional(
     Type.Object({
       asked: Type.String(),
       checked: Type.Array(Type.String()),
+      skipped: Type.Optional(Type.Array(Type.String())),
       gaps: Type.Array(Type.String()),
       failed: Type.Boolean(),
       changes: Type.Optional(Type.Object({ files: Type.Number(), added: Type.Number(), removed: Type.Number() })),
@@ -26,6 +29,7 @@ const output = Type.Object({
       agents: Type.Number(),
       elapsedSeconds: Type.Number(),
       weekPercent: Type.Optional(Type.Number()),
+      notes: Type.Optional(Type.Array(Type.String())),
     }),
   ),
 });
@@ -76,8 +80,16 @@ export function registerFinish(
         finished = true;
         const report = args.status === "done" ? check?.report() : undefined;
         const counts = summary?.(ctx);
+        const last = [...ctx.sessionManager.getBranch()]
+          .reverse()
+          .find((entry) => entry.type === "message" && entry.message.role === "assistant");
+        const replied =
+          last?.type === "message" &&
+          last.message.role === "assistant" &&
+          last.message.content.some((block) => block.type === "text" && block.text.trim() !== "");
         const data: FinishResult = {
           ...args,
+          replied,
           ...(report && counts ? { receipt: { ...structuredClone(report), ...counts } } : {}),
         };
         return { ...result(data), terminate: true };

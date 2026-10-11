@@ -1,18 +1,26 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { wrapTextWithAnsi } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { toolResult } from "./jobs";
 
 type Question = { id: string; question: string; choices?: string[] };
 
-/** What the user's typed reply means for the oldest open question: a choice number picks that choice. */
+/** The user's typed reply as an answer to the oldest open question: a choice number picks that choice. */
 export function answerText(question: Question, text: string) {
   const index = /^\s*(\d+)\s*$/.exec(text)?.[1];
   const choice = index && question.choices?.[Number(index) - 1];
-  return `Answer to ${question.id} (${question.question}): ${choice || text}`;
+  // The model asked the question itself, so its ID is enough context and keeps the row short.
+  return `${question.id}: ${choice || text.trim()}`;
 }
 
-export function registerQuestions(pi: ExtensionAPI) {
+export interface Answers {
+  /** Whether this input is the user answering an open question (a continuation, not a new request). */
+  isAnswer(text: string): boolean;
+}
+
+export function registerQuestions(pi: ExtensionAPI): Answers {
   let nextId = 0;
+  const answers = new Set<string>();
   // Terminal questions wait above the input; the user answers by typing a normal message.
   let open: Question[] = [];
   let ui: ExtensionContext["ui"] | undefined;
@@ -20,10 +28,16 @@ export function registerQuestions(pi: ExtensionAPI) {
     ui?.setWidget(
       "bruv-questions",
       open.length
-        ? open.flatMap((item) => [
-            ` ? ${item.id} · ${item.question}`,
-            ...(item.choices ?? []).map((choice, index) => `     ${index + 1}. ${choice}`),
-          ])
+        ? (_tui, theme) => ({
+            invalidate() {},
+            render: (width) =>
+              open.flatMap((item) =>
+                [
+                  ` ${theme.fg("warning", "?")} ${theme.fg("dim", item.id)} ${item.question}`,
+                  ...(item.choices ?? []).map((choice, index) => `   ${theme.fg("accent", `${index + 1}.`)} ${choice}`),
+                ].flatMap((line) => wrapTextWithAnsi(line, Math.max(1, width))),
+              ),
+          })
         : undefined,
       { placement: "aboveEditor" },
     );
@@ -43,7 +57,9 @@ export function registerQuestions(pi: ExtensionAPI) {
     if (!open.length || event.source !== "interactive" || event.text.startsWith("/")) return { action: "continue" };
     const question = open.shift() as Question;
     show();
-    return { action: "transform", text: answerText(question, event.text) };
+    const text = answerText(question, event.text);
+    answers.add(text);
+    return { action: "transform", text };
   });
   pi.registerTool({
     name: "ask",
@@ -86,4 +102,5 @@ export function registerQuestions(pi: ExtensionAPI) {
       return toolResult({ id });
     },
   });
+  return { isAnswer: (text) => answers.has(text) };
 }

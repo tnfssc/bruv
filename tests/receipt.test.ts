@@ -56,7 +56,7 @@ test("receipt frames counts, five checks and every gap within terminal width", a
   }
 });
 
-test("finish wraps every gap, colors the count, and expands the raw note", async () => {
+test("finish wraps every gap and colors the count without repeating the note", async () => {
   initTheme("dark", false);
   const app = await sdk([registerFinishRender]);
   try {
@@ -83,7 +83,7 @@ test("finish wraps every gap, colors the count, and expands the raw note", async
     expect(rows.every((row) => visibleWidth(row) <= 40)).toBe(true);
     for (const value of ["case-781", "tail-781", "case-782", "second-782"]) expect(rows.join("\n")).toContain(value);
     expect(rows.join("\n")).not.toContain(note);
-    expect(render("done", true).join("\n")).toContain(note);
+    expect(render("done", true).join("\n")).not.toContain(note);
     for (const status of ["need_you", "blocked"]) expect(render(status, false, []).join("\n")).toContain(note);
     expect(render("need_you", false, [])[0]).not.toBe(render("blocked", false, [])[0]);
   } finally {

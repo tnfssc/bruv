@@ -37,6 +37,8 @@ export interface Work extends Omit<Result, "output" | "elapsedSeconds"> {
   outputStream: WriteStream;
   outputDone: Promise<undefined | Error>;
   detached: boolean;
+  /** A fresh check of finished work, not an agent the model started. */
+  checker?: boolean;
   seen: boolean;
   stopped: boolean;
   progress?: string;

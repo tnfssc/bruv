@@ -24,8 +24,13 @@ export function usageFooter(data: PlanUsage) {
   return `${text}${usingCredits(data) ? " · using credits" : ""}`;
 }
 export function usageLines(data: PlanUsage, now = Date.now()) {
+  const credits = data.credits.unlimited
+    ? "unlimited credits"
+    : data.credits.balance === null
+      ? ""
+      : `${Math.round(Number(data.credits.balance)).toLocaleString()} credits`;
   return [
-    `Plan: ${data.plan_type}`,
+    [`Plan: ${data.plan_type}`, credits].filter(Boolean).join(" · "),
     ...windows(data).map((w) => {
       const filled = Math.min(10, Math.max(0, Math.round(w.used_percent / 10)));
       const minutes = Math.max(0, Math.ceil((w.reset_at * 1000 - now) / 60000));
@@ -38,10 +43,17 @@ export function usageLines(data: PlanUsage, now = Date.now()) {
         minute: "2-digit",
         hour12: false,
       });
-      return `${name(w)}: ${Math.round(w.used_percent)}% [${"#".repeat(filled)}${"-".repeat(10 - filled)}] · resets ${reset}, in ${relative}`;
+      const label = name(w);
+      return `${label[0].toUpperCase()}${label.slice(1)}: ${Math.round(w.used_percent)}% [${"#".repeat(filled)}${"-".repeat(10 - filled)}] resets ${reset} (in ${relative})`;
     }),
-    `Limits reached: ${data.rate_limits.limit_reached ? "yes" : "no"} · Using credits: ${usingCredits(data) ? "yes" : "no"}`,
-    `Credits: ${data.credits.unlimited ? "unlimited" : data.credits.balance === null ? "unavailable" : Math.round(Number(data.credits.balance)).toLocaleString()}`,
+    // Only worth a line when it is true.
+    ...(data.rate_limits.limit_reached || usingCredits(data)
+      ? [
+          [data.rate_limits.limit_reached && "Limit reached", usingCredits(data) && "using credits"]
+            .filter(Boolean)
+            .join(" · "),
+        ]
+      : []),
   ];
 }
 function fromHeaders(headers: Record<string, string>): PlanUsage | undefined {

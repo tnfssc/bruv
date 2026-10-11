@@ -42,6 +42,7 @@ export function registerFast(pi: ExtensionAPI, agentDir = getAgentDir()) {
       saveConfig({ fast: next, fastConfirmed: confirmed }, agentDir);
       preferred = next;
       show(ctx);
+      ctx.ui.notify(next ? "Fast mode on: quicker replies, more quota." : "Fast mode off.", "info");
     },
   });
   pi.on("before_provider_request", (event, ctx) => {

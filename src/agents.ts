@@ -5,6 +5,7 @@ import type { ExtensionAPI, ExtensionContext, JsonAgentSessionEvent } from "@ear
 import { type Static, Type } from "typebox";
 import { type Config, readConfig, saveConfig } from "./config";
 import { type Jobs, toolResult, type Work, workDirectory } from "./jobs";
+import { scriptLabel } from "./render";
 import { createWorktree, worktreeChanges } from "./worktree";
 
 export function resolveProfile(
@@ -53,7 +54,14 @@ export function agentParser(jobs: Jobs, item: Work) {
   const event = (line: string) => {
     if (!line.trim()) return;
     const value = JSON.parse(line) as JsonAgentSessionEvent | { type: "session" };
-    if (value.type === "tool_execution_start") item.progress = value.toolName;
+    // Agents work in scripts; the script's opening comment says what they are doing.
+    if (value.type === "tool_execution_start")
+      item.progress =
+        value.toolName === "codemode"
+          ? scriptLabel((value.args as { code?: unknown } | undefined)?.code)
+          : value.toolName === "finish"
+            ? undefined
+            : value.toolName;
     if (value.type === "tool_execution_end") item.progress = undefined;
     if (value.type === "message_update")
       item.tokens = usage.input + usage.output + value.usage.input + value.usage.output;
@@ -139,6 +147,7 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
         args.title ? (prompts.length > 1 ? `${args.title} ${index + 1}` : args.title) : prompt.slice(0, 100),
         directory,
       );
+      item.checker = checker;
       const sessionPath = join(sessions, `${item.id}.jsonl`);
       item.sessionPath = sessionPath;
       const parser = agentParser(jobs, item);
@@ -209,11 +218,14 @@ export function registerAgents(pi: ExtensionAPI, jobs: Jobs, isFast: () => boole
         const chosen = new Set(agentModels(ctx).map(ref));
         const save = "Save";
         for (;;) {
-          const options = available.map((model) => `${chosen.has(ref(model)) ? "✓" : " "} ${ref(model)}`);
+          const options = available.map(
+            (model) =>
+              `${chosen.has(ref(model)) ? "✓" : " "} ${ref(model)}${model.cost.input ? ` · $${model.cost.input}/$${model.cost.output} per M` : ""}`,
+          );
           const picked = await ctx.ui.select("Models agents may use (pick to switch, then Save)", [save, ...options]);
           if (picked === undefined) return;
           if (picked === save) break;
-          const name = picked.slice(2);
+          const name = picked.slice(2).split(" · ")[0];
           if (!chosen.delete(name)) chosen.add(name);
         }
         saveConfig({ agentModels: [...chosen] });

@@ -58,10 +58,11 @@ export class WorkBoard {
           : item.status === "failed"
             ? "error"
             : "dim";
-      const parts = [this.theme.fg(color, mark), item.id];
+      const parts = [`${this.theme.fg(color, mark)} ${item.id}`];
       if (running && item.kind === "agent") {
         if (item.progress) parts.push(oneLine(item.progress));
-        parts.push(`${item.tokens ?? (item.usage?.input ?? 0) + (item.usage?.output ?? 0)} tokens`);
+        const tokens = item.tokens ?? (item.usage?.input ?? 0) + (item.usage?.output ?? 0);
+        parts.push(`${tokens < 1000 ? tokens : `${Math.round(tokens / 1000)}k`} tokens`);
       }
       if (!running && item.changes) {
         const { added, removed, files } = item.changes;
@@ -69,7 +70,7 @@ export class WorkBoard {
       }
       parts.push(this.theme.fg("dim", duration(this.jobs.summary(item).elapsedSeconds)));
       parts.splice(
-        2,
+        1,
         0,
         truncateToWidth(oneLine(item.title), Math.max(0, width - visibleWidth(parts.join(" · ")) - 3)),
       );

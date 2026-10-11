@@ -9,19 +9,22 @@ import { readConfig, saveConfig } from "./config";
 import type { GoalControl } from "./goal";
 import type { Jobs } from "./jobs";
 import { notesDir } from "./notes";
+import type { Answers } from "./questions";
 
 const exec = promisify(execFile);
 type Snapshot = { cwd: string; head: string; tree: string };
 export type CheckReport = {
   asked: string;
   checked: string[];
+  /** Checks the user's own instructions ruled out, such as running the app without installing. */
+  skipped?: string[];
   gaps: string[];
   failed: boolean;
   changes?: { files: number; added: number; removed: number };
   /** Notes this work changed, relative to the repository. */
   notes?: string[];
 };
-type Verdict = { verdict: "pass" | "gaps"; checked: string[]; gaps: string[] };
+type Verdict = { verdict: "pass" | "gaps"; checked: string[]; skipped?: string[]; gaps: string[] };
 export type Checker = ReturnType<typeof registerCheck>;
 
 async function git(cwd: string, args: string[], signal?: AbortSignal, env = process.env) {
@@ -65,6 +68,8 @@ function verdict(answer: string): Verdict {
     !value.checked.every((s: unknown) => typeof s === "string") ||
     !Array.isArray(value.gaps) ||
     !value.gaps.every((s: unknown) => typeof s === "string") ||
+    (value.skipped !== undefined &&
+      (!Array.isArray(value.skipped) || !value.skipped.every((s: unknown) => typeof s === "string"))) ||
     (value.verdict === "pass" ? value.gaps.length !== 0 : value.gaps.length === 0)
   )
     throw new Error("Checker returned an invalid verdict.");
@@ -77,6 +82,7 @@ export function registerCheck(
   start: StartAgents,
   agentDir = getAgentDir(),
   goal?: GoalControl,
+  answers?: Answers,
 ) {
   let enabled = true;
   let running = false;
@@ -111,6 +117,16 @@ export function registerCheck(
   pi.on("input", (event, ctx) => {
     const received = ++revision;
     if (child) jobs.stop(child);
+    // An answer to the agent's question continues the same request: keep its start point.
+    if (answers?.isAnswer(event.text) && messages.length && base) {
+      running = true;
+      messages.push(event.text);
+      reply = "";
+      rounds = 0;
+      report = undefined;
+      accepted = false;
+      return;
+    }
     if (!running) messages = [];
     running = true;
     messages.push(event.text);
@@ -134,11 +150,17 @@ export function registerCheck(
     return capture;
   });
   pi.on("message_end", (event) => {
-    if (event.message.role === "assistant")
-      reply = event.message.content
-        .filter((block) => block.type === "text")
-        .map((block) => block.text)
-        .join("\n");
+    if (event.message.role !== "assistant") return;
+    // The final reply can span several messages (a table, then a closing line with finish), so
+    // collect text written after the last working step. Text written while working is narration.
+    const working = event.message.content.some((block) => block.type === "toolCall" && block.name !== "finish");
+    const text = event.message.content
+      .filter((block) => block.type === "text")
+      .map((block) => block.text)
+      .join("\n")
+      .trim();
+    if (working) reply = "";
+    else if (text) reply = `${reply}\n\n${text}`.trim().slice(-12000);
   });
   pi.registerCommand("check", {
     description: "Show or save whether a fresh agent checks finished work.",
@@ -219,6 +241,7 @@ export function registerCheck(
           if (item.status !== "done") throw new Error(`Checker ${item.status}: ${jobs.result(item).output}`);
           const result = verdict(item.answer ?? "");
           report.checked = result.checked;
+          report.skipped = result.skipped;
           report.gaps = result.gaps;
           goal?.checked(result, ctx);
           if (result.verdict === "gaps")

@@ -54,8 +54,13 @@ function draw(result: Args[0], options: Args[1], theme: Theme): Component | unde
           options.expanded && note
           ? [theme.fg("dim", note)]
           : []
-        : [theme.fg("warning", data.status === "need_you" ? "Waiting for you" : "Blocked"), ...(note ? [note] : [])];
-  const extra = options.expanded && note && (data.receipt || gaps.length) ? [theme.fg("dim", note)] : [];
+        : [
+            theme.fg("warning", data.status === "need_you" ? "Waiting for you" : "Blocked"),
+            // The reply above usually says the same; show the note only when there was none.
+            ...(note && (!data.replied || options.expanded) ? [note] : []),
+          ];
+  // With gaps the note is the same list written for the model; only a receipt's note adds anything.
+  const extra = options.expanded && note && data.receipt ? [theme.fg("dim", note)] : [];
   return {
     invalidate() {},
     render(width) {
