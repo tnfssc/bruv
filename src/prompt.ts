@@ -13,6 +13,8 @@ export function registerPrompt(pi: ExtensionAPI): void {
     history = `\n- Earlier sessions in this project are saved as JSONL files in \`${ctx.sessionManager.getSessionDir()}\`. When the user refers to past work that isn't in this conversation, search them with rg.`;
   });
   pi.on("before_agent_start", (event) => {
+    // Pi lists every skill once read or bash is active. Leave them out; the model looks them up when needed.
+    event.systemPromptOptions.skills = [];
     const text = (pi.getActiveTools().includes("finish") ? guidance : withoutFinish) + history;
     event.systemPromptOptions.sections.bruv = pi.getActiveTools().includes("codemode")
       ? `${text}\n\n${examples}`
