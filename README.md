@@ -85,4 +85,4 @@ bunx biome ci . && bunx tsc --noEmit && bun test
 pi install /path/to/checkout
 ```
 
-Local installs load directly from the checkout. Read [docs/REWRITE.md](docs/REWRITE.md) before changing a module.
+Local installs load directly from the checkout. Read [.agents/notes/rewrite.md](.agents/notes/rewrite.md) before changing a module.

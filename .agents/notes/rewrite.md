@@ -246,7 +246,9 @@ bruv/
     checker.md            fresh check guidance, under 130 words
   tests/
   docs/
-    REWRITE.md            this file
+    USAGE.md
+  .agents/notes/
+    rewrite.md            this file
   .github/workflows/ci.yml
   AGENTS.md
   README.md
@@ -806,8 +808,8 @@ For development: `pi install /path/to/bruv/checkout` (local packages load from t
 
 ### 3.17 Repo rules for agents (`AGENTS.md`, under 60 lines)
 
-- Read `docs/REWRITE.md` (until merged) and the module you touch.
-- Module line budgets are in `docs/REWRITE.md` 3.1. Over budget needs a reason in the PR.
+- Read `.agents/notes/rewrite.md` (until merged) and the module you touch.
+- Module line budgets are in `.agents/notes/rewrite.md` 3.1. Over budget needs a reason in the PR.
 - Team notes go in `.agents/notes/` (3.18). Scratch goes in `.tmp/` (ignored).
 - Tests follow 3.14. No wording assertions.
 - Plain English. Banned in code identifiers, comments and user-facing text: owner, ownership,
