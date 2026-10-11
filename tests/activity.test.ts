@@ -102,6 +102,8 @@ test("the footer stays on one line at every width", async () => {
       getAvailableProviderCount: () => 1,
       onBranchChange: () => () => {},
     };
+    expect(compactFooter(ctx, data, ctx.ui.theme, 160, 1.234).join("")).toContain("1.23");
+    expect(compactFooter(ctx, data, ctx.ui.theme, 160, 0).join("")).not.toContain("$");
     for (const width of [0, 1, 10, 30, 60, 80, 140]) {
       const lines = compactFooter(ctx, data, ctx.ui.theme, width, 0.5);
       expect(lines.length).toBeLessThanOrEqual(1);

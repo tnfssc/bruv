@@ -41,16 +41,6 @@ export function registerUI(pi: ExtensionAPI, jobs: Jobs) {
         },
         { placement: "aboveEditor" },
       );
-    const cost = [...jobs.items.values()].reduce((sum, item) => sum + (item.usage?.cost ?? 0), 0);
-    setStatus(
-      ctx,
-      "agents",
-      // On a subscription the dollars are only a price-list estimate; the week % says what it cost.
-      [...jobs.items.values()].some((item) => item.kind === "agent") &&
-        !(ctx.model && ctx.modelRegistry.isUsingOAuth(ctx.model))
-        ? `agents $${cost.toFixed(2)}`
-        : undefined,
-    );
   };
   const waiting = new Map<string, string[]>();
   const working = (context: ExtensionContext) => {

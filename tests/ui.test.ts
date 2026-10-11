@@ -93,7 +93,7 @@ test.each(["tui", "rpc", "print"] as const)("board follows mode and stops its ti
       expect([...statuses.keys()]).toEqual(["bruv"]);
       expect(statuses.get("bruv")?.split(" · ").slice(0, 3)).toEqual(["usage", "fast", "goal"]);
       setStatus(runner.createContext(), "fast", undefined);
-      expect(statuses.get("bruv")?.split(" · ")).toHaveLength(3);
+      expect(statuses.get("bruv")?.split(" · ")).toHaveLength(2);
       app.faux.setResponses([fauxAssistantMessage("ready")]);
       await app.session.prompt("next");
       expect(board).toBeUndefined();

@@ -7,6 +7,7 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { readConfig } from "./config";
+import { agentTotals, type Jobs } from "./jobs";
 
 const oneLine = (text: string) => text.replace(/\s+/g, " ").trim();
 
@@ -62,7 +63,8 @@ export function compactFooter(
       percent != null && percent > 90 ? "error" : percent != null && percent > 70 ? "warning" : "dim",
       `${label}${percent == null ? "?" : `${Math.round(percent)}%`}`,
     );
-  const price = cost && !subscription ? `$${cost.toFixed(2)}` : "";
+  // What the work would cost at API prices, agents included. On a subscription it is only that: a price.
+  const price = cost >= 0.005 ? `$${cost.toFixed(2)}${subscription ? " api" : ""}` : "";
   const extra = others ? `+${others} status` : "";
   const name = oneLine(model?.id ?? "no model");
   const thinking = model?.reasoning ? ` · ${ctx.thinkingLevel ?? "off"}` : "";
@@ -85,7 +87,7 @@ export function compactFooter(
 }
 
 /** One-line footer with the cache countdown, and no startup banner. */
-export function registerFooter(pi: ExtensionAPI) {
+export function registerFooter(pi: ExtensionAPI, jobs?: Jobs) {
   // When each provider/model last answered; the cache countdown starts there.
   const answered = new Map<string, number>();
   const key = (model: { provider: string; id?: string; model?: string }) =>
@@ -108,7 +110,7 @@ export function registerFooter(pi: ExtensionAPI) {
         render: (width) => {
           const model = ctx.model;
           const cache = model ? cacheBadge(answered.get(key(model)), ttl, Date.now(), theme) : "";
-          return compactFooter(ctx, data, theme, width, cost(), cache);
+          return compactFooter(ctx, data, theme, width, cost() + (jobs ? agentTotals(jobs).cost : 0), cache);
         },
         invalidate() {},
         dispose() {

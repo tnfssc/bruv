@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
 import { readJson } from "./config";
+import { agentTotals, type Jobs } from "./jobs";
 import { setStatus } from "./status";
 
 type Window = { used_percent: number; window_minutes: number; reset_at: number };
@@ -82,7 +83,7 @@ function fromHeaders(headers: Record<string, string>): PlanUsage | undefined {
     },
   };
 }
-export function registerUsage(pi: ExtensionAPI, agentDir = getAgentDir()) {
+export function registerUsage(pi: ExtensionAPI, agentDir = getAgentDir(), jobs?: Jobs) {
   const path = join(agentDir, "bruv-usage.json");
   const sessions = new Map<string, { data?: PlanUsage; warned: Set<string> }>();
   const state = (ctx: ExtensionContext) => {
@@ -150,7 +151,12 @@ export function registerUsage(pi: ExtensionAPI, agentDir = getAgentDir()) {
         tokens += usage?.totalTokens ?? 0;
         cost += usage?.cost.total ?? 0;
       }
-      ctx.ui.notify([...lines, `Session: ${tokens.toLocaleString()} tokens · $${cost.toFixed(2)}`].join("\n"), "info");
+      const agents = jobs ? agentTotals(jobs) : { tokens: 0, cost: 0 };
+      const total = `This session: ${(tokens + agents.tokens).toLocaleString()} tokens · $${(cost + agents.cost).toFixed(2)} at API prices`;
+      const split = agents.tokens
+        ? ` (agents ${agents.tokens.toLocaleString()} tokens · $${agents.cost.toFixed(2)})`
+        : "";
+      ctx.ui.notify([...lines, total + split].join("\n"), "info");
     },
   });
   return (ctx: ExtensionContext) => state(ctx).data;

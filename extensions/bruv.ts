@@ -34,7 +34,7 @@ export default function bruv(pi: ExtensionAPI): void {
   registerPs(pi, jobs);
   activity.scripts = registerRender(pi);
   registerEditor(pi);
-  registerFooter(pi);
+  registerFooter(pi, jobs);
   registerFinishRender(pi);
   registerNotifications(pi);
   registerSettle(pi, jobs, () => hasFinished());
@@ -44,7 +44,7 @@ export default function bruv(pi: ExtensionAPI): void {
   const goal = registerGoal(pi, () => hasFinished());
   const answers = registerQuestions(pi);
   const check = registerCheck(pi, jobs, startAgents, undefined, goal, answers);
-  const usage = registerUsage(pi);
+  const usage = registerUsage(pi, undefined, jobs);
   const summary = registerTurn(pi, jobs, usage);
   registerCodexCompaction(pi);
   const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);

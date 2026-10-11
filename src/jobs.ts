@@ -267,6 +267,18 @@ export class Jobs {
   }
 }
 
+/** Tokens and API-price cost of every agent this session started, checkers included. */
+export function agentTotals(jobs: Jobs) {
+  let tokens = 0;
+  let cost = 0;
+  for (const item of jobs.items.values()) {
+    if (item.kind !== "agent" || !item.usage) continue;
+    tokens += item.usage.input + item.usage.output;
+    cost += item.usage.cost;
+  }
+  return { tokens, cost };
+}
+
 export function workDirectory(ctx: ExtensionContext) {
   return join(ctx.sessionManager.getSessionDir(), "bruv", ctx.sessionManager.getSessionId());
 }
