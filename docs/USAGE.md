@@ -105,7 +105,7 @@ A notice offers the import once when Codex settings are found.
 | `job_stop` | Stop a job or agent and its child processes. |
 | `agent` | Start one or several agents, with optional git worktrees. |
 | `goal_update` | Record goal progress or a blocker. |
-| `ask` | Ask you a question while work continues; your answer arrives as a message. |
+| `ask` | Ask you something only you can decide, with its pick, while work continues. In the terminal the question waits above the input and your next message answers it (a number picks a choice). |
 
 ## How background work behaves
 

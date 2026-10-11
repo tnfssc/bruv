@@ -538,11 +538,16 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 
 ### 3.9 Async questions (`src/questions.ts`)
 
-- `ask({ question, choices? })` opens a dialog without awaiting it (`ctx.ui.select` with choices,
-  otherwise `ctx.ui.input`) and returns `{ id }` at once.
-- When answered, the answer is delivered as a `bruv-answer` custom message: steer if the run is
+- `ask({ question, choices? })` is listed in the codemode tools, and the prompt says to use it only
+  for choices that are really the user's, with the model's pick, while other work goes on. It
+  returns `{ id }` at once.
+- In the terminal it opens no dialog, so typing is never blocked. Open questions show above the
+  input with numbered choices. The next typed message (not a command) answers the oldest one: it
+  reaches the model as "Answer to q1 (question): text", and a bare number picks that choice.
+- In T3 and other RPC clients it opens their question prompt without awaiting it (`select` with
+  choices, else `input`). The answer arrives as a `bruv-answer` message: steer if the run is
   active, otherwise next turn.
-- Unanswered questions do not make settle wait. Their answers arrive as described above.
+- Unanswered questions do not make settle wait.
 - Without UI (`ctx.hasUI` false, print mode), `ask` fails with "No one can answer questions in this
   mode."
 - **Verify first** (V3): a non-awaited dialog works during a run in the TUI and over RPC in T3.
