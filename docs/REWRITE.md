@@ -223,6 +223,7 @@ bruv/
     render.ts             readable codemode calls and output (~200)
     activity.ts           one line per run of tool calls, click to open (~200)
     editor.ts             borderless input with the spinner in the prompt mark (~90)
+    compact.ts            compact transcript spacing on listed Pi versions, /bruv-compact (~340)
     footer.ts             one-line footer, cache countdown, quiet start (~130)
     home.ts               bruv logo behind an empty chat until the first message (~100)
     ps.ts                 /ps: read and stop jobs and agents (~70)
@@ -714,6 +715,19 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
     `quietStartup` so Pi skips its resource list.
   - `finish` draws no call line, only its result. Reports and summaries are indented like the
     transcript; collapsed reports start with a colored status mark.
+- Compact spacing (`src/compact.ts`), as in bruv 0.x. Pi has no hooks for transcript spacing, so on
+  the Pi versions listed in `SUPPORTED` bruv changes how the running Pi draws, never its files:
+  - No blank row above replies, tool lines, reports and entries that follow another message. An
+    answer after a tool line or report keeps one blank row.
+  - User messages lose Pi's shaded padding rows and get one plain row above and below, shared
+    between user messages next to each other. Pi's spacer before a user message is dropped.
+  - Shown thinking runs become one block with no blank lines between plain prose (lists, quotes,
+    tables and code keep theirs). Hidden thinking takes no rows. The saved message is unchanged.
+  - Ctrl+O shows no "Tool output" status line.
+  - The input needs one row, not Pi's three, when the bruv input is installed.
+  - Clicks still reach the right row of every moved item.
+  - On by default. `/bruv-compact on|off` saves `compact` in `bruv.json` and switches live; off
+    puts Pi's own drawing back. Other Pi versions keep Pi's spacing and say so once at startup.
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,
   bounded, seam, authority).
 
@@ -797,8 +811,8 @@ For development: `pi install /path/to/bruv/checkout` (local packages load from t
 - Tests follow 3.14. No wording assertions.
 - Plain English. Banned in code identifiers, comments and user-facing text: owner, ownership,
   authority, seam, projection, durable, bounded, canonical, opaque, admission, "not proof".
-- No prototype patching of Pi. If Pi lacks a hook, open an upstream issue and work around it in the
-  extension.
+- Never change Pi's files. If Pi lacks a hook, work around it in the extension. Changing how a
+  running Pi draws is allowed only in `src/compact.ts` (3.12), on the Pi versions it lists.
 - Squash-merge PRs. Commit messages: one imperative line, optional short body.
 
 ### 3.18 Project notes (`src/notes.ts`, `prompts/notes.md`)

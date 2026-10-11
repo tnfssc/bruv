@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Bring back the compact transcript from 0.x: no blank row between replies, tool lines and reports, one plain row around user messages, tight thinking, no "Thinking..." rows when thinking is hidden, no Ctrl+O status line, and a one-row input. It changes how Pi 1.1.0 draws while bruv runs, never Pi's files, and keeps Pi's spacing on other versions. `/bruv-compact off` turns it off live.
+
 - Bring the website back to its terminal style: the page and its demos are drawn as terminal cells, with an HTML view for everyone else. New demos show bruv 1.0 keeping a run going, a fresh agent finding gaps before the receipt, and work running in the background. The site serves `install.sh` again.
 
 - Show a large bruv logo in the middle of an empty chat, with a light band that sweeps across it every few seconds. It goes away with the first message and hides on small terminals.
