@@ -13,9 +13,18 @@ const previousDir = process.env.PI_CODING_AGENT_DIR;
 const previousCodex = process.env.CODEX_HOME;
 process.env.CODEX_HOME = join(dir, "codex");
 process.env.PI_CODING_AGENT_DIR = dir;
-const app = await sdk([bruv], undefined, dir, "rpc", [
-  { path: join(dir, "AGENTS.md"), content: "fixture-context-781" },
-]);
+const skill = join(dir, "fixture-skill-492");
+mkdirSync(skill);
+writeFileSync(join(skill, "SKILL.md"), "---\nname: fixture-skill-492\ndescription: Fixture skill.\n---\n");
+const app = await sdk(
+  [bruv],
+  undefined,
+  dir,
+  "rpc",
+  [{ path: join(dir, "AGENTS.md"), content: "fixture-context-781" }],
+  undefined,
+  [skill],
+);
 const { session, faux, resourceLoader } = app;
 afterAll(async () => {
   await app.close();
@@ -51,13 +60,15 @@ test("setup confirms, merges settings, and preserves other keys", async () => {
   });
 });
 
-test("guidance extends the prompt while preserving Pi context files", async () => {
+test("guidance extends the prompt, keeps Pi context files and leaves out the skill list", async () => {
+  expect(resourceLoader.getSkills().skills.map((item) => item.name)).toContain("fixture-skill-492");
   const size = session.systemPrompt.length;
   faux.setResponses([
     (context) => {
       const system = context.messages.find((message) => message.role === "system");
       expect(system?.sections?.bruv?.length).toBeGreaterThan(0);
       expect(JSON.stringify(system)).toContain("fixture-context-781");
+      expect(JSON.stringify(system)).not.toContain("fixture-skill-492");
       expect(session.systemPrompt.length).toBeGreaterThan(size);
       return fauxAssistantMessage("781");
     },
