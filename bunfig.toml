@@ -1,2 +1,4 @@
 [test]
+# Root tests only; the site has its own browser tests (cd site && bun run test).
+root = "./tests"
 preload = ["./tests/preload.ts"]

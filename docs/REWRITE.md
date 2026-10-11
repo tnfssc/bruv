@@ -164,7 +164,7 @@ Release notes: `docs/releases/release-v0.16.20.md` is 895 lines, 263 of them the
 | D2 | In T3, bruv runs through **T3's built-in Pi driver**. claude-compat and the "bruv (not Claude)" provider are deleted. |
 | D3 | Scripting runs on **Pi codemode**. bruv's own Bun `execute` runtime is deleted. |
 | D4 | v1 keeps: background jobs, subagents with optional worktrees, goal mode, keep-going, `/fast`, Codex native compaction, async questions. |
-| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, the cross-session history search tool (the prompt names the session folder and the model searches it with rg), cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, this repo's old `wisdom/` folder (the idea returns as project notes, 3.18), `site/`, release tooling, perf harnesses. |
+| D5 | Deleted: voice (`live`, `native/`), `remote`, `web`, `claude-compat`, `t3`, the cross-session history search tool (the prompt names the session folder and the model searches it with rg), cache-affine compaction, `/shake`, `/mode`, attention snooze/watch, diagnostics, task-lifecycle journal, the disk-backed session manager, this repo's old `wisdom/` folder (the idea returns as project notes, 3.18), `site/` (later brought back in its terminal style with 1.0 content and demos; see `site/README.md`), release tooling, perf harnesses. |
 | D6 | One large PR from `rewrite/pi-package` into `develop`. Git history keeps everything deleted; nothing is archived as copies. |
 | D7 | Prompts and all text use plain, short, normal English. Not "grug" grammar. |
 
@@ -224,6 +224,7 @@ bruv/
     activity.ts           one line per run of tool calls, click to open (~200)
     editor.ts             borderless input with the spinner in the prompt mark (~90)
     footer.ts             one-line footer, cache countdown, quiet start (~130)
+    home.ts               bruv logo behind an empty chat until the first message (~100)
     ps.ts                 /ps: read and stop jobs and agents (~70)
     turn.ts               turn counts and non-context summary (~100)
     receipt.ts            completion receipt text (~50)
@@ -232,6 +233,7 @@ bruv/
     config.ts             reads ~/.pi/agent/bruv.json (~60)
   scripts/
     install.sh            installs Pi and bruv; the old 0.x install URL points here
+  site/                   the website, a Bun workspace (site/README.md)
   prompts/
     system.md
     codemode.md           guidance + examples appended to the codemode tool description
@@ -754,8 +756,12 @@ into the new tree "for reference".
 ### 3.15 CI
 
 One workflow, `.github/workflows/ci.yml`, on pull requests and pushes to `develop`:
-`bun install --frozen-lockfile`, `bunx biome ci .`, `bunx tsc --noEmit`, `bun test`. Linux only.
+`bun install --frozen-lockfile`, `bunx biome ci .`, `bun run check` (root and site types), `bun test`,
+`bun run test:site` (site checks that need no browser). Linux only.
 No release workflow: users install from git (3.16).
+Root `bun test` runs `tests/` only. The site's browser checks need Chromium and run locally (`site/README.md`).
+The repo root stays the Pi package: Pi clones git packages and installs at the root, so site packages are all dev
+dependencies.
 
 ### 3.16 Install and migration
 

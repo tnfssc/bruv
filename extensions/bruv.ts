@@ -11,6 +11,7 @@ import { registerFinish } from "../src/finish";
 import { registerFinishRender } from "../src/finish-render";
 import { registerFooter } from "../src/footer";
 import { registerGoal } from "../src/goal";
+import { registerHome } from "../src/home";
 import { Jobs, registerJobs } from "../src/jobs";
 import { registerMigrate } from "../src/migrate";
 import { registerNotes } from "../src/notes";
@@ -35,6 +36,7 @@ export default function bruv(pi: ExtensionAPI): void {
   activity.scripts = registerRender(pi);
   registerEditor(pi);
   registerFooter(pi, jobs);
+  registerHome(pi);
   registerFinishRender(pi);
   registerNotifications(pi);
   registerSettle(pi, jobs, () => hasFinished());

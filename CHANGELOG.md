@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Bring the website back to its terminal style: the page and its demos are drawn as terminal cells, with an HTML view for everyone else. New demos show bruv 1.0 keeping a run going, a fresh agent finding gaps before the receipt, and work running in the background. The site serves `install.sh` again.
+
+- Show a large bruv logo in the middle of an empty chat, with a light band that sweeps across it every few seconds. It goes away with the first message and hides on small terminals.
+
 - Leave the skill list out of the main agent's prompt, as in 0.x. Skills still load, `/skill:name` still works, and the model can look them up.
 
 - Tell the main agent to hand off separate pieces in worktrees and work elsewhere or wait. Update the script example to request worktrees.
