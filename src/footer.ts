@@ -86,7 +86,7 @@ export function compactFooter(
   return [truncateToWidth(theme.fg("dim", name), width, "…")];
 }
 
-/** One-line footer with the cache countdown, and no startup banner. */
+/** One-line footer with the cache countdown. */
 export function registerFooter(pi: ExtensionAPI, jobs?: Jobs) {
   // When each provider/model last answered; the cache countdown starts there.
   const answered = new Map<string, number>();
@@ -98,7 +98,6 @@ export function registerFooter(pi: ExtensionAPI, jobs?: Jobs) {
       if (entry.type === "message" && entry.message.role === "assistant" && entry.message.stopReason !== "error")
         answered.set(key(entry.message), entry.message.timestamp);
     if (ctx.mode !== "tui") return;
-    ctx.ui.setHeader(() => ({ render: () => [], invalidate() {} }));
     const cost = costTracker(ctx);
     const ttl = readConfig().cacheTtlMinutes ?? 60;
     ctx.ui.setFooter((tui, theme, data) => {
