@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Leave the skill list out of the main agent's prompt, as in 0.x. Skills still load, `/skill:name` still works, and the model can look them up.
+
 - Tell the main agent to hand off separate pieces in worktrees and work elsewhere or wait. Update the script example to request worktrees.
 
 - Keep the board short: show running work, the latest three finishes and finishes from the last 30 seconds. Fold older results into counts and hide the board after work goes quiet.

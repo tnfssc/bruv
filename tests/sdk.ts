@@ -10,6 +10,7 @@ export async function sdk(
   mode: Pi.ExtensionContext["mode"] = "rpc",
   agentsFiles: { path: string; content: string }[] = [],
   api?: string,
+  skillPaths: string[] = [],
 ) {
   mkdirSync(".tmp", { recursive: true });
   const dir = mkdtempSync(resolve(".tmp/sdk-"));
@@ -34,6 +35,7 @@ export async function sdk(
     extensionFactories: [Pi.createCodemodeExtension(), ...extensionFactories],
     noExtensions: true,
     noSkills: true,
+    additionalSkillPaths: skillPaths,
     noThemes: true,
     noPromptTemplates: true,
     noContextFiles: true,
