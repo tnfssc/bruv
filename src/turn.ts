@@ -1,3 +1,4 @@
+import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth } from "@earendil-works/pi-tui";
 import type { Jobs } from "./jobs";
@@ -12,6 +13,28 @@ export type TurnSummary = {
 };
 const week = (usage?: PlanUsage) =>
   [usage?.rate_limits.primary, usage?.rate_limits.secondary].find((w) => w?.window_minutes === 10080);
+type Assistant = Extract<AgentMessage, { role: "assistant" }>;
+function phase(block: Assistant["content"][number]) {
+  if (block.type !== "text" || !block.textSignature) return undefined;
+  try {
+    return (JSON.parse(block.textSignature) as { phase?: string }).phase;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * GPT models sometimes write a "commentary" draft and then a "final_answer" that says the same
+ * thing in one message. Keep the final answer so the reply shows once.
+ */
+export function dropDraft(message: Assistant): Assistant | undefined {
+  const blocks = message.content;
+  if (blocks.some((block) => block.type === "toolCall") || !blocks.some((block) => phase(block) === "final_answer"))
+    return undefined;
+  const content = blocks.filter((block) => phase(block) !== "commentary");
+  return content.length === blocks.length ? undefined : { ...message, content };
+}
+
 export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: ExtensionContext) => PlanUsage | undefined) {
   let run:
     | { start: number; scripts: number; calls: number; agents: Set<string>; week: ReturnType<typeof week> }
@@ -30,6 +53,11 @@ export function registerTurn(pi: ExtensionAPI, jobs: Jobs, usage: (ctx: Extensio
       return [` ${truncateToWidth(theme.fg("dim", parts.join(" · ")), Math.max(0, width - 1))}`];
     },
   }));
+  pi.on("message_end", (event) => {
+    if (event.message.role !== "assistant") return;
+    const message = dropDraft(event.message);
+    return message && { message };
+  });
   let hasReceipt = false;
   const reset = () => {
     hasReceipt = false;

@@ -5,7 +5,7 @@ import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
 import { initTheme } from "@earendil-works/pi-coding-agent";
 import { registerAgents } from "../src/agents";
 import { Jobs, registerJobs } from "../src/jobs";
-import { registerTurn, type TurnSummary } from "../src/turn";
+import { dropDraft, registerTurn, type TurnSummary } from "../src/turn";
 import type { PlanUsage } from "../src/usage";
 import { sdk } from "./sdk";
 
@@ -140,4 +140,22 @@ test("one summary counts scripts, nested calls and agents across continuations w
     if (previous === undefined) delete process.env.BRUV_PI_COMMAND;
     else process.env.BRUV_PI_COMMAND = previous;
   }
+});
+
+test("a commentary draft before a final answer in the same message is dropped", () => {
+  const text = (phase: string, value: string) => ({
+    type: "text" as const,
+    text: value,
+    textSignature: JSON.stringify({ v: 1, id: value, phase }),
+  });
+  const message = (content: unknown[]) =>
+    ({ role: "assistant", content, stopReason: "stop" }) as unknown as Parameters<typeof dropDraft>[0];
+  const both = message([text("commentary", "draft"), text("final_answer", "answer")]);
+  expect(dropDraft(both)?.content).toEqual([text("final_answer", "answer")]);
+  expect(dropDraft(message([text("final_answer", "answer")]))).toBeUndefined();
+  expect(dropDraft(message([text("commentary", "working")]))).toBeUndefined();
+  expect(
+    dropDraft(message([text("commentary", "draft"), text("final_answer", "x"), { type: "toolCall", id: "1" }])),
+  ).toBeUndefined();
+  expect(dropDraft(message([{ type: "text", text: "plain", textSignature: "not json" }]))).toBeUndefined();
 });
