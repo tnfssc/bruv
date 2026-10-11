@@ -1,6 +1,0 @@
-{
-  "original": "/home/tnfssc/.bruv/upstream-preparation/t3-ui-history-2644",
-  "originalDistMatchesPriorPinnedParentTree": true,
-  "treeEntries": 6730,
-  "gitOutput": "mise ERROR error parsing config file: ~/.bruv/worktrees/bruv-5442693331ce-task_b83a5c50/mise.toml\nmise ERROR Config files in ~/.bruv/worktrees/bruv-5442693331ce-task_b83a5c50/mise.toml are not trusted.\nTrust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.\nmise ERROR Run with --verbose or MISE_VERBOSE=1 for more information\nc1310b2429625e704ef20a175e8b2847f58589ba\naeee9df0337bcfa35230e8cd69816815a54e648f\n"
-}

@@ -1,0 +1,1 @@
+The goal is still active. Take the next useful step toward the objective and criteria, following recent user steering. Fix any gaps from the fresh check. When ready, write your reply and call finish with done; only a passing check completes the goal. Report a specific blocker if you cannot go on. You do not need to record progress to keep working.

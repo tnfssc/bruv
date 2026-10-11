@@ -1,9 +1,0 @@
-# Herdr integration
-
-Herdr starts root interactive pane with HERDR_ENV=1, HERDR_SOCKET_PATH, and HERDR_PANE_ID? Bruv reports pane agent state over local Herdr socket. No config or installed Pi extension needed. Child workers do not report. Bruv spots them through BRUV_SUBAGENT_TYPE or positive BRUV_SUBAGENT_DEPTH. Non-UI modes do not report, even with inherited Herdr environment. Bad depth means non-root.
-
-Code lives in src/herdr-agent-state.ts. It is separate type-safe version of Herdr-managed Pi integration v8 at ~/.pi/agent/extensions/herdr-agent-state.ts. Managed source stays read-only. Bruv does not load or change it. Version keeps pane.report_agent_session, pane.report_agent, and pane.release_agent, monotonic sequence numbers, and session path/ID refs. Installed Herdr 0.7.5 accepts any agent label, but built-in display and detection enum has pi, not bruv. Native bruv identity does not work end to end. Reports use source herdr:bruv with compatible agent identity pi until Herdr documents native bruv support.
-
-State comes from Pi lifecycle events. It does not poll processes. agent_start reports working. agent_settled reports idle only when ctx.isIdle() is true. Blocking UI prompts and herdr:blocked custom events report blocked. Root-owned background jobs and subagents keep pane working while running, even after foreground turn settles. If completion starts another agent run, normal event reports working again. Session reload, new, resume, and fork replace report owner without releasing pane. Only quit shutdown releases it.
-
-Socket failure stays quiet and does not stop bruv. Reports stay in wire sequence order. They use short bounded timeouts, retry once, and merge pending state. Startup report stays async. On quit, Pi waits for same bounded drain before exit. Pane, session, and blocked-message fields are cleaned and length-limited before send.

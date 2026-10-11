@@ -1,23 +1,10 @@
 {
-  "name": "bruv-landing",
+  "name": "bruv-site",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun scripts/build.ts",
-    "preview": "bun scripts/preview.ts",
-    "assets": "bun scripts/captures/extract-cells.ts",
-    "test": "bun test scripts/build.test.ts captures/settings/capture.test.ts scripts/scroll.test.ts demos.test.ts scripts/html-animation.test.ts scripts/startup.test.ts scripts/install.test.ts scripts/install-ui.test.ts scripts/readme-gifs.test.ts && bun scripts/validate.ts",
-    "test:scroll": "bun test scripts/scroll.test.ts && bun scripts/validate.ts",
-    "test:animation": "bun scripts/animation.ts",
-    "test:html": "bun test scripts/html-animation.test.ts",
-    "test:install": "bun test scripts/install.test.ts scripts/install-ui.test.ts",
-    "gifs": "bun scripts/readme-gifs.ts"
-  },
-  "devDependencies": {
-    "@axe-core/playwright": "4.11.1",
-    "playwright-core": "1.63.0"
-  },
-  "dependencies": {
-    "ghostty-web": "0.4.0"
+    "build": "node scripts/build.mjs",
+    "frames": "node scripts/frames.mjs \"$FRAMES\" scripts/plan.json replay-frames.json",
+    "record": "node scripts/record.mjs \"$CHROME\" http://127.0.0.1:8791/replay.html .frames 39 20 && ffmpeg -loglevel error -y -framerate 20 -i .frames/f%04d.png -vf \"scale=1200:-2:flags=lanczos,format=yuv420p\" -c:v libx264 -crf 18 -preset slow -movflags +faststart assets/done.mp4 && ffmpeg -loglevel error -y -framerate 20 -i .frames/f%04d.png -vf \"fps=8,scale=800:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle\" assets/done.gif && rm -rf .frames"
   }
 }

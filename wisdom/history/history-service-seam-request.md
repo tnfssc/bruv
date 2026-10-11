@@ -1,3 +1,0 @@
-# Request: expose a history service seam
-
-Searchable history needs a small integration seam from the main runtime. Please expose the active session's authoritative entry stream or a `HistoryService` with scoped search and read methods. It must preserve stable entry IDs and parent links, active-leaf selection, compaction and branch metadata, and custom `die.shake.v1` exclusions. Do not pass a flattened current-context array. Do not grant cross-session access by default. The owner of searchable history will build validation, bounded paging, refs, provenance, and execute-tool routing on this seam.

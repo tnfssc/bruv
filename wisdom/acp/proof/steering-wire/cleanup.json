@@ -1,8 +1,0 @@
-{
-  "port": 18788,
-  "listenerOrOwnedProcesses": "none",
-  "browser": "completed exit 0",
-  "server": "killed SIGTERM",
-  "privateStateRemoved": true,
-  "otherWorkersTouched": false
-}
