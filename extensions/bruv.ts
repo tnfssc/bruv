@@ -5,6 +5,7 @@ import { registerCheck } from "../src/check";
 import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
+import { registerCompact } from "../src/compact";
 import { registerEditor } from "../src/editor";
 import { registerFast } from "../src/fast";
 import { registerFinish } from "../src/finish";
@@ -35,6 +36,7 @@ export default function bruv(pi: ExtensionAPI): void {
   registerPs(pi, jobs);
   activity.scripts = registerRender(pi);
   registerEditor(pi);
+  registerCompact(pi);
   registerFooter(pi, jobs);
   registerHome(pi);
   registerFinishRender(pi);

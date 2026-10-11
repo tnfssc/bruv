@@ -24,6 +24,8 @@ export interface Config {
   agentModels?: string[];
   /** Minutes the provider keeps the prompt cache, for the footer countdown. Default 60. */
   cacheTtlMinutes?: number;
+  /** Compact transcript spacing (/bruv-compact). Default on. */
+  compact?: boolean;
 }
 
 export function readJson<T>(path: string, fallback: T): T {

@@ -23,6 +23,7 @@ Disable the old "bruv (not Claude)" provider.
 - `/subagents` picks which of your signed-in models agents may use. The model chooses among them per task; your own model is always allowed and is the default.
 - `/bruv-migrate` brings your sign-in, settings, agent models and sessions over from bruv 0.x after showing what it will copy. It never changes `~/.bruv`.
 - `/bruv-setup` turns on scripting for all tool calls and a quiet start; run `/reload` afterward.
+- `/bruv-compact` turns the compact transcript on or off; `/bruv-compact on` and `/bruv-compact off` also work. It is on by default and switches right away. On Pi versions bruv doesn't know yet, Pi's own spacing is used.
 
 Goal examples:
 

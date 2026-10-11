@@ -5,6 +5,8 @@ type Indicator = Parameters<CustomEditor["setWorkingStatusIndicator"]>[0];
 const PROMPT = ""; // Nerd Font chevron
 const TOP = "\u0000bruv-top";
 const BOTTOM = "\u0000bruv-bottom";
+/** Rows Pi keeps for the input. src/compact.ts lowers it to one. */
+export const inputRows = { min: 3 };
 
 /** Borderless input. The prompt mark turns into the working spinner; Pi keeps all editing and keys. */
 export class CompactEditor extends CustomEditor {
@@ -53,8 +55,10 @@ export class CompactEditor extends CustomEditor {
       this.indicator && this.indicator.kind !== "working"
         ? [truncateToWidth(this.indicator.renderInBorder(width), width)]
         : [];
-    // Pi gives the input at least three rows. Fill from the top so the input sits on the footer.
-    const fill = Array<string>(Math.max(0, 3 - status.length - input.length - (lines.length - bottom - 1))).fill("");
+    // Fill Pi's reserved rows from the top so the input sits on the footer.
+    const fill = Array<string>(
+      Math.max(0, inputRows.min - status.length - input.length - (lines.length - bottom - 1)),
+    ).fill("");
     this.top = fill.length + status.length;
     return [...fill, ...status, ...input, ...lines.slice(bottom + 1)];
   }
