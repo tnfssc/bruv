@@ -212,6 +212,7 @@ bruv/
     fast.ts               /fast priority tier (~100)
     usage.ts              ChatGPT plan limits and session use (~150)
     codex-compaction.ts   Codex native compaction (~350)
+    reasoning.ts          GPT-6 Codex thinking changes that keep the prompt cache (~150)
     codex-import.ts       confirmed Codex settings import (~200)
     migrate.ts            confirmed bruv 0.x import (~170)
     notes.ts              project notes: prompt, index, receipt line, moving wisdom/ (~150)
@@ -232,6 +233,9 @@ bruv/
     finish-render.ts      finish results and receipt frame (~100)
     notify.ts             desktop alerts and terminal title (~100)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
+    developer.ts          time reminder; bruv's own messages as developer messages (~60)
+    dictate.ts            /dictate: record, transcribe with the ChatGPT sign-in, type the text (~140)
+    patch.ts              apply_patch in the Codex format (~350)
   scripts/
     install.sh            installs Pi and bruv; the old 0.x install URL points here
   site/                   the website, a Bun workspace (site/README.md)
@@ -243,6 +247,7 @@ bruv/
     goal.md
     goal-continue.md
     review.md             review guidance, under 150 words
+    pi-docs.md            map of Pi's docs, read on demand instead of sitting in the prompt
     checker.md            fresh check guidance, under 130 words
   tests/
   docs/
@@ -397,6 +402,7 @@ so scripts get objects, not text.
 | `job_stop` | codemode | `{ id: string }` | `{ id, status }` |
 | `ask` | deferred, namespace `bruv_questions` | `{ question: string, choices?: string[] }` | `{ id }` |
 | `goal_update` | codemode | `{ status: "active" \| "blocked", progress?: string, blocker?: string }` | `{ goal }` |
+| `apply_patch` | codemode, and declared as a freeform tool on OpenAI models | `{ input: string }` (Codex patch) | `{ added, modified, deleted, moved? }`; text is the Codex summary |
 
 `Summary`: `{ id, kind: "job" \| "agent", title, status, startedAt, elapsedSeconds, outputPath, worktree? }`.
 `Result`: `Summary` plus `exitCode?`, `output` (last 4,000 chars), and for agents `answer` (final

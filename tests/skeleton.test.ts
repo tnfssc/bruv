@@ -60,13 +60,18 @@ test("setup confirms, merges settings, and preserves other keys", async () => {
   });
 });
 
-test("guidance extends the prompt, keeps Pi context files and leaves out the skill list", async () => {
+test("guidance replaces Pi's opening, keeps Pi context files and leaves out the skill list", async () => {
   expect(resourceLoader.getSkills().skills.map((item) => item.name)).toContain("fixture-skill-492");
   const size = session.systemPrompt.length;
   faux.setResponses([
     (context) => {
       const system = context.messages.find((message) => message.role === "system");
-      expect(system?.sections?.bruv?.length).toBeGreaterThan(0);
+      expect(system?.sections?.preamble?.length).toBeGreaterThan(0);
+      // Pi's tool list, general rules and docs list give way to bruv's guidance and the tools' own rules.
+      expect(Object.keys(system?.sections ?? {})).not.toContainAnyValues(["tools", "rules", "docs"]);
+      expect(system?.sections?.tool_rules?.length).toBeGreaterThan(0);
+      const file = session.sessionManager.getSessionFile();
+      if (file) expect(system?.sections?.preamble).toContain(file);
       expect(JSON.stringify(system)).toContain("fixture-context-781");
       expect(JSON.stringify(system)).not.toContain("fixture-skill-492");
       expect(session.systemPrompt.length).toBeGreaterThan(size);

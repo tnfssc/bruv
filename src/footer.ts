@@ -1,4 +1,5 @@
 import { basename } from "node:path";
+import type { Model, Usage } from "@earendil-works/pi-ai";
 import type {
   ExtensionAPI,
   ExtensionContext,
@@ -32,13 +33,22 @@ function costTracker(ctx: ExtensionContext) {
   };
 }
 
-/** Time left on the provider's prompt cache, counted from the last answer from this model. */
-export function cacheBadge(last: number | undefined, ttlMinutes: number, now: number, theme: Theme) {
+/** Time left on the provider's prompt cache, counted from the last answer from this model, and how much of that answer's prompt was read from it. */
+export function cacheBadge(last: number | undefined, ttlMinutes: number, now: number, theme: Theme, hit?: number) {
   if (last === undefined) return "";
   const left = last + ttlMinutes * 60_000 - now;
   if (left <= 0) return theme.fg("error", "cache expired");
   const minutes = Math.ceil(left / 60_000);
-  return theme.fg(minutes <= 5 ? "error" : minutes <= 15 ? "warning" : "dim", `cache ${minutes}m`);
+  const read = hit === undefined ? "" : `${Math.round(hit * 100)}% · `;
+  return theme.fg(minutes <= 5 ? "error" : minutes <= 15 ? "warning" : "dim", `cache ${read}${minutes}m`);
+}
+
+/** Minutes the provider keeps this model's prompt cache: the user's setting, then the model's own, then a guess. */
+export function cacheTtl(model: Model<string>, configured: number | undefined) {
+  if (configured) return configured;
+  if (model.promptCache?.short) return model.promptCache.short / 60;
+  // Codex keeps Luna's cache for about five minutes and the larger models' for about an hour.
+  return /luna/i.test(model.id) ? 5 : 60;
 }
 
 export function compactFooter(
@@ -89,17 +99,21 @@ export function compactFooter(
 /** One-line footer with the cache countdown. */
 export function registerFooter(pi: ExtensionAPI, jobs?: Jobs) {
   // When each provider/model last answered; the cache countdown starts there.
-  const answered = new Map<string, number>();
+  const answered = new Map<string, { at: number; hit?: number }>();
+  const hit = (usage: Usage) => {
+    const prompt = usage.input + usage.cacheRead + usage.cacheWrite;
+    return prompt ? usage.cacheRead / prompt : undefined;
+  };
   const key = (model: { provider: string; id?: string; model?: string }) =>
     `${model.provider}/${model.id ?? model.model}`;
   pi.on("session_start", (_event, ctx) => {
     answered.clear();
     for (const entry of ctx.sessionManager.getBranch())
       if (entry.type === "message" && entry.message.role === "assistant" && entry.message.stopReason !== "error")
-        answered.set(key(entry.message), entry.message.timestamp);
+        answered.set(key(entry.message), { at: entry.message.timestamp, hit: hit(entry.message.usage) });
     if (ctx.mode !== "tui") return;
     const cost = costTracker(ctx);
-    const ttl = readConfig().cacheTtlMinutes ?? 60;
+    const configured = readConfig().cacheTtlMinutes;
     ctx.ui.setFooter((tui, theme, data) => {
       const stop = data.onBranchChange(() => tui.requestRender());
       // The countdown moves by the minute; nothing else redraws an idle screen.
@@ -108,7 +122,9 @@ export function registerFooter(pi: ExtensionAPI, jobs?: Jobs) {
       return {
         render: (width) => {
           const model = ctx.model;
-          const cache = model ? cacheBadge(answered.get(key(model)), ttl, Date.now(), theme) : "";
+          const last = model && answered.get(key(model));
+          const cache =
+            model && last ? cacheBadge(last.at, cacheTtl(model, configured), Date.now(), theme, last.hit) : "";
           return compactFooter(ctx, data, theme, width, cost() + (jobs ? agentTotals(jobs).cost : 0), cache);
         },
         invalidate() {},
@@ -121,6 +137,10 @@ export function registerFooter(pi: ExtensionAPI, jobs?: Jobs) {
   });
   pi.on("message_end", (event) => {
     if (event.message.role === "assistant" && event.message.stopReason !== "error")
-      answered.set(key(event.message), Date.now());
+      answered.set(key(event.message), { at: Date.now(), hit: hit(event.message.usage) });
   });
+  // Codex ignores the output cap on Pi's cache warming requests, so a warm-up would be a full, paid reply.
+  pi.on("cache_warming_decision", (_event, ctx) =>
+    ctx.model?.api === "openai-codex-responses" ? { action: "stop" } : undefined,
+  );
 }

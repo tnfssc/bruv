@@ -3,31 +3,65 @@ import { arch, platform, release } from "node:os";
 import { calculateCost, type Model, type Usage } from "@earendil-works/pi-ai";
 import {
   type CompactionEntry,
+  type CompactionResult,
+  compact,
   convertToLlm,
   type ExtensionAPI,
   type ExtensionContext,
+  type SessionBeforeCompactEvent,
 } from "@earendil-works/pi-coding-agent";
+import { priorityUsage } from "./fast";
 
-type Item = { type: "compaction"; id: string; encrypted_content: string };
-type Details = { strategy: "codex-native"; version: 1; provider: string; model: string; item: Item };
+type Item = { type: "compaction"; id?: string; encrypted_content: string };
+type Details = {
+  strategy: "codex-native";
+  version: 1;
+  provider: string;
+  model: string;
+  baseUrl?: string;
+  item: Item;
+};
 type Capture = {
   model: Model<string>;
   payload: Record<string, unknown>;
   headers?: Record<string, string | null>;
 };
 const summary =
-  "Earlier messages were saved by Codex. Continue from the recent messages. If details are missing, ask the user.";
+  "Earlier messages were saved by Codex. Continue from the recent messages. If you need details from before, search this session's file, named in the system prompt.";
 const record = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
 const isItem = (value: unknown): value is Item =>
   record(value) &&
   value.type === "compaction" &&
-  typeof value.id === "string" &&
+  (value.id === undefined || typeof value.id === "string") &&
   typeof value.encrypted_content === "string" &&
   value.encrypted_content.length > 0;
+// The backend may also name the item compaction_summary; replay always sends it as compaction.
+const asItem = (value: unknown): Item | undefined => {
+  if (!record(value) || (value.type !== "compaction" && value.type !== "compaction_summary")) return;
+  const item = {
+    type: "compaction",
+    ...(value.id === undefined ? {} : { id: value.id }),
+    encrypted_content: value.encrypted_content,
+  };
+  return isItem(item) ? item : undefined;
+};
+const isCompaction = (value: unknown) =>
+  record(value) && (value.type === "compaction" || value.type === "compaction_summary");
 
 export function codexResponsesUrl(baseUrl: string) {
   const base = (baseUrl.trim() || "https://chatgpt.com/backend-api").replace(/\/+$/, "");
   return base.endsWith("/codex/responses") ? base : `${base}${base.endsWith("/codex") ? "" : "/codex"}/responses`;
+}
+
+/** The ChatGPT account in a Codex sign-in token, if it has one. */
+export function codexAccountId(token: string): string | undefined {
+  try {
+    const claims = JSON.parse(Buffer.from(token.split(".")[1] ?? "", "base64url").toString("utf8"));
+    const id = claims["https://api.openai.com/auth"]?.chatgpt_account_id;
+    return typeof id === "string" && id ? id : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 async function headersFor(captured: Record<string, string | null>, model: Model<string>, ctx: ExtensionContext) {
@@ -37,15 +71,10 @@ async function headersFor(captured: Record<string, string | null>, model: Model<
   if (!headers.has("Authorization") || !headers.has("chatgpt-account-id")) {
     const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
     if (auth.ok && auth.apiKey) {
-      try {
-        const claims = JSON.parse(Buffer.from(auth.apiKey.split(".")[1] ?? "", "base64url").toString("utf8"));
-        const accountId = claims["https://api.openai.com/auth"]?.chatgpt_account_id;
-        if (typeof accountId !== "string" || !accountId) throw new Error();
-        headers.set("Authorization", `Bearer ${auth.apiKey}`);
-        headers.set("chatgpt-account-id", accountId);
-      } catch {
-        throw new Error("Codex sign-in is invalid. Sign in again with /login.");
-      }
+      const accountId = codexAccountId(auth.apiKey);
+      if (!accountId) throw new Error("Codex sign-in is invalid. Sign in again with /login.");
+      headers.set("Authorization", `Bearer ${auth.apiKey}`);
+      headers.set("chatgpt-account-id", accountId);
     }
   }
   if (!headers.has("Authorization") || !headers.has("chatgpt-account-id"))
@@ -109,9 +138,10 @@ async function readCompaction(response: Response, model: Model<string>, signal: 
     const event = JSON.parse(data);
     if (["error", "response.failed", "response.cancelled", "response.incomplete"].includes(event.type))
       throw new Error("Codex compaction did not finish.");
-    if (event.type === "response.output_item.done") {
-      if (!isItem(event.item)) throw new Error("Codex returned an unexpected item.");
-      items.push(event.item);
+    if (event.type === "response.output_item.done" && isCompaction(event.item)) {
+      const item = asItem(event.item);
+      if (!item) throw new Error("Codex returned an invalid compaction item.");
+      items.push(item);
     }
     if (event.type !== "response.completed" && event.type !== "response.done") return;
     const result = event.response;
@@ -121,11 +151,11 @@ async function readCompaction(response: Response, model: Model<string>, signal: 
       !Array.isArray(result.output)
     )
       throw new Error("Codex returned an unfinished response.");
-    const output = result.output.length ? result.output : items;
+    const output = result.output.length ? result.output.filter(isCompaction).map(asItem) : items;
     const item = output[0];
     if (
       output.length !== 1 ||
-      !isItem(item) ||
+      !item ||
       items.some((other) => other.id !== item.id || other.encrypted_content !== item.encrypted_content)
     )
       throw new Error("Codex returned an invalid compaction item.");
@@ -162,14 +192,55 @@ async function readCompaction(response: Response, model: Model<string>, signal: 
   }
 }
 
+type Summarize = (event: SessionBeforeCompactEvent, ctx: ExtensionContext) => Promise<CompactionResult>;
+
+// Pi's own text summary, made alongside the Codex item so other providers and later compactions can read the history.
+const piSummary: (pi: ExtensionAPI) => Summarize = (pi) => async (event, ctx) => {
+  if (!ctx.model) throw new Error("No model selected.");
+  const auth = await ctx.modelRegistry.getApiKeyAndHeaders(ctx.model);
+  if (!auth.ok) throw new Error(auth.error);
+  return compact(
+    event.preparation,
+    { ...ctx.model, baseUrl: auth.baseUrl ?? ctx.model.baseUrl },
+    auth.apiKey,
+    auth.headers as Record<string, string> | undefined,
+    event.customInstructions,
+    event.signal,
+    pi.getThinkingLevel(),
+    undefined,
+    auth.env,
+  );
+};
+
+function addUsage(a: Usage | undefined, b: Usage | undefined): Usage | undefined {
+  if (!a || !b) return a ?? b;
+  const sum = (key: "input" | "output" | "cacheRead" | "cacheWrite" | "total") => a.cost[key] + b.cost[key];
+  return {
+    input: a.input + b.input,
+    output: a.output + b.output,
+    cacheRead: a.cacheRead + b.cacheRead,
+    cacheWrite: a.cacheWrite + b.cacheWrite,
+    totalTokens: a.totalTokens + b.totalTokens,
+    cost: {
+      input: sum("input"),
+      output: sum("output"),
+      cacheRead: sum("cacheRead"),
+      cacheWrite: sum("cacheWrite"),
+      total: sum("total"),
+    },
+  };
+}
+
+const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
+
 export function registerCodexCompaction(
   pi: ExtensionAPI,
-  options: { fetch?: (url: string, init: RequestInit) => Promise<Response> } = {},
+  options: { fetch?: (url: string, init: RequestInit) => Promise<Response>; summarize?: Summarize } = {},
 ) {
+  const summarize = options.summarize ?? piSummary(pi);
   let captured: Capture | undefined;
   let requestHeaders: Capture["headers"];
   let latest: CompactionEntry | undefined;
-  let useDefault = false;
   let warned: string | undefined;
   const reset = () => {
     captured = undefined;
@@ -180,7 +251,6 @@ export function registerCodexCompaction(
   };
   const restore = (_event: unknown, ctx: ExtensionContext) => {
     reset();
-    useDefault = false;
     warned = undefined;
     remember(
       ctx.sessionManager
@@ -192,7 +262,14 @@ export function registerCodexCompaction(
   pi.on("session_start", restore);
   pi.on("session_tree", restore);
   pi.on("model_select", reset);
-  pi.on("session_compact", (event) => remember(event.compactionEntry));
+  pi.on("session_compact", (event) => {
+    // Pi's own summary requests pass through before_provider_request too; never reuse one.
+    captured = undefined;
+    remember(event.compactionEntry);
+  });
+  pi.on("session_compact_failed", () => {
+    captured = undefined;
+  });
   pi.on("before_provider_headers", (event) => {
     requestHeaders = { ...event.headers };
     if (captured) captured.headers = requestHeaders;
@@ -201,10 +278,11 @@ export function registerCodexCompaction(
     const details = latest?.details as Details | undefined;
     const payload = event.payload as Record<string, unknown>;
     if (latest && details) {
+      // The item works across Codex models; it is tied to the account behind the provider.
       if (
         ctx.model?.api === "openai-codex-responses" &&
         ctx.model.provider === details.provider &&
-        ctx.model.id === details.model
+        (details.baseUrl === undefined || details.baseUrl === ctx.model.baseUrl)
       ) {
         const message = convertToLlm([
           { role: "compactionSummary", summary: latest.summary, tokensBefore: latest.tokensBefore, timestamp: 0 },
@@ -226,7 +304,7 @@ export function registerCodexCompaction(
           );
       } else if (warned !== latest.id) {
         warned = latest.id;
-        ctx.ui.notify("The model changed. Using the saved text summary.", "info");
+        ctx.ui.notify("The provider changed. Using the saved text summary.", "info");
       }
     }
     captured =
@@ -236,54 +314,56 @@ export function registerCodexCompaction(
   });
   pi.on("session_before_compact", async (event, ctx) => {
     if (ctx.model?.api !== "openai-codex-responses") return;
-    if (useDefault) {
-      useDefault = false;
-      return;
-    }
     const request = captured;
     if (!request?.headers || request.model.provider !== ctx.model.provider || request.model.id !== ctx.model.id) return;
     const payload = request.payload;
+    const input = payload.input;
     if (
-      !Array.isArray(payload.input) ||
+      !Array.isArray(input) ||
       typeof payload.model !== "string" ||
       payload.stream !== true ||
       payload.store !== false
     )
       return;
-    try {
+    const native = async () => {
       const response = await (options.fetch ?? globalThis.fetch)(codexResponsesUrl(request.model.baseUrl), {
         method: "POST",
-        headers: await headersFor(request.headers, request.model, ctx),
-        body: JSON.stringify({
-          ...payload,
-          service_tier: "default",
-          input: [...payload.input, { type: "compaction_trigger" }],
-        }),
+        headers: await headersFor(request.headers ?? {}, request.model, ctx),
+        body: JSON.stringify({ ...payload, input: [...input, { type: "compaction_trigger" }] }),
         signal: event.signal,
       });
-      const { item, usage } = await readCompaction(response, request.model, event.signal);
-      return {
-        compaction: {
-          summary,
-          firstKeptEntryId: event.preparation.firstKeptEntryId,
-          tokensBefore: event.preparation.tokensBefore,
-          usage,
-          details: {
-            strategy: "codex-native",
-            version: 1,
-            provider: request.model.provider,
-            model: request.model.id,
-            item,
-          } satisfies Details,
-        },
-      };
-    } catch (error) {
-      useDefault = true;
-      ctx.ui.notify(
-        `Codex compaction failed. History kept; the next attempt will use a text summary. ${error instanceof Error ? error.message : String(error)}`,
-        "error",
-      );
+      const result = await readCompaction(response, request.model, event.signal);
+      if (payload.service_tier === "priority" && result.usage)
+        result.usage = priorityUsage(request.model, result.usage);
+      return result;
+    };
+    const [codex, text] = await Promise.allSettled([native(), summarize(event, ctx)]);
+    if (event.signal.aborted) return { cancel: true };
+    if (codex.status === "rejected" && text.status === "rejected") {
+      ctx.ui.notify(`Compaction failed. History kept. ${message(codex.reason)}`, "error");
       return { cancel: true };
     }
+    if (codex.status === "rejected") {
+      ctx.ui.notify(`Codex compaction failed, so a text summary was used. ${message(codex.reason)}`, "warning");
+      return { compaction: (text as PromiseFulfilledResult<CompactionResult>).value };
+    }
+    const readable = text.status === "fulfilled" ? text.value : undefined;
+    return {
+      compaction: {
+        summary: readable?.summary ?? summary,
+        firstKeptEntryId: event.preparation.firstKeptEntryId,
+        tokensBefore: event.preparation.tokensBefore,
+        usage: addUsage(codex.value.usage, readable?.usage),
+        details: {
+          ...(readable?.details as object | undefined),
+          strategy: "codex-native",
+          version: 1,
+          provider: request.model.provider,
+          model: request.model.id,
+          baseUrl: request.model.baseUrl,
+          item: codex.value.item,
+        } satisfies Details,
+      },
+    };
   });
 }

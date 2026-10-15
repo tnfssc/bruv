@@ -6,6 +6,8 @@ import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
 import { registerCompact } from "../src/compact";
+import { registerDeveloper } from "../src/developer";
+import { registerDictate } from "../src/dictate";
 import { registerEditor } from "../src/editor";
 import { registerFast } from "../src/fast";
 import { registerFinish } from "../src/finish";
@@ -17,9 +19,11 @@ import { Jobs, registerJobs } from "../src/jobs";
 import { registerMigrate } from "../src/migrate";
 import { registerNotes } from "../src/notes";
 import { registerNotifications } from "../src/notify";
+import { registerPatch } from "../src/patch";
 import { registerPrompt } from "../src/prompt";
 import { registerPs } from "../src/ps";
 import { registerQuestions } from "../src/questions";
+import { registerReasoning } from "../src/reasoning";
 import { registerRender } from "../src/render";
 import { registerReview } from "../src/review";
 import { registerSettle } from "../src/settle";
@@ -43,6 +47,7 @@ export default function bruv(pi: ExtensionAPI): void {
   registerNotifications(pi);
   registerSettle(pi, jobs, () => hasFinished());
   registerJobs(pi, jobs);
+  registerPatch(pi);
   const isFast = registerFast(pi);
   const startAgents = registerAgents(pi, jobs, isFast);
   const goal = registerGoal(pi, () => hasFinished());
@@ -50,6 +55,9 @@ export default function bruv(pi: ExtensionAPI): void {
   const check = registerCheck(pi, jobs, startAgents, undefined, goal, answers);
   const usage = registerUsage(pi, undefined, jobs);
   const summary = registerTurn(pi, jobs, usage);
+  // Both change the request, so they run before compaction saves it for Codex compaction.
+  registerDeveloper(pi);
+  registerReasoning(pi);
   registerCodexCompaction(pi);
   const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);
   registerPrompt(pi);
@@ -58,4 +66,5 @@ export default function bruv(pi: ExtensionAPI): void {
   registerCodexImport(pi);
   registerMigrate(pi);
   registerReview(pi);
+  registerDictate(pi);
 }

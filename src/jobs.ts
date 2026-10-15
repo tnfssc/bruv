@@ -26,14 +26,18 @@ const ResultSchema = Type.Object({
   ...SummarySchema.properties,
   exitCode: Type.Optional(Type.Number()),
   output: Type.String(),
+  /** True when output holds only the end; the rest is in outputPath. */
+  truncated: Type.Boolean(),
   answer: Type.Optional(Type.String()),
   usage: Type.Optional(Type.Object({ input: Type.Number(), output: Type.Number(), cost: Type.Number() })),
   sessionPath: Type.Optional(Type.String()),
 });
 export type Summary = Static<typeof SummarySchema>;
 export type Result = Static<typeof ResultSchema>;
-export interface Work extends Omit<Result, "output" | "elapsedSeconds"> {
+export interface Work extends Omit<Result, "output" | "truncated" | "elapsedSeconds"> {
   tail: Buffer;
+  /** Bytes written so far, to tell whether tail dropped any. */
+  bytes: number;
   outputStream: WriteStream;
   outputDone: Promise<undefined | Error>;
   detached: boolean;
@@ -57,6 +61,25 @@ export function toolResult<T extends object>(value: T) {
     details: value,
     structuredContent: JSON.parse(JSON.stringify(value)),
   };
+}
+
+/** Output as a terminal shows it: carriage returns and backspaces overwrite, so progress bars keep only their last state. */
+export function terminalText(text: string): string {
+  return text
+    .split("\n")
+    .map((line) => {
+      line = line.replace(/\r$/, "");
+      if (!/[\r\b]/.test(line)) return line;
+      const cells: string[] = [];
+      let column = 0;
+      for (const char of line) {
+        if (char === "\r") column = 0;
+        else if (char === "\b") column = Math.max(0, column - 1);
+        else cells[column++] = char;
+      }
+      return cells.join("");
+    })
+    .join("\n");
 }
 
 export class Jobs {
@@ -86,6 +109,7 @@ export class Jobs {
       startedAt: Date.now(),
       outputPath: join(directory, `${id}.log`),
       tail: Buffer.alloc(0),
+      bytes: 0,
       outputStream,
       outputDone: finished(outputStream).then(
         () => undefined,
@@ -103,6 +127,7 @@ export class Jobs {
   }
   append(item: Work, chunk: Buffer | string) {
     item.outputStream.write(chunk);
+    item.bytes += Buffer.byteLength(chunk);
     item.tail = Buffer.concat([item.tail, Buffer.from(chunk)]).subarray(-65536);
   }
   summary(item: Work): Summary {
@@ -118,9 +143,11 @@ export class Jobs {
     };
   }
   result(item: Work): Result {
+    const text = terminalText(stripVTControlCharacters(item.tail.toString("utf8")));
     return {
       ...this.summary(item),
-      output: stripVTControlCharacters(item.tail.toString("utf8")).slice(-4000),
+      output: text.slice(-4000),
+      truncated: text.length > 4000 || item.bytes > item.tail.length,
       exitCode: item.exitCode,
       ...(item.kind === "agent" ? { answer: item.answer, usage: item.usage, sessionPath: item.sessionPath } : {}),
     };
@@ -306,7 +333,8 @@ export function registerJobs(pi: ExtensionAPI, jobs: Jobs) {
       void jobs.run(item, () =>
         jobs.process(item, process.env.SHELL ?? "/bin/sh", ["-c", args.command], args.cwd ?? ctx.cwd, {
           ...args,
-          env,
+          // A background git status must not take the index lock from the user's own git commands.
+          env: { ...env, GIT_OPTIONAL_LOCKS: "0" },
         }),
       );
       await jobs.wait([item.id], true, args.waitSeconds ?? 3, () => ctx.hasPendingMessages(), signal);
