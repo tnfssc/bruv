@@ -2,8 +2,6 @@
 
 ## Unreleased
 
-- Add dictation: `/dictate` or Ctrl+Alt+D records until pressed again, transcribes the clip with your ChatGPT sign-in and puts the text in the input. It uses the recorder already on the machine (`pw-record`, `parec`, `arecord` or `sox`); no API key or extra binary.
-
 - Keep the Codex prompt cache when the thinking level changes on GPT-6 models. Requests keep the effort the conversation started with and mark each change where it happened, so earlier turns stay cached. The effort starts again after a compaction or a model switch.
 
 - Keep Codex compaction across Codex model switches, and save a readable summary next to it. If Codex compaction fails, that summary is used instead, so history is no longer lost on a failure or a provider switch. Compaction keeps fast mode and accepts extra items in the reply.

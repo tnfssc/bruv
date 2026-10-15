@@ -17,7 +17,6 @@ Disable the old "bruv (not Claude)" provider.
 - `/review` picks uncommitted changes, a branch diff, or a commit; `/review <branch or commit>` starts directly.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, banked plan resets, and session tokens and cost.
-- `/dictate` or Ctrl+Alt+D starts dictation; press it again to stop. The clip is transcribed with your ChatGPT sign-in (no API key) and the text goes into the input for you to edit and send. It records with `pw-record`, `parec`, `arecord` or `sox` on the machine Pi runs on, so over SSH it needs a microphone on that machine.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
 - `/notes` lists the project's notes in `.agents/notes/`. `/notes move` moves a bruv 0.x `wisdom/` folder there, keeping git history.
 - `/ps` lists this session's jobs and agents. Pick one to read its output or answer, see its worktree and session file, or stop it.

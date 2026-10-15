@@ -7,7 +7,6 @@ import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
 import { registerCompact } from "../src/compact";
 import { registerDeveloper } from "../src/developer";
-import { registerDictate } from "../src/dictate";
 import { registerEditor } from "../src/editor";
 import { registerFast } from "../src/fast";
 import { registerFinish } from "../src/finish";
@@ -66,5 +65,4 @@ export default function bruv(pi: ExtensionAPI): void {
   registerCodexImport(pi);
   registerMigrate(pi);
   registerReview(pi);
-  registerDictate(pi);
 }

@@ -234,7 +234,6 @@ bruv/
     notify.ts             desktop alerts and terminal title (~100)
     config.ts             reads ~/.pi/agent/bruv.json (~60)
     developer.ts          time reminder; bruv's own messages as developer messages (~60)
-    dictate.ts            /dictate: record, transcribe with the ChatGPT sign-in, type the text (~140)
     patch.ts              apply_patch in the Codex format (~350)
   scripts/
     install.sh            installs Pi and bruv; the old 0.x install URL points here
