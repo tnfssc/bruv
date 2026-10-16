@@ -20,7 +20,7 @@
 
 - Replace Pi's opening line, tool list, general rules and docs list with bruv's guidance. The tools' own rules stay, and a short file maps Pi's docs for questions about Pi. The prompt now names the session's own file, so the model can look up messages from before a compaction.
 
-- Bring back the compact transcript from 0.x: no blank row between replies, tool lines and reports, one plain row around user messages, tight thinking, no "Thinking..." rows when thinking is hidden, no Ctrl+O status line, and a one-row input. It changes how Pi 1.1.0 draws while bruv runs, never Pi's files, and keeps Pi's spacing on other versions. `/bruv-compact off` turns it off live.
+- Bring back the compact transcript from 0.x: no blank row between replies, tool lines and reports, one plain row around user messages, tight thinking, no "Thinking..." rows when thinking is hidden, no Ctrl+O status line, and a one-row input. It changes how Pi draws while bruv runs, never Pi's files, and keeps Pi's spacing on a Pi that lacks the parts it changes. `/bruv-compact off` turns it off live.
 
 - Bring the website back to its terminal style: the page and its demos are drawn as terminal cells, with an HTML view for everyone else. New demos show bruv 1.0 keeping a run going, a fresh agent finding gaps before the receipt, and work running in the background. The site serves `install.sh` again.
 

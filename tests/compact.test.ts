@@ -8,7 +8,7 @@ import {
   UserMessageComponent,
 } from "@earendil-works/pi-coding-agent";
 import { Container, Spacer, Text, VStack } from "@earendil-works/pi-tui";
-import { Compact, compactProse, type Mode, registerCompact, thinkingView } from "../src/compact";
+import { Compact, compactProse, fits, type Mode, registerCompact, thinkingView } from "../src/compact";
 import { CompactEditor, inputRows } from "../src/editor";
 import { sdk } from "./sdk";
 
@@ -139,9 +139,21 @@ test("hidden thinking takes no rows, and the real message comes back when turned
   }
 });
 
-test("an unknown Pi version keeps Pi's own drawing", async () => {
+test("compact spacing fits the installed Pi, and not one missing a wrapped method", () => {
+  expect(fits()).toBe(true);
+  const proto = AssistantMessageComponent.prototype as unknown as Record<string, unknown>;
+  const update = proto.updateContent;
+  delete proto.updateContent;
+  try {
+    expect(fits()).toBe(false);
+  } finally {
+    proto.updateContent = update;
+  }
+});
+
+test("a Pi that does not fit keeps Pi's own drawing", async () => {
   const update = AssistantMessageComponent.prototype.updateContent;
-  const app = await sdk([(pi) => void registerCompact(pi, "0.0.1")]);
+  const app = await sdk([(pi) => void registerCompact(pi, false)]);
   try {
     expect(AssistantMessageComponent.prototype.updateContent).toBe(update);
   } finally {

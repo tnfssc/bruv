@@ -5,7 +5,6 @@ import {
   InteractiveMode,
   ToolExecutionComponent,
   UserMessageComponent,
-  VERSION,
 } from "@earendil-works/pi-coding-agent";
 import {
   type Component,
@@ -19,8 +18,7 @@ import { readConfig, saveConfig } from "./config";
 import { CompactEditor, inputRows } from "./editor";
 
 // Pi has no hooks for transcript spacing yet, so bruv changes how a running Pi draws: never its
-// files. Only these versions are known to match; any other version keeps Pi's own spacing.
-export const SUPPORTED = ["1.1.0"];
+// files. It does so only when the Pi parts it wraps are there; otherwise Pi keeps its own spacing.
 
 type Part = { type: string; text?: string; thinking?: string };
 type Message = { content?: Part[] };
@@ -87,6 +85,18 @@ export function thinkingView<T extends Message>(message: T, hidden: boolean): T 
       part.type === "thinking" ? { ...part, thinking: compactProse(part.thinking?.trim() ?? "") } : part,
     ),
   };
+}
+
+/** True when the running Pi has the classes and methods this file wraps. */
+export function fits(): boolean {
+  const has = (owner: unknown, ...names: string[]) =>
+    typeof owner === "function" && names.every((name) => typeof owner.prototype?.[name] === "function");
+  return (
+    has(InteractiveMode, "renderSessionItems", "showStatus") &&
+    has(AssistantMessageComponent, "updateContent") &&
+    has(Container, "render") &&
+    [UserMessageComponent, ToolExecutionComponent, CustomMessageComponent, Spacer, VStack].every((owner) => has(owner))
+  );
 }
 
 type Kind = "user" | "message" | "blank" | "other";
@@ -243,7 +253,9 @@ export class Compact {
           const seen = state.shown.get(this as object);
           // Pi redraws from lastMessage, which is the copy shown here; keep using the real message.
           const source = seen && message === seen.view ? seen.source : message;
-          const view = state.active ? thinkingView(source, (this as unknown as Assistant).hideThinkingBlock) : source;
+          const hidden = (this as unknown as Assistant).hideThinkingBlock;
+          // Pi keeps the show/hide choice here; if it moved, show the message as Pi would.
+          const view = state.active && typeof hidden === "boolean" ? thinkingView(source, hidden) : source;
           state.shown.set(this as object, { source, view });
           return original.call(this, ...([view, ...rest] as never[]));
         },
@@ -304,8 +316,7 @@ export class Compact {
   }
 }
 
-export function registerCompact(pi: ExtensionAPI, version = VERSION) {
-  const supported = SUPPORTED.includes(version);
+export function registerCompact(pi: ExtensionAPI, supported = fits()) {
   const compact = new Compact();
   if (supported) {
     compact.install();
@@ -313,10 +324,7 @@ export function registerCompact(pi: ExtensionAPI, version = VERSION) {
   }
   pi.on("session_start", (event, ctx) => {
     if (!supported && ctx.mode === "tui" && event.reason === "startup" && readConfig().compact !== false)
-      ctx.ui.notify(
-        `Compact spacing works with Pi ${SUPPORTED.join(", ")}. This is Pi ${version}, so Pi's own spacing is used.`,
-        "info",
-      );
+      ctx.ui.notify("Compact spacing does not fit this Pi version, so Pi's own spacing is used.", "info");
   });
   pi.on("session_shutdown", () => compact.uninstall());
   pi.registerCommand("bruv-compact", {
@@ -328,10 +336,7 @@ export function registerCompact(pi: ExtensionAPI, version = VERSION) {
       const on = choice === "on" ? true : choice === "off" ? false : readConfig().compact === false;
       saveConfig({ compact: on });
       if (!supported)
-        return ctx.ui.notify(
-          `Saved. Compact spacing works with Pi ${SUPPORTED.join(", ")}; this is Pi ${version}.`,
-          "info",
-        );
+        return ctx.ui.notify("Saved. Compact spacing does not fit this Pi version, so it stays off.", "info");
       compact.set(on);
       ctx.ui.notify(on ? "Compact spacing is on." : "Compact spacing is off. Pi's own spacing is back.", "info");
     },
