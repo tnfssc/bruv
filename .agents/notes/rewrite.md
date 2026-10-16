@@ -1,10 +1,11 @@
 # bruv rewrite: from a patched Pi distribution to a Pi package
 
-Status: Implemented on branch rewrite/pi-package.
+Status: merged into `develop` in PR #76.
 Date: 2026-10-10.
 
-This document is the spec for the rewrite. Part 1 explains why. Part 2 lists the decisions that are
-settled. Part 3 is the build spec. Part 4 is how we get there. If code and this document disagree,
+This document was the spec for the rewrite. Part 1 explains why. Part 2 lists the decisions that are
+settled. Part 3 describes how bruv is built. The plan, spikes and list of deleted paths were
+removed after the merge; `git log` on this file has them. If code and this document disagree,
 fix one of them in the same PR.
 
 ---
@@ -198,43 +199,43 @@ bruv/
   biome.json
   bunfig.toml             only if tests need a preload
   extensions/
-    bruv.ts               entry: registers every module below, nothing else (~60 lines)
+    bruv.ts               entry: registers every module below, nothing else
   src/
-    prompt.ts             system prompt wiring (~80)
-    codemode.ts           codemode-only setup (~80)
-    jobs.ts               background commands: registry, output files, stop (~350)
-    agents.ts             subagent launch, profiles, result parsing (~350)
-    worktree.ts           git worktree create + setup scripts (~120)
-    settle.ts             reports results and reminds the model to wait (~150)
-    goal.ts               /goal command, state, continuation, budget (~350)
-    finish.ts             explicit finish and keep-going continuation (~150)
-    check.ts              fresh checker, Git snapshots and verdicts (~250)
-    fast.ts               /fast priority tier (~100)
-    usage.ts              ChatGPT plan limits and session use (~150)
-    codex-compaction.ts   Codex native compaction (~350)
-    reasoning.ts          GPT-6 Codex thinking changes that keep the prompt cache (~150)
-    codex-import.ts       confirmed Codex settings import (~200)
-    migrate.ts            confirmed bruv 0.x import (~170)
-    notes.ts              project notes: prompt, index, receipt line, moving wisdom/ (~150)
-    review.ts             diff review command and pickers (~100)
-    questions.ts          async ask tool (~120)
-    ui.ts                 widget, status, tool renderers (~200)
-    board.ts              short work board and row display (~120)
-    status.ts             shared footer parts (~30)
-    render.ts             readable codemode calls and output (~200)
-    activity.ts           one line per run of tool calls, click to open (~200)
-    editor.ts             borderless input with the spinner in the prompt mark (~90)
-    compact.ts            compact transcript spacing on listed Pi versions, /bruv-compact (~340)
-    footer.ts             one-line footer, cache countdown, quiet start (~130)
-    home.ts               bruv logo behind an empty chat until the first message (~100)
-    ps.ts                 /ps: read and stop jobs and agents (~70)
-    turn.ts               turn counts and non-context summary (~100)
-    receipt.ts            completion receipt text (~50)
-    finish-render.ts      finish results and receipt frame (~100)
-    notify.ts             desktop alerts and terminal title (~100)
-    config.ts             reads ~/.pi/agent/bruv.json (~60)
-    developer.ts          time reminder; bruv's own messages as developer messages (~60)
-    patch.ts              apply_patch in the Codex format (~350)
+    prompt.ts             system prompt wiring
+    codemode.ts           codemode-only setup
+    jobs.ts               background commands: registry, output files, stop
+    agents.ts             subagent launch, profiles, result parsing
+    worktree.ts           git worktree create + setup scripts
+    settle.ts             reports results and reminds the model to wait
+    goal.ts               /goal command, state, continuation, budget
+    finish.ts             explicit finish and keep-going continuation
+    check.ts              fresh checker, Git snapshots and verdicts
+    fast.ts               /fast priority tier
+    usage.ts              ChatGPT plan limits and session use
+    codex-compaction.ts   Codex native compaction
+    reasoning.ts          GPT-6 Codex thinking changes that keep the prompt cache
+    codex-import.ts       confirmed Codex settings import
+    migrate.ts            confirmed bruv 0.x import
+    notes.ts              project notes: prompt, index, receipt line, moving wisdom/
+    review.ts             diff review command and pickers
+    questions.ts          async ask tool
+    ui.ts                 widget, status, tool renderers
+    board.ts              short work board and row display
+    status.ts             shared footer parts
+    render.ts             readable codemode calls and output
+    activity.ts           one line per run of tool calls, click to open
+    editor.ts             borderless input with the spinner in the prompt mark
+    compact.ts            compact transcript spacing, /bruv-compact
+    footer.ts             one-line footer, cache countdown, quiet start
+    home.ts               bruv logo behind an empty chat until the first message
+    ps.ts                 /ps: read and stop jobs and agents
+    turn.ts               turn counts and non-context summary
+    receipt.ts            completion receipt text
+    finish-render.ts      finish results and receipt frame
+    notify.ts             desktop alerts and terminal title
+    config.ts             reads ~/.pi/agent/bruv.json
+    developer.ts          time reminder; bruv's own messages as developer messages
+    patch.ts              apply_patch in the Codex format
   scripts/
     install.sh            installs Pi and bruv; the old 0.x install URL points here
   site/                   the website, a Bun workspace (site/README.md)
@@ -260,9 +261,6 @@ bruv/
   LICENSE
   t3.json
 ```
-
-Line numbers are budgets, not targets. Total source budget: about 3,670 lines, including Codex import, review and the terminal layout. Going over a module
-budget needs a sentence in the PR description saying why.
 
 `package.json`:
 
@@ -382,7 +380,7 @@ hold the details.
 - Result reports use `customType: "bruv-report"`, are rendered by `ui.ts`, and are capped at
   4,000 characters with output file paths for the rest.
 
-**Verify first** (V1): codemode can wait for a job, steering releases that wait, and abort ends
+**Required** (spike V1 in this file's history): codemode can wait for a job, steering releases that wait, and abort ends
 it and the run within one second while the job keeps running. Its result arrives with the next
 prompt. Pi awaits settle handlers even after abort, so settle must not wait.
 
@@ -570,7 +568,7 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 - Unanswered questions do not make settle wait.
 - Without UI (`ctx.hasUI` false, print mode), `ask` fails with "No one can answer questions in this
   mode."
-- **Verify first** (V3): a non-awaited dialog works during a run in the TUI and over RPC in T3.
+- **Required** (spike V3 in this file's history): a non-awaited dialog works during a run in the TUI and over RPC in T3.
 
 ### 3.10 `/fast` (`src/fast.ts`)
 
@@ -632,7 +630,7 @@ Port the behavior of the current `src/goals/` (pure extension code), simplified:
 ### 3.11 Codex native compaction (`src/codex-compaction.ts`)
 
 Port the essential behavior of `src/agent/native-compaction.ts` (read it with
-`git show develop:src/agent/native-compaction.ts`). Budget 350 lines.
+`git show develop:src/agent/native-compaction.ts`).
 
 - Applies only when `ctx.model.api === "openai-codex-responses"`. Other models use Pi's default.
 - In `before_provider_request`, capture the current Codex model and a copy of the rewritten
@@ -723,8 +721,8 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
     `quietStartup` so Pi skips its resource list.
   - `finish` draws no call line, only its result. Reports and summaries are indented like the
     transcript; collapsed reports start with a colored status mark.
-- Compact spacing (`src/compact.ts`), as in bruv 0.x. Pi has no hooks for transcript spacing, so on
-  the Pi versions listed in `SUPPORTED` bruv changes how the running Pi draws, never its files:
+- Compact spacing (`src/compact.ts`), as in bruv 0.x. Pi has no hooks for transcript spacing, so when
+  the running Pi has the parts it wraps (`fits()`) bruv changes how it draws, never its files:
   - No blank row above replies, tool lines, reports and entries that follow another message. An
     answer after a tool line or report keeps one blank row.
   - User messages lose Pi's shaded padding rows and get one plain row above and below, shared
@@ -739,26 +737,9 @@ Terminal components require `ctx.hasUI` and TUI mode. Summary entries are saved 
 - Wording rule: never show internal words (owner, native, opaque, checkpoint, projection, durable,
   bounded, seam, authority).
 
-### 3.13 What is deleted
-
-Delete these paths entirely:
-
-```text
-src/                      (all current code; the new src/ is written from scratch)
-tests/                    (all current tests)
-wisdom/
-docs/PRODUCT.md docs/ARCHITECTURE.md docs/historical/ docs/releases/ docs/README.md
-site/ native/ patches/ licenses/ scripts/ (except scripts/install.sh, rewritten)
-.github/workflows/dependency-updates.yml .github/workflows/live.yml .github/workflows/release.yml
-bun.lock (regenerate)  bunfig.toml (recreate only if needed)  CONTRIBUTING.md (fold into README)
-```
-
-Old code stays reachable through git history (`git show develop:<path>`). Do not copy old files
-into the new tree "for reference".
-
 ### 3.14 Tests
 
-- Runner: `bun test`. Target under 60 seconds locally, total test code no larger than source code.
+- Runner: `bun test`. Target under 60 seconds locally.
   Allow 15 seconds for tests that run several SDK turns or child processes on busy hosts.
   A test preload clears `BRUV_DEPTH` and `BRUV_FAST` so runs inside agents work too. Tests that
   change either variable restore it afterward.
@@ -811,17 +792,9 @@ present suggests `/bruv-migrate` once. Nothing under `~/.bruv` is changed.
 
 For development: `pi install /path/to/bruv/checkout` (local packages load from the path, no copy).
 
-### 3.17 Repo rules for agents (`AGENTS.md`, under 60 lines)
+### 3.17 Repo rules for agents
 
-- Read `.agents/notes/rewrite.md` (until merged) and the module you touch.
-- Module line budgets are in `.agents/notes/rewrite.md` 3.1. Over budget needs a reason in the PR.
-- Team notes go in `.agents/notes/` (3.18). Scratch goes in `.tmp/` (ignored).
-- Tests follow 3.14. No wording assertions.
-- Plain English. Banned in code identifiers, comments and user-facing text: owner, ownership,
-  authority, seam, projection, durable, bounded, canonical, opaque, admission, "not proof".
-- Never change Pi's files. If Pi lacks a hook, work around it in the extension. Changing how a
-  running Pi draws is allowed only in `src/compact.ts` (3.12), on the Pi versions it lists.
-- Squash-merge PRs. Commit messages: one imperative line, optional short body.
+They live in `AGENTS.md` (under 60 lines).
 
 ### 3.18 Project notes (`src/notes.ts`, `prompts/notes.md`)
 
@@ -842,46 +815,3 @@ through git. Code can be rebuilt from notes; the reasons behind code can't be re
   a trusted `.bruv/settings.json` `wisdomDir` still wins. The first session in such a project
   suggests `/notes move` once; it moves the folder with `git mv` when tracked (keeping history),
   then lists files that still mention `wisdom/`. `/notes` lists the notes.
-
----
-
-## Part 4. Plan
-
-### 4.1 Verify first (spikes, results go in the PR description, not in files)
-
-| ID | Question | Fallback |
-|---|---|---|
-| V1 | Does codemode `wait` return on completion, steering and abort, with abort ending the run within 1 s? | Keep all waiting in tools; settle only reports or reminds (3.4). |
-| V2 | How can a package turn on codemode-only mode? | `/bruv-setup` writes settings (3.3). |
-| V3 | Does a non-awaited `ctx.ui.select` dialog work during a run, in TUI and over RPC? | `ask` blocks the script until answered. |
-| V4 | Does system-prompt framing from `before_agent_start` survive `continue: true` requests? | Keep static guidance in structured system prompt sections. |
-| V5 | Does `pi --mode json --session <new path>` create and keep the child session file, and does the child load bruv from the global install? | Pass `--extension <package path>` explicitly. |
-
-### 4.2 Phases
-
-Each phase ends with a commit on `rewrite/pi-package` and green `bunx biome ci . && bunx tsc
---noEmit && bun test`.
-
-1. **Clear and skeleton.** Delete everything in 3.13. Add the new `package.json`, `tsconfig.json`,
-   `biome.json`, `extensions/bruv.ts`, `src/prompt.ts`, `src/codemode.ts`, `src/config.ts`, the
-   prompts, CI workflow, `AGENTS.md`, a short `README.md`. Run spikes V1-V5 and report results.
-   Acceptance: `pi -e ./` loads the package with no errors; the model-facing prompt contains bruv's
-   guidance; tests green.
-2. **Jobs, agents, settle, UI.** `jobs.ts`, `agents.ts`, `worktree.ts`, `settle.ts`, `ui.ts` and
-   their tests. Acceptance: integration tests in 3.14 for jobs, reminders, wait, steer release and abort pass.
-3. **Goal, fast, codex compaction, questions.** With tests. Acceptance: unit and integration tests
-   pass.
-4. **Finish.** README (install, commands, tools, config, migration), `CHANGELOG.md` with one entry
-   for 1.0.0, `t3.json` updated (setup script: `bun install --frozen-lockfile`), final size check
-   against budgets. Acceptance: total source stays within the section 3.1 budget; smaller is fine.
-   One real smoke run in T3 is done by the reviewer.
-
-### 4.3 Risks
-
-- T3's Pi driver is in a nightly. If it changes how it treats long turns, the tool-wait model needs
-  another look.
-- Codemode runs scripts in QuickJS: no direct `fs`, network or npm. Anything needing those goes
-  through `tools.bash`. The usage data says that is rare.
-- Losing auto-wake after the user's turn ends is a deliberate trade for T3 compatibility.
-- Pi upstream gaps worth filing as issues (not blockers): a hook to write settings from a package;
-  `before_provider_request` able to block.

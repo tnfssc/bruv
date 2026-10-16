@@ -16,7 +16,13 @@ The user chose to bring it back by changing how the running Pi draws, not by edi
 write access, and it would change plain `pi` too). Extensions get Pi's own module copies, so
 wrapping prototypes from the extension reaches the real classes.
 
-- Only on Pi versions in `SUPPORTED` (`1.1.0`). Others keep Pi's spacing and say so at startup.
+- Only when `fits()` finds the classes and methods it wraps in the running Pi. Otherwise Pi keeps
+  its spacing and bruv says so at startup. This replaced a list of Pi versions (`1.1.0` only):
+  every Pi release turned compact spacing off and showed the notice, even when nothing it wraps
+  had changed. The check finds removed or renamed parts, not changed behavior; the tests run
+  against Pi's real components to catch that. Fields that cannot be checked before a session
+  (`hideThinkingBlock`, the user message's `paddingY`, the input slot's `minSize`) are checked
+  where they are used, and that part passes through if they look wrong.
 - Every wrapper passes straight through when off; `/bruv-compact off` and `session_shutdown` put
   Pi back (session changes and `/reload` load a fresh extension, which wraps again).
 - The transcript is found through `InteractiveMode.renderSessionItems`, which Pi calls at startup,
