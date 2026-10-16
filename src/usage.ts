@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
+import { codexAccountId } from "./codex-compaction";
 import { readJson } from "./config";
 import { agentTotals, type Jobs } from "./jobs";
 import { setStatus } from "./status";
@@ -83,7 +84,40 @@ function fromHeaders(headers: Record<string, string>): PlanUsage | undefined {
     },
   };
 }
-export function registerUsage(pi: ExtensionAPI, agentDir = getAgentDir(), jobs?: Jobs) {
+/** Banked plan resets, which only the usage endpoint reports. Undefined when it can't be read. */
+async function resetCredits(ctx: ExtensionContext, fetch: typeof globalThis.fetch): Promise<number | undefined> {
+  const model = ctx.model;
+  if (model?.api !== "openai-codex-responses") return;
+  const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
+  const accountId = auth.ok && auth.apiKey ? codexAccountId(auth.apiKey) : undefined;
+  if (!auth.ok || !accountId) return;
+  const base = (auth.baseUrl || model.baseUrl || "https://chatgpt.com/backend-api")
+    .replace(/\/+$/, "")
+    .replace(/\/codex(?:\/responses)?$/, "");
+  try {
+    const response = await fetch(`${base}/wham/usage`, {
+      headers: {
+        Authorization: `Bearer ${auth.apiKey}`,
+        "chatgpt-account-id": accountId,
+        accept: "application/json",
+        originator: "pi",
+      },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) return;
+    const count = (await response.json())?.rate_limit_reset_credits?.available_count;
+    return Number.isSafeInteger(count) && count >= 0 ? count : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function registerUsage(
+  pi: ExtensionAPI,
+  agentDir = getAgentDir(),
+  jobs?: Jobs,
+  fetch: typeof globalThis.fetch = globalThis.fetch,
+) {
   const path = join(agentDir, "bruv-usage.json");
   const sessions = new Map<string, { data?: PlanUsage; warned: Set<string> }>();
   const state = (ctx: ExtensionContext) => {
@@ -133,7 +167,7 @@ export function registerUsage(pi: ExtensionAPI, agentDir = getAgentDir(), jobs?:
     description: "Show ChatGPT plan limits and session usage.",
     async handler(_args, ctx) {
       const data = state(ctx).data;
-      const lines =
+      const lines: string[] =
         ctx.model?.api !== "openai-codex-responses"
           ? ["Limits are only reported for ChatGPT plan models."]
           : data
@@ -151,6 +185,8 @@ export function registerUsage(pi: ExtensionAPI, agentDir = getAgentDir(), jobs?:
         tokens += usage?.totalTokens ?? 0;
         cost += usage?.cost.total ?? 0;
       }
+      const credits = data ? await resetCredits(ctx, fetch) : undefined;
+      if (credits) lines.push(`Plan resets banked: ${credits}`);
       const agents = jobs ? agentTotals(jobs) : { tokens: 0, cost: 0 };
       const total = `This session: ${(tokens + agents.tokens).toLocaleString()} tokens · $${(cost + agents.cost).toFixed(2)} at API prices`;
       const split = agents.tokens

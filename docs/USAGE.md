@@ -16,7 +16,7 @@ Disable the old "bruv (not Claude)" provider.
 - `/goal <objective>` starts work; `/goal` shows status, and `pause`, `resume`, or `clear` controls the saved goal.
 - `/review` picks uncommitted changes, a branch diff, or a commit; `/review <branch or commit>` starts directly.
 - `/import-codex` previews and imports Codex settings after you confirm.
-- `/usage` shows ChatGPT plan limits, credits, and session tokens and cost.
+- `/usage` shows ChatGPT plan limits, credits, banked plan resets, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
 - `/notes` lists the project's notes in `.agents/notes/`. `/notes move` moves a bruv 0.x `wisdom/` folder there, keeping git history.
 - `/ps` lists this session's jobs and agents. Pick one to read its output or answer, see its worktree and session file, or stop it.
@@ -100,6 +100,7 @@ A notice offers the import once when Codex settings are found.
 
 | Tool | What it does |
 |---|---|
+| `apply_patch` | Add, change, delete or move files with one patch in the Codex format. A patch that doesn't fit the files changes nothing. |
 | `job_start` | Run a shell command in the background and return its ID and recent output. |
 | `wait` | Wait for one or all jobs or agents, or until you send a message. |
 | `jobs` | List the jobs and agents started in this session. |
@@ -133,7 +134,7 @@ old. Your next prompt also clears finished rows.
 Totals are counted once against the starting commit, including committed and uncommitted edits and new files.
 Titles shorten to leave room for totals and elapsed time.
 The footer shows usage, fast mode and goal, separated by ` · `. Only active parts appear.
-The footer's dollar amount is what the session, agents included, would cost at API prices (`api` marks it on a subscription, where it is only a price); it moves after each model response. `cache 42m` counts down the time left on the provider's prompt cache since your model last answered: yellow under 15 minutes, red under 5. Coming back after it expires costs more. Set `cacheTtlMinutes` in `~/.pi/agent/bruv.json` if your provider keeps it longer or shorter than 60 minutes.
+The footer's dollar amount is what the session, agents included, would cost at API prices (`api` marks it on a subscription, where it is only a price); it moves after each model response. `cache 96% · 42m` shows how much of the last prompt was read from the provider's prompt cache and counts down the time left on it since your model last answered: yellow under 15 minutes, red under 5. Coming back after it expires costs more. The lifetime comes from the model, or 5 minutes for Luna and 60 for other models; set `cacheTtlMinutes` in `~/.pi/agent/bruv.json` to change it.
 Script results list the tool calls and show plain output. Bash call rows show the first command line, cut to 60 columns.
 Expand a result to see the full script and output.
 When a check finds gaps, the finish result shows a red count and every gap, wrapped to fit,

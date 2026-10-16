@@ -117,3 +117,42 @@ test.each(["stream", "headers"])(
     }
   },
 );
+
+test("/usage adds banked plan resets from the usage endpoint", async () => {
+  mkdirSync(".tmp", { recursive: true });
+  const dir = mkdtempSync(resolve(".tmp/usage-credits-"));
+  const claims = { "https://api.openai.com/auth": { chatgpt_account_id: "account-790" } };
+  const apiKey = `test.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.test`;
+  const urls: string[] = [];
+  let available = 2;
+  const fetch = (async (url: string, init: RequestInit) => {
+    urls.push(url);
+    expect(new Headers(init.headers).get("chatgpt-account-id")).toBe("account-790");
+    return Response.json({ rate_limit_reset_credits: { available_count: available } });
+  }) as typeof globalThis.fetch;
+  const notices: string[] = [];
+  const app = await sdk([(pi) => void registerUsage(pi, dir, undefined, fetch)], {
+    notify: (text) => {
+      notices.push(text);
+    },
+  });
+  try {
+    const runner = app.session.extensionRunner;
+    runner.createContext().modelRegistry.registerProvider(app.faux.getModel().provider, { apiKey });
+    await app.session.setModel({
+      ...app.faux.getModel(),
+      api: "openai-codex-responses",
+      baseUrl: "https://fixture.invalid/backend-api/codex",
+    });
+    await runner.emit({ type: "after_provider_response", status: 200, headers: { "x-codex-plan-type": "pro" } });
+    await app.session.prompt("/usage");
+    const withCredits = notices.at(-1)?.split("\n").length ?? 0;
+    expect(urls).toEqual(["https://fixture.invalid/backend-api/wham/usage"]);
+    available = 0;
+    await app.session.prompt("/usage");
+    expect(notices.at(-1)?.split("\n").length).toBe(withCredits - 1);
+  } finally {
+    await app.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

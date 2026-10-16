@@ -152,7 +152,7 @@ test.each(["faux", "openai-responses", "openai-codex-responses"])(
         app.faux.setResponses([
           (context) => {
             const system = [...context.messages].reverse().find((message) => message.role === "system");
-            prompts.push(system?.sections?.bruv ?? "");
+            prompts.push(system?.sections?.preamble ?? "");
             return app.session.getActiveToolNames().includes("finish") ? finish() : fauxAssistantMessage("reply");
           },
         ]);

@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
+import { fauxAssistantMessage } from "@earendil-works/pi-ai";
 import { readConfig, saveConfig } from "../src/config";
 import { registerFast } from "../src/fast";
 import { sdk } from "./sdk";
@@ -117,6 +118,45 @@ test("child fast starts on without a dialog and its saved off setting survives r
     await app.session.extensionRunner.emit({ type: "session_start", reason: "reload" });
     expect(isFast()).toBe(false);
     expect(readConfig(dir)).toMatchObject({ fast: false, fastConfirmed: true });
+  } finally {
+    await app.close();
+    rmSync(dir, { recursive: true, force: true });
+    if (previous === undefined) delete process.env.BRUV_FAST;
+    else process.env.BRUV_FAST = previous;
+  }
+});
+
+test("fast replies Pi priced at the base rate are priced at the priority tier once", async () => {
+  mkdirSync(".tmp", { recursive: true });
+  const dir = mkdtempSync(resolve(".tmp/fast-cost-"));
+  const previous = process.env.BRUV_FAST;
+  process.env.BRUV_FAST = "1";
+  const app = await sdk([(pi) => void registerFast(pi, dir)]);
+  try {
+    const cost = { input: 1, output: 2, cacheRead: 0.5, cacheWrite: 0 };
+    const model = { ...app.faux.getModel(), id: "codex-cost", api: "openai-codex-responses", cost } as const;
+    await app.session.setModel(model);
+    const reply = (total: number) =>
+      ({
+        ...fauxAssistantMessage("done"),
+        model: model.id,
+        usage: {
+          input: 1_000_000,
+          output: 1_000_000,
+          cacheRead: 0,
+          cacheWrite: 0,
+          totalTokens: 2_000_000,
+          cost: { input: total / 3, output: (total * 2) / 3, cacheRead: 0, cacheWrite: 0, total },
+        },
+      }) as const;
+    const runner = app.session.extensionRunner;
+    await runner.emitBeforeProviderRequest({ input: [] });
+    const base = await runner.emitMessageEnd({ type: "message_end", message: reply(3) });
+    expect(base?.role === "assistant" && base.usage.cost.total).toBe(6);
+    expect(await runner.emitMessageEnd({ type: "message_end", message: reply(6) })).toBeUndefined();
+    await app.session.prompt("/fast off");
+    await runner.emitBeforeProviderRequest({ input: [] });
+    expect(await runner.emitMessageEnd({ type: "message_end", message: reply(3) })).toBeUndefined();
   } finally {
     await app.close();
     rmSync(dir, { recursive: true, force: true });

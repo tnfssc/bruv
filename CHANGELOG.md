@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- Keep the Codex prompt cache when the thinking level changes on GPT-6 models. Requests keep the effort the conversation started with and mark each change where it happened, so earlier turns stay cached. The effort starts again after a compaction or a model switch.
+
+- Keep Codex compaction across Codex model switches, and save a readable summary next to it. If Codex compaction fails, that summary is used instead, so history is no longer lost on a failure or a provider switch. Compaction keeps fast mode and accepts extra items in the reply.
+
+- Price fast-mode replies at the priority rate when Codex reports the default tier, so the footer and `/usage` no longer show half the cost.
+
+- Tell the model the current time when a session starts and again after an hour, and send bruv's own messages (reports, goal and keep-going nudges) to OpenAI models as developer messages instead of user messages.
+
+- Show job output the way a terminal does, so progress bars keep only their last state, and mark output that was cut short. Background jobs no longer take git's optional index lock.
+
+- Show how much of the last prompt was read from the cache next to the countdown, take the cache lifetime from the model (about 5 minutes for Luna), and stop Pi's cache warming on Codex, where a warm-up would be a full reply.
+
+- `/usage` shows banked plan resets.
+
+- Add `apply_patch` in Codex's patch format, written in TypeScript. OpenAI models call it directly, as in Codex: Codex's grammar lets them write the raw patch instead of JSON. Scripts can call it on any model. It checks every change before writing, so a patch that fails changes nothing.
+
+- Replace Pi's opening line, tool list, general rules and docs list with bruv's guidance. The tools' own rules stay, and a short file maps Pi's docs for questions about Pi. The prompt now names the session's own file, so the model can look up messages from before a compaction.
+
 - Bring back the compact transcript from 0.x: no blank row between replies, tool lines and reports, one plain row around user messages, tight thinking, no "Thinking..." rows when thinking is hidden, no Ctrl+O status line, and a one-row input. It changes how Pi 1.1.0 draws while bruv runs, never Pi's files, and keeps Pi's spacing on other versions. `/bruv-compact off` turns it off live.
 
 - Bring the website back to its terminal style: the page and its demos are drawn as terminal cells, with an HTML view for everyone else. New demos show bruv 1.0 keeping a run going, a fresh agent finding gaps before the receipt, and work running in the background. The site serves `install.sh` again.

@@ -2,6 +2,7 @@ import { stripVTControlCharacters } from "node:util";
 import type { NestedToolCallRecord } from "@earendil-works/pi-ai";
 import type { CodemodeToolDetails, ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { Text, truncateToWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
+import { patchPaths } from "./patch";
 
 type Call = Omit<NestedToolCallRecord, "status"> & { status: string; ids?: string[]; exit?: number };
 const record = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
@@ -57,6 +58,8 @@ export function scriptLabel(code: unknown): string | undefined {
 
 function target(call: Call) {
   const args = call.arguments ?? {};
+  if (call.name === "apply_patch" && typeof args.input === "string")
+    return truncateToWidth(oneLine(patchPaths(args.input).join(", ")), 60, "…");
   return call.name === "agent" && call.ids
     ? call.ids.join(", ")
     : typeof args.path === "string"

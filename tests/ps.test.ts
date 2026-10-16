@@ -3,7 +3,7 @@ import { stripVTControlCharacters } from "node:util";
 import { initTheme } from "@earendil-works/pi-coding-agent";
 import { agentModels, registerAgents } from "../src/agents";
 import { readConfig, saveConfig } from "../src/config";
-import { cacheBadge } from "../src/footer";
+import { cacheBadge, cacheTtl } from "../src/footer";
 import { Jobs } from "../src/jobs";
 import { details, registerPs } from "../src/ps";
 import { sdk } from "./sdk";
@@ -89,4 +89,13 @@ test("the cache countdown counts whole minutes down to expired", () => {
   expect(stripVTControlCharacters(cacheBadge(start, 60, start + 30_000, theme)).match(/\d+/g)).toEqual(["60"]);
   expect(stripVTControlCharacters(cacheBadge(start, 60, start + 59 * 60_000 + 1, theme)).match(/\d+/g)).toEqual(["1"]);
   expect(cacheBadge(start, 60, start + 60 * 60_000, theme).match(/\d/)).toBeNull();
+  expect(cacheBadge(start, 60, start + 30_000, theme, 0.964).match(/\d+/g)).toEqual(["96", "60"]);
+});
+
+test("the cache lifetime follows the setting, then the model, then the model family", () => {
+  const model = (id: string, promptCache?: { short?: number }) => ({ id, promptCache }) as never;
+  expect(cacheTtl(model("gpt-6-luna"), 30)).toBe(30);
+  expect(cacheTtl(model("gpt-6-luna", { short: 600 }), undefined)).toBe(10);
+  expect(cacheTtl(model("gpt-6-luna"), undefined)).toBe(5);
+  expect(cacheTtl(model("gpt-6.1-sol"), undefined)).toBe(60);
 });

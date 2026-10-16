@@ -1,7 +1,7 @@
 import { afterAll, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
-import { Jobs } from "../src/jobs";
+import { Jobs, terminalText } from "../src/jobs";
 import { report } from "../src/settle";
 
 mkdirSync(".tmp", { recursive: true });
@@ -22,7 +22,7 @@ test("registry records output, exit codes, previews, waits and IDs", async () =>
   expect(early.done.map((item) => item.exitCode)).toEqual([3]);
   expect(early.running.map((item) => item.id)).toEqual([first.id]);
   await jobs.wait(undefined, true);
-  expect(jobs.result(first).output).toBe("done\nerr\n");
+  expect(jobs.result(first)).toMatchObject({ output: "done\nerr\n", truncated: false });
   expect(second.status).toBe("failed");
   const large = jobs.create("job", "large output", dir);
   void jobs.run(large, async () => {
@@ -32,6 +32,7 @@ test("registry records output, exit codes, previews, waits and IDs", async () =>
   expect((await jobs.wait([large.id])).done[0].exitCode).toBe(0);
   expect(large.tail.byteLength).toBe(65536);
   expect(jobs.result(large).output.length).toBe(4000);
+  expect(jobs.result(large).truncated).toBe(true);
   expect(readFileSync(large.outputPath, "utf8")).toBe("x".repeat(70000));
   expect(large.outputStream.closed).toBe(true);
   const message = report({ ...jobs.result(large), sessionPath: "/test/session" });
@@ -54,6 +55,12 @@ test("output previews strip ANSI codes before truncating while logs stay raw", a
   expect(result.exitCode).toBe(0);
   expect(result.output).toBe(`${text}\nlink\n`.slice(-4000));
   expect(readFileSync(result.outputPath, "utf8")).toBe(raw);
+});
+
+test("previews keep the last state of redrawn lines", () => {
+  expect(terminalText("get 10%\rget 55%\rget 100%\r\nnext\n")).toBe("get 100%\nnext\n");
+  expect(terminalText("abc\b\bXY\n")).toBe("aXY\n");
+  expect(terminalText("long line\rshort")).toBe("shortline");
 });
 
 test("wait returns on timeout, a user message, and abort without stopping work", async () => {

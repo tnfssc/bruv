@@ -32,12 +32,28 @@ const eventStream = (events: unknown[]) => {
     }),
   );
 };
+const textUsage = {
+  input: 5,
+  output: 1,
+  cacheRead: 0,
+  cacheWrite: 0,
+  totalTokens: 6,
+  cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+};
+const readable = async (event: SessionBeforeCompactEvent) => ({
+  summary: "summary-781",
+  firstKeptEntryId: event.preparation.firstKeptEntryId,
+  tokensBefore: event.preparation.tokensBefore,
+  usage: textUsage,
+  details: { readFiles: ["a.ts"], modifiedFiles: [] },
+});
 async function setup(
   fetch: (url: string, init: RequestInit) => Promise<Response>,
   requestHeaders: Record<string, string | null> = headers,
+  summarize: NonNullable<Parameters<typeof registerCodexCompaction>[1]>["summarize"] = readable,
 ) {
   let notices = 0;
-  const app = await sdk([(pi) => registerCodexCompaction(pi, { fetch })], {
+  const app = await sdk([(pi) => registerCodexCompaction(pi, { fetch, summarize })], {
     notify: () => {
       notices++;
     },
@@ -72,114 +88,149 @@ function nextPayload(app: Awaited<ReturnType<typeof setup>>) {
   };
 }
 
-test.each([false, true])("Codex request, saved item, replay, and model fallback (streamed=%s)", async (streamed) => {
-  let calls = 0;
-  const app = await setup(async (url, init) => {
-    calls++;
-    expect(url).toBe("https://fixture.invalid/backend-api/codex/responses");
-    expect(JSON.parse(String(init?.body))).toEqual({
-      ...body,
-      service_tier: "default",
-      input: [...body.input, { type: "compaction_trigger" }],
-    });
-    const sent = new Headers(init?.headers);
-    expect(sent.get("Authorization")).toBe(headers.Authorization);
-    expect(sent.get("chatgpt-account-id")).toBe(headers["chatgpt-account-id"]);
-    expect(sent.get("x-extra")).toBe("kept");
-    expect(sent.has("connection")).toBe(false);
-    expect(sent.has("sec-websocket-key")).toBe(false);
-    expect(sent.get("session-id")).toBe(app.session.sessionManager.getSessionId());
-    return eventStream([
-      ...(streamed ? [{ type: "response.output_item.done", item }] : []),
-      {
-        type: "response.completed",
-        response: {
-          status: "completed",
-          output: streamed ? [] : [item],
-          usage: { input_tokens: 12, output_tokens: 2, input_tokens_details: { cached_tokens: 4 } },
-        },
-      },
-    ]);
-  });
-  try {
-    const result = await app.session.compact();
-    expect(result.details).toEqual({
-      strategy: "codex-native",
-      version: 1,
-      provider: app.faux.getModel().provider,
-      model: "codex-test",
-      item,
-    });
-    expect(result.usage).toMatchObject({ input: 8, output: 2, cacheRead: 4, totalTokens: 14 });
-    const payload = nextPayload(app);
-    expect(
-      ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
-    ).toContainEqual(item);
-    await app.runner.emit({ type: "session_start", reason: "reload" });
-    expect(
-      ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
-    ).toContainEqual(item);
-    const compactionId = app.session.sessionManager.getLeafId();
-    const earlier = app.session.sessionManager.getBranch().find((entry) => entry.type === "message");
-    if (!earlier || !compactionId) throw new Error("Missing test entries");
-    app.session.sessionManager.branch(earlier.id);
-    await app.runner.emit({ type: "session_tree", oldLeafId: compactionId, newLeafId: earlier.id });
-    expect(await app.runner.emitBeforeProviderRequest(structuredClone(payload))).toEqual(payload);
-    app.session.sessionManager.branch(compactionId);
-    await app.runner.emit({ type: "session_tree", oldLeafId: earlier.id, newLeafId: compactionId });
-    expect(
-      ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
-    ).toContainEqual(item);
-    await app.session.setModel({ ...app.faux.getModel(), id: "another-codex", api: "openai-codex-responses" });
-    expect(await app.runner.emitBeforeProviderRequest(structuredClone(payload))).toEqual(payload);
-    await app.runner.emitBeforeProviderRequest(structuredClone(payload));
-    expect(app.notices()).toBe(1);
-    expect(calls).toBe(1);
-  } finally {
-    await app.close();
-  }
-});
-
-test.each(["http", "failed", "missing", "mixed"])(
-  "Codex failure keeps history and lets the next compaction use Pi (%s)",
-  async (failure) => {
+test.each(["output", "streamed", "mixed"])(
+  "Codex request, saved item, replay, and provider fallback (%s)",
+  async (shape) => {
+    const streamed = shape === "streamed";
     let calls = 0;
-    const app = await setup(async () => {
+    const app = await setup(async (url, init) => {
       calls++;
-      if (failure === "http") return new Response("", { status: 500 });
-      if (failure === "failed") return eventStream([{ type: "response.failed" }]);
+      expect(url).toBe("https://fixture.invalid/backend-api/codex/responses");
+      expect(JSON.parse(String(init?.body))).toEqual({
+        ...body,
+        input: [...body.input, { type: "compaction_trigger" }],
+      });
+      const sent = new Headers(init?.headers);
+      expect(sent.get("Authorization")).toBe(headers.Authorization);
+      expect(sent.get("chatgpt-account-id")).toBe(headers["chatgpt-account-id"]);
+      expect(sent.get("x-extra")).toBe("kept");
+      expect(sent.has("connection")).toBe(false);
+      expect(sent.has("sec-websocket-key")).toBe(false);
+      expect(sent.get("session-id")).toBe(app.session.sessionManager.getSessionId());
       return eventStream([
-        { type: "response.completed", response: { output: failure === "missing" ? [] : [item, { type: "message" }] } },
+        ...(streamed ? [{ type: "response.output_item.done", item }] : []),
+        {
+          type: "response.completed",
+          response: {
+            status: "completed",
+            output: streamed ? [] : shape === "mixed" ? [{ type: "reasoning" }, item] : [item],
+            usage: { input_tokens: 12, output_tokens: 2, input_tokens_details: { cached_tokens: 4 } },
+          },
+        },
       ]);
     });
     try {
-      const branch = app.session.sessionManager.getBranch();
-      await expect(app.session.compact()).rejects.toThrow();
-      expect(app.session.sessionManager.getBranch()).toEqual(branch);
+      const result = await app.session.compact();
+      expect(result.summary).toBe("summary-781");
+      expect(result.details).toEqual({
+        readFiles: ["a.ts"],
+        modifiedFiles: [],
+        strategy: "codex-native",
+        version: 1,
+        provider: app.faux.getModel().provider,
+        model: "codex-test",
+        baseUrl: "https://fixture.invalid/backend-api/codex/",
+        item,
+      });
+      expect(result.usage).toMatchObject({ input: 13, output: 3, cacheRead: 4, totalTokens: 20 });
+      // The request saved before compaction is stale now; the next one waits for a new request.
+      await app.session.compact().catch(() => undefined);
+      expect(calls).toBe(1);
+      const payload = nextPayload(app);
+      expect(
+        ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
+      ).toContainEqual(item);
+      await app.runner.emit({ type: "session_start", reason: "reload" });
+      expect(
+        ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
+      ).toContainEqual(item);
+      const compactionId = app.session.sessionManager.getLeafId();
+      const earlier = app.session.sessionManager.getBranch().find((entry) => entry.type === "message");
+      if (!earlier || !compactionId) throw new Error("Missing test entries");
+      app.session.sessionManager.branch(earlier.id);
+      await app.runner.emit({ type: "session_tree", oldLeafId: compactionId, newLeafId: earlier.id });
+      expect(await app.runner.emitBeforeProviderRequest(structuredClone(payload))).toEqual(payload);
+      app.session.sessionManager.branch(compactionId);
+      await app.runner.emit({ type: "session_tree", oldLeafId: earlier.id, newLeafId: compactionId });
+      expect(
+        ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
+      ).toContainEqual(item);
+      const codex = {
+        ...app.faux.getModel(),
+        api: "openai-codex-responses",
+        baseUrl: "https://fixture.invalid/backend-api/codex/",
+      } as const;
+      await app.session.setModel({ ...codex, id: "another-codex" });
+      expect(
+        ((await app.runner.emitBeforeProviderRequest(structuredClone(payload))) as { input: unknown[] }).input,
+      ).toContainEqual(item);
+      await app.session.setModel({ ...codex, baseUrl: "https://other.invalid/backend-api/codex/" });
+      expect(await app.runner.emitBeforeProviderRequest(structuredClone(payload))).toEqual(payload);
+      await app.runner.emitBeforeProviderRequest(structuredClone(payload));
       expect(app.notices()).toBe(1);
-      const event: SessionBeforeCompactEvent = {
-        type: "session_before_compact",
-        branchEntries: branch,
-        reason: "manual",
-        willRetry: false,
-        signal: new AbortController().signal,
-        preparation: {
-          firstKeptEntryId: branch[0].id,
-          messagesToSummarize: [],
-          turnPrefixMessages: [],
-          isSplitTurn: false,
-          tokensBefore: 10,
-          fileOps: { read: new Set(), written: new Set(), edited: new Set() },
-          settings: { enabled: false, keepRecentTokens: 100, reserveTokens: 100 },
-        },
-      };
-      expect(await app.runner.emit(event)).toBeUndefined();
       expect(calls).toBe(1);
     } finally {
       await app.close();
     }
   },
 );
+
+const failing = (failure: string) => async () => {
+  if (failure === "http") return new Response("", { status: 500 });
+  if (failure === "failed") return eventStream([{ type: "response.failed" }]);
+  return eventStream([
+    {
+      type: "response.completed",
+      response: { output: failure === "missing" ? [] : [item, { ...item, id: "cmp_782" }] },
+    },
+  ]);
+};
+
+test.each(["http", "failed", "missing", "two"])(
+  "Codex failure falls back to the text summary (%s)",
+  async (failure) => {
+    const app = await setup(failing(failure));
+    try {
+      const result = await app.session.compact();
+      expect(result.summary).toBe("summary-781");
+      expect(result.details).toEqual({ readFiles: ["a.ts"], modifiedFiles: [] });
+      expect(app.notices()).toBe(1);
+    } finally {
+      await app.close();
+    }
+  },
+);
+
+test("Codex and text summary both failing keep history", async () => {
+  const app = await setup(failing("http"), headers, async () => {
+    throw new Error("no summary");
+  });
+  try {
+    const branch = app.session.sessionManager.getBranch();
+    await expect(app.session.compact()).rejects.toThrow();
+    expect(app.session.sessionManager.getBranch()).toEqual(branch);
+    expect(app.notices()).toBe(1);
+  } finally {
+    await app.close();
+  }
+});
+
+test("a Codex item with only a text summary missing keeps the fixed summary", async () => {
+  const app = await setup(
+    async () => eventStream([{ type: "response.completed", response: { output: [item] } }]),
+    headers,
+    async () => {
+      throw new Error("no summary");
+    },
+  );
+  try {
+    const result = await app.session.compact();
+    expect(result.details).toMatchObject({ strategy: "codex-native", item });
+    expect(result.summary).not.toBe("summary-781");
+  } finally {
+    await app.close();
+  }
+});
 
 test("Codex URL accepts each supported base path", () => {
   expect(codexResponsesUrl("")).toBe("https://chatgpt.com/backend-api/codex/responses");
