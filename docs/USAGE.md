@@ -18,7 +18,7 @@ Disable the old "bruv (not Claude)" provider.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, banked plan resets, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
-- `/voice` lets you talk to bruv. It opens a page in your browser: press start, allow the microphone and talk. Replies are read aloud, and talking over one stops it. `/voice here` uses this machine's microphone and speaker instead (use headphones: nothing cancels the echo), `/voice tunnel` puts the page on your own domain through Cloudflare, and `/voice off` stops. `pi --voice` starts with voice on. See [Voice](#voice).
+- `/voice` lets you talk to bruv with this machine's microphone and speaker (use headphones: nothing cancels the echo). Replies are read aloud, and talking over one stops it. `/voice` again turns it off. `/voice web` opens a page in your browser to talk from, `/voice tunnel` puts that page on your own domain through Cloudflare, and `/voice off` stops everything. `pi --voice` starts with voice on. See [Voice](#voice).
 - `/notes` lists the project's notes in `.agents/notes/`. `/notes move` moves a bruv 0.x `wisdom/` folder there, keeping git history.
 - `/ps` lists this session's jobs and agents. Pick one to read its output or answer, see its worktree and session file, or stop it.
 - `/subagents` picks which of your signed-in models agents may use. The model chooses among them per task; your own model is always allowed and is the default.
@@ -157,13 +157,15 @@ Speech is recognised and spoken on your machine, on the CPU, by open models: Sil
 
 Talking over a reply pauses it at once. A cough or the speaker's own echo resumes it; real words stop the reply and the run, and go to the model. Talking while the agent works without speaking steers the work instead of stopping it.
 
-The talk button listens from the moment you touch it. **Hold** it while you talk, and the words go as soon as you let go, without waiting for silence; it suits noisy places. **Tap** it for hands-free: the microphone stays open and a pause ends each turn; tap again to turn it off. Words you start saying during the tap are kept. Pressing during a reply cuts in. On a computer, Space works the same way, and the ⋯ menu lists the keys. On a phone the controls take the bottom half of the screen; the arrow next to them makes them one small row, and the page remembers that.
+`/voice` listens all the time and a pause ends each turn. `/voice web` starts the page server in the same session and opens the page, which works alongside the terminal.
+
+On the page, the talk button listens from the moment you touch it. **Hold** it while you talk, and the words go as soon as you let go, without waiting for silence; it suits noisy places. **Tap** it for hands-free: the microphone stays open and a pause ends each turn; tap again to turn it off. Words you start saying during the tap are kept. Pressing during a reply cuts in. On a computer, Space works the same way, and the ⋯ menu lists the keys. On a phone the controls take the bottom half of the screen; the arrow next to them makes them one small row, and the page remembers that.
 
 **Mute** (or M) pauses the voice. Unmuting starts again from the beginning of the sentence it was saying. The sentence being spoken is lit up in the reply. **Stop** (or Esc) drops the rest of the reply.
 
 The button works the moment you touch it: the page connects while it loads, and what you say before the connection is up is sent as soon as it is.
 
-While voice is on, the agent can also put things on the page when seeing beats hearing: a page it writes (a table, a chart, code), or a picture or video from a file or a link. It says in a sentence what it showed. Each one appears in the conversation; the corner button opens it full screen. Pages run in a sandbox, apart from the voice page and its key.
+While voice is on, the agent can also show things when seeing beats hearing: a page it writes (a table, a chart, code), or a picture or video from a file or a link. It says in a sentence what it showed. The newest one sits above the input in the terminal: pictures and a video's first frame are drawn in terminals that can (Kitty, Ghostty, WezTerm, iTerm2), and each gets a link to open it. While `/voice web` runs, links go through the page (and the tunnel), so they work over SSH too; otherwise they open files on this machine. On the page each one appears in the conversation, and the corner button opens it full screen. Pages run in a sandbox, apart from the voice page and its key.
 
 The page needs a key that is in its link and stays the same across runs (`~/.pi/agent/bruv/voice/token`). It listens on `127.0.0.1:7807`. Anyone with the link can talk to your agent, so keep it private.
 
@@ -171,7 +173,7 @@ The page needs a key that is in its link and stays the same across runs (`~/.pi/
 
 Browsers allow the microphone only on `localhost` or https. `/voice tunnel` serves the page on a host name of yours, such as `voice.example.com`, through a Cloudflare tunnel. It asks for the host name and a Cloudflare API token with these permissions: Account › Cloudflare Tunnel › Edit, Zone › DNS › Edit, and Zone › Zone › Read. It then makes a tunnel named `bruv-voice-<host>`, points it at the page, adds a DNS record for the host, and starts `cloudflared`. If `cloudflared` isn't installed, it asks before downloading it. It never replaces a DNS record it didn't make.
 
-The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout` can remove it, and the host in `bruv.json`. After that, every `/voice` starts the tunnel too and shows both links. `/voice tunnel off` stops using it. A tunnel token from the Cloudflare dashboard also works; then set the tunnel's public host name to `http://localhost:7807` there.
+The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout` can remove it, and the host in `bruv.json`. After that, every `/voice web` starts the tunnel too and shows both links. `/voice tunnel off` stops using it. A tunnel token from the Cloudflare dashboard also works; then set the tunnel's public host name to `http://localhost:7807` there.
 
 Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's address with the same `?t=` key.
 

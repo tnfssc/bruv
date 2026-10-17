@@ -6,11 +6,13 @@ reached SSH or T3 Code.
 
 ## Choices and why
 
-- **A browser page is the microphone and speaker.** This answers the question that sank 0.x: bruv can
-  run anywhere the page can reach (locally, over SSH with a forwarded port, behind an https tunnel). The
-  browser also cancels echo, so you can talk over a reply played through speakers. `/voice here` uses
-  this machine's own devices (pw-record/pw-play, parec/pacat, arecord/aplay or sox) with no echo
-  cancelling; use headphones there.
+- **`/voice` is the terminal; `/voice web` adds a browser page.** `/voice` uses this machine's own
+  devices (pw-record/pw-play, parec/pacat, arecord/aplay or sox) with no echo cancelling, so use
+  headphones; `/voice` again stops. The page server starts only for `/voice web` or `/voice tunnel`, in
+  the same session and the same call. The page answers the question that sank 0.x: bruv can run
+  anywhere the page can reach (locally, over SSH with a forwarded port, behind an https tunnel), and the
+  browser cancels echo, so you can talk over a reply played through speakers. The page came first and
+  was the default; the user wanted `/voice` to mean the terminal.
 - **Speech to text, the session's model, text to speech; not a speech-to-speech model.** The user wanted
   no subscription for voice. Open full-duplex models (NVIDIA Nemotron VoiceChat 11B, 2026) need an 80 GB
   GPU. A chain lets the brain be the model the user already pays for, with all of bruv's tools.
@@ -58,6 +60,15 @@ reached SSH or T3 Code.
   Shown things start in a fixed 16rem box and take their own height only while they are last in the
   conversation, so nothing above or below moves. They are capped to the visible part of the conversation, so each can be
   seen whole with its title bar. Your own words bring the conversation back to the end.
+- **`show` in the terminal.** The newest shown thing sits in a widget above the input, so it works however
+  the tool was called (directly or from a codemode script) and never goes to the model. Pictures are
+  drawn with Pi's `Image` (Kitty or iTerm2 protocol), a video gets its first frame from ffmpeg when
+  installed, and pages, videos and pictures get an OSC 8 link. With the page server running, links go
+  through it (`/shown/<id>`, the tunnel's address when there is one), so they work over SSH and from
+  other machines, and pages keep the sandbox (`CSP: sandbox allow-scripts`). Without it they are
+  `file://` links on this machine; an inline page is saved under `bruv/voice/shown/`, which is deleted
+  when voice stops. Rendering a page to a picture would need a headless browser,
+  too heavy to ship. The tool result says where it went (`shownOn`), so the agent can say where to look.
 - **Brand.** The header uses the wordmark and the favicon the b from `site/assets/brand`, drawn in
   `currentColor` so they follow light and dark.
 - **Demo video.** `.tmp/demo/` (not kept in git) records the real agent over RPC with a virtual

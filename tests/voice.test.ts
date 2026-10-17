@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fauxAssistantMessage } from "@earendil-works/pi-ai";
 import WebSocket from "ws";
@@ -10,10 +10,13 @@ import { release } from "../src/voice/cloudflared";
 import { readKey, saveKey } from "../src/voice/keys";
 import { missing } from "../src/voice/models";
 import { serve } from "../src/voice/server";
-import { prepareShown, Shelf } from "../src/voice/show";
+import { forPage, resolveShown, Shelf, type ShowArgs } from "../src/voice/show";
+import { forTerminal } from "../src/voice/terminal";
 import { isEcho, Sentences, speakable } from "../src/voice/text";
 import { cleanHost, prepare } from "../src/voice/tunnel";
 import { sdk } from "./sdk";
+
+const shown = (args: ShowArgs, cwd: string, shelf: Shelf) => forPage(resolveShown(args, cwd), shelf);
 
 class FakeEngine implements Engine {
   heard: Int16Array[] = [];
@@ -230,9 +233,10 @@ test("the page and its socket need the key; audio goes both ways", async () => {
   }
 });
 
-test("/voice sends what was heard to the session and speaks the reply", async () => {
+test("/voice talks in the terminal, /voice web adds the page, and /voice again stops", async () => {
   const engine = new FakeEngine();
   let opened = "";
+  let here = 0;
   const agentDir = join(process.env.PI_CODING_AGENT_DIR as string, `voice-${Date.now()}`);
   const app = await sdk([
     (pi) =>
@@ -240,6 +244,10 @@ test("/voice sends what was heard to the session and speaks the reply", async ()
         engine: () => engine,
         open: (url) => {
           opened = url;
+        },
+        local: () => {
+          here++;
+          return { stop: () => here-- };
         },
         agentDir,
       }),
@@ -257,9 +265,14 @@ test("/voice sends what was heard to the session and speaks the reply", async ()
     ]);
     expect(app.session.getActiveToolNames()).not.toContain("show");
     await app.session.prompt("/voice");
-    expect(opened).toContain("?t=");
+    // The terminal's microphone and speaker, and no page server until it is asked for.
+    expect(here).toBe(1);
+    expect(opened).toBe("");
     // The model can show things only while voice is on.
     expect(app.session.getActiveToolNames()).toContain("show");
+    await app.session.prompt("/voice web");
+    expect(opened).toContain("?t=");
+    expect(here).toBe(1);
     engine.emit({ type: "ready" });
     engine.emit({ type: "speech" });
     engine.emit({ type: "heard", text: "how are things" });
@@ -267,7 +280,13 @@ test("/voice sends what was heard to the session and speaks the reply", async ()
     expect(sections[0]?.voice).toBeDefined();
     expect(app.session.messages.some((message) => message.role === "user")).toBe(true);
 
-    await app.session.prompt("/voice off");
+    const saved = join(agentDir, "bruv", "voice", "shown");
+    mkdirSync(saved, { recursive: true });
+    writeFileSync(join(saved, "page.html"), "<p>hi</p>");
+    await app.session.prompt("/voice");
+    expect(here).toBe(0);
+    // Pages saved for terminal links go when voice stops.
+    expect(existsSync(saved)).toBe(false);
     expect(app.session.getActiveToolNames()).not.toContain("show");
     app.faux.setResponses([
       (context) => {
@@ -382,17 +401,17 @@ test("the agent can show a page, a picture from disk or a video link", () => {
   writeFileSync(join(dir, "plot.png"), "png");
   writeFileSync(join(dir, "page.html"), "<p>hi</p>");
   const shelf = new Shelf();
-  expect(prepareShown({ html: "<p>hi</p>", title: "Hi" }, dir, shelf)).toEqual({
+  expect(shown({ html: "<p>hi</p>", title: "Hi" }, dir, shelf)).toEqual({
     kind: "html",
     title: "Hi",
     html: "<p>hi</p>",
   });
-  expect(prepareShown({ file: "page.html" }, dir, shelf)).toMatchObject({ kind: "html", html: "<p>hi</p>" });
-  const picture = prepareShown({ file: "plot.png" }, dir, shelf);
+  expect(shown({ file: "page.html" }, dir, shelf)).toMatchObject({ kind: "html", html: "<p>hi</p>" });
+  const picture = shown({ file: "plot.png" }, dir, shelf);
   expect(picture.kind).toBe("image");
   expect(picture.src).toMatch(/^\/shown\/[\w-]{20,}$/);
-  expect(prepareShown({ url: "https://example.com/clip.webm" }, dir, shelf)).toMatchObject({ kind: "video" });
-  expect(prepareShown({ url: "https://example.com/v/123", kind: "video" }, dir, shelf)).toMatchObject({
+  expect(shown({ url: "https://example.com/clip.webm" }, dir, shelf)).toMatchObject({ kind: "video" });
+  expect(shown({ url: "https://example.com/v/123", kind: "video" }, dir, shelf)).toMatchObject({
     kind: "video",
   });
   for (const args of [
@@ -403,7 +422,7 @@ test("the agent can show a page, a picture from disk or a video link", () => {
     { url: "file:///etc/passwd" },
     { url: "https://example.com/what" },
   ]) {
-    expect(() => prepareShown(args, dir, shelf)).toThrow();
+    expect(() => shown(args, dir, shelf)).toThrow();
   }
 });
 
@@ -422,7 +441,7 @@ test("shown things reach every open page, and files stream in byte ranges", asyn
       if (!binary) events.push(JSON.parse(data.toString()));
     });
     await new Promise((resolve) => ws.on("open", resolve));
-    const clip = prepareShown({ file: "clip.mp4", title: "Clip" }, dir, served.shelf);
+    const clip = shown({ file: "clip.mp4", title: "Clip" }, dir, served.shelf);
     expect(call.show(clip)).toBe(1);
     await until(() => events.some((event) => event.type === "show"));
     expect(events.find((event) => event.type === "show")).toMatchObject({ kind: "video", src: clip.src });
@@ -435,8 +454,41 @@ test("shown things reach every open page, and files stream in byte ranges", asyn
     expect(part.headers.get("content-range")).toBe("bytes 2-4/10");
     expect(await part.text()).toBe("234");
     expect((await fetch(`http://${host}/shown/guess`)).status).toBe(404);
+    // Pages written for terminal links run their scripts only in a sandbox, apart from the voice page.
+    const page = await fetch(`http://${host}${served.shelf.add(Buffer.from("<p>hi</p>"), "text/html")}`);
+    expect(await page.text()).toBe("<p>hi</p>");
+    expect(page.headers.get("content-security-policy")).toContain("allow-scripts");
+    expect(whole.headers.get("content-security-policy")).toBe("sandbox");
     ws.close();
   } finally {
     await served.close();
   }
+});
+
+test("the terminal draws pictures, gives videos a link and saves pages to open", async () => {
+  const dir = join(process.env.PI_CODING_AGENT_DIR as string, `terminal-${Date.now()}`);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, "plot.png"), "png");
+  writeFileSync(join(dir, "logo.svg"), "<svg/>");
+  writeFileSync(join(dir, "clip.mp4"), "not really a video");
+  const picture = await forTerminal(resolveShown({ file: "plot.png", title: "Plot" }, dir), dir);
+  expect(picture.picture?.mime).toBe("image/png");
+  // Terminals can't draw SVG, so it is a link.
+  expect((await forTerminal(resolveShown({ file: "logo.svg" }, dir), dir)).link?.url).toStartWith("file://");
+  const video = await forTerminal(resolveShown({ file: "clip.mp4" }, dir), dir);
+  expect(video.link?.url).toStartWith("file://");
+  const page = await forTerminal(resolveShown({ html: "<p>hi</p>" }, dir), join(dir, "shown"));
+  expect(readFileSync(new URL(page.link?.url as string), "utf8")).toBe("<p>hi</p>");
+  // With the page server running, links go through it and nothing is saved.
+  const served = await forTerminal(resolveShown({ html: "<p>yo</p>" }, dir), join(dir, "unused"), {
+    href: "http://127.0.0.1:7807/shown/abc",
+  });
+  expect(served.link?.url).toBe("http://127.0.0.1:7807/shown/abc");
+  expect(existsSync(join(dir, "unused"))).toBe(false);
+  // A link that isn't a picture terminals draw stays a link.
+  const fake = (async () =>
+    new Response("<html>", { headers: { "content-type": "text/html" } })) as unknown as typeof fetch;
+  expect(
+    (await forTerminal(resolveShown({ url: "https://example.com/a.png" }, dir), dir, { fetch: fake })).link?.url,
+  ).toBe("https://example.com/a.png");
 });

@@ -31,13 +31,16 @@ const kept = 200;
 
 export type ShowArgs = { html?: string; file?: string; url?: string; kind?: "image" | "video"; title?: string };
 
-/** Files shared with the page under random names, so only a page that was shown one can fetch it. */
+/**
+ * Things shared under random names, so only someone who was shown one can fetch it: a file by its path, or
+ * a page the agent wrote, kept in memory.
+ */
 export class Shelf {
-  private files = new Map<string, { path: string; type: string }>();
+  private files = new Map<string, { source: string | Buffer; type: string }>();
 
-  add(path: string, type: string) {
+  add(source: string | Buffer, type: string) {
     const id = randomBytes(16).toString("base64url");
-    this.files.set(id, { path, type });
+    this.files.set(id, { source, type });
     if (this.files.size > kept) this.files.delete(this.files.keys().next().value as string);
     return `/shown/${id}`;
   }
@@ -47,7 +50,7 @@ export class Shelf {
     const file = this.files.get(id);
     let size = 0;
     try {
-      if (file) size = statSync(file.path).size;
+      if (file) size = typeof file.source === "string" ? statSync(file.source).size : file.source.length;
     } catch {}
     if (!file || !size) {
       response.writeHead(404).end();
@@ -58,13 +61,20 @@ export class Shelf {
       "accept-ranges": "bytes",
       "cache-control": "private, max-age=3600",
       "x-content-type-options": "nosniff",
-      // An SVG opened on its own must not run scripts with the page's origin.
-      "content-security-policy": "sandbox",
+      // Nothing shown runs with the voice page's origin: an SVG runs no scripts, and a page runs its own in a
+      // sandbox, as it does inside the voice page.
+      "content-security-policy": file.type.startsWith("text/html")
+        ? "sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox"
+        : "sandbox",
+    };
+    const body = (start?: number, end?: number) => {
+      if (typeof file.source === "string") createReadStream(file.source, { start, end }).pipe(response);
+      else response.end(start === undefined ? file.source : file.source.subarray(start, (end ?? 0) + 1));
     };
     const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.range ?? "");
     if (!range || (!range[1] && !range[2])) {
       response.writeHead(200, { ...headers, "content-length": size });
-      createReadStream(file.path).pipe(response);
+      body();
       return;
     }
     const start = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
@@ -78,12 +88,22 @@ export class Shelf {
       "content-length": end - start + 1,
       "content-range": `bytes ${start}-${end}/${size}`,
     });
-    createReadStream(file.path, { start, end }).pipe(response);
+    body(start, end);
   }
 }
 
-/** Turns what the agent asked to show into what the page gets. Throws with a reason the agent can act on. */
-export function prepareShown(args: ShowArgs, cwd: string, shelf: Shelf): Shown {
+/** What to show, checked: a whole page, a file on this machine, or a link. */
+export type Resolved = {
+  kind: Shown["kind"];
+  title?: string;
+  html?: string;
+  path?: string;
+  url?: string;
+  type?: string;
+};
+
+/** Checks what the agent asked to show. Throws with a reason the agent can act on. */
+export function resolveShown(args: ShowArgs, cwd: string): Resolved {
   const given = [args.html, args.file, args.url].filter((value) => value !== undefined);
   if (given.length !== 1) throw new Error("Give exactly one of html, file or url.");
   const title = args.title?.trim() || undefined;
@@ -101,7 +121,7 @@ export function prepareShown(args: ShowArgs, cwd: string, shelf: Shelf): Shown {
     if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("Only http and https links work.");
     const kind = args.kind ?? types[extname(url.pathname).toLowerCase()]?.[0];
     if (kind !== "image" && kind !== "video") throw new Error("Say whether the link is an image or a video in kind.");
-    return { kind, title, src: url.href };
+    return { kind, title, url: url.href };
   }
   const path = resolve(cwd, args.file as string);
   const type = types[extname(path).toLowerCase()];
@@ -115,9 +135,14 @@ export function prepareShown(args: ShowArgs, cwd: string, shelf: Shelf): Shown {
   } catch {
     throw new Error(`No file at ${path}.`);
   }
-  if (type[0] === "html") {
-    if (size > maxHtml) throw new Error("That page is over 2 MB. Make it smaller.");
-    return { kind: "html", title, html: readFileSync(path, "utf8") };
-  }
-  return { kind: type[0], title, src: shelf.add(path, type[1]) };
+  if (type[0] !== "html") return { kind: type[0], title, path, type: type[1] };
+  if (size > maxHtml) throw new Error("That page is over 2 MB. Make it smaller.");
+  return { kind: "html", title, html: readFileSync(path, "utf8"), path };
+}
+
+/** What a voice page gets: the page itself, the link, or a file shared under a name no one can guess. */
+export function forPage(item: Resolved, shelf: Shelf): Shown {
+  const { kind, title } = item;
+  if (kind === "html") return { kind, title, html: item.html };
+  return { kind, title, src: item.url ?? shelf.add(item.path as string, item.type as string) };
 }

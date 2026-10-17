@@ -2,18 +2,25 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { toolResult } from "../jobs";
 import type { Call } from "./call";
-import { prepareShown, type Shelf } from "./show";
+import { forPage, resolveShown, type Shelf } from "./show";
+import { forTerminal, showInTerminal } from "./terminal";
 
 /**
- * The `show` tool: puts a page, picture or video on the voice page. It is declared to the model only
- * while voice is on (see `showTool`); the voice section of the prompt says when to use it.
+ * Where shown things can go while voice is on: open voice pages and the terminal. `web` is the page server
+ * and its address (the tunnel's when there is one), so terminal links can go through it.
  */
-export function registerShow(pi: ExtensionAPI, live: () => { call: Call; shelf: Shelf } | undefined) {
+export type Screens = { call: Call; web?: { shelf: Shelf; address: string }; saved: string };
+
+/**
+ * The `show` tool: puts a page, picture or video on every screen that can show it. It is declared to the
+ * model only while voice is on (see `showTool`); the voice section of the prompt says when to use it.
+ */
+export function registerShow(pi: ExtensionAPI, live: () => Screens | undefined) {
   pi.registerTool({
     name: "show",
     label: "Show",
     description:
-      "Put a page, picture or video on the user's voice page. Give one of html (a whole self-contained page), file (an image, video or .html file) or url (an image or video link).",
+      "Put a page, picture or video on the user's screen: the terminal and any open voice page. Give one of html (a whole self-contained page), file (an image, video or .html file) or url (an image or video link).",
     exposure: "codemode",
     parameters: Type.Object({
       html: Type.Optional(Type.String({ description: "A whole page with its CSS and scripts inline." })),
@@ -28,14 +35,26 @@ export function registerShow(pi: ExtensionAPI, live: () => { call: Call; shelf: 
       ),
       title: Type.Optional(Type.String({ description: "A few words shown above it." })),
     }),
-    outputSchema: Type.Object({ screens: Type.Number() }),
+    outputSchema: Type.Object({ shownOn: Type.Array(Type.String()) }),
     async execute(_id, args, _signal, _update, ctx) {
       const voice = live();
-      if (!voice) throw new Error("Voice is off, so there is no page to show it on.");
-      const screens = voice.call.show(prepareShown(args, ctx.cwd, voice.shelf));
-      if (!screens)
-        throw new Error("No voice page is open right now. Say it instead, or ask the user to open the page.");
-      return toolResult({ screens });
+      if (!voice) throw new Error("Voice is off, so there is nowhere to show it.");
+      const item = resolveShown(args, ctx.cwd);
+      const shownOn: string[] = [];
+      const { web } = voice;
+      const page = web && forPage(item, web.shelf);
+      if (page && voice.call.show(page)) shownOn.push("voice page");
+      if (ctx.mode === "tui" && ctx.hasUI) {
+        // With the page server running, links go through it: they work over SSH and through the tunnel.
+        const href =
+          web &&
+          (item.url ??
+            `${web.address}${page?.src ?? web.shelf.add(Buffer.from(item.html ?? ""), "text/html; charset=utf-8")}`);
+        showInTerminal(ctx.ui, await forTerminal(item, voice.saved, { href }));
+        shownOn.push("terminal");
+      }
+      if (!shownOn.length) throw new Error("No screen can show it right now: no voice page is open. Say it instead.");
+      return toolResult({ shownOn });
     },
   });
 }
