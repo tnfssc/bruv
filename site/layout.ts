@@ -136,10 +136,15 @@ function composeLanding(
   text(landing.intro, palette.base, margin, Math.min(width, 66));
   y += 2;
   link("Install bruv", "install", margin, true);
-  if (width < 38) {
+  if (width < 52) {
+    y += 2;
+    link(`${landing.video.label} ↗`, landing.video.src);
     y += 2;
     link("Source ↗", siteContent.repository);
-  } else link("Source ↗", siteContent.repository, margin + 20);
+  } else {
+    link(`${landing.video.label} ↗`, landing.video.src, margin + 20);
+    link("Source ↗", siteContent.repository, margin + 36);
+  }
   y += 4;
   landing.features.forEach((feature, i) => {
     const id = demoIds[i];

@@ -43,7 +43,11 @@ export function textContent(animated = true) {
     escapeHtml(landing.titleTail) +
     "</p><p>" +
     escapeHtml(landing.intro) +
-    "</p><p>" +
+    '</p><video class="hero-video" src="' +
+    landing.video.src +
+    '" poster="' +
+    landing.video.poster +
+    '" width="1080" height="1080" autoplay muted loop playsinline controls aria-label="bruv voice: talking to the agent from a phone and the terminal"></video><p>' +
     cta +
     ' · <a href="' +
     siteContent.repository +
@@ -148,6 +152,8 @@ export async function build(raw = process.env.BASE_URL ?? "https://bruv.sharath.
   await mkdir(resolve(out, "assets"), { recursive: true });
   await cp(resolve(root, "assets/brand"), resolve(out, "assets/brand"), { recursive: true });
   await cp(resolve(root, "assets/bruv-prompt.woff2"), resolve(out, "assets/bruv-prompt.woff2"));
+  for (const name of ["voice.mp4", "voice-poster.jpg"])
+    await cp(resolve(root, "assets", name), resolve(out, "assets", name));
   // Workspace installs may hoist ghostty-web to the repo root.
   await cp(Bun.resolveSync("ghostty-web/ghostty-vt.wasm", root), resolve(out, "ghostty-vt.wasm"));
   await cp(resolve(root, "licenses"), resolve(out, "licenses"), { recursive: true });

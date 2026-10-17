@@ -173,6 +173,10 @@ The page needs a key that is in its link and stays the same across runs (`~/.pi/
 
 Browsers allow the microphone only on `localhost` or https. `/voice tunnel` serves the page on a host name of yours, such as `voice.example.com`, through a Cloudflare tunnel. It asks for the host name and a Cloudflare API token with these permissions: Account › Cloudflare Tunnel › Edit, Zone › DNS › Edit, and Zone › Zone › Read. It then makes a tunnel named `bruv-voice-<host>`, points it at the page, adds a DNS record for the host, and starts `cloudflared`. If `cloudflared` isn't installed, it asks before downloading it. It never replaces a DNS record it didn't make.
 
+Once the tunnel is up, a QR code for the page sits above the input until a page starts, and the voice page shows it too on a computer. Scan it with your phone. Without a tunnel, `/voice web` says how to get one.
+
+The page installs as an app: on a phone, use Add to Home Screen; in Chrome or Edge, use the install button in the address bar. The app opens the page already signed in. It needs bruv running with `/voice web` or `/voice tunnel`; when bruv isn't running, the app says so and opens the page once it's back. Installing works on https or `localhost`, so a phone needs the tunnel.
+
 The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout` can remove it, and the host in `bruv.json`. After that, every `/voice web` starts the tunnel too and shows both links. `/voice tunnel off` stops using it. A tunnel token from the Cloudflare dashboard also works; then set the tunnel's public host name to `http://localhost:7807` there.
 
 Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's address with the same `?t=` key.

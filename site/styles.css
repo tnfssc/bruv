@@ -132,6 +132,16 @@ figure {
   font-display: block;
 }
 
+/* The voice video: muted and looping, with controls to turn the sound on. */
+.hero-video {
+  display: block;
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
+  margin: 1.5rem 0;
+  border-radius: 10px;
+  background: #09090b;
+}
 /* HTML demos use the same styled cells as the terminal, without a canvas. */
 .demo-note {
   color: #a0a0a0;

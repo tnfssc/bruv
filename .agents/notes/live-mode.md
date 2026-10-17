@@ -78,6 +78,31 @@ reached SSH or T3 Code.
   the user is at the terminal, on the page, or both, and the tunnel's host. It changes only when the user
   turns parts on or off, so the cache holds in between. On and off need no message: the section comes
   and goes. Messages in the conversation on each change were considered and left out as noise.
+- **QR code for the phone.** Only a tunnel gives a phone an address it can use (https, not
+  127.0.0.1), so the code appears once the tunnel is up: above the input until a page starts (the
+  server's `onStart`, on a page's `mic`), and on the page on a computer (the server sends `remote` with
+  an SVG). `uqr` (MIT, no dependencies) encodes it: QR encoding is easy to get subtly wrong, so this is
+  a runtime dependency worth having. Both forms were scanned back with `zbarimg`; in a dark terminal the
+  default polarity reads, the inverted one doesn't.
+- **The voice page is an installable app (PWA).** The key is the page's only sign-in, so the manifest
+  holds it in `start_url` and is itself served only with the key (the server writes the key into the
+  page's manifest link). Icons and `sw.js` need no key. Installing only lasts because the key is saved
+  (`token` file), the port is fixed (7807) and the tunnel uses the user's own host; a random-host tunnel
+  would leave a dead app after each restart. The worker keeps nothing offline, since the page is useless
+  without bruv: it only swaps a failed load, or a 5xx from Cloudflare when bruv is stopped, for a short
+  page that polls and reloads. Chromium reported no installability errors with a real profile
+  (incognito always reports one).
+- **Voice is the flagship.** The README, the site (headline, first demo, a muted looping video in the HTML
+  view, a "Watch it" link in the terminal view) and the changelog lead with voice. The hero video
+  (`.tmp/hero/` records, `.tmp/hype/` edits; not kept) is the real agent on a phone page with a
+  virtual microphone. A plain walkthrough cut was tried first and read as dull; the one in use is a
+  37-second square hype cut: an HTML stage (Inter, kinetic words, a realistic phone frame, live captions
+  so it works muted) rendered frame by frame with Playwright at 30 fps, the real voices cut to each scene,
+  and a pulse made with ffmpeg's `aevalsrc` that ducks under them. Every voice clip ends on a sentence
+  end (checked by running the clip through the speech recogniser), and each cut in the footage gets a
+  slice sound. In `aevalsrc`, keep `exp()` finite before an event starts (`max(t-start,0)`): infinity
+  times zero is NaN, and one NaN silences the whole mix. Chromium's screencast and
+  Playwright's video both record CSS pixels, so the phone is shown near its real size.
 - **Brand.** The header uses the wordmark and the favicon the b from `site/assets/brand`, drawn in
   `currentColor` so they follow light and dark.
 - **Terminal demo.** `.tmp/tv/` (not kept) runs bruv in a pseudo-terminal (`script`) shown in xterm.js,
