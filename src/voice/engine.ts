@@ -21,7 +21,8 @@ export function startEngine(paths: ModelPaths, threads = 4): Engine {
   );
   return {
     hear: (pcm) => worker.postMessage({ type: "hear", pcm }, [pcm.buffer as ArrayBuffer]),
-    speak: (text) => worker.postMessage({ type: "speak", text }),
+    speak: (text, part) => worker.postMessage({ type: "speak", text, part }),
+    talk: (on, keep) => worker.postMessage({ type: "talk", on, keep }),
     hush: () => {
       generation++;
       worker.postMessage({ type: "hush" });

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Add `/voice`: talk to bruv from a browser page, or with this machine's microphone through `/voice here`. Speech is recognised and spoken locally by open models (Silero VAD, NVIDIA Nemotron streaming, Kyutai Pocket TTS) on the CPU; the session's model answers in short spoken sentences. Talking over a reply stops it at once. The page works from other devices through an https tunnel.
+- Add `/voice`: talk to bruv with this machine's microphone and speaker; `/voice` again turns it off, and `/voice web` adds a browser page to talk from. Speech is recognised and spoken locally by open models (Silero VAD, NVIDIA Nemotron streaming, Kyutai Pocket TTS) on the CPU; the session's model answers in short spoken sentences. Talking over a reply stops it at once. The talk button works both ways: hold it to talk, or tap it for hands-free. The page has a mute button that picks up again from the start of the sentence. `/voice tunnel` serves it on your own domain through a Cloudflare tunnel, set up from an API token and a host name. The talk button works the moment it is touched, and the agent can show pages, pictures and videos on the page with a `show` tool.
 
 - Keep the Codex prompt cache when the thinking level changes on GPT-6 models. Requests keep the effort the conversation started with and mark each change where it happened, so earlier turns stay cached. The effort starts again after a compaction or a model switch.
 
