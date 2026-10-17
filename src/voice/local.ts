@@ -26,6 +26,14 @@ const players: ((rate: number) => Tool)[] = [
 ];
 
 const installed = (command: string) => spawnSync("which", [command], { stdio: "ignore" }).status === 0;
+const missing = "Voice here needs pw-record and pw-play, parec and pacat, arecord and aplay, or sox.";
+
+/** Why this machine can't record and play audio, or undefined when it can. Cheap, so it runs before the models load. */
+export function audioMissing() {
+  const ready =
+    recorders.some((tool) => installed(tool.command)) && players.some((tool) => installed(tool(16000).command));
+  return ready ? undefined : missing;
+}
 
 /**
  * This machine's microphone and speaker as a device. Nothing here cancels echo, so without headphones the
@@ -34,39 +42,51 @@ const installed = (command: string) => spawnSync("which", [command], { stdio: "i
 export function startLocal(call: Call): { stop(): void } | string {
   const recorder = recorders.find((tool) => installed(tool.command));
   const player = players.find((tool) => installed(tool(16000).command));
-  if (!recorder || !player)
-    return "Voice here needs pw-record and pw-play, parec and pacat, arecord and aplay, or sox.";
+  if (!recorder || !player) return missing;
   let speaker: ChildProcess | undefined;
   let speakerRate = 0;
-  let endsAt = 0;
+  /** Audio handed to the speaker and when it plays, kept until it has played so a pause can go back. */
+  let queue: { pcm: Int16Array; rate: number; part: number; ends: number }[] = [];
   let timer: NodeJS.Timeout | undefined;
-  /** Audio that came in while paused. */
-  let held: [Int16Array, number, number][] | undefined;
+  /** Audio held while paused, from the start of the sentence that was playing. */
+  let held: { pcm: Int16Array; rate: number; part: number }[] | undefined;
   const silence = () => {
     speaker?.kill();
     speaker = undefined;
-    endsAt = 0;
+    queue = [];
     clearTimeout(timer);
+  };
+  /** Reports each sentence once all its audio has played. */
+  const tick = () => {
+    const now = Date.now();
+    const playing = queue.find((chunk) => chunk.ends > now);
+    const last = queue.at(-1)?.part ?? 0;
+    queue = playing ? queue.filter((chunk) => chunk.part >= playing.part) : [];
+    call.played(playing ? playing.part - 1 : last, device);
+    if (playing) timer = setTimeout(tick, playing.ends - now);
   };
   const device: Device = {
     send: (event) => {
       // A process can't pause what it has already handed to the sound server, so a pause stops playback
-      // and holds what comes next.
+      // and keeps what wasn't heard, from the start of the sentence that was playing.
       if (event.type === "pause") {
+        const now = Date.now();
+        const playing = queue.find((chunk) => chunk.ends > now);
+        const rest = playing ? queue.filter((chunk) => chunk.part >= playing.part) : [];
         silence();
-        held ??= [];
+        held = [...(held ?? []), ...rest];
       } else if (event.type === "flush") {
         silence();
         held = undefined;
       } else if (event.type === "resume" && held) {
         const waiting = held;
         held = undefined;
-        for (const [pcm, rate, part] of waiting) device.play(pcm, rate, part);
+        for (const chunk of waiting) device.play(chunk.pcm, chunk.rate, chunk.part);
       }
     },
     play: (pcm, rate, part) => {
       if (held) {
-        held.push([pcm, rate, part]);
+        held.push({ pcm, rate, part });
         return;
       }
       if (!speaker || speakerRate !== rate) {
@@ -77,9 +97,10 @@ export function startLocal(call: Call): { stop(): void } | string {
         speakerRate = rate;
       }
       speaker.stdin?.write(Buffer.from(pcm.buffer, pcm.byteOffset, pcm.byteLength));
-      endsAt = Math.max(endsAt, Date.now()) + (pcm.length / rate) * 1000;
+      const starts = Math.max(queue.at(-1)?.ends ?? 0, Date.now());
+      queue.push({ pcm, rate, part, ends: starts + (pcm.length / rate) * 1000 });
       clearTimeout(timer);
-      timer = setTimeout(() => call.played(), endsAt - Date.now());
+      tick();
     },
   };
   const microphone = spawn(recorder.command, recorder.args, { stdio: ["ignore", "pipe", "ignore"] });

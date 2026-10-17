@@ -72,6 +72,8 @@ let held = false;
  */
 let grace = 0;
 const graceFrames = Math.round((rate * 1.2) / window);
+/** The words heard when the grace was last given, so it is given again only while they still grow. */
+let graceText = "";
 
 function decode() {
   while (recognizer.isReady(stream)) recognizer.decode(stream);
@@ -98,7 +100,11 @@ function frame(samples) {
   vad.acceptWaveform(samples);
   while (!vad.isEmpty()) vad.pop();
   const talking = vad.isDetected();
-  if (talking) grace = 0;
+  if (talking && grace > 0) {
+    // The VAD has the tap's turn now; the audio kept in case it never came isn't needed.
+    grace = 0;
+    forget();
+  }
   if (!stream && talking) {
     stream = recognizer.createStream();
     for (const chunk of recent) stream.acceptWaveform({ sampleRate: rate, samples: chunk });
@@ -108,17 +114,39 @@ function frame(samples) {
     post({ type: "speech" });
   }
   if (!stream) {
-    recent.push(samples);
-    recentLength += samples.length;
-    while (recentLength - recent[0].length >= preroll) recentLength -= recent.shift().length;
+    remember(samples);
     return;
   }
   stream.acceptWaveform({ sampleRate: rate, samples });
   if (talking) report();
   else if (grace > 0) {
+    // Speech that starts late in the grace may reach the VAD only after it, so its start is kept too.
+    remember(samples);
     grace--;
     report();
+    if (grace > 0) return;
+    // Words still coming: give the VAD more time. None at all: end quietly, so the turn the VAD may start
+    // next begins with the audio just kept rather than losing its first words.
+    if (partial && partial !== graceText) {
+      graceText = partial;
+      grace = graceFrames;
+    } else if (!partial) {
+      stream = undefined;
+      post({ type: "heard", text: "" });
+    }
   } else finish();
+}
+
+/** Keeps the last `preroll` of audio, so a turn can start a little before the VAD noticed it. */
+function remember(samples) {
+  recent.push(samples);
+  recentLength += samples.length;
+  while (recentLength - recent[0].length >= preroll) recentLength -= recent.shift().length;
+}
+
+function forget() {
+  recent = [];
+  recentLength = 0;
 }
 
 function report() {
@@ -133,23 +161,34 @@ function finish(extra) {
   stream.inputFinished();
   const text = decode();
   stream = undefined;
+  // Audio kept during a grace belongs to this turn, not the next.
+  forget();
   post({ type: "heard", text, ...extra });
 }
 
 /**
  * Hold to talk: a turn starts when the button goes down and ends when it comes up. With `keep`, letting go
- * hands the turn to the VAD instead, which ends it at the next silence (a tap that turns on hands-free).
+ * hands the turn to the VAD instead, which ends it at the next silence (a tap that turns on hands-free),
+ * and pressing keeps the moment just heard (a hold that began in hands-free).
  */
 function talk(on, keep) {
-  if (on === held) return;
+  if (on === held) {
+    // Hands-free turned off: a turn the VAD had open ends now, as the microphone stops.
+    if (!on && !keep && stream) finish();
+    return;
+  }
   held = on;
   vad.reset();
   if (!on && keep) {
     grace = graceFrames;
+    graceText = partial;
     return;
   }
   if (on) {
-    stream ??= recognizer.createStream();
+    if (!stream) {
+      stream = recognizer.createStream();
+      if (keep) for (const chunk of recent) stream.acceptWaveform({ sampleRate: rate, samples: chunk });
+    }
     recent = [];
     recentLength = 0;
     partial = "";

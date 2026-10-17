@@ -43,6 +43,10 @@ reached SSH or T3 Code.
   with `keep`: the worker keeps the turn's stream and gives the VAD 1.2 s to hear speech, so words said
   during the tap are kept and silence ends the turn as usual. A held turn is never taken for echo. A
   separate mode switch came first; one gesture is simpler and nothing has to be chosen.
+  While hands-free is on, a press starts a held turn only once it outlasts a tap, with `keep` so the
+  worker starts it from the VAD's last 0.6 s. Starting it at once made the tap that turns hands-free off
+  pause the reply, and as a held turn skips the echo check, the reply's own echo heard during the tap
+  became a turn and cut the reply off. Turning hands-free off now just ends a turn the VAD has open.
 - **Big or small controls.** On phones the controls take the bottom half of the screen, or one row of
   76 px after the arrow button; the choice is kept in localStorage. The ⋯ menu only lists keys, so it
   is hidden on touch screens.
@@ -169,4 +173,45 @@ reached SSH or T3 Code.
 - English only. Nemotron 3.5 streaming (40 languages, same size) is in the same sherpa-onnx release.
 - A turn model (Pipecat's Smart Turn v3, ONNX, CPU) could replace the fixed 0.6 s silence.
 - A small local or fast model could answer at once while the main model works; not needed yet.
-- `played` from the page clears echo detection; a gap between sentences can clear it early.
+- **Progress is per sentence.** Devices report `played(part)` for each sentence they finish (the page
+  from its schedule, the terminal from its own timeline), and `Call` keeps what isn't heard yet by number.
+  A bare `played` meant "caught up with what came so far", so a short first sentence ("Sure.") ended the
+  reply early: "Ready" mid-reply, echo checks off, and a new question not counted as cutting in. With
+  nothing left to say, the state is "thinking" until `agent_end`, so tool steps after a spoken line don't
+  show "Ready". The terminal speaker keeps each sentence's audio until it has played, since killing
+  `pw-play` on a pause lost everything already written to it; resume plays the sentence again from its
+  start. The sentence playing when someone starts talking goes to the agent as a note on their message,
+  because the reply in the history was written well ahead of the voice and usually finished.
+- **Echo and soft pauses.** The echo check counts words over 3 letters, takes close matches (prefixes,
+  small edit distance) and needs 75%: echo comes back misheard ("thirty-one years" as "One year"), while a
+  real question sharing a few short words must still get through. A pause from the microphone alone is
+  `soft`: the page turns the reply down instead of stopping it, so echo doesn't make it stutter; a press
+  stops it, after the tap window. Colons no longer end sentences ("One:" alone sounded clipped).
+- **Pages keep the conversation.** `Call` logs user lines, sentences and shown things with numbers; a
+  page says `hello` with the call id and last number it has and gets what it missed (all of it on a new
+  call), sentences already played marked past. Reloads, a second page and the installed app open on the
+  conversation instead of an empty page, and a dropped connection no longer crosses out a reply that
+  goes on playing. `/voice off` closes sockets with code 4000 so pages say voice is off.
+- **Only players report progress.** The terminal speaker and pages that have started (claimed the mic)
+  play replies; a page that is only open doesn't, and counting it marked every sentence heard on arrival.
+  When the last player goes (a reload), the rest counts as heard; with no player at all, audio counts as
+  heard on arrival and the state never shows speaking. A failed model run is told once, after Pi's retries
+  (`agent_settled`), as a page alert and one spoken line.
+- **Echo limits, tested without echo cancelling** (page playback fed back into the virtual mic): at
+  −10 dB and −20 dB no false cut-ins; at −30 dB short misheard fragments still cut in (about 2 per long
+  reply). The check compares a turn against every sentence since it began, ignores words of 3 letters or
+  fewer, and matches close spellings and, for 5+ letters, Soundex. Looser rules started taking short real
+  interruptions ("what about Saturn") for echo, so it stops here until tried on a real phone, whose
+  browser cancels echo.
+- **The where-line follows devices,** not commands: who holds the microphone and whether a page is
+  connected. "Server running" read as "user on the page" when no page was open.
+- **Command and grace fixes from user testing.** `/voice` toggles only the terminal's microphone and
+  speaker when the page is on (`/voice off` stops all). `/voice tunnel` asks its questions before starting
+  anything, Escape changes nothing (Pi's input gives `undefined` for Escape, so a saved key is reused only
+  on an empty answer), and a failed tunnel stops what it started. The audio programs are checked
+  (`audioMissing` in `local.ts`) before the models load. The empty-chat logo hides when anything is drawn under it
+  (`covers` in `home.ts`, from `tui.render`), since it hid the QR code at 40 rows. After a tap, audio in
+  the grace also goes to the preroll; the grace grows while the words do, and with no words the turn ends
+  without decoding (decoding padded a first syllable into a turn of its own), so a VAD turn right after
+  starts from the kept audio. With the real models, speech starting 0.8–1.3 s after the tap used to lose
+  or split its first words ("Tell me" / "Fun fact about Saturn") and now arrives whole.

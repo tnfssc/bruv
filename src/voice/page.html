@@ -292,12 +292,17 @@ let started = false, connected = false, state = "listening", offlineSince = Date
 // One button for both ways to talk. It listens from the moment it is touched; letting go within `tapTime`
 // was a tap, which turns hands-free on or off, and later ends a held turn.
 const tapTime = 280;
-let free = false, holding = false, pressedAt = 0, tail;
+let free = false, holding = false, pressedAt = 0, tail, hold;
 // Small controls take one row instead of half the screen.
 let small = localStorage.getItem("bruv-voice-small") === "1";
 // Playback. Audio comes in numbered sentences ("parts"); finished audio of the sentence playing is kept, so
 // unmuting can start that sentence again.
-let rate = 24000, incoming = 0, items = [], nextTime = 0, muted = false, now = 0;
+let rate = 24000, incoming = 0, items = [], nextTime = 0, muted = false, now = 0, reported = 0, pauseLater;
+// The call this page shows and the entries it has, so a page that reconnects or reopens gets only what it
+// missed, and a new call starts a clean page.
+let callId, seen = new Set();
+// Set when bruv turned voice off, rather than the connection dropping.
+let bye = false;
 const spans = new Map();
 let partialLine, reply;
 
@@ -344,11 +349,11 @@ function alert(text) {
 function render() {
   // A short drop isn't worth showing.
   const offline = started && !connected && Date.now() - offlineSince > 2000;
-  const tone = !started ? "idle" : offline ? "error" : holding ? "hearing" : !free && state === "listening" ? "idle" : state;
+  const tone = bye ? "idle" : !started ? "idle" : offline ? "error" : holding ? "hearing" : !free && state === "listening" ? "idle" : state;
   document.body.dataset.tone = tone;
   if (small) document.body.dataset.small = ""; else delete document.body.dataset.small;
   if (holding) document.body.dataset.holding = ""; else delete document.body.dataset.holding;
-  ui.label.textContent = !started ? "Not started" : offline ? "Connecting" : muted && items.length ? "Muted"
+  ui.label.textContent = bye ? "Voice is off" : !started ? "Not started" : offline ? "Connecting" : muted && items.length ? "Muted"
     : holding ? labels.hearing : state === "listening" && !free ? "Ready" : labels[state] ?? state;
   ui.intro.textContent = free ? "Just talk" : "Hold to talk · tap for hands-free";
   ui.talk.querySelector("use").setAttribute("href", free ? "#i-lines" : "#i-mic");
@@ -384,14 +389,28 @@ function silence() {
 
 function tidy() {
   const first = items.find((item) => !item.done);
-  if (first) { items = items.filter((item) => !item.done || item.part === first.part); return render(); }
-  mark(Math.max(now, ...items.map((item) => item.part)), true);
+  if (first) {
+    items = items.filter((item) => !item.done || item.part === first.part);
+    played(first.part - 1);
+    return render();
+  }
+  const last = Math.max(now, ...items.map((item) => item.part));
+  mark(last, true);
   items = [];
-  send({ type: "played" });
+  played(last);
   render();
 }
 
+/** Tells bruv every sentence up to `part` has been heard. */
+function played(part) {
+  if (part <= reported) return;
+  reported = part;
+  send({ type: "played", part });
+}
+
 function play(buffer) {
+  // A page that hasn't started can't play yet, and bruv doesn't wait for it.
+  if (!output) return;
   const pcm = new Int16Array(buffer);
   const audio = output.createBuffer(1, pcm.length, rate);
   const channel = audio.getChannelData(0);
@@ -416,7 +435,29 @@ function setMuted(value) {
   render();
 }
 
+/** Someone may be talking over the reply. Only the microphone hearing something turns it down, as it may be
+ * the reply's own echo; a press stops it, unless it turns out to be a tap. */
+function pause(soft) {
+  if (!output) return;
+  outputGain.gain.setTargetAtTime(0.15, output.currentTime, 0.03);
+  // A press already let go of as a tap (the pause comes later over a slow link) only turned hands-free on.
+  if (soft || (!holding && tail === undefined)) return;
+  const left = tapTime - (performance.now() - pressedAt);
+  clearTimeout(pauseLater);
+  if (holding && left > 0) pauseLater = setTimeout(() => { if (holding || tail !== undefined) output.suspend(); }, left);
+  else output.suspend();
+}
+
+function resume() {
+  if (!output) return;
+  clearTimeout(pauseLater);
+  outputGain.gain.setTargetAtTime(1, output.currentTime, 0.03);
+  output.resume();
+}
+
 function flush() {
+  clearTimeout(pauseLater);
+  if (outputGain) outputGain.gain.setTargetAtTime(1, output.currentTime, 0.03);
   silence();
   items = [];
   for (const [part, span] of spans) if (part > now || !span.classList.contains("said")) span.classList.add("cut");
@@ -465,6 +506,9 @@ function press() {
   navigator.vibrate?.(8);
   // Pressing again just after letting go carries on the same turn.
   if (tail !== undefined) { clearTimeout(tail); tail = undefined; }
+  // Hands-free already sends everything, so a press only becomes a turn once it outlasts a tap. A tap that
+  // turns hands-free off then leaves a reply playing; the words since the press are kept.
+  else if (free) hold = setTimeout(() => { hold = undefined; send({ type: "talk", on: true, keep: true }); }, tapTime);
   else send({ type: "talk", on: true });
   render();
 }
@@ -476,6 +520,7 @@ function release() {
     // A tap. Turning hands-free on hands the turn to silence detection, so words said right away are kept;
     // turning it off ends the turn now.
     free = !free;
+    if (hold !== undefined) { clearTimeout(hold); hold = undefined; }
     send({ type: "talk", on: false, keep: free });
     return render();
   }
@@ -485,6 +530,10 @@ function release() {
 }
 
 function onEvent(event) {
+  if (event.seq !== undefined) {
+    if (seen.has(event.seq)) return;
+    seen.add(event.seq);
+  }
   switch (event.type) {
     case "state":
       state = event.state;
@@ -493,8 +542,22 @@ function onEvent(event) {
       return render();
     case "rate": rate = event.rate; return;
     case "part": incoming = event.part; return;
-    case "pause": return output.suspend();
-    case "resume": return output.resume();
+    case "pause": return pause(event.soft);
+    case "resume": return resume();
+    case "history": {
+      if (event.reset) {
+        flush();
+        for (const element of [...ui.log.children]) if (element !== ui.empty) element.remove();
+        ui.empty.hidden = false;
+        seen = new Set();
+        reply = undefined;
+        partialLine = undefined;
+        reported = 0;
+      }
+      callId = event.id;
+      for (const entry of event.events) onEvent(entry);
+      return;
+    }
     case "flush": return flush();
     case "partial":
       // Your own words bring the conversation back to the end, wherever you had scrolled.
@@ -514,7 +577,8 @@ function onEvent(event) {
       const span = document.createElement("span");
       span.textContent = `${event.text} `;
       follow(() => reply.append(span));
-      spans.set(event.part, span);
+      if (event.past) span.classList.add("said");
+      else spans.set(event.part, span);
       return;
     }
     case "show": return show(event);
@@ -605,18 +669,21 @@ function connect(delay = 500) {
   socket.onopen = () => {
     delay = 500;
     connected = true;
+    bye = false;
+    send({ type: "hello", id: callId, seq: Math.max(0, ...seen) });
     if (started) socket.send(JSON.stringify({ type: "mic" }));
     for (const data of outbox.splice(0)) socket.send(data);
     render();
   };
-  socket.onclose = () => {
+  socket.onclose = (event) => {
     if (connected) offlineSince = Date.now();
     connected = false;
-    flush();
+    // bruv turned voice off; a dropped connection keeps playing what came, and picks up where it was.
+    if (event.code === 4000) { bye = true; flush(); }
     // A turn held through the drop goes on over the new connection.
     if (holding || tail !== undefined) outbox.push(JSON.stringify({ type: "talk", on: true }));
     setTimeout(render, 2100);
-    setTimeout(() => connect(Math.min(delay * 2, 8000)), delay);
+    setTimeout(() => connect(Math.min(delay * 2, 4000)), delay);
   };
 }
 
