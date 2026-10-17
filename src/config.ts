@@ -26,6 +26,8 @@ export interface Config {
   cacheTtlMinutes?: number;
   /** Compact transcript spacing (/bruv-compact). Default on. */
   compact?: boolean;
+  /** /voice. Port default 7807 on 127.0.0.1; voice is a Pocket TTS voice name or a WAV file to sound like. */
+  voice?: { host?: string; port?: number; voice?: string; threads?: number };
 }
 
 export function readJson<T>(path: string, fallback: T): T {

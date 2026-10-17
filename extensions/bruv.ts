@@ -29,6 +29,7 @@ import { registerSettle } from "../src/settle";
 import { registerTurn } from "../src/turn";
 import { registerUI } from "../src/ui";
 import { registerUsage } from "../src/usage";
+import { registerVoice } from "../src/voice";
 
 export default function bruv(pi: ExtensionAPI): void {
   const jobs = new Jobs();
@@ -65,4 +66,5 @@ export default function bruv(pi: ExtensionAPI): void {
   registerCodexImport(pi);
   registerMigrate(pi);
   registerReview(pi);
+  registerVoice(pi);
 }

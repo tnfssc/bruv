@@ -18,6 +18,7 @@ Disable the old "bruv (not Claude)" provider.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, banked plan resets, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
+- `/voice` lets you talk to bruv. It opens a page in your browser: press start, allow the microphone and talk. Replies are read aloud, and talking over one stops it. `/voice here` uses this machine's microphone and speaker instead (use headphones: nothing cancels the echo), and `/voice off` stops. `pi --voice` starts with voice on. See [Voice](#voice).
 - `/notes` lists the project's notes in `.agents/notes/`. `/notes move` moves a bruv 0.x `wisdom/` folder there, keeping git history.
 - `/ps` lists this session's jobs and agents. Pick one to read its output or answer, see its worktree and session file, or stop it.
 - `/subagents` picks which of your signed-in models agents may use. The model chooses among them per task; your own model is always allowed and is the default.
@@ -149,6 +150,20 @@ Other runs with tools get a dim summary line with counts, elapsed time and weekl
 While working, the terminal title spins; waiting shows which agents or jobs are pending.
 In supported terminals, a desktop notification and bell announce runs longer than 30 seconds,
 and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and print modes.
+
+## Voice
+
+Speech is recognised and spoken on your machine, on the CPU, by open models: Silero VAD hears when you talk, NVIDIA's streaming Nemotron (English) writes down what you say, and Kyutai's Pocket TTS speaks. The first `/voice` asks before downloading them (about 560 MB, to `~/.pi/agent/bruv/voice/models`). Only the session's own model, the one you already use, runs elsewhere, so voice costs nothing on top of it. Thinking makes the first words slower; `low` suits talking.
+
+Talking over a reply pauses it at once. A cough or the speaker's own echo resumes it; real words stop the reply and the run, and go to the model. Talking while the agent works without speaking steers the work instead of stopping it.
+
+The page needs a key that is in its link and stays the same across runs (`~/.pi/agent/bruv/voice/token`). It listens on `127.0.0.1:7807`. Browsers allow the microphone only on `localhost` or https, so to talk from another device, put an https tunnel in front of it, such as `tailscale serve 7807` or `cloudflared tunnel --url http://localhost:7807`, and open the tunnel's address with the same `?t=` key. Anyone with the link can talk to your agent, so keep it private.
+
+```json
+{ "voice": { "port": 7807, "host": "127.0.0.1", "voice": "bria", "threads": 4 } }
+```
+
+`voice` is `bria` or `loona`, or the path of a WAV file of someone talking, whose voice Pocket TTS then copies. `threads` is how many CPU threads each model uses.
 
 ## Configuration
 

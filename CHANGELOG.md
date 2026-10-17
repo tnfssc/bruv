@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `/voice`: talk to bruv from a browser page, or with this machine's microphone through `/voice here`. Speech is recognised and spoken locally by open models (Silero VAD, NVIDIA Nemotron streaming, Kyutai Pocket TTS) on the CPU; the session's model answers in short spoken sentences. Talking over a reply stops it at once. The page works from other devices through an https tunnel.
+
 - Keep the Codex prompt cache when the thinking level changes on GPT-6 models. Requests keep the effort the conversation started with and mark each change where it happened, so earlier turns stay cached. The effort starts again after a compaction or a model switch.
 
 - Keep Codex compaction across Codex model switches, and save a readable summary next to it. If Codex compaction fails, that summary is used instead, so history is no longer lost on a failure or a provider switch. Compaction keeps fast mode and accepts extra items in the reply.
