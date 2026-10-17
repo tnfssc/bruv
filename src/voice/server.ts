@@ -4,11 +4,19 @@ import { createServer, type IncomingMessage } from "node:http";
 import type { AddressInfo } from "node:net";
 import { WebSocket, WebSocketServer } from "ws";
 import type { Call, Device } from "./call";
+import { qrSvg } from "./qr";
 import { Shelf } from "./show";
 
 const page = readFileSync(new URL("./page.html", import.meta.url), "utf8");
 
-export type Served = { url: string; port: number; shelf: Shelf; close(): Promise<void> };
+export type Served = {
+  url: string;
+  port: number;
+  shelf: Shelf;
+  /** The address a phone can use (the tunnel's), sent to every page with its QR code; none clears it. */
+  setRemote(url?: string): void;
+  close(): Promise<void>;
+};
 
 function allowed(request: IncomingMessage, token: string) {
   const given = Buffer.from(new URL(request.url ?? "/", "http://x").searchParams.get("t") ?? "");
@@ -17,8 +25,12 @@ function allowed(request: IncomingMessage, token: string) {
 }
 
 /** Serves the voice page and its socket. Every open page is a microphone and a speaker for the call. */
-export async function serve(call: Call, options: { host: string; port: number; token: string }): Promise<Served> {
+export async function serve(
+  call: Call,
+  options: { host: string; port: number; token: string; onStart?: () => void },
+): Promise<Served> {
   const shelf = new Shelf();
+  let remote = JSON.stringify({ type: "remote", url: null });
   const server = createServer((request, response) => {
     const path = new URL(request.url ?? "/", "http://x").pathname;
     // Shown files have names no one can guess, so they need no key.
@@ -59,6 +71,7 @@ export async function serve(call: Call, options: { host: string; port: number; t
       },
     };
     call.attach(device);
+    ws.send(remote);
     ws.on("message", (data, binary) => {
       if (!binary) {
         try {
@@ -67,7 +80,10 @@ export async function serve(call: Call, options: { host: string; port: number; t
           if (type === "hush") call.hush();
           // A page connects as soon as it opens, but only takes the microphone when it starts, and whoever
           // presses the button has it. So the page started last listens.
-          if (type === "mic") call.claim(device);
+          if (type === "mic") {
+            call.claim(device);
+            options.onStart?.();
+          }
           if (type === "talk") {
             call.claim(device);
             call.talk(on === true, keep === true);
@@ -98,6 +114,10 @@ export async function serve(call: Call, options: { host: string; port: number; t
     url: `http://${host}:${port}/?t=${options.token}`,
     port,
     shelf,
+    setRemote: (url) => {
+      remote = JSON.stringify({ type: "remote", url: url ?? null, qr: url ? qrSvg(url) : null });
+      for (const ws of sockets.clients) if (ws.readyState === WebSocket.OPEN) ws.send(remote);
+    },
     close: () =>
       new Promise((resolve) => {
         for (const ws of sockets.clients) ws.terminate();

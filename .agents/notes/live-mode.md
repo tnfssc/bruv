@@ -78,6 +78,17 @@ reached SSH or T3 Code.
   the user is at the terminal, on the page, or both, and the tunnel's host. It changes only when the user
   turns parts on or off, so the cache holds in between. On and off need no message: the section comes
   and goes. Messages in the conversation on each change were considered and left out as noise.
+- **QR code for the phone.** Only a tunnel gives a phone an address it can use (https, not
+  127.0.0.1), so the code appears once the tunnel is up: above the input until a page starts (the
+  server's `onStart`, on a page's `mic`), and on the page on a computer (the server sends `remote` with
+  an SVG). `uqr` (MIT, no dependencies) encodes it: QR encoding is easy to get subtly wrong, so this is
+  a runtime dependency worth having. Both forms were scanned back with `zbarimg`; in a dark terminal the
+  default polarity reads, the inverted one doesn't.
+- **Voice is the flagship.** The README, the site (headline, first demo, a muted looping video in the HTML
+  view, a "Watch it" link in the terminal view) and the changelog lead with voice. The hero video
+  (`.tmp/hero/`, not kept) is the real agent on a phone page with a virtual microphone; long waits are
+  sped up and labelled. Chromium's screencast and Playwright's video both record CSS pixels, so the
+  phone is shown near its real size on a 1280×720 canvas rather than scaled up.
 - **Brand.** The header uses the wordmark and the favicon the b from `site/assets/brand`, drawn in
   `currentColor` so they follow light and dark.
 - **Terminal demo.** `.tmp/tv/` (not kept) runs bruv in a pseudo-terminal (`script`) shown in xterm.js,

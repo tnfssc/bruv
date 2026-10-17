@@ -8,7 +8,7 @@ export type Cell = { text: string; style: string };
  * from src/footer.ts. Colors are Pi's dark theme in truecolor. The prompt mark is the Nerd Font
  * icon U+F460, bundled as a small webfont subset. Board times run faster than real time.
  */
-export const demoIds = ["keep", "check", "background"] as const;
+export const demoIds = ["voice", "keep", "check"] as const;
 export type DemoId = (typeof demoIds)[number];
 export const demoHeight = (cols: number): number => (cols < 60 ? 27 : 23);
 
@@ -32,6 +32,7 @@ const BOARD_SPEED = 6;
 
 type Block =
   | { kind: "user"; text: string }
+  | { kind: "note"; text: string }
   | { kind: "prose"; text: string }
   | { kind: "tools"; count: number; label?: string }
   | { kind: "gaps"; gaps: string[] }
@@ -45,10 +46,26 @@ type Shot = {
   typeFor?: number;
   busy?: boolean;
   board?: Work[];
+  /** What `show` put above the input: a title, a small chart or nothing, and a link. */
+  shown?: { title: string; bars?: number[]; link: string };
+  /** Voice is on, as the footer shows. */
+  voice?: boolean;
 };
 const user = (text: string): Block => ({ kind: "user", text });
 const prose = (text: string): Block => ({ kind: "prose", text });
 const tools = (count: number, label?: string): Block => ({ kind: "tools", count, label });
+const note = (text: string): Block => ({ kind: "note", text });
+
+// Voice: what you say shows as your message; replies are spoken as they stream.
+const vOn = note("Voice is on. Just talk; /voice again turns it off.");
+const vAsk = user("show me how signups did this month");
+const vChart = prose("Signups grew 18% this month, most of it in week two. The chart is in your terminal.");
+const vWhy = user("why the jump in week two?");
+const vCut = prose("The newsletter went out on the 14th, and signups doubled over the next");
+const vStop = user("ok, show me that newsletter");
+const vPage = prose("It's on screen. The subject line was the free plan announcement.");
+const signups = { title: "Signups this month", bars: [2, 3, 3, 4, 7, 8, 6, 5, 5, 6, 6, 7], link: "Open the picture" };
+const newsletter = { title: "March newsletter", link: "Open the page in the browser" };
 
 const keepPrompt = "the export button on reports is broken. fix it and add tests";
 const ku = user(keepPrompt);
@@ -82,14 +99,51 @@ const recheck = (since: number, done?: number): Work => ({
   detail: checkPrompt,
 });
 
-const backgroundPrompt = "run the full test suite. while it runs, update the export docs";
-const bu = user(backgroundPrompt);
-const questionPrompt = "does export handle unicode?";
-const bDocs = prose("Docs updated in docs/export.md. The suite is still running.");
-const bAnswer = prose("Yes. It writes UTF-8 with a byte order mark, so Excel opens it right.");
-const suite = (done?: number): Work => ({ id: "j1", title: "Full test suite", since: 3000, done });
-
 const scripts: Record<DemoId, Shot[]> = {
+  voice: [
+    { at: 0, stage: "Turn voice on", blocks: [], input: "/voice", typeFor: 900 },
+    { at: 1300, stage: "Voice is on", blocks: [vOn], voice: true },
+    { at: 2600, stage: "Just talk", blocks: [vOn, vAsk], busy: true, voice: true },
+    { at: 3600, stage: "It works on it", blocks: [vOn, vAsk, tools(2, "Query signups")], busy: true, voice: true },
+    {
+      at: 5600,
+      stage: "It shows you things",
+      blocks: [vOn, vAsk, tools(3), vChart],
+      shown: signups,
+      voice: true,
+    },
+    {
+      at: 8200,
+      stage: "Ask a follow-up",
+      blocks: [vOn, vAsk, tools(3), vChart, vWhy, tools(1, "Read campaign log")],
+      busy: true,
+      shown: signups,
+      voice: true,
+    },
+    {
+      at: 9600,
+      stage: "It answers out loud",
+      blocks: [vOn, vAsk, tools(3), vChart, vWhy, tools(1), vCut],
+      busy: true,
+      shown: signups,
+      voice: true,
+    },
+    {
+      at: 11000,
+      stage: "Talk over it to cut in",
+      blocks: [vOn, vAsk, tools(3), vChart, vWhy, tools(1), vCut, vStop, tools(1, "Show newsletter")],
+      busy: true,
+      shown: signups,
+      voice: true,
+    },
+    {
+      at: 13400,
+      stage: "It stops and answers that",
+      blocks: [vOn, vAsk, tools(3), vChart, vWhy, tools(1), vCut, vStop, tools(2), vPage],
+      shown: newsletter,
+      voice: true,
+    },
+  ],
   keep: [
     { at: 0, stage: "Type a loose request", blocks: [], input: keepPrompt, typeFor: 2600 },
     { at: 2900, stage: "Find the cause", blocks: [ku, tools(1, "Read reports page")], busy: true },
@@ -136,53 +190,6 @@ const scripts: Record<DemoId, Shot[]> = {
       stage: "Checked, with a receipt",
       blocks: [cu, tools(8), cp, gaps, tools(5), receipt],
       board: [check(5900, 8600), recheck(11600, 14000)],
-    },
-  ],
-  background: [
-    { at: 0, stage: "Ask for two things at once", blocks: [], input: backgroundPrompt, typeFor: 2700 },
-    { at: 3000, stage: "Start the suite", blocks: [bu, tools(1, "Start full test suite")], busy: true },
-    {
-      at: 4200,
-      stage: "Edit the docs while it runs",
-      blocks: [bu, tools(4, "Edit docs/export.md")],
-      busy: true,
-      board: [suite()],
-    },
-    { at: 6800, stage: "The suite keeps running", blocks: [bu, tools(4), bDocs], board: [suite()] },
-    {
-      at: 7900,
-      stage: "Ask something else",
-      blocks: [bu, tools(4), bDocs],
-      input: questionPrompt,
-      typeFor: 1800,
-      board: [suite()],
-    },
-    {
-      at: 10000,
-      stage: "Answer while the suite runs",
-      blocks: [bu, tools(4), bDocs, user(questionPrompt)],
-      busy: true,
-      board: [suite()],
-    },
-    {
-      at: 11300,
-      stage: "Answer while the suite runs",
-      blocks: [bu, tools(4), bDocs, user(questionPrompt), tools(2), bAnswer],
-      board: [suite()],
-    },
-    {
-      at: 14200,
-      stage: "The result comes back",
-      blocks: [
-        bu,
-        tools(4),
-        bDocs,
-        user(questionPrompt),
-        tools(2),
-        bAnswer,
-        prose("Full test suite passed: 312 tests."),
-      ],
-      board: [suite(14200)],
     },
   ],
 };
@@ -250,8 +257,8 @@ function transcriptRows(shot: Shot, cols: number): Cell[][] {
       }
       rows.push(edge("╰", "╯"));
     } else {
-      for (const text of wrap(block.text, Math.max(1, cols - 2)))
-        rows.push(line(` ${text}`, block.kind === "user" ? styles.user : styles.text, cols));
+      const style = block.kind === "user" ? styles.user : block.kind === "note" ? styles.dim : styles.text;
+      for (const text of wrap(block.text, Math.max(1, cols - 2))) rows.push(line(` ${text}`, style, cols));
     }
   }
   return rows;
@@ -273,16 +280,36 @@ function boardRows(shot: Shot, cols: number, elapsed: number, spin: string): Cel
   });
 }
 
-function footerRow(cols: number): Cell[] {
-  // The compact footer's first fitting layout: project:branch · price · context, then the model.
+/** The shown thing above the input: a title, a small bar chart standing in for the picture, and its link. */
+function shownRows(shot: Shot, cols: number): Cell[][] {
+  if (!shot.shown) return [];
+  const { title, bars, link } = shot.shown;
+  const head = line(clip(` ▍ ${title}`, cols), styles.text, cols);
+  if (cols > 1) head[1] = { text: "▍", style: styles.accent };
+  // Three rows of blocks, each row three steps high, like a tiny bar chart.
+  const cell = (value: number, row: number) => {
+    const fill = value - (row - 1) * 3;
+    return fill >= 3 ? "█" : fill === 2 ? "▆" : fill === 1 ? "▃" : " ";
+  };
+  const chart = bars
+    ? [3, 2, 1].map((row) => line(`   ${bars.map((value) => cell(value, row)).join(" ")}`, styles.accent, cols))
+    : [];
+  return [head, ...chart, line(clip(`   ${link}`, cols), styles.accent, cols)];
+}
+
+function footerRow(cols: number, voice = false): Cell[] {
+  // The compact footer's first fitting layout: project:branch · voice · price · context, then the model.
+  const on = voice ? " · ● voice" : "";
   const tries: [string, string][] = [
-    ["shop:main · $0.42 api · ctx 18%", "gpt-6-astra · high"],
-    ["shop · $0.42 api · ctx 18%", "gpt-6-astra · high"],
-    ["$0.42 api · ctx 18%", "gpt-6-astra"],
-    ["ctx 18%", "gpt-6-astra"],
+    [`shop:main${on} · $0.42 api · ctx 18%`, "gpt-6-astra · high"],
+    [`shop${on} · $0.42 api · ctx 18%`, "gpt-6-astra · high"],
+    [`$0.42 api${on} · ctx 18%`, "gpt-6-astra"],
+    [`ctx 18%${on}`, "gpt-6-astra"],
   ];
   const [left, right] = tries.find(([l, r]) => l.length + 2 + r.length <= cols) ?? ["ctx 18%", ""];
   const footer = line(left, styles.dim, cols);
+  const dot = left.indexOf("●");
+  if (dot >= 0 && dot < cols) footer[dot] = { text: "●", style: styles.accent };
   if (right)
     for (let i = 0; i < right.length; i++) footer[cols - right.length + i] = { text: right[i], style: styles.dim };
   return footer;
@@ -299,7 +326,8 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
   const spin = spinner[Math.floor(elapsed / 80) % spinner.length];
   const rows = Array.from({ length: height }, () => line("", styles.text, cols));
   const transcript = transcriptRows(shot, cols);
-  const board = boardRows(shot, cols, elapsed, spin);
+  // Like bruv's widgets, the board and the shown thing sit above the editor.
+  const board = [...shownRows(shot, cols), ...boardRows(shot, cols, elapsed, spin)];
   const typed =
     shot.input?.slice(0, Math.floor(shot.input.length * Math.min(1, (elapsed - shot.at) / (shot.typeFor ?? 1)))) ?? "";
   const inputLines = wrap(typed, Math.max(1, cols - 2));
@@ -324,7 +352,7 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
     const x = Math.min(cols - 1, 2 + [...inputLines[inputLines.length - 1]].length);
     if (!shot.input || Math.floor(elapsed / 500) % 2 === 0) rows[y][x] = { text: " ", style: styles.cursor };
   }
-  rows[height - 1] = footerRow(cols);
+  rows[height - 1] = footerRow(cols, shot.voice);
   return { rows, stage: shot.stage };
 }
 
@@ -335,6 +363,7 @@ export function demoTranscript(id: DemoId): string {
     .map((block) => {
       if (block.kind === "user" || block.kind === "prose")
         return `${block.kind === "user" ? "You" : "bruv"}: ${block.text}`;
+      if (block.kind === "note") return block.text;
       if (block.kind === "tools") return `(${block.count} ${block.count === 1 ? "tool" : "tools"} called)`;
       if (block.kind === "gaps")
         return [`Check found ${block.gaps.length} gaps:`, ...block.gaps.map((gap) => `- ${gap}`)].join("\n");

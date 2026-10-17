@@ -9,6 +9,7 @@ import { Call, type DeviceEvent, type Engine, type EngineEvent } from "../src/vo
 import { release } from "../src/voice/cloudflared";
 import { readKey, saveKey } from "../src/voice/keys";
 import { missing } from "../src/voice/models";
+import { qrLines, qrSvg } from "../src/voice/qr";
 import { serve } from "../src/voice/server";
 import { forPage, resolveShown, Shelf, type ShowArgs } from "../src/voice/show";
 import { forTerminal } from "../src/voice/terminal";
@@ -512,4 +513,38 @@ test("the terminal draws pictures, gives videos a link and saves pages to open",
   expect(
     (await forTerminal(resolveShown({ url: "https://example.com/a.png" }, dir), dir, { fetch: fake })).link?.url,
   ).toBe("https://example.com/a.png");
+});
+
+test("pages learn the address a phone can use, with its QR code, and say when they start", async () => {
+  const engine = new FakeEngine();
+  const call = new Call(engine, { tell: () => {} });
+  let started = 0;
+  const served = await serve(call, { host: "127.0.0.1", port: 0, token: "secret", onStart: () => started++ });
+  try {
+    const ws = new WebSocket(`ws://${new URL(served.url).host}/socket?t=secret`);
+    const remotes: { url: string | null; qr?: string | null }[] = [];
+    ws.on("message", (data, binary) => {
+      const event = binary ? undefined : JSON.parse(data.toString());
+      if (event?.type === "remote") remotes.push(event);
+    });
+    await new Promise((resolve) => ws.on("open", resolve));
+    await until(() => remotes.length === 1);
+    expect(remotes[0].url).toBeNull();
+    served.setRemote("https://voice.example.com/?t=secret");
+    await until(() => remotes.length === 2);
+    expect(remotes[1].url).toBe("https://voice.example.com/?t=secret");
+    expect(remotes[1].qr).toContain("<svg");
+    ws.send(JSON.stringify({ type: "mic" }));
+    await until(() => started === 1);
+    ws.close();
+  } finally {
+    await served.close();
+  }
+});
+
+test("the terminal QR code is a block of equal rows", () => {
+  const lines = qrLines("https://voice.example.com/?t=secret");
+  expect(lines.length).toBeGreaterThan(10);
+  expect(new Set(lines.map((line) => [...line].length)).size).toBe(1);
+  expect(qrSvg("https://voice.example.com/")).toContain("<svg");
 });

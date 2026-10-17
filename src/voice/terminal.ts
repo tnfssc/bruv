@@ -5,6 +5,7 @@ import { extname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { Container, getCapabilities, hyperlink, Image, Text, type TUI } from "@earendil-works/pi-tui";
+import { qrLines } from "./qr";
 import type { Resolved } from "./show";
 
 /**
@@ -119,6 +120,24 @@ export function showInTerminal(ui: ExtensionContext["ui"], item: InTerminal | un
         }
         return box;
       }),
+    { placement: "aboveEditor" },
+  );
+}
+
+/** A QR code for the phone above the input, until a page starts. `undefined` clears it. */
+export function showPhoneCode(ui: ExtensionContext["ui"], url: string | undefined) {
+  ui.setWidget(
+    "bruv-voice-phone",
+    url
+      ? (_tui: TUI, theme: Theme) => ({
+          invalidate() {},
+          render: () => [
+            ` ${theme.fg("accent", "▍")} ${theme.bold("Scan to talk from your phone")}`,
+            ...qrLines(url).map((line) => `  ${line}`),
+            `  ${theme.fg("dim", url)}`,
+          ],
+        })
+      : undefined,
     { placement: "aboveEditor" },
   );
 }

@@ -94,6 +94,12 @@ main { position: relative; z-index: 1; flex: 1; overflow-y: auto; overscroll-beh
 .empty { margin: auto; text-align: center; max-width: 20rem; padding: 2rem 0; }
 .empty .b { display: block; height: 3rem; width: calc(3rem * 125 / 144); margin: 0 auto 1.25rem; fill: currentColor; color: var(--tone); opacity: .9; transition: color .3s; }
 .empty h1 { margin: 0; font-size: 1.125rem; font-weight: 500; letter-spacing: -0.02em; color: var(--muted-foreground); }
+/* On a computer, a QR code opens the page on a phone, once the tunnel gives it an address a phone can use. */
+.phone { display: none; flex-direction: column; align-items: center; gap: .5rem; font-size: .8125rem; color: var(--muted-foreground); }
+.phone svg { display: block; width: 9rem; height: 9rem; border-radius: calc(var(--radius) - 2px); }
+@media (hover: hover) and (pointer: fine) { .phone:not([hidden]) { display: flex; } }
+.empty .phone { margin-top: 2rem; }
+#menu .phone { padding: .5rem 0 .25rem; }
 .msg { max-width: 100%; overflow-wrap: anywhere; }
 .msg.user { align-self: flex-end; max-width: min(85%, 32rem); text-align: right; color: var(--muted-foreground); }
 .msg.partial::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; margin-right: -4px; vertical-align: -0.15em; background: var(--hearing); animation: blink 1s steps(2) infinite; }
@@ -232,6 +238,7 @@ kbd { font: 500 .6875rem ui-monospace, monospace; padding: .0625rem .375rem; bor
     <div class="empty" id="empty">
       <svg class="b" aria-hidden="true"><use href="#bruv-b"/></svg>
       <h1 id="intro">Tap to start</h1>
+      <div class="phone" hidden><div class="code"></div><span>Scan to talk from your phone</span></div>
     </div>
   </div>
 </main>
@@ -244,6 +251,7 @@ kbd { font: 500 .6875rem ui-monospace, monospace; padding: .0625rem .375rem; bor
   </div>
 </footer>
 <dialog id="menu" aria-label="Settings">
+  <div class="phone" hidden><div class="code"></div><span>Scan to talk from your phone</span></div>
   <div class="keys"><span>Hold to talk <kbd>Space</kbd></span><span>Tap for hands-free <kbd>Space</kbd></span><span>Mute <kbd>M</kbd></span><span>Stop <kbd>Esc</kbd></span></div>
 </dialog>
 <dialog id="viewer" aria-label="Full screen">
@@ -508,6 +516,12 @@ function onEvent(event) {
       return;
     }
     case "show": return show(event);
+    case "remote":
+      for (const phone of document.querySelectorAll(".phone")) {
+        phone.hidden = !event.url;
+        phone.querySelector(".code").innerHTML = event.qr ?? "";
+      }
+      return;
     case "error": return alert(event.message);
   }
 }

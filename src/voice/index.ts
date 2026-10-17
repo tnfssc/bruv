@@ -12,7 +12,7 @@ import { readKey, saveKey } from "./keys";
 import { startLocal } from "./local";
 import { download, type ModelPaths, missing, modelPaths } from "./models";
 import { type Served, serve } from "./server";
-import { showInTerminal } from "./terminal";
+import { showInTerminal, showPhoneCode } from "./terminal";
 import { registerShow, showTool } from "./tool";
 import { cleanHost, permissions, prepare } from "./tunnel";
 
@@ -81,6 +81,12 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       }
     | undefined;
   let starting: Promise<unknown> | undefined;
+  /** Where the phone's QR code is showing, so it can go when a page starts. */
+  let phoneCode: ExtensionContext["ui"] | undefined;
+  const hidePhoneCode = () => {
+    phoneCode?.setWidget("bruv-voice-phone", undefined);
+    phoneCode = undefined;
+  };
   let ctx: ExtensionContext | undefined;
   const agentDir = () => options.agentDir ?? getAgentDir();
   const dir = () => join(agentDir(), "bruv", "voice");
@@ -148,6 +154,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       host: config.host ?? "127.0.0.1",
       port: config.port ?? 7807,
       token: token(dir()),
+      onStart: hidePhoneCode,
     });
     if (live !== current) {
       await served.close();
@@ -196,13 +203,21 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       const running = await runTunnel(binary, await prepare(key, host, origin, options.fetch), (message) => {
         if (current.tunnel !== tunnel) return;
         current.tunnel = undefined;
+        served.setRemote(undefined);
+        hidePhoneCode();
         status(context);
         context.ui.notify(`Voice tunnel stopped: ${message}`, "error");
       });
       tunnel.stop = running.stop;
       current.tunnel?.stop();
-      if (live === current) current.tunnel = tunnel;
-      else running.stop();
+      if (live === current) {
+        current.tunnel = tunnel;
+        served.setRemote(tunnel.url);
+        if (context.mode === "tui") {
+          showPhoneCode(context.ui, tunnel.url);
+          phoneCode = context.ui;
+        }
+      } else running.stop();
     } finally {
       if (live) status(context);
     }
@@ -219,6 +234,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     await current.call.close();
     if (context) setStatus(context, "voice", undefined);
     if (context?.mode === "tui") showInTerminal(context.ui, undefined);
+    hidePhoneCode();
     // Pages saved for terminal links are only for this run.
     rmSync(join(dir(), "shown"), { recursive: true, force: true });
   };
@@ -234,6 +250,8 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     if (word === "tunnel off") {
       live?.tunnel?.stop();
       if (live) live.tunnel = undefined;
+      live?.served?.setRemote(undefined);
+      hidePhoneCode();
       const { tunnel: _, ...rest } = readConfig(options.agentDir).voice ?? {};
       saveConfig({ voice: rest }, options.agentDir);
       if (live) status(context);
@@ -268,7 +286,11 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       await setUpTunnel(context);
       return;
     }
-    const remote = live?.tunnel ? `\nFrom anywhere: ${live.tunnel.url}` : "";
+    const remote = live?.tunnel
+      ? `\nFrom anywhere: ${live.tunnel.url}`
+      : readConfig(options.agentDir).voice?.tunnel
+        ? ""
+        : "\nTo talk from your phone, run /voice tunnel.";
     context.ui.notify(`Voice is on: ${served.url}${remote}`, "info");
     (options.open ?? openBrowser)(served.url);
   };

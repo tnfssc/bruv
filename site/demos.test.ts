@@ -34,7 +34,7 @@ test("all three scripts keep their cell bounds and fixed viewport throughout", (
           for (const cell of row) {
             expect([...cell.text].length).toBe(1);
             // Closed repertoire: no surrogate pairs, combining or double-width glyphs.
-            expect(cell.text).toMatch(/^[ -~⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏✓✗·−…─│╭╮╰╯\uf460]$/u);
+            expect(cell.text).toMatch(/^[ -~⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏✓✗·−…─│╭╮╰╯●▍▃▆█\uf460]$/u);
             expect(cell.style).toContain("38;2;");
             expect(cell.style).toContain("48;2;");
           }
@@ -55,7 +55,7 @@ test("each demo types its request, works with a spinner in the prompt mark, then
 });
 
 test("the board sits above the editor while work runs and ends with every item done", () => {
-  for (const id of ["check", "background"] as const) {
+  for (const id of ["check"] as const) {
     const boardRow = (row: { text: string }[]) => /^ [⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏✓] [aj]\d/.test(row.map((cell) => cell.text).join(""));
     expect(
       frames(id, 80).some((frame) => frame.rows.some((row) => spinner.includes(row[1]?.text) && boardRow(row))),
@@ -66,6 +66,19 @@ test("the board sits above the editor while work runs and ends with every item d
     for (const row of board) expect(row[1].text).toBe("✓");
     // Board rows come after the transcript and before the editor and footer.
     expect(final.findLastIndex(boardRow)).toBeLessThan(final.length - 2);
+  }
+});
+
+test("the voice demo shows what was shown above the editor, and voice in the footer", () => {
+  for (const cols of [30, 60, 80]) {
+    const rows = demoFrame("voice", cols, demoDuration("voice")).rows.map((row) =>
+      row.map((cell) => cell.text).join(""),
+    );
+    const shown = rows.findIndex((row) => row.startsWith(" ▍"));
+    expect(shown).toBeGreaterThan(0);
+    // Above the editor and footer, like bruv's widgets.
+    expect(shown).toBeLessThan(rows.length - 2);
+    expect(rows.at(-1)).toContain("●");
   }
 });
 

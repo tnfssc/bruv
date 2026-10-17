@@ -95,7 +95,7 @@ describe("semantic HTML feature demos", () => {
       expect(await screenText(page)).toBe(paused);
       expect(await button.getAttribute("aria-label")).toStartWith("Resume");
       await page.keyboard.press("Space");
-      await page.locator('[data-demo="background"]').scrollIntoViewIfNeeded();
+      await page.locator('[data-demo="check"]').scrollIntoViewIfNeeded();
       await page.waitForTimeout(150);
       const offscreen = await screenText(page);
       await page.waitForTimeout(250);
@@ -124,16 +124,19 @@ describe("semantic HTML feature demos", () => {
 
   test("shared playback loops only after the final hold", async () => {
     await withDemoPage({ viewport: { width: 1280, height: 1000 }, manualClock: true }, async (page) => {
-      const first = page.locator('[data-demo="keep"]');
+      const id = demoIds[0];
+      const first = page.locator(`[data-demo="${id}"]`);
       await first.scrollIntoViewIfNeeded();
-      // Let layout and the visibility observer settle before controlling time.
+      // Visibility arrives with a real rendered frame, which the fake clock doesn't drive; the first demo
+      // now sits below the hero video, so it scrolls in and needs that frame before time is controlled.
+      await page.waitForTimeout(300);
       await page.clock.runFor(160);
-      await page.clock.runFor(demoDuration("keep"));
-      const final = await screenText(page);
+      await page.clock.runFor(demoDuration(id));
+      const final = await screenText(page, id);
       await page.clock.runFor(FINAL_HOLD - 500);
-      expect(await screenText(page)).toBe(final);
+      expect(await screenText(page, id)).toBe(final);
       await page.clock.runFor(800);
-      expect(await screenText(page)).not.toBe(final);
+      expect(await screenText(page, id)).not.toBe(final);
     });
   }, 10000);
 

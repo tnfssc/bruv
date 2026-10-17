@@ -1,18 +1,18 @@
 # bruv
 
-![A real bruv run, sped up: it works through an app, a fresh agent finds two gaps, they get fixed, and a receipt appears](site/assets/done.gif)
+https://github.com/user-attachments/assets/VOICE_VIDEO
 
-**It finishes.** GPT runs don't stop halfway. A fresh agent checks the work against what you
-asked, and you get a receipt showing what it tried and anything still missing.
+**Talk to your coding agent.** Type `/voice` and talk. bruv answers out loud, puts what's better seen on
+your screen, and stops the moment you talk over it. Use it from your terminal, or from your phone anywhere.
 
-A reply halfway through no longer ends the run: the model writes its answer and calls `finish`.
-When files changed, a fresh check tries the result before accepting done. Plain answers skip the check.
+Speech is recognised and spoken on your machine by open models, so it stays private and costs nothing on top
+of the model you already use. bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, with your
+ChatGPT plan or any model Pi supports.
 
-Give it a goal, let agents work in parallel, and come back to results—not another request to continue.
-bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, not a plugin for it.
-
-- **Keep working without “continue.”** GPT runs keep going by default. `/keep-going on|off|auto` changes this; `/goal` adds an objective, criteria and an optional token budget.
-- **See what was checked.** The terminal receipt lists the request, checks, remaining gaps, changed files, time and usage. `/check on|off` controls the fresh check.
+- **Talk, don't type.** `/voice` turns it on in your terminal; replies are spoken as they stream. Talk over a reply to cut in, or keep working while it talks.
+- **It shows you things.** Charts, pages, pictures and video appear in your terminal and on the voice page, with a link to open them.
+- **Take it with you.** `/voice web` opens the same session in your browser; `/voice tunnel` puts it on your own domain through Cloudflare and shows a QR code to scan with your phone. Hold the button to talk, or tap it for hands-free.
+- **It finishes.** GPT runs don't stop halfway. A fresh agent checks the work against what you asked, and you get a receipt.
 - **Don't wait on one thing at a time.** Run tests in the background while agents investigate bugs or build separate parts in their own copies of your repo.
 - **Keep what the team learns.** bruv reads and writes the project's notes in `.agents/notes/`: choices, reasons, what was tried. They're shared through git, and the next session starts from them.
 - **Do more per turn.** The model can read files, make edits, and run checks in one script, filtering long logs before they fill the conversation.
@@ -28,21 +28,38 @@ curl -fsSL https://bruv.sharath.page/install.sh | sh
 Already have Pi? `pi install git:github.com/tnfssc/bruv` does the same.
 
 Inside Pi, use `/login` to sign in to your model provider.
-Run `/bruv-setup`, confirm, then `/reload`. You're ready to work.
+Run `/bruv-setup`, confirm, then `/reload`. Then type `/voice` and start talking.
+
+### Talk to it
+
+```text
+/voice          talk here, with this machine's microphone and speaker
+/voice web      open the same session in your browser
+/voice tunnel   serve it on your own domain, for your phone
+/voice          again, to turn it off
+```
+
+The first `/voice` asks before downloading the speech models (about 560 MB). Use headphones in the terminal:
+nothing cancels the speaker's echo there; the browser page does. A phone needs https, which `/voice tunnel`
+gives you with a Cloudflare token and a host name. See [Voice](docs/USAGE.md#voice).
 
 ### Give it the whole job
+
+![A real bruv run, sped up: it works through an app, a fresh agent finds two gaps, they get fixed, and a receipt appears](site/assets/done.gif)
 
 ```text
 /goal Add CSV export --criteria "handles empty data; tests pass"
 ```
 
-The agent keeps going between turns instead of waiting for another prompt.
-You can set a token budget, pause it, or stop it at any time. It also stops if it repeatedly hits the same blocker.
-Only a passing fresh check completes the goal, with its checked items saved as evidence.
+The agent keeps going between turns instead of waiting for another prompt. A reply halfway through no longer
+ends the run: the model writes its answer and calls `finish`. When files changed, a fresh check tries the result
+before accepting done, and the terminal receipt lists the request, checks, remaining gaps, changed files, time
+and usage. `/keep-going on|off|auto` and `/check on|off` change this. You can set a token budget, pause the goal,
+or stop it at any time; it also stops if it repeatedly hits the same blocker.
 
 ### Stay in the loop, not in the way
 
-Watch live jobs and agent progress in the terminal. Send a message to steer the work, or press Esc to stop it.
+Watch live jobs and agent progress in the terminal. Talk or send a message to steer the work, or press Esc to stop it.
 `/usage` shows ChatGPT plan limits and session usage; `/fast` opts into faster OpenAI/Codex responses at the cost of more quota.
 Parallel agents use more quota too.
 
@@ -50,7 +67,7 @@ Parallel agents use more quota too.
 
 ## Commands
 
-`/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/voice` · `/notes` · `/ps` · `/subagents` · `/bruv-compact` · `/bruv-setup` · `/bruv-migrate`
+`/voice` · `/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/notes` · `/ps` · `/subagents` · `/bruv-compact` · `/bruv-setup` · `/bruv-migrate`
 
 Coming from Codex? `/import-codex` previews your model, MCP servers, skills, prompts and trusted projects, then asks before importing. Sign in to Pi with `/login`; Codex sign-in tokens stay separate.
 
