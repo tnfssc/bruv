@@ -10,10 +10,11 @@ import { release } from "../src/voice/cloudflared";
 import { readKey, saveKey } from "../src/voice/keys";
 import { missing, modelPaths, voices } from "../src/voice/models";
 import { qrLines, qrSvg } from "../src/voice/qr";
+import { Speaker, sayLimit, within } from "../src/voice/say";
 import { serve } from "../src/voice/server";
 import { forPage, resolveShown, Shelf, type ShowArgs } from "../src/voice/show";
 import { forTerminal } from "../src/voice/terminal";
-import { isEcho, Sentences, speakable } from "../src/voice/text";
+import { fresh, isEcho, Sentences, speakable, withoutEcho } from "../src/voice/text";
 import { cleanHost, prepare } from "../src/voice/tunnel";
 import { sdk } from "./sdk";
 
@@ -66,6 +67,70 @@ async function until(check: () => boolean) {
     await new Promise((resolve) => setTimeout(resolve, 10));
   }
 }
+
+test("a long say stops at the last whole sentence within the limit, unless confirmed", () => {
+  const sentence = "This sentence has exactly eight words in it. ";
+  const long = sentence.repeat(Math.ceil(sayLimit / 8) + 3);
+  expect(within(long).split(/\s+/).length).toBeLessThanOrEqual(sayLimit);
+  expect(within(long).endsWith(".")).toBe(true);
+
+  const engine = new FakeEngine();
+  const call = new Call(engine, { tell: () => {} });
+  call.attach(device());
+  const speaker = new Speaker(() => call);
+  // Streamed a little at a time, as a model writes it.
+  for (let at = 1; at <= long.length; at += 7) speaker.stream("a", long.slice(0, at));
+  speaker.finish("a", long);
+  expect(speaker.stopped("a")).toBe(within(long));
+  expect(engine.spoken.join(" ")).toBe(within(long).trim());
+
+  // All at once, as from a script.
+  const before = engine.spoken.length;
+  speaker.finish("c", long);
+  expect(engine.spoken.slice(before).join(" ")).toBe(within(long).trim());
+
+  speaker.finish("b", long, true);
+  expect(speaker.stopped("b")).toBeUndefined();
+  expect(engine.spoken.length).toBeGreaterThan(Math.ceil(sayLimit / 8) + 3);
+});
+
+test("without echo cancelling, the user's words are told from the reply heard around them", () => {
+  const reply = "The release notes are on the page if you want to look. Anything else before we ship it?";
+  expect(withoutEcho("Tell me a fun fact about Saturn the release notes are on the page", reply)).toBe(
+    "Tell me a fun fact about Saturn",
+  );
+  expect(withoutEcho("anything else before we ship it what about Saturn", reply)).toBe("what about Saturn");
+  // Short runs stay: the user's own words often repeat a few of the reply's.
+  expect(withoutEcho("fix the page", reply)).toBe("fix the page");
+  expect(fresh("tell me about Saturn", reply)).toBe(3);
+  expect(withoutEcho("if you wanna look anything else", reply)).toBe("");
+
+  // Real words while it plays stop the reply before the turn ends.
+  const engine = new FakeEngine();
+  const told: [string, boolean][] = [];
+  const call = new Call(engine, { tell: (text, interrupted) => told.push([text, interrupted]) });
+  const speaker = device();
+  call.attach(speaker);
+  call.replyStart();
+  call.reply(`${reply} `);
+  call.replyEnd();
+  engine.emit({ type: "speech" });
+  engine.emit({ type: "partial", text: "the release notes are" });
+  expect(engine.hushes).toBe(0);
+  engine.emit({ type: "partial", text: "the release notes are tell me about Saturn instead" });
+  expect(engine.hushes).toBe(1);
+  engine.emit({ type: "heard", text: "the release notes are tell me about Saturn instead" });
+  expect(told).toEqual([["tell me about Saturn instead", true]]);
+});
+
+test("the first piece of a reply may end at a comma, so the first sound comes sooner", () => {
+  const sentences = new Sentences();
+  const pieces = sentences.push(
+    "When you open the settings page and scroll all the way down, you will find it. Then, tap it. ",
+  );
+  expect(pieces[0]).toMatch(/down,$/);
+  expect(pieces.slice(1)).toEqual(["you will find it.", "Then, tap it."]);
+});
 
 test("a voice is picked by name, and an unknown name gets the default", () => {
   expect(voices[modelPaths("m", "am_michael").speaker]).toBe("am_michael");

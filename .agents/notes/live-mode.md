@@ -26,6 +26,11 @@ reached SSH or T3 Code.
     `agent_before_settle` like bruv's other nudges, never a new run.
   - The page shows the agent's written text and tool steps as quiet notes (the user wanted the full
     transcript there), never spoken.
+  - **Long says: a soft check, not a cap** (the user didn't want hard limits). Past 70 words (about 30 s)
+    a say stops at the last whole sentence that fits and the tool returns an error with the word count
+    and the last sentence heard, asking to show the rest and say one sentence, or to call say again with
+    `confirm: true` and only the unheard part. `confirm` comes first in the schema so it streams before
+    the text. The prompt asks to show anything longer than two or three sentences up front.
 
 - **`/voice` is the terminal; `/voice web` adds a browser page.** `/voice` uses this machine's own
   devices (pw-record/pw-play, parec/pacat, arecord/aplay or sox) with no echo cancelling, so use
@@ -228,6 +233,19 @@ reached SSH or T3 Code.
   fewer, and matches close spellings and, for 5+ letters, Soundex. Looser rules started taking short real
   interruptions ("what about Saturn") for echo, so it stops here until tried on a real phone, whose
   browser cancels echo.
+- **Terminal echo (laptop speakers, no echo cancelling).** The user found `/voice` in the terminal
+  repeating the same sentence forever: echo set off a pause, the terminal speaker stopped and kept the
+  sentence, the echo check resumed it from the start, and its echo set off the next pause. Now the terminal
+  speaker ignores pauses from the microphone alone (it can't turn down `pw-play`); real words stop it. As
+  echo keeps the turn open until the reply ends, the reply is stopped mid-turn once the live transcript
+  has 3+ words over 3 letters that aren't in what was said (`fresh`), and runs of 4+ words of the reply
+  are trimmed from the start and end of the turn (`withoutEcho`); a lone word left by the trim is dropped.
+  The recogniser writes "want to" as "wanna", so common contractions are expanded before matching.
+  Checked with `.tmp/echo/` (stand-in pw-play/pw-record feeding the speaker back at 0.1 and 0.3 gain,
+  60 ms late, real worker): replies finish with no false turns, and a line said 4–6 s in stops the reply
+  within about 2 s and reaches the agent clean.
+- **First sound sooner.** Kokoro makes a piece at a time, so a long first sentence delayed the first
+  sound by seconds. The first piece of a reply may end at a comma once it has 8 words.
 - **The where-line follows devices,** not commands: who holds the microphone and whether a page is
   connected. "Server running" read as "user on the page" when no page was open.
 - **Command and grace fixes from user testing.** `/voice` toggles only the terminal's microphone and

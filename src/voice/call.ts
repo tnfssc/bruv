@@ -1,4 +1,4 @@
-import { isEcho, Sentences } from "./text";
+import { fresh, isEcho, Sentences, withoutEcho } from "./text";
 
 /** What the speech engine reports. `speech` means someone started talking. */
 export type EngineEvent =
@@ -100,6 +100,8 @@ export class Call {
   private playedAt = 0;
   /** Whether the user started talking while a reply could be heard, so it may be its echo. */
   private echoable = false;
+  /** Set when real words were heard over the reply and it was stopped before the turn ended. */
+  private cutIn = false;
   /** Between the brain starting and stopping. */
   private busy = false;
   /** Set while a page's talk button is down. */
@@ -214,9 +216,11 @@ export class Call {
     for (const sentence of this.sentences.push(delta)) this.say(sentence);
   }
 
-  replyEnd() {
+  /** The reply is over. `flush` says what is left of a sentence; a reply stopped early drops it. */
+  replyEnd(flush = true) {
     this.replying = false;
-    if (!this.muted) for (const sentence of this.sentences.flush()) this.say(sentence);
+    const rest = this.sentences.flush();
+    if (flush && !this.muted) for (const sentence of rest) this.say(sentence);
   }
 
   /** The brain is working on something it will answer. */
@@ -279,6 +283,12 @@ export class Call {
     return entry;
   }
 
+  /** What could be heard since the user started talking, to tell their words from the echo. */
+  private heardSince() {
+    const since = [...this.spoken].flatMap(([part, sentence]) => (part >= this.heardFrom ? [sentence] : []));
+    return [...this.recent, ...since].join(" ");
+  }
+
   /** Nothing left to say: thinking while the brain works, otherwise listening. */
   private settle() {
     this.setState(this.busy || this.replying ? "thinking" : "listening");
@@ -299,14 +309,25 @@ export class Call {
         this.broadcast({ type: "pause", soft: !this.held });
         this.setState("hearing");
         return;
-      case "partial":
+      case "partial": {
         this.broadcast(event);
+        // Without echo cancelling the microphone hears the reply too, so the turn only ends with it. Real
+        // words in it stop the reply now instead.
+        if (this.cutIn || this.held || !this.saying.size || fresh(event.text, this.heardSince()) < 3) return;
+        this.cutIn = true;
+        this.cut = this.saying.values().next().value;
+        this.hush();
+        this.setState("hearing");
         return;
+      }
       case "heard": {
-        const text = event.text.trim();
-        const spoken = [...this.spoken].flatMap(([part, sentence]) => (part >= this.heardFrom ? [sentence] : []));
-        spoken.unshift(...this.recent);
-        const echo = !event.held && this.echoable && isEcho(text, spoken.join(" "));
+        const spoken = this.heardSince();
+        const text = event.held ? event.text.trim() : withoutEcho(event.text, spoken);
+        const cutIn = this.cutIn;
+        this.cutIn = false;
+        // What trimming the echo leaves can be a stray syllable of it, such as "a".
+        const scrap = text !== event.text.trim() && !fresh(text, spoken) && text.split(/\s+/).length < 2;
+        const echo = !event.held && !cutIn && this.echoable && (scrap || isEcho(text, spoken));
         if (!text || echo) {
           this.broadcast({ type: "resume" });
           if (this.saying.size) this.setState("speaking");
@@ -314,7 +335,7 @@ export class Call {
           return;
         }
         // Every pause ends in a flush or a resume.
-        const interrupted = this.saying.size > 0 || this.replying;
+        const interrupted = cutIn || this.saying.size > 0 || this.replying;
         if (interrupted) this.hush();
         else this.broadcast({ type: "resume" });
         this.broadcast(this.remember({ type: "user", text }));

@@ -2,6 +2,8 @@
 export class Sentences {
   private buffer = "";
   private fence = false;
+  /** Nothing said yet. Speech is made a piece at a time, so a long first sentence delays the first sound. */
+  private first = true;
 
   /** Adds streamed text and returns the sentences it completed. */
   push(delta: string): string[] {
@@ -13,6 +15,7 @@ export class Sentences {
       const piece = this.buffer.slice(0, end);
       this.buffer = this.buffer.slice(end);
       done.push(...this.take(piece));
+      if (done.length) this.first = false;
     }
     return done;
   }
@@ -22,6 +25,7 @@ export class Sentences {
     const rest = this.take(this.buffer);
     this.buffer = "";
     this.fence = false;
+    this.first = true;
     return rest;
   }
 
@@ -31,7 +35,15 @@ export class Sentences {
     // A sentence ends at . ! or ? followed by a space; "e.g. " and "1.5" stay whole. A colon doesn't end
     // one: "One:" alone sounds clipped.
     const sentence = this.buffer.search(/(?<!\b(?:e\.g|i\.e|etc|vs|Mr|Ms|Dr))[.!?](?=\s)/);
-    const ends = [line < 0 ? -1 : line + 1, sentence < 0 ? -1 : sentence + 1].filter((at) => at > 0);
+    // The first piece may end at a comma once it has 8 words, so the first sound comes sooner.
+    let comma = -1;
+    if (this.first)
+      for (const match of this.buffer.matchAll(/[,;](?=\s)/g))
+        if ((this.buffer.slice(0, match.index).match(/\S+/g)?.length ?? 0) >= 8) {
+          comma = match.index;
+          break;
+        }
+    const ends = [line, sentence, comma].map((at) => (at < 0 ? -1 : at + 1)).filter((at) => at > 0);
     return ends.length ? Math.min(...ends) : -1;
   }
 
@@ -60,6 +72,57 @@ export function speakable(text: string) {
     .trim();
 }
 
+/** How many of the heard words, over 3 letters, are nowhere close in what was said: the user's own words. */
+export function fresh(heard: string, spoken: string) {
+  const said = words(spoken);
+  return words(heard).filter((word) => word.length > 3 && !said.some((other) => close(word, other))).length;
+}
+
+/**
+ * The heard text without the echo around it. Without echo cancelling, a turn spoken over the reply starts
+ * or ends with a stretch of the reply itself; runs of 4 or more words that follow what was said are cut from
+ * either end. Shorter runs stay, as the user's own words often repeat a few of the reply's.
+ */
+export function withoutEcho(heard: string, spoken: string) {
+  const said = words(spoken).join(" ");
+  const parts = heard.trim().split(/\s+/);
+  const key = (part: string) => words(part).join(" ");
+  const run = (from: number, to: number) => {
+    const text = parts.slice(from, to).map(key).filter(Boolean).join(" ");
+    return text.split(" ").length >= 4 && said.includes(text);
+  };
+  let start = 0;
+  for (let end = parts.length; end - start >= 4; end--)
+    if (run(start, end)) {
+      start = end;
+      break;
+    }
+  let end = parts.length;
+  for (let from = start; end - from >= 4; from++)
+    if (run(from, end)) {
+      end = from;
+      break;
+    }
+  return parts.slice(start, end).join(" ");
+}
+
+/** The recogniser writes speech as said: "want to" comes back as "wanna". */
+const spoken: Record<string, string> = {
+  wanna: "want to",
+  gonna: "going to",
+  gotta: "got to",
+  kinda: "kind of",
+  lemme: "let me",
+};
+
+const words = (text: string) =>
+  (
+    text
+      .toLowerCase()
+      .replace(/'/g, "")
+      .match(/[a-z0-9]+/g) ?? []
+  ).flatMap((word) => (spoken[word] ?? word).split(" "));
+
 /**
  * Whether what was heard is most likely the speaker's own voice coming back through the microphone. Echo is
  * often misheard ("years" as "year", "during" as "dur"), so words only need to be close. Short words are
@@ -67,11 +130,6 @@ export function speakable(text: string) {
  * tests" would hang on "tests" alone.
  */
 export function isEcho(heard: string, spoken: string) {
-  const words = (text: string) =>
-    text
-      .toLowerCase()
-      .replace(/'/g, "")
-      .match(/[a-z0-9]+/g) ?? [];
   const said = words(spoken);
   const all = words(heard);
   const long = all.filter((word) => word.length > 3);

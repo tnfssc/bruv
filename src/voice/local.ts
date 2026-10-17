@@ -68,7 +68,10 @@ export function startLocal(call: Call): { stop(): void } | string {
   const device: Device = {
     send: (event) => {
       // A process can't pause what it has already handed to the sound server, so a pause stops playback
-      // and keeps what wasn't heard, from the start of the sentence that was playing.
+      // and keeps what wasn't heard, from the start of the sentence that was playing. A pause from the
+      // microphone alone is ignored: nothing here cancels echo, so it is mostly the speaker heard back,
+      // and restarting the sentence each time looped it forever. Real words still flush it.
+      if (event.type === "pause" && event.soft) return;
       if (event.type === "pause") {
         const now = Date.now();
         const playing = queue.find((chunk) => chunk.ends > now);

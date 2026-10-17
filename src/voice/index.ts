@@ -482,8 +482,9 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     if (block?.type !== "toolCall" || block.name !== "say") return;
     awaiting = false;
     const text = typeof block.arguments?.text === "string" ? block.arguments.text : "";
-    if (update.type === "toolcall_end") speaker.finish(block.id, text);
-    else speaker.stream(block.id, text);
+    const confirm = block.arguments?.confirm === true;
+    if (update.type === "toolcall_end") speaker.finish(block.id, text, confirm);
+    else speaker.stream(block.id, text, confirm);
   });
   pi.on("message_end", (event) => {
     if (event.message.role !== "assistant") return;
