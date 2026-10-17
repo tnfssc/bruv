@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>bruv voice</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg: #111214; --fg: #e8e6e3; --dim: #8a8f98; --card: #1b1d21; --accent: #7aa2f7; --you: #2a3a5c; }
+  @media (prefers-color-scheme: light) { :root { --bg: #f7f7f5; --fg: #1d1d1f; --dim: #6b7079; --card: #ffffff; --you: #dfe8fb; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100dvh; display: flex; flex-direction: column; background: var(--bg); color: var(--fg);
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; }
+  header h1 { font-size: 15px; font-weight: 600; margin: 0; flex: 1; }
+  #state { font-size: 13px; color: var(--dim); }
+  #log { flex: 1; overflow-y: auto; padding: 8px 18px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .line { max-width: 78ch; padding: 10px 14px; border-radius: 14px; background: var(--card); white-space: pre-wrap; }
+  .user { align-self: flex-end; background: var(--you); }
+  .partial { opacity: .6; }
+  .error { color: #f7768e; background: transparent; padding: 0; }
+  footer { display: flex; justify-content: center; align-items: center; gap: 16px; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); }
+  #orb { width: 76px; height: 76px; border-radius: 50%; border: 0; cursor: pointer; background: var(--card);
+    box-shadow: 0 0 0 2px var(--dim) inset; transition: box-shadow .2s, transform .15s; color: var(--fg); font-size: 13px; }
+  #orb[data-state="listening"] { box-shadow: 0 0 0 3px var(--accent) inset; }
+  #orb[data-state="hearing"] { box-shadow: 0 0 0 6px #9ece6a inset; transform: scale(1.05); }
+  #orb[data-state="thinking"] { box-shadow: 0 0 0 3px #e0af68 inset; animation: pulse 1.2s ease-in-out infinite; }
+  #orb[data-state="speaking"] { box-shadow: 0 0 0 6px var(--accent) inset; }
+  #orb[data-muted="true"] { opacity: .45; }
+  @keyframes pulse { 50% { transform: scale(.94); } }
+  #stop { border: 0; background: none; color: var(--dim); font-size: 14px; cursor: pointer; visibility: hidden; }
+</style>
+</head>
+<body>
+<header><h1>bruv</h1><span id="state">Press start and allow the microphone.</span></header>
+<main id="log"></main>
+<footer><button id="orb" type="button">Start</button><button id="stop" type="button">Stop speaking</button></footer>
+<script>
+const token = new URLSearchParams(location.search).get("t");
+const log = document.getElementById("log");
+const orb = document.getElementById("orb");
+const stateText = document.getElementById("state");
+const stopButton = document.getElementById("stop");
+const labels = { starting: "Loading speech models…", listening: "Listening", hearing: "Hearing you",
+  thinking: "Thinking", speaking: "Speaking" };
+
+// The worklet turns microphone audio into 16 kHz 16-bit frames of 20 ms, averaging the samples it drops.
+const worklet = `registerProcessor("mic", class extends AudioWorkletProcessor {
+  constructor() { super(); this.step = sampleRate / 16000; this.at = 0; this.sum = 0; this.count = 0;
+    this.out = new Int16Array(320); this.n = 0; this.port.onmessage = (e) => { this.muted = e.data; }; }
+  process([input]) {
+    const samples = input[0]; if (!samples) return true;
+    for (let i = 0; i < samples.length; i++) {
+      this.sum += samples[i]; this.count++; this.at++;
+      if (this.at < this.step) continue;
+      this.at -= this.step;
+      const value = this.muted ? 0 : this.sum / this.count;
+      this.sum = 0; this.count = 0;
+      this.out[this.n++] = Math.max(-1, Math.min(1, value)) * 32767;
+      if (this.n === this.out.length) { this.port.postMessage(this.out.slice().buffer, []); this.n = 0; }
+    }
+    return true;
+  }
+});`;
+
+let socket, mic, output, rate = 24000, playing = new Set(), nextTime = 0, muted = false, assistantLine, partialLine, started = false;
+
+function add(kind, text) {
+  const line = document.createElement("div");
+  line.className = `line ${kind}`;
+  line.textContent = text;
+  log.append(line);
+  log.scrollTop = log.scrollHeight;
+  return line;
+}
+
+function setState(state) {
+  orb.dataset.state = state;
+  stateText.textContent = labels[state] ?? state;
+}
+
+function flush() {
+  for (const source of playing) { source.onended = null; try { source.stop(); } catch {} }
+  playing.clear();
+  nextTime = 0;
+  output.resume();
+  stopButton.style.visibility = "hidden";
+}
+
+function play(buffer) {
+  const pcm = new Int16Array(buffer);
+  const audio = output.createBuffer(1, pcm.length, rate);
+  const channel = audio.getChannelData(0);
+  for (let i = 0; i < pcm.length; i++) channel[i] = pcm[i] / 32768;
+  const source = output.createBufferSource();
+  source.buffer = audio;
+  source.connect(output.destination);
+  nextTime = Math.max(nextTime, output.currentTime + 0.03);
+  source.start(nextTime);
+  nextTime += audio.duration;
+  playing.add(source);
+  stopButton.style.visibility = "visible";
+  source.onended = () => {
+    playing.delete(source);
+    if (playing.size) return;
+    stopButton.style.visibility = "hidden";
+    send({ type: "played" });
+  };
+}
+
+function send(message) {
+  if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify(message));
+}
+
+function onEvent(event) {
+  switch (event.type) {
+    case "state": return setState(event.state);
+    case "rate": rate = event.rate; return;
+    case "pause": return output.suspend();
+    case "resume": return output.resume();
+    case "flush": return flush();
+    case "partial":
+      partialLine ??= add("user partial", "");
+      partialLine.textContent = event.text;
+      return;
+    case "user":
+      partialLine?.remove(); partialLine = undefined;
+      add("user", event.text);
+      assistantLine = undefined;
+      return;
+    case "assistant":
+      if (assistantLine) assistantLine.textContent += ` ${event.text}`;
+      else assistantLine = add("assistant", event.text);
+      log.scrollTop = log.scrollHeight;
+      return;
+    case "error": add("error", event.message); return;
+  }
+}
+
+function connect(delay = 500) {
+  socket = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/socket?t=${encodeURIComponent(token)}`);
+  socket.binaryType = "arraybuffer";
+  socket.onmessage = (message) => typeof message.data === "string" ? onEvent(JSON.parse(message.data)) : play(message.data);
+  socket.onopen = () => { delay = 500; };
+  socket.onclose = () => {
+    stateText.textContent = "Reconnecting…";
+    flush();
+    setTimeout(() => connect(Math.min(delay * 2, 8000)), delay);
+  };
+}
+
+async function start() {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 },
+  });
+  const input = new AudioContext();
+  output = new AudioContext();
+  await input.audioWorklet.addModule(URL.createObjectURL(new Blob([worklet], { type: "text/javascript" })));
+  mic = new AudioWorkletNode(input, "mic");
+  mic.port.onmessage = (message) => { if (socket?.readyState === WebSocket.OPEN) socket.send(message.data); };
+  input.createMediaStreamSource(stream).connect(mic);
+  connect();
+}
+
+orb.onclick = async () => {
+  if (!started) {
+    started = true;
+    orb.textContent = "";
+    try { await start(); } catch (error) { started = false; orb.textContent = "Start"; add("error", `Microphone: ${error.message}`); }
+    return;
+  }
+  muted = !muted;
+  orb.dataset.muted = muted;
+  mic.port.postMessage(muted);
+  stateText.textContent = muted ? "Microphone off" : labels[orb.dataset.state] ?? "";
+};
+stopButton.onclick = () => { flush(); send({ type: "hush" }); };
+if (!window.isSecureContext) add("error", "Browsers only allow the microphone on https:// or localhost. Open this page through an https tunnel.");
+</script>
+</body>
+</html>

@@ -236,6 +236,7 @@ bruv/
     config.ts             reads ~/.pi/agent/bruv.json
     developer.ts          time reminder; bruv's own messages as developer messages
     patch.ts              apply_patch in the Codex format
+    voice/                /voice: local speech in and out, a browser page, the session's model as the brain
   scripts/
     install.sh            installs Pi and bruv; the old 0.x install URL points here
   site/                   the website, a Bun workspace (site/README.md)
