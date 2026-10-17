@@ -5,14 +5,21 @@ export type EngineEvent =
   | { type: "ready" }
   | { type: "speech" }
   | { type: "partial"; text: string }
-  | { type: "heard"; text: string }
-  | { type: "audio"; pcm: Int16Array; rate: number }
+  /** `held`: the user held the talk button, so this is theirs and never the speaker's echo. */
+  | { type: "heard"; text: string; held?: boolean }
+  /** `part` is the sentence the audio belongs to, as given to `speak`. */
+  | { type: "audio"; pcm: Int16Array; rate: number; part: number }
   | { type: "error"; message: string };
 
 /** Speech to text and text to speech. Audio in is 16 kHz mono; audio out is mono at `rate`. */
 export interface Engine {
   hear(pcm: Int16Array): void;
-  speak(text: string): void;
+  speak(text: string, part: number): void;
+  /**
+   * Hold to talk: `true` starts the user's turn, `false` ends it now, without waiting for silence.
+   * `false` with `keep` lets silence end it instead, for a tap that turns on hands-free.
+   */
+  talk(on: boolean, keep?: boolean): void;
   /** Drops the speech being made and all speech waiting to be made. */
   hush(): void;
   onEvent(listener: (event: EngineEvent) => void): void;
@@ -26,18 +33,25 @@ export type DeviceEvent =
   | { type: "state"; state: State }
   | { type: "partial"; text: string }
   | { type: "user"; text: string }
-  | { type: "assistant"; text: string }
+  | { type: "assistant"; text: string; part: number }
   /** Hold playback: someone may be talking over it. */
   | { type: "pause" }
   /** It was a noise or an echo; play on. */
   | { type: "resume" }
   /** Drop all playback. */
   | { type: "flush" }
+  | ({ type: "show" } & Shown)
   | { type: "error"; message: string };
 
+/** Something to look at: a page, a picture or a video. `src` is a link; `html` is a whole page. */
+export type Shown = { kind: "html" | "image" | "video"; title?: string; src?: string; html?: string };
+
 export interface Device {
+  /** A device with a screen can show things; the local speaker can't. */
+  screen?: boolean;
   send(event: DeviceEvent): void;
-  play(pcm: Int16Array, rate: number): void;
+  /** Sentences are numbered in order, so a device can go back to the start of the one it is playing. */
+  play(pcm: Int16Array, rate: number, part: number): void;
 }
 
 /** Where heard words go. The brain answers through `Call.reply`. */
@@ -59,6 +73,7 @@ export class Call {
   /** What is being said or waiting to be said, to tell the speaker's own echo from the user. */
   private saying: string[] = [];
   private state: State = "starting";
+  private part = 0;
 
   constructor(
     private engine: Engine,
@@ -78,6 +93,17 @@ export class Call {
 
   hear(pcm: Int16Array) {
     this.engine.hear(pcm);
+  }
+
+  talk(on: boolean, keep = false) {
+    this.engine.talk(on, keep);
+  }
+
+  /** Puts something on every screen. Returns how many screens got it. */
+  show(item: Shown) {
+    const screens = [...this.devices].filter((device) => device.screen);
+    for (const device of screens) device.send({ type: "show", ...item });
+    return screens.length;
   }
 
   /** A new reply starts. */
@@ -129,9 +155,10 @@ export class Call {
   }
 
   private say(sentence: string) {
+    const part = ++this.part;
     this.saying.push(sentence);
-    this.engine.speak(sentence);
-    this.broadcast({ type: "assistant", text: sentence });
+    this.engine.speak(sentence, part);
+    this.broadcast({ type: "assistant", text: sentence, part });
   }
 
   private onEngine(event: EngineEvent) {
@@ -148,7 +175,7 @@ export class Call {
         return;
       case "heard": {
         const text = event.text.trim();
-        const echo = this.saying.length > 0 && isEcho(text, this.saying.join(" "));
+        const echo = !event.held && this.saying.length > 0 && isEcho(text, this.saying.join(" "));
         if (!text || echo) {
           this.broadcast({ type: "resume" });
           this.setState(this.saying.length ? "speaking" : "listening");
@@ -165,7 +192,7 @@ export class Call {
       }
       case "audio":
         if (this.state !== "hearing") this.setState("speaking");
-        for (const device of this.devices) device.play(event.pcm, event.rate);
+        for (const device of this.devices) device.play(event.pcm, event.rate, event.part);
         return;
       case "error":
         this.broadcast(event);

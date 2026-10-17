@@ -64,6 +64,14 @@ let recent = [];
 let recentLength = 0;
 let stream;
 let partial = "";
+/** Set while the user holds the talk button: the turn is theirs until they let go, whatever the VAD says. */
+let held = false;
+/**
+ * Frames left for the VAD to hear speech after a tap handed it the turn. A tap starts a turn at once, so
+ * words said right away are kept; if none come, the turn ends quietly.
+ */
+let grace = 0;
+const graceFrames = Math.round((rate * 1.2) / window);
 
 function decode() {
   while (recognizer.isReady(stream)) recognizer.decode(stream);
@@ -82,9 +90,15 @@ function hear(pcm) {
 }
 
 function frame(samples) {
+  if (held) {
+    stream.acceptWaveform({ sampleRate: rate, samples });
+    report();
+    return;
+  }
   vad.acceptWaveform(samples);
   while (!vad.isEmpty()) vad.pop();
   const talking = vad.isDetected();
+  if (talking) grace = 0;
   if (!stream && talking) {
     stream = recognizer.createStream();
     for (const chunk of recent) stream.acceptWaveform({ sampleRate: rate, samples: chunk });
@@ -100,19 +114,51 @@ function frame(samples) {
     return;
   }
   stream.acceptWaveform({ sampleRate: rate, samples });
-  if (talking) {
-    const text = decode();
-    if (text !== partial) {
-      partial = text;
-      post({ type: "partial", text });
-    }
-    return;
-  }
+  if (talking) report();
+  else if (grace > 0) {
+    grace--;
+    report();
+  } else finish();
+}
+
+function report() {
+  const text = decode();
+  if (text === partial) return;
+  partial = text;
+  post({ type: "partial", text });
+}
+
+function finish(extra) {
   stream.acceptWaveform({ sampleRate: rate, samples: new Float32Array(rate * 0.5) });
   stream.inputFinished();
   const text = decode();
   stream = undefined;
-  post({ type: "heard", text });
+  post({ type: "heard", text, ...extra });
+}
+
+/**
+ * Hold to talk: a turn starts when the button goes down and ends when it comes up. With `keep`, letting go
+ * hands the turn to the VAD instead, which ends it at the next silence (a tap that turns on hands-free).
+ */
+function talk(on, keep) {
+  if (on === held) return;
+  held = on;
+  vad.reset();
+  if (!on && keep) {
+    grace = graceFrames;
+    return;
+  }
+  if (on) {
+    stream ??= recognizer.createStream();
+    recent = [];
+    recentLength = 0;
+    partial = "";
+    post({ type: "speech" });
+    return;
+  }
+  stream.acceptWaveform({ sampleRate: rate, samples: pending });
+  pending = new Float32Array(0);
+  finish({ held: true });
 }
 
 // Speaking.
@@ -121,8 +167,8 @@ const queue = [];
 let speaking;
 let generation = 0;
 
-function speak(text) {
-  queue.push({ text, generation });
+function speak(text, part) {
+  queue.push({ text, part, generation });
   run();
 }
 
@@ -153,7 +199,7 @@ async function next() {
           if (job.generation !== generation) return 0;
           const pcm = new Int16Array(samples.length);
           for (let i = 0; i < samples.length; i++) pcm[i] = Math.max(-1, Math.min(1, samples[i])) * 32767;
-          post({ type: "audio", pcm, rate: tts.sampleRate, generation: job.generation }, [pcm.buffer]);
+          post({ type: "audio", pcm, rate: tts.sampleRate, part: job.part, generation: job.generation }, [pcm.buffer]);
           return 1;
         },
       });
@@ -165,7 +211,8 @@ async function next() {
 
 parentPort.on("message", (message) => {
   if (message.type === "hear") hear(message.pcm);
-  else if (message.type === "speak") speak(message.text);
+  else if (message.type === "speak") speak(message.text, message.part);
+  else if (message.type === "talk") talk(message.on, message.keep);
   else if (message.type === "hush" || message.type === "close") {
     generation++;
     queue.length = 0;

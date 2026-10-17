@@ -41,7 +41,7 @@ export function startLocal(call: Call): { stop(): void } | string {
   let endsAt = 0;
   let timer: NodeJS.Timeout | undefined;
   /** Audio that came in while paused. */
-  let held: [Int16Array, number][] | undefined;
+  let held: [Int16Array, number, number][] | undefined;
   const silence = () => {
     speaker?.kill();
     speaker = undefined;
@@ -61,12 +61,12 @@ export function startLocal(call: Call): { stop(): void } | string {
       } else if (event.type === "resume" && held) {
         const waiting = held;
         held = undefined;
-        for (const [pcm, rate] of waiting) device.play(pcm, rate);
+        for (const [pcm, rate, part] of waiting) device.play(pcm, rate, part);
       }
     },
-    play: (pcm, rate) => {
+    play: (pcm, rate, part) => {
       if (held) {
-        held.push([pcm, rate]);
+        held.push([pcm, rate, part]);
         return;
       }
       if (!speaker || speakerRate !== rate) {

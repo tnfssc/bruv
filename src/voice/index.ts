@@ -3,13 +3,17 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
-import { readConfig } from "../config";
+import { readConfig, saveConfig } from "../config";
 import { setStatus } from "../status";
 import { Call, type Engine } from "./call";
+import { downloadCloudflared, findCloudflared, runTunnel } from "./cloudflared";
 import { startEngine } from "./engine";
+import { readKey, saveKey } from "./keys";
 import { startLocal } from "./local";
 import { download, type ModelPaths, missing, modelPaths } from "./models";
 import { type Served, serve } from "./server";
+import { registerShow, showTool } from "./tool";
+import { cleanHost, permissions, prepare } from "./tunnel";
 
 const guidance = readFileSync(new URL("../../prompts/voice.md", import.meta.url), "utf8").trim();
 
@@ -17,7 +21,11 @@ type Options = {
   engine?: (paths: ModelPaths, threads?: number) => Engine;
   open?: (url: string) => void;
   agentDir?: string;
+  /** For Cloudflare's API. */
+  fetch?: typeof fetch;
 };
+
+const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 /** Opens a URL in the desktop browser, when there is a desktop. */
 function openBrowser(url: string) {
@@ -44,10 +52,20 @@ function token(dir: string) {
  * session's model is the brain.
  */
 export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
-  let live: { call: Call; served: Served; local?: { stop(): void } } | undefined;
+  let live:
+    | {
+        call: Call;
+        served: Served;
+        local?: { stop(): void };
+        tunnel?: { stop(): void; url: string };
+      }
+    | undefined;
   let starting: Promise<unknown> | undefined;
   let ctx: ExtensionContext | undefined;
-  const dir = () => join(options.agentDir ?? getAgentDir(), "bruv", "voice");
+  const agentDir = () => options.agentDir ?? getAgentDir();
+  const dir = () => join(agentDir(), "bruv", "voice");
+  const status = (context: ExtensionContext) =>
+    setStatus(context, "voice", `● voice${live?.local ? " here" : ""}${live?.tunnel ? " · tunnel" : ""}`);
 
   /**
    * Talking over a reply stops the run, as it would stop a person; it was most likely still writing.
@@ -91,19 +109,71 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
         token: token(dir()),
       });
       live = { call, served };
+      showTool(pi, true);
     } catch (error) {
       await call.close();
       throw error;
     }
-    setStatus(context, "voice", "● voice");
+    status(context);
+    const host = config.tunnel;
+    const key = readKey(agentDir());
+    // The tunnel can take a while; the page works locally meanwhile.
+    if (host && key)
+      void openTunnel(context, host, key).then(
+        () => live?.tunnel && context.ui.notify(`Voice from anywhere: ${live.tunnel.url}`, "info"),
+        (error) => context.ui.notify(`Voice tunnel failed: ${message(error)}`, "error"),
+      );
     return live;
+  };
+
+  /** cloudflared on this machine, or a copy downloaded after asking. */
+  const cloudflared = async (context: ExtensionContext) => {
+    const bin = join(dir(), "bin");
+    const found = findCloudflared(bin);
+    if (found) return found;
+    const ok =
+      context.hasUI &&
+      (await context.ui.confirm(
+        "Download cloudflared?",
+        `The tunnel runs Cloudflare's cloudflared program, which isn't installed. Download it (about 40 MB) from github.com/cloudflare/cloudflared into ${bin}?`,
+      ));
+    if (!ok) throw new Error("The tunnel needs cloudflared. Install it, then run /voice tunnel again.");
+    setStatus(context, "voice", "voice: downloading cloudflared");
+    return downloadCloudflared(bin);
+  };
+
+  /** Serves the page on https://host through a Cloudflare tunnel. */
+  const openTunnel = async (context: ExtensionContext, host: string, key: string) => {
+    if (!live) return;
+    const binary = await cloudflared(context);
+    setStatus(context, "voice", "voice: connecting tunnel");
+    const listen = readConfig(options.agentDir).voice?.host ?? "127.0.0.1";
+    const origin = `http://${listen === "0.0.0.0" || listen === "::" ? "127.0.0.1" : listen}:${live.served.port}`;
+    try {
+      const current = live;
+      const tunnel = { stop: () => {}, url: `https://${host}/${new URL(current.served.url).search}` };
+      const running = await runTunnel(binary, await prepare(key, host, origin, options.fetch), (message) => {
+        if (current.tunnel !== tunnel) return;
+        current.tunnel = undefined;
+        status(context);
+        context.ui.notify(`Voice tunnel stopped: ${message}`, "error");
+      });
+      tunnel.stop = running.stop;
+      current.tunnel?.stop();
+      if (live === current) current.tunnel = tunnel;
+      else running.stop();
+    } finally {
+      if (live) status(context);
+    }
   };
 
   const stop = async (context?: ExtensionContext) => {
     const current = live;
     live = undefined;
     if (!current) return;
+    showTool(pi, false);
     current.local?.stop();
+    current.tunnel?.stop();
     await current.served.close();
     await current.call.close();
     if (context) setStatus(context, "voice", undefined);
@@ -115,6 +185,15 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     if (word === "off") {
       await stop(context);
       context.ui.notify("Voice is off.", "info");
+      return;
+    }
+    if (word === "tunnel off") {
+      live?.tunnel?.stop();
+      if (live) live.tunnel = undefined;
+      const { tunnel: _, ...rest } = readConfig(options.agentDir).voice ?? {};
+      saveConfig({ voice: rest }, options.agentDir);
+      if (live) status(context);
+      context.ui.notify("Voice tunnel is off. /logout can remove the saved Cloudflare key.", "info");
       return;
     }
     if (!live) {
@@ -129,25 +208,58 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       const local = startLocal(live.call);
       if (typeof local === "string") context.ui.notify(local, "error");
       else live.local = local;
-      setStatus(context, "voice", "● voice here");
+      status(context);
       return;
     }
-    context.ui.notify(`Voice is on: ${live.served.url}`, "info");
+    if (word === "tunnel") {
+      await setUpTunnel(context);
+      return;
+    }
+    const remote = live.tunnel ? `\nFrom anywhere: ${live.tunnel.url}` : "";
+    context.ui.notify(`Voice is on: ${live.served.url}${remote}`, "info");
     (options.open ?? openBrowser)(live.served.url);
+  };
+
+  /** /voice tunnel: asks for the host and the Cloudflare key, sets the tunnel up, and keeps both. */
+  const setUpTunnel = async (context: ExtensionContext) => {
+    const config = readConfig(options.agentDir).voice ?? {};
+    const typedHost = await context.ui.input("Host name for the voice page", config.tunnel ?? "voice.example.com");
+    if (typedHost === undefined) return;
+    const host = cleanHost(typedHost || config.tunnel || "");
+    if (!host) {
+      context.ui.notify("That isn't a host name. Use one like voice.example.com.", "error");
+      return;
+    }
+    const saved = readKey(agentDir());
+    const typedKey = (
+      await context.ui.input(
+        saved ? "Cloudflare token" : "Cloudflare API token or tunnel token",
+        saved ? "Leave empty to keep the saved one" : `API token with ${permissions}`,
+      )
+    )?.trim();
+    const key = typedKey || saved;
+    if (!key) return;
+    await openTunnel(context, host, key);
+    if (typedKey) await saveKey(typedKey, agentDir());
+    saveConfig({ voice: { ...readConfig(options.agentDir).voice, tunnel: host } }, options.agentDir);
+    context.ui.notify(`Voice is on at ${live?.tunnel?.url}`, "info");
   };
 
   const command = async (args: string, context: ExtensionContext) => {
     try {
       await run(args, context);
     } catch (error) {
-      setStatus(context, "voice", undefined);
-      context.ui.notify(`Voice failed: ${error instanceof Error ? error.message : String(error)}`, "error");
+      if (live) status(context);
+      else setStatus(context, "voice", undefined);
+      context.ui.notify(`Voice failed: ${message(error)}`, "error");
     }
   };
 
+  registerShow(pi, () => live && { call: live.call, shelf: live.served.shelf });
   pi.registerFlag("voice", { description: "Start voice and open its page in the browser", type: "boolean" });
   pi.registerCommand("voice", {
-    description: "Talk to bruv in the browser; /voice here uses this machine's microphone; /voice off",
+    description:
+      "Talk to bruv in the browser; /voice here uses this machine's microphone; /voice tunnel serves it on your domain; /voice off",
     handler: command,
   });
 

@@ -23,6 +23,59 @@ reached SSH or T3 Code.
 - **Models run in a worker thread** (`worker.mjs`, plain JS so it needs no TypeScript loader). Decoding
   takes about half a CPU core while someone talks and would stall the terminal on the main thread.
 
+- **The page follows shadcn/ui (zinc tokens, new-york components) and uses Lucide icons**, ported by hand to
+  plain CSS and inline SVG. The page is one file served from memory; a build step or a CDN would cost more
+  than the few components it needs. Mobile first: safe areas, a screen wake lock. On touch screens
+  (`pointer: coarse`) mute and stop are wide buttons and the talk button is a pad; with big controls the
+  pad and buttons fill the bottom half. Little text: the state badge, icons, one line when empty. The
+  keys sit in a ⋯ menu (a `<dialog>`). No pills or bubbles: the state is plain text with a dot, your words are
+  plain grey text, and there are no borders anywhere. Mute, stop and the menu are ghost buttons;
+  the talk button is the only filled one, and on phones its fill deepens with the voice level. Nothing moves the layout: no slide-in or press scaling,
+  the status has a fixed width with the dot pinned, the heard line becomes the final line in place, and
+  the transcript only follows new words when it is already at the end. Checked with Chromium's
+  `layout-shift` entries.
+- **One button, two ways to talk.** The button starts a held turn the moment it goes down (`talk` to
+  the worker, which skips the VAD while held). Letting go after 280 ms ends the turn, after a 0.3 s tail
+  because the last word often ends after the finger lifts; the words are final about 0.5 s after
+  release. Letting go sooner is a tap, which turns hands-free on or off. Turning it on sends `talk` off
+  with `keep`: the worker keeps the turn's stream and gives the VAD 1.2 s to hear speech, so words said
+  during the tap are kept and silence ends the turn as usual. A held turn is never taken for echo. A
+  separate mode switch came first; one gesture is simpler and nothing has to be chosen.
+- **Big or small controls.** On phones the controls take the bottom half of the screen, or one row of
+  76 px after the arrow button; the choice is kept in localStorage. The ⋯ menu only lists keys, so it
+  is hidden on touch screens.
+- **Optimistic start.** The page connects when it loads. The first touch starts at once: both
+  AudioContexts are made inside the tap (Safari needs that), the button shows the turn, and the
+  microphone opens behind it. Anything sent before the socket is open waits in an outbox (up to about
+  20 s of audio) and goes when it opens. A page only takes the microphone when it starts (`mic`), so
+  opening the page on a phone doesn't steal it from another. A drop shows only after 2 s.
+- **`show` puts things on the page.** One tool (`exposure: "codemode"`), switched on with
+  `setActiveTools` while voice is on and off again after, as `apply_patch` is. That costs one uncached
+  request when voice starts. `deferred` was tried first, to keep the tool list still: in a real run the
+  model looked for the tool, didn't find it, and opened a page in the desktop browser instead. html goes inline
+  into a sandboxed `srcdoc` iframe (scripts, no same origin, no referrer, so it never sees the key);
+  files are served at `/shown/<random id>` with byte ranges (Safari video needs them) and a sandbox CSP.
+  Shown things start in a fixed 16rem box and take their own height only while they are last in the
+  conversation, so nothing above or below moves. They are capped to the visible part of the conversation, so each can be
+  seen whole with its title bar. Your own words bring the conversation back to the end.
+- **Brand.** The header uses the wordmark and the favicon the b from `site/assets/brand`, drawn in
+  `currentColor` so they follow light and dark.
+- **Demo video.** `.tmp/demo/` (not kept in git) records the real agent over RPC with a virtual
+  microphone in the page: TTS-made questions are played into a `MediaStreamDestination` returned by a
+  replaced `getUserMedia`, and a `MediaRecorder` takes the microphone and the page's speaker together.
+  The agent's long think is cut to a labelled fast-forward with ffmpeg.
+- **Mute replays the sentence.** Sentences are numbered (`part`); the server sends `part` before a
+  sentence's audio. The page keeps the played audio of the sentence playing, so unmuting starts it again.
+  Muting is the page's own; the server still thinks it is speaking. Talking unmutes.
+- **`/voice tunnel`: a Cloudflare API token and a host are enough.** It finds the zone (longest suffix the
+  token can see), makes or reuses the tunnel `bruv-voice-<host>`, sets its ingress to the local port
+  (again on every start, since the port can change), adds a proxied CNAME, and runs `cloudflared` with
+  the tunnel's token in `TUNNEL_TOKEN`. A tunnel token from the dashboard is run as it is. It never
+  replaces a DNS record it did not make. If cloudflared is missing it asks to download the release binary
+  (Linux, macOS).
+- **The Cloudflare key is in Pi's `auth.json`** as `cloudflare-tunnel`, which `/logout` lists. Pi exports
+  no writer, so `keys.ts` takes Pi's lock (proper-lockfile's `auth.json.lock` folder) and writes it.
+
 ## How interrupting works (`call.ts`)
 
 - The VAD hears speech start (about 0.35 s after the first word; 0.6 s of audio before that is kept for
@@ -51,6 +104,15 @@ reached SSH or T3 Code.
   all of it the model. Thinking level and model speed matter most now.
 
 ## Where work stopped / ideas
+
+- Not tried with a real Cloudflare account: the API calls were checked against Cloudflare's docs and a fake
+  API in the tests only. A bad tunnel token makes cloudflared give up after about 20 s.
+- Cloud speech, so the page or an app could work without this machine's models: researched 2026-10-17, not
+  built. Deepgram Flux (speech to text with end-of-turn, $0.39/hr) and Aura-2 (speech, $30 per 1M
+  characters) share one short-lived browser token; AssemblyAI Universal-Streaming ($0.15/hr) and Inworld
+  TTS-1.5 Mini ($5 per 1M characters, price unclear) are cheaper. The brain would still be bruv.
+- The headphone play/pause button could mute through the Media Session API; it needs an `<audio>` element
+  playing, not only Web Audio.
 
 - English only. Nemotron 3.5 streaming (40 languages, same size) is in the same sherpa-onnx release.
 - A turn model (Pipecat's Smart Turn v3, ONNX, CPU) could replace the fixed 0.6 s silence.
