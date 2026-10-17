@@ -20,8 +20,12 @@ reached SSH or T3 Code.
   plain spoken replies. The agent itself is the worker; it says one line before long work.
 - **sherpa-onnx (`sherpa-onnx-node`) runs every model in Node, on the CPU, without Python.** Models
   (about 560 MB) are downloaded on first use to `~/.pi/agent/bruv/voice/models` after asking:
-  Silero VAD v5, `nemotron-speech-streaming-en-0.6b` int8 with 160 ms chunks, Pocket TTS int8.
-  Kokoro (82M) also works but was slower here (0.45 vs 0.3 of real time) and is a 3x larger download.
+  Silero VAD v5, `nemotron-speech-streaming-en-0.6b` int8 with 160 ms chunks, Kokoro v1.0 (82M, voice
+  `af_heart`). Pocket TTS came first (98 MB, 0.26 of real time) but users found it unnatural. Kokoro's int8
+  build ran at about real time on this x86 machine, too slow to keep up; the full model runs at 0.41, so
+  that is the one (333 MB). It speaks a sentence at a time, so the first audio waits for the first
+  sentence (about 0.3 s for "Sure."). Only the US English lexicon is loaded. The old Pocket folder is
+  deleted after the download.
 - **Models run in a worker thread** (`worker.mjs`, plain JS so it needs no TypeScript loader). Decoding
   takes about half a CPU core while someone talks and would stall the terminal on the main thread.
 

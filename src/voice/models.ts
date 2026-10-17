@@ -6,7 +6,11 @@ import { pipeline } from "node:stream/promises";
 
 const releases = "https://github.com/k2-fsa/sherpa-onnx/releases/download";
 
-/** Silero VAD, NVIDIA's streaming English Nemotron (160 ms chunks) and Kyutai's Pocket TTS. All run on the CPU. */
+/**
+ * Silero VAD, NVIDIA's streaming English Nemotron (160 ms chunks) and Kokoro v1.0. All run on the CPU. Kokoro
+ * sounds far more natural than Pocket TTS, which came first; its int8 build ran at about real time here,
+ * too slow to keep up, so this is the full one.
+ */
 const models = {
   vad: { url: `${releases}/asr-models/silero_vad_v5.onnx`, name: "silero_vad_v5.onnx", mb: 2 },
   asr: {
@@ -15,24 +19,35 @@ const models = {
     mb: 463,
   },
   tts: {
-    url: `${releases}/tts-models/sherpa-onnx-pocket-tts-int8-2026-01-26.tar.bz2`,
-    name: "sherpa-onnx-pocket-tts-int8-2026-01-26",
-    mb: 98,
+    url: `${releases}/tts-models/kokoro-multi-lang-v1_0.tar.bz2`,
+    name: "kokoro-multi-lang-v1_0",
+    mb: 333,
   },
 };
 
-export type ModelPaths = { vad: string; asr: string; tts: string; voice: string };
+/** Models bruv used before, deleted once their replacements are in. */
+const retired = ["sherpa-onnx-pocket-tts-int8-2026-01-26"];
 
-/** Voices that come with Pocket TTS. A path to a WAV file of someone talking also works. */
-export const voices = ["bria", "loona"];
+export type ModelPaths = { vad: string; asr: string; tts: string; speaker: number };
 
-export function modelPaths(dir: string, voice = "bria"): ModelPaths {
-  const tts = join(dir, models.tts.name);
+/**
+ * Kokoro's English voices, in the model's speaker order: American and British, women (f) and men (m).
+ * af_heart is the best rated.
+ */
+export const voices = [
+  ...["af_alloy", "af_aoede", "af_bella", "af_heart", "af_jessica", "af_kore", "af_nicole", "af_nova", "af_river"],
+  ...["af_sarah", "af_sky", "am_adam", "am_echo", "am_eric", "am_fenrir", "am_liam", "am_michael", "am_onyx"],
+  ...["am_puck", "am_santa", "bf_alice", "bf_emma", "bf_isabella", "bf_lily", "bm_daniel", "bm_fable"],
+  ...["bm_george", "bm_lewis"],
+];
+
+export function modelPaths(dir: string, voice = "af_heart"): ModelPaths {
+  const speaker = voices.indexOf(voice);
   return {
     vad: join(dir, models.vad.name),
     asr: join(dir, models.asr.name),
-    tts,
-    voice: voices.includes(voice) ? join(tts, "test_wavs", `${voice}.wav`) : voice,
+    tts: join(dir, models.tts.name),
+    speaker: speaker < 0 ? voices.indexOf("af_heart") : speaker,
   };
 }
 
@@ -69,4 +84,5 @@ export async function download(dir: string, progress: (text: string) => void, fe
       renameSync(partial, join(dir, model.name));
     }
   }
+  for (const name of retired) rmSync(join(dir, name), { recursive: true, force: true });
 }

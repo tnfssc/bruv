@@ -153,7 +153,7 @@ and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and pr
 
 ## Voice
 
-Speech is recognised and spoken on your machine, on the CPU, by open models: Silero VAD hears when you talk, NVIDIA's streaming Nemotron (English) writes down what you say, and Kyutai's Pocket TTS speaks. The first `/voice` asks before downloading them (about 560 MB, to `~/.pi/agent/bruv/voice/models`). Only the session's own model, the one you already use, runs elsewhere, so voice costs nothing on top of it. Thinking makes the first words slower; `low` suits talking.
+Speech is recognised and spoken on your machine, on the CPU, by open models: Silero VAD hears when you talk, NVIDIA's streaming Nemotron (English) writes down what you say, and Kokoro speaks. The first `/voice` asks before downloading them (about 800 MB, to `~/.pi/agent/bruv/voice/models`). Only the session's own model, the one you already use, runs elsewhere, so voice costs nothing on top of it. Thinking makes the first words slower; `low` suits talking.
 
 Talking over a reply pauses it at once. A cough or the speaker's own echo resumes it; real words stop the reply and the run, and go to the model. Talking while the agent works without speaking steers the work instead of stopping it.
 
@@ -182,10 +182,10 @@ The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout
 Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's address with the same `?t=` key.
 
 ```json
-{ "voice": { "port": 7807, "host": "127.0.0.1", "voice": "bria", "threads": 4, "tunnel": "voice.example.com" } }
+{ "voice": { "port": 7807, "host": "127.0.0.1", "voice": "af_heart", "threads": 4, "tunnel": "voice.example.com" } }
 ```
 
-`voice` is `bria` or `loona`, or the path of a WAV file of someone talking, whose voice Pocket TTS then copies. `threads` is how many CPU threads each model uses.
+`voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `threads` is how many CPU threads each model uses.
 
 ## Configuration
 

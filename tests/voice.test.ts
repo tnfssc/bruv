@@ -8,7 +8,7 @@ import { registerVoice } from "../src/voice";
 import { Call, type DeviceEvent, type Engine, type EngineEvent } from "../src/voice/call";
 import { release } from "../src/voice/cloudflared";
 import { readKey, saveKey } from "../src/voice/keys";
-import { missing } from "../src/voice/models";
+import { missing, modelPaths, voices } from "../src/voice/models";
 import { qrLines, qrSvg } from "../src/voice/qr";
 import { serve } from "../src/voice/server";
 import { forPage, resolveShown, Shelf, type ShowArgs } from "../src/voice/show";
@@ -66,6 +66,11 @@ async function until(check: () => boolean) {
     await new Promise((resolve) => setTimeout(resolve, 10));
   }
 }
+
+test("a voice is picked by name, and an unknown name gets the default", () => {
+  expect(voices[modelPaths("m", "am_michael").speaker]).toBe("am_michael");
+  expect(modelPaths("m", "bria").speaker).toBe(modelPaths("m").speaker);
+});
 
 test("streamed text is spoken a sentence at a time, without Markdown or code", () => {
   const sentences = new Sentences();

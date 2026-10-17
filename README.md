@@ -39,7 +39,7 @@ Run `/bruv-setup`, confirm, then `/reload`. Then type `/voice` and start talking
 /voice          again, to turn it off
 ```
 
-The first `/voice` asks before downloading the speech models (about 560 MB). Use headphones in the terminal:
+The first `/voice` asks before downloading the speech models (about 800 MB). Use headphones in the terminal:
 nothing cancels the speaker's echo there; the browser page does. A phone needs https, which `/voice tunnel`
 gives you with a Cloudflare token and a host name. See [Voice](docs/USAGE.md#voice).
 

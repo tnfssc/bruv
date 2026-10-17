@@ -30,5 +30,5 @@ export const landing = {
   installNote: "Installs Pi if you don't have it, then adds bruv.",
   start: "$ cd your-project\n$ pi\n/login\n/bruv-setup\n/voice",
   requirements:
-    "Sign in with /login. A ChatGPT plan works, and so does any provider Pi supports. The first /voice downloads the speech models (about 560 MB). Already have Pi? Run pi install git:github.com/tnfssc/bruv. Coming from Codex? /import-codex brings your settings.",
+    "Sign in with /login. A ChatGPT plan works, and so does any provider Pi supports. The first /voice downloads the speech models (about 800 MB). Already have Pi? Run pi install git:github.com/tnfssc/bruv. Coming from Codex? /import-codex brings your settings.",
 };

@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import { parentPort, workerData } from "node:worker_threads";
 
 const sherpa = createRequire(import.meta.url)("sherpa-onnx-node");
-const { vad: vadModel, asr, tts: ttsDir, voice, threads } = workerData;
+const { vad: vadModel, asr, tts: ttsDir, speaker, threads } = workerData;
 const rate = 16000;
 const window = 512;
 // Audio kept from before speech is detected; detection lags the first word by about 0.35 s.
@@ -41,22 +41,19 @@ const recognizer = new sherpa.OnlineRecognizer({
 });
 const tts = await sherpa.OfflineTts.createAsync({
   model: {
-    pocket: {
-      lmFlow: `${ttsDir}/lm_flow.int8.onnx`,
-      lmMain: `${ttsDir}/lm_main.int8.onnx`,
-      encoder: `${ttsDir}/encoder.onnx`,
-      decoder: `${ttsDir}/decoder.int8.onnx`,
-      textConditioner: `${ttsDir}/text_conditioner.onnx`,
-      vocabJson: `${ttsDir}/vocab.json`,
-      tokenScoresJson: `${ttsDir}/token_scores.json`,
-      voiceEmbeddingCacheCapacity: 4,
+    kokoro: {
+      model: `${ttsDir}/model.onnx`,
+      voices: `${ttsDir}/voices.bin`,
+      tokens: `${ttsDir}/tokens.txt`,
+      dataDir: `${ttsDir}/espeak-ng-data`,
+      // English only; the model's other lexicons are for Chinese.
+      lexicon: `${ttsDir}/lexicon-us-en.txt`,
     },
     numThreads: threads,
     provider: "cpu",
   },
   maxNumSentences: 1,
 });
-const reference = sherpa.readWave(voice);
 
 // Listening.
 let pending = new Float32Array(0);
@@ -223,12 +220,7 @@ async function next() {
   while (queue.length) {
     const job = queue.shift();
     if (job.generation !== generation) continue;
-    const config = new sherpa.GenerationConfig({
-      referenceAudio: reference.samples,
-      referenceSampleRate: reference.sampleRate,
-      numSteps: 5,
-      extra: { max_reference_audio_len: 12, seed: 42 },
-    });
+    const config = new sherpa.GenerationConfig({ sid: speaker, speed: 1 });
     try {
       await tts.generateAsync({
         text: job.text,

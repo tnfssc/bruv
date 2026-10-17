@@ -27,7 +27,7 @@ export interface Config {
   /** Compact transcript spacing (/bruv-compact). Default on. */
   compact?: boolean;
   /**
-   * /voice. Port default 7807 on 127.0.0.1; voice is a Pocket TTS voice name or a WAV file to sound like.
+   * /voice. Port default 7807 on 127.0.0.1; voice is one of Kokoro's English voices (af_heart by default).
    * tunnel is the public host name a Cloudflare tunnel serves the page on (/voice tunnel).
    */
   voice?: { host?: string; port?: number; voice?: string; threads?: number; tunnel?: string };
