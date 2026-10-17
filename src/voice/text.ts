@@ -61,6 +61,7 @@ export class Sentences {
 /** Turns one line of Markdown into words worth saying. */
 export function speakable(text: string) {
   return text
+    .replace(/<[^>]*>/g, " ")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     .replace(/https?:\/\/\S+/g, "a link")

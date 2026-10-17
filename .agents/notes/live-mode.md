@@ -10,8 +10,11 @@ reached SSH or T3 Code.
   reach the agent as voice messages; it answers through `say` (`src/voice/say.ts`), the only thing
   spoken. Reading the transcript aloud spoke whatever the model wrote, at whatever length; with `say` the
   agent decides what is worth hearing, and the same pair (messages in, a tool out) fits any other surface.
-  - `say` is a declared tool, not a codemode one, so its arguments stream: Pi parses tool arguments as
-    they arrive, and `message_update` toolcall events feed the sentences to speech, as text deltas did.
+  - `say` must be declared to the model, so its arguments stream: Pi parses tool arguments as they
+    arrive, and `message_update` toolcall events feed the sentences to speech, as text deltas did. It has
+    `codemode` exposure like `show` and is activated while voice is on: codemode "only" (bruv's setup)
+    hides plain tools behind scripts, and the user found the agent never speaking because `say` was one
+    of them. An activated codemode tool stays declared; the test checks the request's `toolsAdded`.
     `execute` speaks whatever streaming missed and returns at once, so work goes on while it plays.
   - A run must start from a user message. A run started by `sendMessage(..., { triggerTurn: true })`
     skips `before_agent_start` and gets Pi's base prompt: no voice section and none of bruv's own prompt
@@ -30,7 +33,10 @@ reached SSH or T3 Code.
     a say stops at the last whole sentence that fits and the tool returns an error with the word count
     and the last sentence heard, asking to show the rest and say one sentence, or to call say again with
     `confirm: true` and only the unheard part. `confirm` comes first in the schema so it streams before
-    the text. The prompt asks to show anything longer than two or three sentences up front.
+    the text. The prompt asks to show anything longer than two or three sentences up front. Length is
+    words or characters over 6, whichever is more: a model once leaked chat-template tokens and a whole
+    HTML page into one say, which counted as 54 space-separated words and was read for 100 s. Text after a
+    `<|` token is dropped, and HTML tags are stripped before speaking.
 
 - **`/voice` is the terminal; `/voice web` adds a browser page.** `/voice` uses this machine's own
   devices (pw-record/pw-play, parec/pacat, arecord/aplay or sox) with no echo cancelling, so use

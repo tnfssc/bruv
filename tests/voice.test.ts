@@ -89,6 +89,14 @@ test("a long say stops at the last whole sentence within the limit, unless confi
   speaker.finish("c", long);
   expect(engine.spoken.slice(before).join(" ")).toBe(within(long).trim());
 
+  // Markup runs words together, and leaked template tokens end the text.
+  const page = `Here it is.<|end|><|start|>assistant to=show<|message|><!DOCTYPE html><html><body style="padding:16px;font-family:system-ui">${"x".repeat(1200)}</body></html>`;
+  const spokenBefore = engine.spoken.length;
+  speaker.finish("d", page);
+  expect(engine.spoken.slice(spokenBefore)).toEqual(["Here it is."]);
+  speaker.finish("e", `<div>${"word".repeat(150)}</div>. And more.`);
+  expect(speaker.stopped("e")).toBeDefined();
+
   speaker.finish("b", long, true);
   expect(speaker.stopped("b")).toBeUndefined();
   expect(engine.spoken.length).toBeGreaterThan(Math.ceil(sayLimit / 8) + 3);
@@ -447,8 +455,15 @@ test("only say is spoken, and an agent that answers in writing is reminded to sa
     saveConfig({ voice: { port: 0 } }, agentDir);
     const models = join(agentDir, "bruv", "voice", "models");
     for (const model of missing(models)) mkdirSync(join(models, model.name), { recursive: true });
+    let declared: string[] = [];
     app.faux.setResponses([
-      fauxAssistantMessage("A written answer."),
+      (context) => {
+        // Declared to the model even with codemode only, which hides other tools behind scripts.
+        declared = context.messages.flatMap((message) =>
+          message.role === "system" ? (message.toolsAdded ?? []).map((tool) => tool.name) : [],
+        );
+        return fauxAssistantMessage("A written answer.");
+      },
       fauxAssistantMessage(fauxToolCall("say", { text: "Spoken now." }), { stopReason: "toolUse" }),
       fauxAssistantMessage("Done."),
     ]);
@@ -459,6 +474,7 @@ test("only say is spoken, and an agent that answers in writing is reminded to sa
     await until(() => engine.spoken.length === 1);
     await until(() => !app.session.isStreaming);
     expect(engine.spoken).toEqual(["Spoken now."]);
+    expect(declared).toContain("say");
   } finally {
     await app.close();
   }

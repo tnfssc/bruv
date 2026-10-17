@@ -10,7 +10,14 @@ import type { Call } from "./call";
  */
 export const sayLimit = 70;
 
-const words = (text: string) => text.match(/\S+/g)?.length ?? 0;
+/**
+ * Length in words, or in characters over 6 when that is more: markup and code run words together, and a
+ * page of HTML counted by spaces once passed as 54 words and was read aloud for a minute and a half.
+ */
+const words = (text: string) => Math.max(text.match(/\S+/g)?.length ?? 0, Math.round(text.length / 6));
+
+/** A model's chat-template tokens ("<|end|>") leaking into the text end it: what follows is not speech. */
+const clean = (text: string) => text.split("<|")[0];
 
 /** The text up to the last sentence that ends within `limit` words. */
 export function within(text: string, limit = sayLimit) {
@@ -42,7 +49,8 @@ export class Speaker {
   constructor(private call: () => Call | undefined) {}
 
   /** The call's text so far, from the stream. `confirm` lifts the limit. */
-  stream(id: string, text: string, confirm = false) {
+  stream(id: string, raw: string, confirm = false) {
+    const text = clean(raw);
     const call = this.call();
     if (!call || this.done.has(id)) return;
     const over = !confirm && words(text) > sayLimit;
@@ -85,6 +93,9 @@ export function registerSay(pi: ExtensionAPI, speaker: Speaker, onSay: () => voi
   pi.registerTool({
     name: "say",
     label: "Say",
+    // Like show: off until voice turns it on, then declared to the model even with codemode only, which
+    // hides plain tools behind scripts. A declared call streams its arguments, so speech starts at once.
+    exposure: "codemode",
     description:
       "Say something to the user out loud. It is the only way they hear you while voice is on; your written replies are not read out. Call it directly, not from a script, so it starts speaking at once. Past about 70 words it stops at a sentence end and asks you to show the rest instead, unless confirm is true.",
     parameters: Type.Object({
