@@ -60,10 +60,10 @@ export function registerShow(pi: ExtensionAPI, live: () => Screens | undefined) 
 }
 
 /**
- * Declares `show` while voice is on. Declared tools change the tool list, so this costs one uncached
+ * Declares `say` and `show` while voice is on. Declared tools change the tool list, so this costs one uncached
  * request when voice turns on; a deferred tool was tried first, and the model never found it.
  */
-export function showTool(pi: ExtensionAPI, on: boolean) {
-  const active = pi.getActiveTools().filter((name) => name !== "show");
-  pi.setActiveTools(on ? [...active, "show"] : active);
+export function voiceTools(pi: ExtensionAPI, on: boolean) {
+  const active = pi.getActiveTools().filter((name) => name !== "show" && name !== "say");
+  pi.setActiveTools(on ? [...active, "say", "show"] : active);
 }

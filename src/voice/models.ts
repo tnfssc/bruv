@@ -64,7 +64,8 @@ export async function download(dir: string, progress: (text: string) => void, fe
     const response = await fetch(model.url);
     if (!response.ok || !response.body) throw new Error(`Download of ${model.name} failed (${response.status}).`);
     const body = Readable.fromWeb(response.body as unknown as import("node:stream/web").ReadableStream);
-    const partial = join(dir, `.partial-${model.name}`);
+    // Per process: two sessions starting voice at once must not unpack into the same folder.
+    const partial = join(dir, `.partial-${process.pid}-${model.name}`);
     rmSync(partial, { recursive: true, force: true });
     if (model.url.endsWith(".tar.bz2")) {
       mkdirSync(partial);
@@ -77,11 +78,12 @@ export async function download(dir: string, progress: (text: string) => void, fe
       });
       await pipeline(body, tar.stdin);
       if ((await exited) !== 0) throw new Error(`Unpacking ${model.name} failed: ${errors.join("").trim()}`);
-      renameSync(join(partial, model.name), join(dir, model.name));
+      if (!existsSync(join(dir, model.name))) renameSync(join(partial, model.name), join(dir, model.name));
       rmSync(partial, { recursive: true, force: true });
     } else {
       await pipeline(body, createWriteStream(partial));
-      renameSync(partial, join(dir, model.name));
+      if (existsSync(join(dir, model.name))) rmSync(partial, { force: true });
+      else renameSync(partial, join(dir, model.name));
     }
   }
   for (const name of retired) rmSync(join(dir, name), { recursive: true, force: true });

@@ -6,6 +6,27 @@ reached SSH or T3 Code.
 
 ## Choices and why
 
+- **Voice is a channel, not a transcript reader (2026-10-18, the user's design).** The user's words
+  reach the agent as voice messages; it answers through `say` (`src/voice/say.ts`), the only thing
+  spoken. Reading the transcript aloud spoke whatever the model wrote, at whatever length; with `say` the
+  agent decides what is worth hearing, and the same pair (messages in, a tool out) fits any other surface.
+  - `say` is a declared tool, not a codemode one, so its arguments stream: Pi parses tool arguments as
+    they arrive, and `message_update` toolcall events feed the sentences to speech, as text deltas did.
+    `execute` speaks whatever streaming missed and returns at once, so work goes on while it plays.
+  - A run must start from a user message. A run started by `sendMessage(..., { triggerTurn: true })`
+    skips `before_agent_start` and gets Pi's base prompt: no voice section and none of bruv's own prompt
+    (`prompt.ts`). So an idle agent gets "The user said by voice: …" as a user message; a busy one gets a
+    `bruv-voice` steer (a developer message on OpenAI, like bruv's other notices). bruv elsewhere never
+    starts runs from custom messages for the same reason.
+  - Busy: Pi takes steers only between steps. While the agent thinks or writes (no tool running), the
+    run is aborted and the words start a new one, so it answers at once; a running tool is left to
+    finish, as cutting it breaks builds and edits (the user chose this). The prompt asks for slow work
+    as background jobs (`job_start`, whose `wait` returns early on pending messages).
+  - A voice-started run that ends without `say` gets one more step with a reminder, through
+    `agent_before_settle` like bruv's other nudges, never a new run.
+  - The page shows the agent's written text and tool steps as quiet notes (the user wanted the full
+    transcript there), never spoken.
+
 - **`/voice` is the terminal; `/voice web` adds a browser page.** `/voice` uses this machine's own
   devices (pw-record/pw-play, parec/pacat, arecord/aplay or sox) with no echo cancelling, so use
   headphones; `/voice` again stops. The page server starts only for `/voice web` or `/voice tunnel`, in

@@ -1,7 +1,8 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 /** Messages bruv writes itself. The user's own words, such as question answers, stay user messages. */
-const fromBruv = new Set(["bruv-report", "bruv-goal", "bruv-keep-going", "bruv-time"]);
+// Voice messages are the user's words, but arrive as notifications: the agent answers them with say.
+const fromBruv = new Set(["bruv-report", "bruv-goal", "bruv-keep-going", "bruv-time", "bruv-voice"]);
 const responsesApis = new Set(["openai-responses", "openai-codex-responses"]);
 const reminderMs = 60 * 60_000;
 

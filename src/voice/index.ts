@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
 import { readConfig, saveConfig } from "../config";
 import { setStatus } from "../status";
 import { Call, type Engine } from "./call";
@@ -11,9 +12,11 @@ import { startEngine } from "./engine";
 import { readKey, saveKey } from "./keys";
 import { audioMissing, startLocal } from "./local";
 import { download, type ModelPaths, missing, modelPaths } from "./models";
+import { registerSay, Speaker } from "./say";
 import { type Served, serve } from "./server";
 import { showInTerminal, showPhoneCode } from "./terminal";
-import { registerShow, showTool } from "./tool";
+import { isEcho } from "./text";
+import { registerShow, voiceTools } from "./tool";
 import { cleanHost, permissions, prepare } from "./tunnel";
 
 const guidance = readFileSync(new URL("../../prompts/voice.md", import.meta.url), "utf8").trim();
@@ -45,6 +48,13 @@ function where(voice: { call: Call; tunnel?: { url: string } }) {
     lines.push("A voice page is open too, so they may be on a phone or another computer.");
   if (voice.tunnel) lines.push(`The voice page can be reached from anywhere at ${new URL(voice.tunnel.url).host}.`);
   return lines.join(" ");
+}
+
+/** One line for a tool step on the page. */
+function step(name: string, args: Record<string, unknown> | undefined) {
+  const detail = args?.command ?? args?.path ?? args?.title ?? args?.url ?? "";
+  const line = `${name}${typeof detail === "string" && detail ? ` ${detail.split("\n")[0]}` : ""}`;
+  return line.length > 120 ? `${line.slice(0, 119)}…` : line;
 }
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
@@ -96,22 +106,37 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   const status = (context: ExtensionContext) =>
     setStatus(context, "voice", `● voice${live?.served ? " · web" : ""}${live?.tunnel ? " · tunnel" : ""}`);
 
+  /** Tools running now. While one runs, the user's words wait for it; Pi only takes them between steps. */
+  let tools = 0;
+  /** Set when the user spoke and the agent hasn't said anything back yet. */
+  let awaiting = false;
+  const speaker = new Speaker(() => live?.call);
+
   /**
-   * Talking over a reply stops the run, as it would stop a person; it was most likely still writing.
-   * Talking while the agent works without speaking steers the work instead of stopping it.
+   * What the user says goes to the agent as a voice message. While it thinks or writes, that stops so it
+   * answers now; nothing is lost but the unfinished reply. A running tool is left to finish (cutting it
+   * would break builds and edits), and the words arrive when it does. A message that starts a run is a user
+   * message: a run started by a custom message gets Pi's base prompt, without bruv's or voice's sections.
    */
-  const tell = async (text: string, interrupted: boolean, cut?: string) => {
-    // The reply was written ahead of the voice; the note says how much of it the user actually heard.
-    if (cut) text = `(Talked over you at: "${cut}")\n\n${text}`;
-    if (ctx && !ctx.isIdle() && interrupted) {
+  const tell = async (words: string, _interrupted: boolean, cut?: string) => {
+    // The note says how much of what it said the user actually heard.
+    const heard = cut ? ` They talked over you at: "${cut}"` : "";
+    const content = `The user said by voice: "${words}"${heard}`;
+    awaiting = true;
+    if (ctx && !ctx.isIdle() && !tools) {
       ctx.abort();
       // Pi is not idle yet when agent_end comes, and a message queued then is lost.
       for (let waited = 0; !ctx.isIdle() && waited < 5000; waited += 20) {
         await new Promise((resolve) => setTimeout(resolve, 20));
       }
     }
-    if (ctx?.isIdle() ?? true) pi.sendUserMessage(text);
-    else pi.sendUserMessage(text, { deliverAs: "steer" });
+    if (ctx?.isIdle() ?? true) {
+      pi.sendUserMessage(content);
+      return;
+    }
+    // Shown, so a long step doesn't look like being ignored.
+    if (tools) live?.call.note("tool", "Your words reach the agent when this step ends");
+    pi.sendMessage({ customType: "bruv-voice", content, display: true, details: { words } }, { deliverAs: "steer" });
   };
 
   const start = async (context: ExtensionContext) => {
@@ -137,7 +162,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       tell: (text, interrupted, cut) => void tell(text, interrupted, cut),
     });
     live = { call };
-    showTool(pi, true);
+    voiceTools(pi, true);
     status(context);
     return live;
   };
@@ -248,7 +273,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     const current = live;
     live = undefined;
     if (!current) return;
-    showTool(pi, false);
+    voiceTools(pi, false);
     current.local?.stop();
     current.tunnel?.stop();
     await current.served?.close();
@@ -381,6 +406,18 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     }
   };
 
+  pi.registerMessageRenderer("bruv-voice", (entry, _options, theme) => {
+    const words = (entry.details as { words?: string } | undefined)?.words;
+    return new Text(`${theme.fg("accent", "●")} ${words ?? ""}`, 1, 0);
+  });
+  registerSay(
+    pi,
+    speaker,
+    () => {
+      awaiting = false;
+    },
+    () => live?.call.hearers() ?? [],
+  );
   registerShow(
     pi,
     () =>
@@ -415,22 +452,57 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   });
   // Settled, not agent_end: Pi may still retry a failed request, and the user hears about a failure once.
   let failed: string | undefined;
+  // The user spoke and heard nothing back: one more step to answer them, within the same run.
+  pi.on("agent_before_settle", (event) => {
+    if (!live || !awaiting || event.outcome !== "completed" || event.continue || event.entries.length) return {};
+    awaiting = false;
+    return {
+      entries: [
+        {
+          type: "custom_message" as const,
+          customType: "bruv-voice",
+          display: false,
+          content: "They heard nothing back. Answer them with say.",
+        },
+      ],
+      continue: true,
+    };
+  });
   pi.on("agent_settled", () => {
     if (failed) live?.call.fail(failed);
+    awaiting = false;
     failed = undefined;
     live?.call.idle();
   });
-  pi.on("message_start", (event) => {
-    if (event.message.role === "assistant") live?.call.replyStart();
-  });
+  // Only `say` is spoken, from its arguments as they stream.
   pi.on("message_update", (event) => {
     const update = event.assistantMessageEvent;
-    if (update.type === "text_delta") live?.call.reply(update.delta);
+    if (update.type !== "toolcall_start" && update.type !== "toolcall_delta" && update.type !== "toolcall_end") return;
+    const block = update.type === "toolcall_end" ? update.toolCall : update.partial.content[update.contentIndex];
+    if (block?.type !== "toolCall" || block.name !== "say") return;
+    awaiting = false;
+    const text = typeof block.arguments?.text === "string" ? block.arguments.text : "";
+    if (update.type === "toolcall_end") speaker.finish(block.id, text);
+    else speaker.stream(block.id, text);
   });
   pi.on("message_end", (event) => {
     if (event.message.role !== "assistant") return;
-    failed = event.message.stopReason === "error" ? (event.message.errorMessage ?? "The model failed.") : undefined;
-    live?.call.replyEnd();
+    const { content, stopReason } = event.message;
+    failed = stopReason === "error" ? (event.message.errorMessage ?? "The model failed.") : undefined;
+    // A say cut off with its message stops where it was.
+    for (const block of content) if (block.type === "toolCall" && block.name === "say") speaker.finish(block.id, "");
+    const written = content.flatMap((block) => (block.type === "text" && block.text.trim() ? [block.text.trim()] : []));
+    // Models often write what they just said; the page shows it once.
+    const text = written.join("\n\n");
+    if (text && live && !isEcho(text, live.call.lately())) live.call.note("text", text);
+  });
+  pi.on("tool_execution_start", (event) => {
+    tools++;
+    if (event.toolName !== "say" && event.toolName !== "show")
+      live?.call.note("tool", step(event.toolName, event.args));
+  });
+  pi.on("tool_execution_end", () => {
+    tools = Math.max(0, tools - 1);
   });
   pi.on("session_shutdown", async () => {
     await stop();

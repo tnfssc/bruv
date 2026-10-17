@@ -44,6 +44,8 @@ export type DeviceEvent =
   /** Drop all playback. */
   | { type: "flush" }
   | ({ type: "show" } & Shown)
+  /** What the agent wrote or did, shown and never spoken. */
+  | { type: "note"; kind: "text" | "tool"; text: string }
   | { type: "error"; message: string };
 
 /** Something to look at: a page, a picture or a video. `src` is a link; `html` is a whole page. */
@@ -52,6 +54,7 @@ export type Shown = { kind: "html" | "image" | "video"; title?: string; src?: st
 /** What a page needs to draw the conversation so far. */
 type Entry =
   | { type: "user"; text: string }
+  | { type: "note"; kind: "text" | "tool"; text: string }
   | { type: "assistant"; text: string; part: number }
   | ({ type: "show" } & Shown);
 /** Entries are numbered, so a page that reconnects gets only what it missed. */
@@ -141,6 +144,21 @@ export class Call {
     return this.log
       .filter((entry) => entry.seq > seq)
       .map((entry) => (entry.type === "assistant" && entry.part < first ? { ...entry, past: true } : entry));
+  }
+
+  /** Where replies are heard: the terminal's speaker and started pages. */
+  hearers() {
+    return [...this.players].map((device) => (device.screen ? "voice page" : "terminal"));
+  }
+
+  /** What was said lately, to leave out written text that only repeats it. */
+  lately() {
+    return [...this.spoken.values()].slice(-6).join(" ");
+  }
+
+  /** Something the agent did or wrote, for pages to show; it is never spoken. */
+  note(kind: "text" | "tool", text: string) {
+    this.broadcast(this.remember({ type: "note", kind, text }));
   }
 
   /** Where the user is: the device holding the microphone, and how many screens are open. */
@@ -272,16 +290,12 @@ export class Call {
         this.setState("listening");
         return;
       case "speech":
-        // The sentence playing now, or the last one played when the rest isn't spoken yet.
+        // The sentence playing now. With nothing playing, nothing was cut: an earlier reply was heard whole.
         // Echo of the last words reaches the microphone as they end, so a reply just finished counts too.
         this.echoable = this.saying.size > 0 || Date.now() - this.playedAt < 1500;
         // Echo can keep the microphone hearing through a whole reply, so it is checked against all of it.
         this.heardFrom = this.saying.size ? Math.min(...this.saying.keys()) - 1 : this.part;
-        this.cut = this.saying.size
-          ? this.saying.values().next().value
-          : this.replying
-            ? this.recent.at(-1)
-            : undefined;
+        this.cut = this.saying.size ? this.saying.values().next().value : undefined;
         this.broadcast({ type: "pause", soft: !this.held });
         this.setState("hearing");
         return;

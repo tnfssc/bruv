@@ -110,6 +110,11 @@ main { position: relative; z-index: 1; flex: 1; overflow-y: auto; overscroll-beh
 .msg.assistant span.said { color: var(--foreground); }
 .msg.assistant span.now { color: var(--foreground); text-decoration-color: color-mix(in oklch, var(--speaking) 70%, transparent); }
 .msg.assistant span.cut { text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--muted-foreground) 60%, transparent); opacity: .6; }
+/* What the agent wrote or did: shown, never spoken. Long text is clamped; a tap opens it. */
+.note { align-self: flex-start; max-width: 100%; overflow-wrap: anywhere; white-space: pre-wrap; color: var(--muted-foreground); font-size: .875rem; line-height: 1.55; opacity: .8; }
+.note.text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; cursor: pointer; }
+.note.text.open { display: block; }
+.note.tool { font: .75rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; opacity: .65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .alert { display: flex; gap: .625rem; align-items: flex-start; padding: .75rem 1rem; border-radius: var(--radius); background: color-mix(in oklch, var(--destructive) 8%, var(--card)); color: var(--destructive); font-size: .875rem; }
 .alert .icon { width: 1rem; height: 1rem; margin-top: .15rem; }
 
@@ -582,6 +587,13 @@ function onEvent(event) {
       return;
     }
     case "show": return show(event);
+    case "note": {
+      const line = add(`note ${event.kind}`, event.text);
+      if (event.kind === "text") line.addEventListener("click", () => line.classList.toggle("open"));
+      // What it says next starts a new block below the work.
+      reply = undefined;
+      return;
+    }
     case "remote":
       for (const phone of document.querySelectorAll(".phone")) {
         phone.hidden = !event.url;

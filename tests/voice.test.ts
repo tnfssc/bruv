@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { fauxAssistantMessage } from "@earendil-works/pi-ai";
+import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
 import WebSocket from "ws";
 import { saveConfig } from "../src/config";
 import { registerVoice } from "../src/voice";
@@ -94,6 +94,7 @@ test("the speaker's own words coming back are told apart from the user's", () =>
   expect(isEcho("One year", "It turned thirty-one years old this year.")).toBe(true);
   expect(isEcho("tell me about the moon", "Let me tell you about Mars.")).toBe(false);
   expect(isEcho("Fog horns", "The foghorn's call carried far.")).toBe(true);
+  expect(isEcho("Now run the tests", "I added a test for it, and the tests pass.")).toBe(false);
 });
 
 test("the echo of a reply's last words is caught after it has played, and a failure is told", () => {
@@ -363,6 +364,41 @@ test("the page and its socket need the key; audio goes both ways", async () => {
   }
 });
 
+test("only say is spoken, and an agent that answers in writing is reminded to say it", async () => {
+  const engine = new FakeEngine();
+  const agentDir = join(process.env.PI_CODING_AGENT_DIR as string, `voice-say-${Date.now()}`);
+  const app = await sdk([
+    (pi) =>
+      registerVoice(pi, {
+        engine: () => engine,
+        local: (call) => {
+          call.attach({ send: () => {}, play: () => {} });
+          return { stop: () => {} };
+        },
+        agentDir,
+      }),
+  ]);
+  try {
+    saveConfig({ voice: { port: 0 } }, agentDir);
+    const models = join(agentDir, "bruv", "voice", "models");
+    for (const model of missing(models)) mkdirSync(join(models, model.name), { recursive: true });
+    app.faux.setResponses([
+      fauxAssistantMessage("A written answer."),
+      fauxAssistantMessage(fauxToolCall("say", { text: "Spoken now." }), { stopReason: "toolUse" }),
+      fauxAssistantMessage("Done."),
+    ]);
+    await app.session.prompt("/voice");
+    engine.emit({ type: "ready" });
+    engine.emit({ type: "speech" });
+    engine.emit({ type: "heard", text: "what's up" });
+    await until(() => engine.spoken.length === 1);
+    await until(() => !app.session.isStreaming);
+    expect(engine.spoken).toEqual(["Spoken now."]);
+  } finally {
+    await app.close();
+  }
+});
+
 test("/voice talks in the terminal, /voice web adds the page, and /voice off stops", async () => {
   const engine = new FakeEngine();
   let opened = "";
@@ -396,9 +432,11 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice off sto
     const sections: (Record<string, string | null> | undefined)[] = [];
     const reply = (context: { messages: { role: string; sections?: Record<string, string | null> }[] }) => {
       sections.push(context.messages.filter((message) => message.role === "system").at(-1)?.sections);
-      return fauxAssistantMessage("Hello there. All good.");
+      return fauxAssistantMessage(fauxToolCall("say", { text: "Hello there. All good." }), { stopReason: "toolUse" });
     };
-    app.faux.setResponses([reply, reply]);
+    // Written text after it is shown, never spoken.
+    const done = () => fauxAssistantMessage("Written, not said.");
+    app.faux.setResponses([reply, done, reply, done]);
     expect(app.session.getActiveToolNames()).not.toContain("show");
     await app.session.prompt("/voice");
     // The terminal's microphone and speaker, and no page server until it is asked for.

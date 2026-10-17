@@ -63,7 +63,8 @@ export function speakable(text: string) {
 /**
  * Whether what was heard is most likely the speaker's own voice coming back through the microphone. Echo is
  * often misheard ("years" as "year", "during" as "dur"), so words only need to be close. Short words are
- * in every reply, so they count only when nothing else was heard.
+ * in every reply, so they count only when fewer than two longer words were heard: otherwise "now run the
+ * tests" would hang on "tests" alone.
  */
 export function isEcho(heard: string, spoken: string) {
   const words = (text: string) =>
@@ -74,7 +75,7 @@ export function isEcho(heard: string, spoken: string) {
   const said = words(spoken);
   const all = words(heard);
   const long = all.filter((word) => word.length > 3);
-  const counted = long.length ? long : all;
+  const counted = long.length >= 2 ? long : all;
   if (!counted.length || !said.length) return false;
   const matched = counted.filter((word) => said.some((other) => close(word, other))).length;
   if (matched / counted.length >= 0.75) return true;

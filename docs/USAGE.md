@@ -18,7 +18,7 @@ Disable the old "bruv (not Claude)" provider.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, banked plan resets, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
-- `/voice` lets you talk to bruv with this machine's microphone and speaker (use headphones: nothing cancels the echo). Replies are read aloud, and talking over one stops it. `/voice` again turns it off. `/voice web` opens a page in your browser to talk from (with the page on, `/voice` adds or drops only the terminal's microphone and speaker), `/voice tunnel` puts that page on your own domain through Cloudflare, and `/voice off` stops everything. `pi --voice` starts with voice on. See [Voice](#voice).
+- `/voice` lets you talk to bruv with this machine's microphone and speaker (use headphones: nothing cancels the echo). The agent answers out loud, and talking over it stops it. `/voice` again turns it off. `/voice web` opens a page in your browser to talk from (with the page on, `/voice` adds or drops only the terminal's microphone and speaker), `/voice tunnel` puts that page on your own domain through Cloudflare, and `/voice off` stops everything. `pi --voice` starts with voice on. See [Voice](#voice).
 - `/notes` lists the project's notes in `.agents/notes/`. `/notes move` moves a bruv 0.x `wisdom/` folder there, keeping git history.
 - `/ps` lists this session's jobs and agents. Pick one to read its output or answer, see its worktree and session file, or stop it.
 - `/subagents` picks which of your signed-in models agents may use. The model chooses among them per task; your own model is always allowed and is the default.
@@ -155,7 +155,9 @@ and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and pr
 
 Speech is recognised and spoken on your machine, on the CPU, by open models: Silero VAD hears when you talk, NVIDIA's streaming Nemotron (English) writes down what you say, and Kokoro speaks. The first `/voice` asks before downloading them (about 800 MB, to `~/.pi/agent/bruv/voice/models`). Only the session's own model, the one you already use, runs elsewhere, so voice costs nothing on top of it. Thinking makes the first words slower; `low` suits talking.
 
-Talking over a reply pauses it at once. A cough or the speaker's own echo resumes it; real words stop the reply and the run, and go to the model. Talking while the agent works without speaking steers the work instead of stopping it.
+Voice is a way to talk with the agent, not a reading of its transcript. What you say reaches it as a voice message, and it answers with a `say` tool: you hear only what it chooses to tell you, while its written replies and tool steps show on screen (on the page too, in a quieter style). Speech starts while it is still writing the call.
+
+The agent can only take in your words between steps. When you talk while it is thinking or writing, that stops and it answers you at once; while a command runs, your words wait for the command to end. It runs slow work, such as test suites and builds, in the background so it can hear you. Talking over it pauses the voice at once; a cough or its own echo resumes it, and real words stop it and tell the agent where you cut in.
 
 `/voice` listens all the time and a pause ends each turn. `/voice web` starts the page server in the same session and opens the page, which works alongside the terminal.
 
