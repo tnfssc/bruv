@@ -86,9 +86,15 @@ reached SSH or T3 Code.
   default polarity reads, the inverted one doesn't.
 - **Voice is the flagship.** The README, the site (headline, first demo, a muted looping video in the HTML
   view, a "Watch it" link in the terminal view) and the changelog lead with voice. The hero video
-  (`.tmp/hero/`, not kept) is the real agent on a phone page with a virtual microphone; long waits are
-  sped up and labelled. Chromium's screencast and Playwright's video both record CSS pixels, so the
-  phone is shown near its real size on a 1280×720 canvas rather than scaled up.
+  (`.tmp/hero/` records, `.tmp/hype/` edits; not kept) is the real agent on a phone page with a
+  virtual microphone. A plain walkthrough cut was tried first and read as dull; the one in use is a
+  37-second square hype cut: an HTML stage (Inter, kinetic words, a realistic phone frame, live captions
+  so it works muted) rendered frame by frame with Playwright at 30 fps, the real voices cut to each scene,
+  and a pulse made with ffmpeg's `aevalsrc` that ducks under them. Every voice clip ends on a sentence
+  end (checked by running the clip through the speech recogniser), and each cut in the footage gets a
+  slice sound. In `aevalsrc`, keep `exp()` finite before an event starts (`max(t-start,0)`): infinity
+  times zero is NaN, and one NaN silences the whole mix. Chromium's screencast and
+  Playwright's video both record CSS pixels, so the phone is shown near its real size.
 - **Brand.** The header uses the wordmark and the favicon the b from `site/assets/brand`, drawn in
   `currentColor` so they follow light and dark.
 - **Terminal demo.** `.tmp/tv/` (not kept) runs bruv in a pseudo-terminal (`script`) shown in xterm.js,

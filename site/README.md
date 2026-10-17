@@ -31,7 +31,7 @@ watch for changes: run `bun run build` after edits, then refresh. `PORT=0 bun ru
 | `demos.ts` | Scripted conversations, cell colors, stages and timing. One demo per feature. |
 | `layout.ts` / `brand.ts` | Terminal layout, click areas and the logo cells. |
 | `assets/brand/` | The SVG logo, its PNG export, the social card and the generated logo cells. |
-| `assets/voice.mp4` | The muted voice video and its poster (`voice-poster.jpg`), at the top of the HTML view. |
+| `assets/voice.mp4` | The voice video, muted, and its poster (`voice-poster.jpg`), at the top of the HTML view. The README plays the same cut with sound. |
 | `terminal.ts` / `scroll.ts` | Mouse, keyboard, touch, scrolling and rendering. |
 | `playback.ts` | Shared timing, final hold, looping and pause rules. |
 | `html-animation.ts` / `html-cells.ts` | The HTML view's animation and colored text. |

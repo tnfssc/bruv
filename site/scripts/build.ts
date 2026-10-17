@@ -47,7 +47,7 @@ export function textContent(animated = true) {
     landing.video.src +
     '" poster="' +
     landing.video.poster +
-    '" width="1280" height="720" autoplay muted loop playsinline controls aria-label="bruv voice: talking from a phone"></video><p>' +
+    '" width="1080" height="1080" autoplay muted loop playsinline controls aria-label="bruv voice: talking to the agent from a phone and the terminal"></video><p>' +
     cta +
     ' · <a href="' +
     siteContent.repository +

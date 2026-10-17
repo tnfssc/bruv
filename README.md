@@ -1,6 +1,6 @@
 # bruv
 
-https://github.com/user-attachments/assets/0048a26d-f29d-4f32-b367-9b2c7f4093bf
+https://github.com/user-attachments/assets/15b3eb18-e5eb-438e-9a76-d6f118d39bf3
 
 **Talk to your coding agent.** Type `/voice` and talk. bruv answers out loud, puts what's better seen on
 your screen, and stops the moment you talk over it. Use it from your terminal, or from your phone anywhere.
