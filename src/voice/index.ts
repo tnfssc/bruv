@@ -28,6 +28,22 @@ type Options = {
   fetch?: typeof fetch;
 };
 
+/**
+ * Where voice is right now, for the model. It changes only when the user turns parts on or off, so the
+ * prompt stays cached in between.
+ */
+function where(voice: { local?: unknown; served?: unknown; tunnel?: { url: string } }) {
+  const lines = [
+    voice.local
+      ? "Right now the user talks through this machine's microphone and hears its speaker, at the terminal."
+      : "Right now the user talks through the voice page, not at this machine's terminal.",
+  ];
+  if (voice.local && voice.served)
+    lines.push("The voice page is on too, so they may be on a phone or another computer.");
+  if (voice.tunnel) lines.push(`The voice page can be reached from anywhere at ${new URL(voice.tunnel.url).host}.`);
+  return lines.join(" ");
+}
+
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 /** Opens a URL in the desktop browser, when there is a desktop. */
@@ -317,7 +333,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   });
   pi.on("before_agent_start", (event, context) => {
     ctx = context;
-    if (live) event.systemPromptOptions.sections.voice = guidance;
+    if (live) event.systemPromptOptions.sections.voice = `${guidance}\n\n${where(live)}`;
     else delete event.systemPromptOptions.sections.voice;
   });
   pi.on("agent_start", (_event, context) => {

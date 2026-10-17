@@ -177,6 +177,22 @@ test("each spoken sentence has its own number, on its text and its audio", () =>
   expect(parts).toEqual([numbers[1]]);
 });
 
+test("one microphone at a time: a page that starts takes it, and the terminal gets it back", () => {
+  const engine = new FakeEngine();
+  const call = new Call(engine, { tell: () => {} });
+  const terminal = device();
+  const page = device();
+  call.attach(terminal);
+  call.attach(page);
+  call.hear(new Int16Array([1]), terminal);
+  call.claim(page);
+  call.hear(new Int16Array([2]), terminal);
+  call.hear(new Int16Array([3]), page);
+  call.detach(page);
+  call.hear(new Int16Array([4]), terminal);
+  expect(engine.heard.map((pcm) => pcm[0])).toEqual([1, 3, 4]);
+});
+
 test("the page and its socket need the key; audio goes both ways", async () => {
   const engine = new FakeEngine();
   const call = new Call(engine, { tell: () => {} });
@@ -257,12 +273,11 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice again s
     const models = join(agentDir, "bruv", "voice", "models");
     for (const model of missing(models)) mkdirSync(join(models, model.name), { recursive: true });
     const sections: (Record<string, string | null> | undefined)[] = [];
-    app.faux.setResponses([
-      (context) => {
-        sections.push(context.messages.filter((message) => message.role === "system").at(-1)?.sections);
-        return fauxAssistantMessage("Hello there. All good.");
-      },
-    ]);
+    const reply = (context: { messages: { role: string; sections?: Record<string, string | null> }[] }) => {
+      sections.push(context.messages.filter((message) => message.role === "system").at(-1)?.sections);
+      return fauxAssistantMessage("Hello there. All good.");
+    };
+    app.faux.setResponses([reply, reply]);
     expect(app.session.getActiveToolNames()).not.toContain("show");
     await app.session.prompt("/voice");
     // The terminal's microphone and speaker, and no page server until it is asked for.
@@ -270,15 +285,21 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice again s
     expect(opened).toBe("");
     // The model can show things only while voice is on.
     expect(app.session.getActiveToolNames()).toContain("show");
-    await app.session.prompt("/voice web");
-    expect(opened).toContain("?t=");
-    expect(here).toBe(1);
     engine.emit({ type: "ready" });
     engine.emit({ type: "speech" });
     engine.emit({ type: "heard", text: "how are things" });
     await until(() => engine.spoken.length === 2);
     expect(sections[0]?.voice).toBeDefined();
     expect(app.session.messages.some((message) => message.role === "user")).toBe(true);
+    await app.session.prompt("/voice web");
+    expect(opened).toContain("?t=");
+    expect(here).toBe(1);
+    // The model is told where voice is now.
+    engine.emit({ type: "speech" });
+    engine.emit({ type: "heard", text: "and now" });
+    await until(() => engine.spoken.length === 4);
+    expect(sections[1]?.voice).toBeTruthy();
+    expect(sections[1]?.voice).not.toBe(sections[0]?.voice);
 
     const saved = join(agentDir, "bruv", "voice", "shown");
     mkdirSync(saved, { recursive: true });
@@ -296,8 +317,8 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice again s
     ]);
     await app.session.prompt("typed");
     // Pi sends changed sections only; a removed section comes as null.
-    expect(sections[1]?.voice).toBeFalsy();
-    expect(engine.spoken.length).toBe(2);
+    expect(sections[2]?.voice).toBeFalsy();
+    expect(engine.spoken.length).toBe(4);
   } finally {
     await app.close();
   }

@@ -90,7 +90,7 @@ export function startLocal(call: Call): { stop(): void } | string {
     odd = whole < bytes.length ? bytes.subarray(whole) : undefined;
     const pcm = new Int16Array(whole >> 1);
     new Uint8Array(pcm.buffer).set(bytes.subarray(0, whole));
-    call.hear(pcm);
+    call.hear(pcm, device);
   });
   call.attach(device);
   return {

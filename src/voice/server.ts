@@ -37,9 +37,6 @@ export async function serve(call: Call, options: { host: string; port: number; t
     });
     response.end(page);
   });
-  // One page listens at a time, the one started last, so two open pages don't talk over each other.
-  // A page connects as soon as it opens, but only takes the microphone when it starts.
-  let microphone: WebSocket | undefined;
   const connect = (ws: WebSocket) => {
     let rate = 0;
     let part = 0;
@@ -68,22 +65,21 @@ export async function serve(call: Call, options: { host: string; port: number; t
           const { type, on, keep } = JSON.parse(data.toString());
           if (type === "played") call.played();
           if (type === "hush") call.hush();
-          if (type === "mic") microphone = ws;
+          // A page connects as soon as it opens, but only takes the microphone when it starts, and whoever
+          // presses the button has it. So the page started last listens.
+          if (type === "mic") call.claim(device);
           if (type === "talk") {
-            // Whoever holds the button is the microphone.
-            microphone = ws;
+            call.claim(device);
             call.talk(on === true, keep === true);
           }
         } catch {}
         return;
       }
-      if (microphone?.readyState !== WebSocket.OPEN) microphone = ws;
-      if (ws !== microphone) return;
       const bytes = Buffer.isBuffer(data) ? data : Buffer.concat(data as Buffer[]);
       // A copy on its own buffer, so it can move to the engine's thread.
       const pcm = new Int16Array(bytes.length >> 1);
       new Uint8Array(pcm.buffer).set(bytes.subarray(0, pcm.length * 2));
-      call.hear(pcm);
+      call.hear(pcm, device);
     });
     ws.on("close", () => call.detach(device));
   };

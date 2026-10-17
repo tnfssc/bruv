@@ -74,6 +74,11 @@ export class Call {
   private saying: string[] = [];
   private state: State = "starting";
   private part = 0;
+  /**
+   * The device whose audio is heard. One at a time: the terminal's microphone and a page's would otherwise
+   * mix into one stream and garble both.
+   */
+  private microphone?: Device;
 
   constructor(
     private engine: Engine,
@@ -89,10 +94,18 @@ export class Call {
 
   detach(device: Device) {
     this.devices.delete(device);
+    if (this.microphone === device) this.microphone = undefined;
   }
 
-  hear(pcm: Int16Array) {
-    this.engine.hear(pcm);
+  /** A page takes the microphone when it starts or its button is pressed. */
+  claim(device: Device) {
+    this.microphone = device;
+  }
+
+  /** Audio from a device. With no microphone, the first device heard takes it, so the terminal gets it back. */
+  hear(pcm: Int16Array, from: Device) {
+    this.microphone ??= from;
+    if (from === this.microphone) this.engine.hear(pcm);
   }
 
   talk(on: boolean, keep = false) {

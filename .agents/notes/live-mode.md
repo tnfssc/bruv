@@ -62,15 +62,31 @@ reached SSH or T3 Code.
   seen whole with its title bar. Your own words bring the conversation back to the end.
 - **`show` in the terminal.** The newest shown thing sits in a widget above the input, so it works however
   the tool was called (directly or from a codemode script) and never goes to the model. Pictures are
-  drawn with Pi's `Image` (Kitty or iTerm2 protocol), a video gets its first frame from ffmpeg when
+  drawn with Pi's `Image` (Kitty protocol; Pi's full-screen view turns iTerm2 pictures off, since it
+  can't place them), a video gets its first frame from ffmpeg when
   installed, and pages, videos and pictures get an OSC 8 link. With the page server running, links go
   through it (`/shown/<id>`, the tunnel's address when there is one), so they work over SSH and from
   other machines, and pages keep the sandbox (`CSP: sandbox allow-scripts`). Without it they are
   `file://` links on this machine; an inline page is saved under `bruv/voice/shown/`, which is deleted
   when voice stops. Rendering a page to a picture would need a headless browser,
   too heavy to ship. The tool result says where it went (`shownOn`), so the agent can say where to look.
+- **One microphone at a time.** The call takes audio from one device: whichever is heard first, until a
+  page claims it by starting or by its button being pressed; when that page goes, the terminal's
+  microphone takes over again. Without this, `/voice` plus `/voice web` fed both microphones into one
+  stream and garbled both.
+- **The model is told where voice is.** The voice section of the prompt ends with a line saying whether
+  the user is at the terminal, on the page, or both, and the tunnel's host. It changes only when the user
+  turns parts on or off, so the cache holds in between. On and off need no message: the section comes
+  and goes. Messages in the conversation on each change were considered and left out as noise.
 - **Brand.** The header uses the wordmark and the favicon the b from `site/assets/brand`, drawn in
   `currentColor` so they follow light and dark.
+- **Terminal demo.** `.tmp/tv/` (not kept) runs bruv in a pseudo-terminal (`script`) shown in xterm.js,
+  with stand-in `pw-record` and `pw-play` first on PATH: the recorder says WAV files named in a queue file,
+  the player "plays" in real time into one speaker track and drops what it hasn't played when killed, as
+  a speaker would. bruv's own audio code runs unchanged. xterm.js can't keep Kitty pictures through Pi's
+  full-screen redraws (its add-on frees a picture's data on delete-all and binds pictures to cells), and
+  Xvfb is broken on this machine, so the video shows the placeholder and link a terminal without
+  pictures shows.
 - **Demo video.** `.tmp/demo/` (not kept in git) records the real agent over RPC with a virtual
   microphone in the page: TTS-made questions are played into a `MediaStreamDestination` returned by a
   replaced `getUserMedia`, and a `MediaRecorder` takes the microphone and the page's speaker together.
