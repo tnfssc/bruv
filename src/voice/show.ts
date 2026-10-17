@@ -103,9 +103,13 @@ export type Resolved = {
 };
 
 /** Checks what the agent asked to show. Throws with a reason the agent can act on. */
-export function resolveShown(args: ShowArgs, cwd: string): Resolved {
-  const given = [args.html, args.file, args.url].filter((value) => value !== undefined);
-  if (given.length !== 1) throw new Error("Give exactly one of html, file or url.");
+export function resolveShown(given: ShowArgs, cwd: string): Resolved {
+  // Models often send the other fields empty; only filled ones count.
+  const filled = (value?: string) => (value?.trim() ? value : undefined);
+  const args = { ...given, html: filled(given.html), file: filled(given.file), url: filled(given.url) };
+  const named = (["html", "file", "url"] as const).filter((key) => args[key] !== undefined);
+  if (named.length !== 1)
+    throw new Error(named.length ? `Give only one of ${named.join(", ")}.` : "Give one of html, file or url.");
   const title = args.title?.trim() || undefined;
   if (args.html !== undefined) {
     if (args.html.length > maxHtml) throw new Error("That page is over 2 MB. Make it smaller.");

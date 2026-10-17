@@ -85,6 +85,114 @@ test("the speaker's own words coming back are told apart from the user's", () =>
   expect(isEcho("the tests pass", "I fixed it, and the tests pass now.")).toBe(true);
   expect(isEcho("stop that", "I fixed it, and the tests pass now.")).toBe(false);
   expect(isEcho("", "anything")).toBe(false);
+  // Echo comes back misheard; a real question that shares a few words with the reply is still the user's.
+  expect(isEcho("One year", "It turned thirty-one years old this year.")).toBe(true);
+  expect(isEcho("tell me about the moon", "Let me tell you about Mars.")).toBe(false);
+  expect(isEcho("Fog horns", "The foghorn's call carried far.")).toBe(true);
+});
+
+test("the echo of a reply's last words is caught after it has played, and a failure is told", () => {
+  const engine = new FakeEngine();
+  const told: string[] = [];
+  const call = new Call(engine, { tell: (text) => told.push(text) });
+  const speaker = device();
+  call.attach(speaker);
+  call.replyStart();
+  call.reply("The lighthouse keeper slept at last. ");
+  call.replyEnd();
+  call.played(1);
+  engine.emit({ type: "speech" });
+  engine.emit({ type: "heard", text: "lighthouse keeper slept" });
+  expect(told).toEqual([]);
+
+  call.fail("402 Insufficient account funds");
+  expect(speaker.events.some((event) => event.type === "error")).toBe(true);
+  expect(engine.spoken.length).toBe(2);
+});
+
+const states = (events: DeviceEvent[]) => events.flatMap((event) => (event.type === "state" ? [event.state] : []));
+
+test("a reply is over only when its last sentence has played, and not before the brain stops", () => {
+  const engine = new FakeEngine();
+  const told: [string, boolean][] = [];
+  const call = new Call(engine, { tell: (text, interrupted) => told.push([text, interrupted]) });
+  const speaker = device();
+  call.attach(speaker);
+  engine.emit({ type: "ready" });
+  call.thinking();
+  call.replyStart();
+  call.reply("Sure. ");
+  engine.emit({ type: "audio", pcm: new Int16Array(4), rate: 24000, part: 1 });
+  // The short first sentence played; the rest is still being written.
+  call.played(1);
+  expect(states(speaker.events).at(-1)).toBe("thinking");
+  engine.emit({ type: "speech" });
+  engine.emit({ type: "heard", text: "actually never mind" });
+  expect(told).toEqual([["actually never mind", true]]);
+
+  call.replyEnd();
+  call.replyStart();
+  call.reply("Okay. ");
+  call.replyEnd();
+  call.played(2);
+  // Spoken out, but the brain is still working.
+  expect(states(speaker.events).at(-1)).toBe("thinking");
+  call.idle();
+  expect(states(speaker.events).at(-1)).toBe("listening");
+});
+
+test("only pages that play say what was heard, and a reply nobody can hear is not waited for", () => {
+  const engine = new FakeEngine();
+  const call = new Call(engine, { tell: () => {} });
+  const idle = { ...device(), screen: true };
+  const phone = { ...device(), screen: true };
+  call.attach(idle);
+  call.attach(phone);
+  call.claim(phone);
+  engine.emit({ type: "ready" });
+  call.replyStart();
+  call.reply("One. Two. Three. ");
+  call.replyEnd();
+  engine.emit({ type: "audio", pcm: new Int16Array(4), rate: 24000, part: 1 });
+  call.played(3, idle);
+  expect(states(phone.events).at(-1)).toBe("speaking");
+  call.played(1, phone);
+  expect(states(phone.events).at(-1)).toBe("speaking");
+  // The phone reloads: no one is left to play the rest.
+  call.detach(phone);
+  expect(states(idle.events).at(-1)).toBe("listening");
+  // With no one playing, a reply never shows as being spoken.
+  call.replyStart();
+  call.reply("Four. ");
+  call.replyEnd();
+  engine.emit({ type: "audio", pcm: new Int16Array(4), rate: 24000, part: 4 });
+  expect(states(idle.events).at(-1)).toBe("listening");
+});
+
+test("talking over a reply tells the brain the sentence it was cut at", () => {
+  const engine = new FakeEngine();
+  const told: (string | undefined)[] = [];
+  const call = new Call(engine, { tell: (_text, _interrupted, cut) => told.push(cut) });
+  call.attach(device());
+  call.replyStart();
+  call.reply("One thing. Another thing. A third thing. ");
+  call.replyEnd();
+  call.played(1);
+  engine.emit({ type: "speech" });
+  engine.emit({ type: "heard", text: "stop there please" });
+  expect(told).toEqual(["Another thing."]);
+});
+
+test("only a held turn stops a reply at once; the microphone alone turns it down", () => {
+  const engine = new FakeEngine();
+  const call = new Call(engine, { tell: () => {} });
+  const speaker = device();
+  call.attach(speaker);
+  engine.emit({ type: "speech" });
+  call.talk(true);
+  engine.emit({ type: "speech" });
+  const pauses = speaker.events.flatMap((event) => (event.type === "pause" ? [event.soft] : []));
+  expect(pauses).toEqual([true, false]);
 });
 
 test("talking over a reply pauses it, then drops it and tells the brain", () => {
@@ -250,7 +358,7 @@ test("the page and its socket need the key; audio goes both ways", async () => {
   }
 });
 
-test("/voice talks in the terminal, /voice web adds the page, and /voice again stops", async () => {
+test("/voice talks in the terminal, /voice web adds the page, and /voice off stops", async () => {
   const engine = new FakeEngine();
   let opened = "";
   let here = 0;
@@ -262,9 +370,16 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice again s
         open: (url) => {
           opened = url;
         },
-        local: () => {
+        local: (call) => {
           here++;
-          return { stop: () => here-- };
+          const speaker = { send: () => {}, play: () => {} };
+          call.attach(speaker);
+          return {
+            stop: () => {
+              here--;
+              call.detach(speaker);
+            },
+          };
         },
         agentDir,
       }),
@@ -295,6 +410,12 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice again s
     await app.session.prompt("/voice web");
     expect(opened).toContain("?t=");
     expect(here).toBe(1);
+    // A page opens and takes the microphone.
+    const url = new URL(opened);
+    const page = new WebSocket(`ws://${url.host}/socket${url.search}`);
+    await new Promise((resolve) => page.on("open", resolve));
+    page.send(JSON.stringify({ type: "mic" }));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     // The model is told where voice is now.
     engine.emit({ type: "speech" });
     engine.emit({ type: "heard", text: "and now" });
@@ -305,7 +426,8 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice again s
     const saved = join(agentDir, "bruv", "voice", "shown");
     mkdirSync(saved, { recursive: true });
     writeFileSync(join(saved, "page.html"), "<p>hi</p>");
-    await app.session.prompt("/voice");
+    page.close();
+    await app.session.prompt("/voice off");
     expect(here).toBe(0);
     // Pages saved for terminal links go when voice stops.
     expect(existsSync(saved)).toBe(false);
@@ -446,6 +568,8 @@ test("the agent can show a page, a picture from disk or a video link", () => {
   ]) {
     expect(() => shown(args, dir, shelf)).toThrow();
   }
+  // Empty fields next to the one given don't count.
+  expect(shown({ html: "<p>hi</p>", file: "", url: " " }, dir, shelf)).toMatchObject({ kind: "html" });
 });
 
 test("the page installs as an app that opens with the key", async () => {
@@ -466,6 +590,57 @@ test("the page installs as an app that opens with the key", async () => {
   } finally {
     await served.close();
   }
+});
+
+test("a page that opens or comes back gets the conversation it missed, and is told when voice turns off", async () => {
+  const engine = new FakeEngine();
+  const call = new Call(engine, { tell: () => {} });
+  const served = await serve(call, { host: "127.0.0.1", port: 0, token: "secret" });
+  const { host } = new URL(served.url);
+  const open = async () => {
+    const ws = new WebSocket(`ws://${host}/socket?t=secret`);
+    const events: { type: string; [key: string]: unknown }[] = [];
+    ws.on("message", (data, binary) => {
+      if (!binary) events.push(JSON.parse(data.toString()));
+    });
+    await new Promise((resolve) => ws.on("open", resolve));
+    return { ws, events };
+  };
+  engine.emit({ type: "speech" });
+  engine.emit({ type: "heard", text: "first question" });
+  call.replyStart();
+  call.reply("First answer. ");
+  call.replyEnd();
+
+  const page = await open();
+  page.ws.send(JSON.stringify({ type: "hello" }));
+  await until(() => page.events.some((event) => event.type === "history"));
+  const history = page.events.find((event) => event.type === "history") as unknown as {
+    id: string;
+    reset: boolean;
+    events: { type: string; seq: number }[];
+  };
+  expect(history.reset).toBe(true);
+  expect(history.events.map((event) => event.type)).toEqual(["user", "assistant"]);
+  page.ws.close();
+
+  // Back after missing one sentence: only that one comes, on the same call.
+  call.replyStart();
+  call.reply("Second answer. ");
+  call.replyEnd();
+  const back = await open();
+  back.ws.send(JSON.stringify({ type: "hello", id: history.id, seq: history.events.at(-1)?.seq }));
+  await until(() => back.events.some((event) => event.type === "history"));
+  const missed = back.events.find((event) => event.type === "history") as unknown as {
+    reset: boolean;
+    events: unknown[];
+  };
+  expect(missed.reset).toBe(false);
+  expect(missed.events.length).toBe(1);
+
+  const closed = new Promise<number>((resolve) => back.ws.on("close", resolve));
+  await served.close();
+  expect(await closed).toBe(4000);
 });
 
 test("shown things reach every open page, and files stream in byte ranges", async () => {

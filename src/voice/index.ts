@@ -9,7 +9,7 @@ import { Call, type Engine } from "./call";
 import { downloadCloudflared, findCloudflared, runTunnel } from "./cloudflared";
 import { startEngine } from "./engine";
 import { readKey, saveKey } from "./keys";
-import { startLocal } from "./local";
+import { audioMissing, startLocal } from "./local";
 import { download, type ModelPaths, missing, modelPaths } from "./models";
 import { type Served, serve } from "./server";
 import { showInTerminal, showPhoneCode } from "./terminal";
@@ -29,17 +29,20 @@ type Options = {
 };
 
 /**
- * Where voice is right now, for the model. It changes only when the user turns parts on or off, so the
- * prompt stays cached in between.
+ * Where voice is right now, for the model: who holds the microphone and whether a page is open. It changes
+ * only when that does, so the prompt stays cached in between.
  */
-function where(voice: { local?: unknown; served?: unknown; tunnel?: { url: string } }) {
+function where(voice: { call: Call; tunnel?: { url: string } }) {
+  const { screens, mic } = voice.call.where();
   const lines = [
-    voice.local
+    mic === "local"
       ? "Right now the user talks through this machine's microphone and hears its speaker, at the terminal."
-      : "Right now the user talks through the voice page, not at this machine's terminal.",
+      : mic === "page"
+        ? "Right now the user talks through the voice page, maybe on a phone or another computer, not at this machine's terminal."
+        : "Nothing is connected to voice right now: the voice page isn't open, so a message now was typed.",
   ];
-  if (voice.local && voice.served)
-    lines.push("The voice page is on too, so they may be on a phone or another computer.");
+  if (mic === "local" && screens)
+    lines.push("A voice page is open too, so they may be on a phone or another computer.");
   if (voice.tunnel) lines.push(`The voice page can be reached from anywhere at ${new URL(voice.tunnel.url).host}.`);
   return lines.join(" ");
 }
@@ -97,7 +100,9 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
    * Talking over a reply stops the run, as it would stop a person; it was most likely still writing.
    * Talking while the agent works without speaking steers the work instead of stopping it.
    */
-  const tell = async (text: string, interrupted: boolean) => {
+  const tell = async (text: string, interrupted: boolean, cut?: string) => {
+    // The reply was written ahead of the voice; the note says how much of it the user actually heard.
+    if (cut) text = `(Talked over you at: "${cut}")\n\n${text}`;
     if (ctx && !ctx.isIdle() && interrupted) {
       ctx.abort();
       // Pi is not idle yet when agent_end comes, and a message queued then is lost.
@@ -121,12 +126,15 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
           "Download voice models?",
           `Voice runs speech recognition and speech on this machine. It needs ${mb} MB of models in ${models}.`,
         ));
-      if (!ok) return;
+      if (!ok) {
+        context.ui.notify("Voice stays off.", "info");
+        return;
+      }
       await download(models, (text) => setStatus(context, "voice", text));
     }
     const engine = (options.engine ?? startEngine)(modelPaths(models, config.voice), config.threads);
     const call = new Call(engine, {
-      tell: (text, interrupted) => void tell(text, interrupted),
+      tell: (text, interrupted, cut) => void tell(text, interrupted, cut),
     });
     live = { call };
     showTool(pi, true);
@@ -145,8 +153,8 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     return live;
   };
 
-  /** Starts the page server, and the tunnel if one was set up before. */
-  const web = async (context: ExtensionContext) => {
+  /** Starts the page server, and the tunnel if one was set up before (unless `savedTunnel` is false). */
+  const web = async (context: ExtensionContext, savedTunnel = true) => {
     if (!live || live.served) return live?.served;
     const current = live;
     const config = readConfig(options.agentDir).voice ?? {};
@@ -165,7 +173,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     const host = config.tunnel;
     const key = readKey(agentDir());
     // The tunnel can take a while; the page works locally meanwhile.
-    if (host && key)
+    if (savedTunnel && host && key)
       void openTunnel(context, host, key).then(
         () => live?.tunnel && context.ui.notify(`Voice from anywhere: ${live.tunnel.url}`, "info"),
         (error) => context.ui.notify(`Voice tunnel failed: ${message(error)}`, "error"),
@@ -223,6 +231,19 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     }
   };
 
+  /** Closes the page server and its tunnel, keeping voice in the terminal. */
+  const stopWeb = async (context: ExtensionContext) => {
+    const current = live;
+    if (!current?.served) return;
+    current.tunnel?.stop();
+    current.tunnel = undefined;
+    const served = current.served;
+    current.served = undefined;
+    hidePhoneCode();
+    await served.close();
+    status(context);
+  };
+
   const stop = async (context?: ExtensionContext) => {
     const current = live;
     live = undefined;
@@ -252,24 +273,33 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       if (live) live.tunnel = undefined;
       live?.served?.setRemote(undefined);
       hidePhoneCode();
-      const { tunnel: _, ...rest } = readConfig(options.agentDir).voice ?? {};
-      saveConfig({ voice: rest }, options.agentDir);
+      const { tunnel: host, ...rest } = readConfig(options.agentDir).voice ?? {};
+      if (host) saveConfig({ voice: rest }, options.agentDir);
       if (live) status(context);
-      context.ui.notify("Voice tunnel is off. /logout can remove the saved Cloudflare key.", "info");
+      const key = readKey(agentDir()) ? " /logout can remove the saved Cloudflare key." : "";
+      context.ui.notify(`Voice tunnel is off.${key}`, "info");
       return;
     }
     if (word === "") {
-      // /voice turns voice in the terminal on, and off again.
-      if (live) {
+      // /voice turns voice in the terminal on, and off again. The page, when on, stays on.
+      if (live?.local) {
+        if (live.served) {
+          live.local.stop();
+          live.local = undefined;
+          context.ui.notify("Voice in the terminal is off; the page stays on. /voice off stops it too.", "info");
+          return;
+        }
         await stop(context);
         context.ui.notify("Voice is off.", "info");
         return;
       }
+      const absent = options.local ? undefined : audioMissing();
+      if (absent) throw new Error(`${absent} Or use /voice web to talk from the browser.`);
       const current = await ensure(context);
       if (!current) return;
       const local = (options.local ?? startLocal)(current.call);
       if (typeof local === "string") {
-        await stop(context);
+        if (!current.served) await stop(context);
         throw new Error(`${local} Or use /voice web to talk from the browser.`);
       }
       current.local = local;
@@ -280,22 +310,30 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       context.ui.notify("Use /voice, /voice web, /voice tunnel, /voice tunnel off or /voice off.", "error");
       return;
     }
-    const served = (await ensure(context)) && (await web(context));
-    if (!served) return;
     if (word === "tunnel") {
       await setUpTunnel(context);
       return;
     }
+    const served = (await ensure(context)) && (await web(context));
+    if (!served) return;
     const remote = live?.tunnel
       ? `\nFrom anywhere: ${live.tunnel.url}`
       : readConfig(options.agentDir).voice?.tunnel
         ? ""
         : "\nTo talk from your phone, run /voice tunnel.";
-    context.ui.notify(`Voice is on: ${served.url}${remote}`, "info");
+    // An installed app keeps one address; a page on another port is a different app.
+    const wanted = readConfig(options.agentDir).voice?.port ?? 7807;
+    const moved =
+      wanted && served.port !== wanted ? `\nPort ${wanted} was busy, so this page is on ${served.port}.` : "";
+    context.ui.notify(`Voice is on: ${served.url}${remote}${moved}`, "info");
     (options.open ?? openBrowser)(served.url);
   };
 
-  /** /voice tunnel: asks for the host and the Cloudflare key, sets the tunnel up, and keeps both. */
+  /**
+   * /voice tunnel: asks for the host and the Cloudflare key, then starts voice and the page if they are off,
+   * sets the tunnel up, and keeps both. Cancelling a question changes nothing; if the tunnel fails, what this
+   * started stops again.
+   */
   const setUpTunnel = async (context: ExtensionContext) => {
     const config = readConfig(options.agentDir).voice ?? {};
     const typedHost = await context.ui.input("Host name for the voice page", config.tunnel ?? "voice.example.com");
@@ -306,15 +344,28 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       return;
     }
     const saved = readKey(agentDir());
-    const typedKey = (
-      await context.ui.input(
-        saved ? "Cloudflare token" : "Cloudflare API token or tunnel token",
-        saved ? "Leave empty to keep the saved one" : `API token with ${permissions}`,
-      )
-    )?.trim();
+    const answer = await context.ui.input(
+      saved ? "Cloudflare token" : "Cloudflare API token or tunnel token",
+      saved ? "Leave empty to keep the saved one" : `API token with ${permissions}`,
+    );
+    // Escape gives undefined; only an empty answer keeps the saved key.
+    if (answer === undefined) return;
+    const typedKey = answer.trim();
     const key = typedKey || saved;
-    if (!key) return;
-    await openTunnel(context, host, key);
+    if (!key) {
+      context.ui.notify("The tunnel needs a Cloudflare token.", "error");
+      return;
+    }
+    const wasOn = live !== undefined;
+    const wasServed = live?.served !== undefined;
+    if (!(await ensure(context)) || !(await web(context, false))) return;
+    try {
+      await openTunnel(context, host, key);
+    } catch (error) {
+      if (!wasOn) await stop(context);
+      else if (!wasServed) await stopWeb(context);
+      throw error;
+    }
     if (typedKey) await saveKey(typedKey, agentDir());
     saveConfig({ voice: { ...readConfig(options.agentDir).voice, tunnel: host } }, options.agentDir);
     context.ui.notify(`Voice is on at ${live?.tunnel?.url}`, "info");
@@ -362,7 +413,13 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     ctx = context;
     live?.call.thinking();
   });
-  pi.on("agent_end", () => live?.call.idle());
+  // Settled, not agent_end: Pi may still retry a failed request, and the user hears about a failure once.
+  let failed: string | undefined;
+  pi.on("agent_settled", () => {
+    if (failed) live?.call.fail(failed);
+    failed = undefined;
+    live?.call.idle();
+  });
   pi.on("message_start", (event) => {
     if (event.message.role === "assistant") live?.call.replyStart();
   });
@@ -371,7 +428,9 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     if (update.type === "text_delta") live?.call.reply(update.delta);
   });
   pi.on("message_end", (event) => {
-    if (event.message.role === "assistant") live?.call.replyEnd();
+    if (event.message.role !== "assistant") return;
+    failed = event.message.stopReason === "error" ? (event.message.errorMessage ?? "The model failed.") : undefined;
+    live?.call.replyEnd();
   });
   pi.on("session_shutdown", async () => {
     await stop();

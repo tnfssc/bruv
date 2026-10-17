@@ -34,8 +34,11 @@ export type DeviceEvent =
   | { type: "partial"; text: string }
   | { type: "user"; text: string }
   | { type: "assistant"; text: string; part: number }
-  /** Hold playback: someone may be talking over it. */
-  | { type: "pause" }
+  /**
+   * Hold playback: someone may be talking over it. `soft` when only the microphone heard something, which
+   * may be the speaker's own echo, so a device can turn it down rather than stop.
+   */
+  | { type: "pause"; soft?: boolean }
   /** It was a noise or an echo; play on. */
   | { type: "resume" }
   /** Drop all playback. */
@@ -45,6 +48,14 @@ export type DeviceEvent =
 
 /** Something to look at: a page, a picture or a video. `src` is a link; `html` is a whole page. */
 export type Shown = { kind: "html" | "image" | "video"; title?: string; src?: string; html?: string };
+
+/** What a page needs to draw the conversation so far. */
+type Entry =
+  | { type: "user"; text: string }
+  | { type: "assistant"; text: string; part: number }
+  | ({ type: "show" } & Shown);
+/** Entries are numbered, so a page that reconnects gets only what it missed. */
+export type Logged = Entry & { seq: number };
 
 export interface Device {
   /** A device with a screen can show things; the local speaker can't. */
@@ -56,8 +67,11 @@ export interface Device {
 
 /** Where heard words go. The brain answers through `Call.reply`. */
 export interface Brain {
-  /** `interrupted`: the user talked over a reply, so it should stop rather than go on. */
-  tell(text: string, interrupted: boolean): void;
+  /**
+   * `interrupted`: the user talked over a reply, so it should stop rather than go on. `cut` is the sentence
+   * that was playing then; the user heard the reply up to it and nothing after.
+   */
+  tell(text: string, interrupted: boolean, cut?: string): void;
 }
 
 /**
@@ -70,15 +84,43 @@ export class Call {
   /** Set when the user talked over a reply, so the rest of that reply is not spoken. */
   private muted = false;
   private replying = false;
-  /** What is being said or waiting to be said, to tell the speaker's own echo from the user. */
-  private saying: string[] = [];
+  /**
+   * Sentences given to the speaker and not yet played everywhere, by number. A device reports each sentence
+   * it finishes, so this is what is still to be heard.
+   */
+  private saying = new Map<number, string>();
+  /** The last sentences played, to tell the speaker's own echo from the user. */
+  private recent: string[] = [];
+  /** The sentence playing when the user started talking, if a reply was. */
+  private cut?: string;
+  /** When the last sentence finished playing. */
+  private playedAt = 0;
+  /** Whether the user started talking while a reply could be heard, so it may be its echo. */
+  private echoable = false;
+  /** Between the brain starting and stopping. */
+  private busy = false;
+  /** Set while a page's talk button is down. */
+  private held = false;
   private state: State = "starting";
   private part = 0;
+  private log: Logged[] = [];
+  private seq = 0;
+  /** Random per call, so a page can tell a new call from the one it was showing. */
+  readonly id = Math.random().toString(36).slice(2);
   /**
    * The device whose audio is heard. One at a time: the terminal's microphone and a page's would otherwise
    * mix into one stream and garble both.
    */
   private microphone?: Device;
+  /**
+   * Devices that play replies aloud: the terminal's speaker, and pages once started. Only they say what was
+   * heard; a page that is open but not started hears nothing.
+   */
+  private players = new Set<Device>();
+  /** Recent sentences by number, to tell a long echo from the user. */
+  private spoken = new Map<number, string>();
+  /** The first sentence that could be heard when the user started talking. */
+  private heardFrom = 0;
 
   constructor(
     private engine: Engine,
@@ -89,17 +131,37 @@ export class Call {
 
   attach(device: Device) {
     this.devices.add(device);
+    if (!device.screen) this.players.add(device);
     device.send({ type: "state", state: this.state });
+  }
+
+  /** The conversation after `seq`, for a page that opened or came back. Sentences already played are `past`. */
+  history(seq = 0) {
+    const first = Math.min(...this.saying.keys());
+    return this.log
+      .filter((entry) => entry.seq > seq)
+      .map((entry) => (entry.type === "assistant" && entry.part < first ? { ...entry, past: true } : entry));
+  }
+
+  /** Where the user is: the device holding the microphone, and how many screens are open. */
+  where() {
+    const screens = [...this.devices].filter((device) => device.screen).length;
+    const local = [...this.devices].some((device) => !device.screen);
+    const mic = this.microphone ? (this.microphone.screen ? "page" : "local") : local ? "local" : undefined;
+    return { screens, local, mic } as const;
   }
 
   detach(device: Device) {
     this.devices.delete(device);
     if (this.microphone === device) this.microphone = undefined;
+    // With no one left to play it, what was waiting to be heard never will be.
+    if (this.players.delete(device) && !this.players.size) this.played(this.part);
   }
 
   /** A page takes the microphone when it starts or its button is pressed. */
   claim(device: Device) {
     this.microphone = device;
+    this.players.add(device);
   }
 
   /** Audio from a device. With no microphone, the first device heard takes it, so the terminal gets it back. */
@@ -109,13 +171,15 @@ export class Call {
   }
 
   talk(on: boolean, keep = false) {
+    this.held = on;
     this.engine.talk(on, keep);
   }
 
   /** Puts something on every screen. Returns how many screens got it. */
   show(item: Shown) {
     const screens = [...this.devices].filter((device) => device.screen);
-    for (const device of screens) device.send({ type: "show", ...item });
+    const entry = this.remember({ type: "show", ...item });
+    for (const device of screens) device.send(entry);
     return screens.length;
   }
 
@@ -139,27 +203,41 @@ export class Call {
 
   /** The brain is working on something it will answer. */
   thinking() {
+    this.busy = true;
     if (this.state === "listening") this.setState("thinking");
   }
 
   /** The brain has stopped; with nothing left to say, listen. */
   idle() {
-    if (this.state === "thinking" && !this.saying.length) this.setState("listening");
+    this.busy = false;
+    if (this.state === "thinking" && !this.saying.size) this.setState("listening");
   }
 
   /** Drops whatever is being said. */
   hush() {
     this.muted = true;
-    this.saying = [];
+    this.saying.clear();
     this.engine.hush();
     this.broadcast({ type: "flush" });
-    this.setState("listening");
+    this.settle();
   }
 
-  /** A device has played everything it was sent. */
-  played() {
-    this.saying = [];
-    if (this.state === "speaking") this.setState("listening");
+  /** The brain failed, so nothing will be said: shown on every page, and said in a few words. */
+  fail(message: string) {
+    this.broadcast({ type: "error", message });
+    this.say("Sorry, that failed. The error is on the screen.");
+  }
+
+  /** A device has played every sentence up to `part`. Only devices that play count. */
+  played(part: number, from?: Device) {
+    if (from && !this.players.has(from)) return;
+    for (const [number, sentence] of this.saying) {
+      if (number > part) continue;
+      this.saying.delete(number);
+      this.recent = [...this.recent, sentence].slice(-2);
+      this.playedAt = Date.now();
+    }
+    if (!this.saying.size && this.state === "speaking") this.settle();
   }
 
   async close() {
@@ -169,9 +247,23 @@ export class Call {
 
   private say(sentence: string) {
     const part = ++this.part;
-    this.saying.push(sentence);
+    this.saying.set(part, sentence);
+    this.spoken.set(part, sentence);
+    this.spoken.delete(part - 100);
     this.engine.speak(sentence, part);
-    this.broadcast({ type: "assistant", text: sentence, part });
+    this.broadcast(this.remember({ type: "assistant", text: sentence, part }));
+  }
+
+  private remember(event: Entry) {
+    const entry: Logged = { ...event, seq: ++this.seq };
+    this.log.push(entry);
+    if (this.log.length > 400) this.log.shift();
+    return entry;
+  }
+
+  /** Nothing left to say: thinking while the brain works, otherwise listening. */
+  private settle() {
+    this.setState(this.busy || this.replying ? "thinking" : "listening");
   }
 
   private onEngine(event: EngineEvent) {
@@ -180,7 +272,17 @@ export class Call {
         this.setState("listening");
         return;
       case "speech":
-        this.broadcast({ type: "pause" });
+        // The sentence playing now, or the last one played when the rest isn't spoken yet.
+        // Echo of the last words reaches the microphone as they end, so a reply just finished counts too.
+        this.echoable = this.saying.size > 0 || Date.now() - this.playedAt < 1500;
+        // Echo can keep the microphone hearing through a whole reply, so it is checked against all of it.
+        this.heardFrom = this.saying.size ? Math.min(...this.saying.keys()) - 1 : this.part;
+        this.cut = this.saying.size
+          ? this.saying.values().next().value
+          : this.replying
+            ? this.recent.at(-1)
+            : undefined;
+        this.broadcast({ type: "pause", soft: !this.held });
         this.setState("hearing");
         return;
       case "partial":
@@ -188,24 +290,29 @@ export class Call {
         return;
       case "heard": {
         const text = event.text.trim();
-        const echo = !event.held && this.saying.length > 0 && isEcho(text, this.saying.join(" "));
+        const spoken = [...this.spoken].flatMap(([part, sentence]) => (part >= this.heardFrom ? [sentence] : []));
+        spoken.unshift(...this.recent);
+        const echo = !event.held && this.echoable && isEcho(text, spoken.join(" "));
         if (!text || echo) {
           this.broadcast({ type: "resume" });
-          this.setState(this.saying.length ? "speaking" : "listening");
+          if (this.saying.size) this.setState("speaking");
+          else this.settle();
           return;
         }
         // Every pause ends in a flush or a resume.
-        const interrupted = this.saying.length > 0 || this.replying;
+        const interrupted = this.saying.size > 0 || this.replying;
         if (interrupted) this.hush();
         else this.broadcast({ type: "resume" });
-        this.broadcast({ type: "user", text });
+        this.broadcast(this.remember({ type: "user", text }));
         this.setState("thinking");
-        this.brain.tell(text, interrupted);
+        this.brain.tell(text, interrupted, interrupted ? this.cut : undefined);
         return;
       }
       case "audio":
-        if (this.state !== "hearing") this.setState("speaking");
         for (const device of this.devices) device.play(event.pcm, event.rate, event.part);
+        // Nothing plays it, so it counts as heard at once.
+        if (!this.players.size) this.played(event.part);
+        else if (this.state !== "hearing") this.setState("speaking");
         return;
       case "error":
         this.broadcast(event);

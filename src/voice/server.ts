@@ -91,8 +91,15 @@ export async function serve(
     ws.on("message", (data, binary) => {
       if (!binary) {
         try {
-          const { type, on, keep } = JSON.parse(data.toString());
-          if (type === "played") call.played();
+          const { type, on, keep, part, id, seq } = JSON.parse(data.toString());
+          if (type === "played") call.played(Number(part) || 0, device);
+          // A page says which call it last showed and how far; it gets what it missed, or all of it.
+          if (type === "hello") {
+            const same = id === call.id;
+            ws.send(
+              JSON.stringify({ type: "history", id: call.id, reset: !same, events: call.history(same ? seq : 0) }),
+            );
+          }
           if (type === "hush") call.hush();
           // A page connects as soon as it opens, but only takes the microphone when it starts, and whoever
           // presses the button has it. So the page started last listens.
@@ -136,7 +143,11 @@ export async function serve(
     },
     close: () =>
       new Promise((resolve) => {
-        for (const ws of sockets.clients) ws.terminate();
+        // Pages say voice is off instead of trying to reconnect as if it dropped.
+        for (const ws of sockets.clients) ws.close(4000, "bye");
+        setTimeout(() => {
+          for (const ws of sockets.clients) ws.terminate();
+        }, 500).unref();
         sockets.close();
         server.close(() => resolve());
         server.closeAllConnections();
