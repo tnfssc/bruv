@@ -4,6 +4,7 @@ import { createServer, type IncomingMessage } from "node:http";
 import type { AddressInfo } from "node:net";
 import { WebSocket, WebSocketServer } from "ws";
 import type { Call, Device } from "./call";
+import { appFile, manifest } from "./install";
 import { qrSvg } from "./qr";
 import { Shelf } from "./show";
 
@@ -30,6 +31,11 @@ export async function serve(
   options: { host: string; port: number; token: string; onStart?: () => void },
 ): Promise<Served> {
   const shelf = new Shelf();
+  // The manifest needs the key, so the page links it with the key.
+  const html = page.replace(
+    'href="manifest.webmanifest"',
+    `href="manifest.webmanifest?t=${encodeURIComponent(options.token)}"`,
+  );
   let remote = JSON.stringify({ type: "remote", url: null });
   const server = createServer((request, response) => {
     const path = new URL(request.url ?? "/", "http://x").pathname;
@@ -38,8 +44,18 @@ export async function serve(
       shelf.serve(request, response, path.slice("/shown/".length));
       return;
     }
-    if (path !== "/" || !allowed(request, options.token)) {
+    const app = appFile(path);
+    if (app) {
+      response.writeHead(200, { "content-type": app.type, "cache-control": "no-cache" }).end(app.body);
+      return;
+    }
+    if ((path !== "/" && path !== "/manifest.webmanifest") || !allowed(request, options.token)) {
       response.writeHead(404).end();
+      return;
+    }
+    if (path === "/manifest.webmanifest") {
+      response.writeHead(200, { "content-type": "application/manifest+json", "cache-control": "no-store" });
+      response.end(manifest(options.token));
       return;
     }
     response.writeHead(200, {
@@ -47,7 +63,7 @@ export async function serve(
       "cache-control": "no-store",
       "referrer-policy": "no-referrer",
     });
-    response.end(page);
+    response.end(html);
   });
   const connect = (ws: WebSocket) => {
     let rate = 0;

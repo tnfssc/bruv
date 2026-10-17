@@ -448,6 +448,26 @@ test("the agent can show a page, a picture from disk or a video link", () => {
   }
 });
 
+test("the page installs as an app that opens with the key", async () => {
+  const call = new Call(new FakeEngine(), { tell: () => {} });
+  const served = await serve(call, { host: "127.0.0.1", port: 0, token: "secret" });
+  try {
+    const { host } = new URL(served.url);
+    const page = await (await fetch(served.url)).text();
+    const link = page.match(/<link rel="manifest" href="([^"]+)"/)?.[1] ?? "";
+    expect((await fetch(`http://${host}/manifest.webmanifest`)).status).toBe(404);
+    const app = await (await fetch(new URL(link, served.url))).json();
+    expect(new URL(app.start_url, served.url).href).toBe(served.url);
+    for (const icon of app.icons) {
+      const response = await fetch(new URL(icon.src, served.url));
+      expect(response.headers.get("content-type")).toBe("image/png");
+    }
+    expect((await fetch(`http://${host}/sw.js`)).status).toBe(200);
+  } finally {
+    await served.close();
+  }
+});
+
 test("shown things reach every open page, and files stream in byte ranges", async () => {
   const engine = new FakeEngine();
   const call = new Call(engine, { tell: () => {} });

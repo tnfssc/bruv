@@ -84,6 +84,14 @@ reached SSH or T3 Code.
   an SVG). `uqr` (MIT, no dependencies) encodes it: QR encoding is easy to get subtly wrong, so this is
   a runtime dependency worth having. Both forms were scanned back with `zbarimg`; in a dark terminal the
   default polarity reads, the inverted one doesn't.
+- **The voice page is an installable app (PWA).** The key is the page's only sign-in, so the manifest
+  holds it in `start_url` and is itself served only with the key (the server writes the key into the
+  page's manifest link). Icons and `sw.js` need no key. Installing only lasts because the key is saved
+  (`token` file), the port is fixed (7807) and the tunnel uses the user's own host; a random-host tunnel
+  would leave a dead app after each restart. The worker keeps nothing offline, since the page is useless
+  without bruv: it only swaps a failed load, or a 5xx from Cloudflare when bruv is stopped, for a short
+  page that polls and reloads. Chromium reported no installability errors with a real profile
+  (incognito always reports one).
 - **Voice is the flagship.** The README, the site (headline, first demo, a muted looping video in the HTML
   view, a "Watch it" link in the terminal view) and the changelog lead with voice. The hero video
   (`.tmp/hero/` records, `.tmp/hype/` edits; not kept) is the real agent on a phone page with a
