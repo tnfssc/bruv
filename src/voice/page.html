@@ -162,7 +162,6 @@ body[data-holding] .talk { background: var(--hearing); color: #fff; }
   #mute { grid-area: mute; }
   #stop { grid-area: stop; }
   #size { display: inline-grid; grid-area: size; color: var(--muted-foreground); }
-  #more { display: none; }
   .btn { width: 100%; height: 3.75rem; border-radius: var(--radius); }
   .btn .icon { width: 1.5rem; height: 1.5rem; }
   .talk-wrap { grid-area: talk; width: 100%; height: 8rem; }
@@ -194,6 +193,9 @@ dialog::backdrop { background: oklch(0 0 0 / 25%); }
 .keys { display: none; flex-direction: column; gap: .25rem; padding: .25rem .5rem; font-size: .8125rem; color: var(--muted-foreground); }
 .keys > * { display: flex; justify-content: space-between; }
 @media (hover: hover) and (pointer: fine) { .keys { display: flex; } }
+.option { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .5rem; font-size: .875rem; cursor: pointer; }
+.option small { display: block; margin-top: .125rem; font-size: .75rem; color: var(--muted-foreground); }
+.option input { flex: none; width: 1.125rem; height: 1.125rem; margin: 0; accent-color: var(--foreground); }
 kbd { font: 500 .6875rem ui-monospace, monospace; padding: .0625rem .375rem; border-radius: 4px; background: var(--muted); color: var(--foreground); }
 
 /* Things the agent shows: a page, a picture or a video, in the conversation and full screen. */
@@ -259,6 +261,7 @@ kbd { font: 500 .6875rem ui-monospace, monospace; padding: .0625rem .375rem; bor
 </footer>
 <dialog id="menu" aria-label="Settings">
   <div class="phone" hidden><div class="code"></div><span>Scan to talk from your phone</span></div>
+  <label class="option"><span>Cancel echo<small>For the phone's own speaker. Sound then uses the call volume.</small></span><input type="checkbox" id="echo"></label>
   <div class="keys"><span>Hold to talk <kbd>Space</kbd></span><span>Tap for hands-free <kbd>Space</kbd></span><span>Mute <kbd>M</kbd></span><span>Stop <kbd>Esc</kbd></span></div>
 </dialog>
 <dialog id="viewer" aria-label="Full screen">
@@ -269,7 +272,7 @@ kbd { font: 500 .6875rem ui-monospace, monospace; padding: .0625rem .375rem; bor
 const $ = (id) => document.getElementById(id);
 const token = new URLSearchParams(location.search).get("t");
 const ui = { log: $("log"), scroller: $("scroller"), empty: $("empty"), intro: $("intro"), label: $("label"), dock: $("dock"),
-  talk: $("talk"), mute: $("mute"), stop: $("stop"), more: $("more"), menu: $("menu"), viewer: $("viewer"), viewerTitle: $("viewerTitle"), viewerBody: $("viewerBody"), size: $("size") };
+  talk: $("talk"), mute: $("mute"), stop: $("stop"), more: $("more"), menu: $("menu"), viewer: $("viewer"), viewerTitle: $("viewerTitle"), viewerBody: $("viewerBody"), size: $("size"), echo: $("echo") };
 const labels = { starting: "Loading voice", listening: "Listening", hearing: "Hearing you", thinking: "Thinking", speaking: "Speaking" };
 
 // The worklet turns microphone audio into 16 kHz 16-bit frames of 20 ms, averaging the samples it drops.
@@ -300,6 +303,12 @@ const tapTime = 280;
 let free = false, holding = false, pressedAt = 0, tail, hold;
 // Small controls take one row instead of half the screen.
 let small = localStorage.getItem("bruv-voice-small") === "1";
+// On a phone that cancels echo itself, Chrome treats a microphone with echo cancelling as a call: sound
+// started after it plays at the call volume and sound started before at the media volume, so the volume
+// buttons changed one or the other. Off, it is always the media volume, and bruv tells its own words from
+// the user's as it does in the terminal; with earphones nothing is lost.
+const echo = localStorage.getItem("bruv-voice-echo") === "1";
+ui.echo.checked = echo;
 // Playback. Audio comes in numbered sentences ("parts"); finished audio of the sentence playing is kept, so
 // unmuting can start that sentence again.
 let rate = 24000, incoming = 0, items = [], nextTime = 0, muted = false, now = 0, reported = 0, pauseLater;
@@ -730,7 +739,7 @@ function begin() {
 
 async function openMic() {
   const stream = await navigator.mediaDevices.getUserMedia({
-    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 },
+    audio: { echoCancellation: echo, noiseSuppression: true, autoGainControl: true, channelCount: 1 },
   });
   await input.audioWorklet.addModule(URL.createObjectURL(new Blob([worklet], { type: "text/javascript" })));
   const mic = new AudioWorkletNode(input, "mic");
@@ -754,6 +763,11 @@ ui.talk.addEventListener("pointerdown", (event) => {
 for (const name of ["pointerup", "pointercancel", "lostpointercapture"]) ui.talk.addEventListener(name, release);
 ui.talk.addEventListener("contextmenu", (event) => event.preventDefault());
 ui.mute.addEventListener("click", () => setMuted(!muted));
+ui.echo.addEventListener("change", () => {
+  localStorage.setItem("bruv-voice-echo", ui.echo.checked ? "1" : "0");
+  // The volume is chosen when sound and microphone start, so both start again.
+  if (started) location.reload();
+});
 ui.stop.addEventListener("click", () => { flush(); send({ type: "hush" }); });
 ui.size.addEventListener("click", () => {
   follow(() => {

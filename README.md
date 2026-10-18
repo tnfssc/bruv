@@ -41,7 +41,7 @@ Run `/bruv-setup`, confirm, then `/reload`. Then type `/voice` and start talking
 ```
 
 The first `/voice` asks before downloading the speech models (about 800 MB). Use headphones in the terminal:
-nothing cancels the speaker's echo there; the browser page does. A phone needs https, which `/voice tunnel`
+nothing cancels the speaker's echo there; the browser page can (Cancel echo in its menu). A phone needs https, which `/voice tunnel`
 gives you with a Cloudflare token and a host name. See [Voice](docs/USAGE.md#voice).
 
 ### Give it the whole job

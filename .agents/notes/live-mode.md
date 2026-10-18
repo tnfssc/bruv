@@ -257,6 +257,14 @@ reached SSH or T3 Code.
   - `/voice web` shows the link instead of opening a browser, at the user's request. With a tunnel saved
     it says the tunnel is connecting, then gives the tunnel's link: the local page gave no sign of the
     tunnel, and the user's installed app lives at the tunnel's address.
+  - Phone volume: the user saw the page switch between the media and the call volume on Android. In
+    Chromium's `audio_manager_android.cc`, the first microphone opened with platform effects (echo
+    cancelling, on phones with a vetted hardware canceller) turns on communication mode, and output
+    streams made while it is on use `AAUDIO_USAGE_VOICE_COMMUNICATION`; ones made before keep media, so
+    it depended on which started first. The emulator (no hardware canceller) stays in `MODE_NORMAL` with
+    either setting, so it can't show this; checked with `dumpsys audio`. The user chose media volume:
+    echo cancelling is off by default and bruv's own echo check (as in the terminal) handles the
+    speaker; a "Cancel echo" switch in the ⋯ menu (shown on phones now) turns it on, kept per browser.
   - Speech recognition stays local. Cloud transcription (Scribe v2, GPT-4o mini transcribe, Parakeet,
     Nova-3, Whisper turbo) took 1–2.6 s after each turn and none streams, which barge-in needs;
     Nemotron here streams for free.
