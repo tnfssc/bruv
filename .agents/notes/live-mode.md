@@ -237,11 +237,19 @@ reached SSH or T3 Code.
     A turn that is still going (speech starts again) or an answer that starts first cancels it.
     Measured: filler at 0.80 s, answer at 2.5–3.2 s with a 1.6 s model.
   - One set for every turn didn't work: "let me think" answered "how are you doing", and the user said
-    no. Now `kindOf` reads the turn: a greeting or small talk ("yo fam what are you doing") gets "oh,
-    hey", a question "hmm", a request "okay", and anything else (stop, thanks, news) nothing, since a
-    wrong sound is worse than silence. A small model (mimo-v2.6-flash) picked the exact sound well, even
-    "oh no" for "my laptop just died", but took 0.5–3.5 s, too late for a 0.8 s filler. Plain rules
-    pick at once; leading "yo", "hey", "ok", "bro" and the like are skipped before reading the rest.
+    no. Regex rules for greeting, question and request were next; the user offered a tiny local model
+    instead. Scored on ~490 phrases from two test sets written apart from the training ones (phrases
+    also in training left out): rules 43–52% right, a TF-IDF classifier (words, word pairs, letter
+    runs 2–5) 81–92%, e5-small (33M) 84–93%, e5-base (110M) 86–95%, potion static embeddings below
+    TF-IDF. Training data, not the model, was what mattered: going from 600 to 3,200 examples moved
+    every model more than switching models did. The models need onnxruntime-node (300 MB; Pi runs
+    on Node, and a plain-JS transformer takes 200–550 ms), so `kind.ts` is the TF-IDF one, learnt
+    from `turns.tsv` (3,400 labelled turns written by agents in different voices) in about 0.3 s
+    when fillers load, 0.03 ms a turn. Good and bad news are learnt apart but play one sound that
+    fits either ("oh!", "whoa"): every model mixed them up on world knowledge ("sign ups doubled",
+    "the memory leak is back"), and "oh nice" to bad news is the worst miss. Under 60% sure plays
+    nothing; that leaves about 8 wrong sounds in 490, mostly harmless. The OpenRouter small model
+    (mimo-v2.6-flash) picked well but took 0.5–3.5 s, too late for a 0.8 s filler.
   - Speech recognition stays local. Cloud transcription (Scribe v2, GPT-4o mini transcribe, Parakeet,
     Nova-3, Whisper turbo) took 1–2.6 s after each turn and none streams, which barge-in needs;
     Nemotron here streams for free.

@@ -2,50 +2,34 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { Level, speakOnce, voiceId } from "./cloud";
+import { type Example, type Kind, Kinds } from "./kind";
 
 /**
  * Short sounds played while the agent starts its answer. Between the user's last word and the agent's first
  * there are a few seconds of silence, which feel like not being heard; a "hmm" fills them the way a person
  * would. They are made once in the agent's voice and kept, so they cost nothing after and play at once.
  *
- * Which one fits depends on what was said: "let me think" to "how are you doing" is worse than silence. A
- * small model picked well but took a second or more, landing on the answer, so plain rules pick at once,
- * and anything they can't place gets no sound.
+ * Which one fits depends on what was said: "let me think" to "how are you doing" is worse than silence, so
+ * a small classifier picks the kind (see kind.ts), and a turn it can't place gets no sound. A model on
+ * OpenRouter picked well but took a second or more, landing on the answer. News, good or bad, gets a sound
+ * that fits either.
  */
-export const fillerLines = {
+export const fillerLines: Record<Kind, string[]> = {
   greeting: ["Oh, hey!", "Hey!", "Heh, hey."],
   question: ["Hmm.", "Hmm, let me see.", "Let me think."],
   request: ["Okay.", "Sure.", "Got it.", "Yep, on it."],
+  news: ["Oh!", "Whoa.", "Oh, wow."],
 };
 
-export type Kind = keyof typeof fillerLines;
-
-/** Words people start with that don't change what they are saying. */
-const lead =
-  /^(?:(?:yo|hey|hi|hello|there|ok|okay|so|um+|uh+|well|right|alright|yeah|yes|yep|yup|fam|bro|dude|man|bruv|mate|buddy)\b[\s,.!]*)+/;
-const hello = /\b(?:yo|hey|hi|hello|sup)\b/;
-const smallTalk =
-  /\b(?:how(?:'?s| is) (?:it going|your day|life|things)|how(?:'?re| are) (?:you|ya|u)|what are you (?:doing|up to)|what'?s (?:up|good|new|happening)|wh?ass?up|sup|good (?:morning|afternoon|evening))\b/;
-const stop = /^(?:wait|stop|hold on|hang on|no\b|nah|never ?mind|cancel|thanks|thank you|cheers|cool|nice|great)/;
-const asks =
-  /^(?:can you|could you|would you|will you|please|let'?s|go ahead|do (?:it|that|this)|i want you to|i need you to|i'?d like you to|add|fix|run|make|show|open|check|create|write|delete|remove|change|update|rename|move|install|build|deploy|test|try|explain|tell me|give me|find|look|put|start|read|refactor|commit|push|revert|undo|send|play|draw|list|search|set|turn)\b/;
-const wonders =
-  /^(?:what'?s|what|why|how'?s|how|which|where'?s|where|when|who'?s|who|whose|is|are|was|were|do|does|did|should|shall|would|could|can|will|have|has|any idea)\b/;
-
-/** What kind of turn the user's words are, for a filler that fits; undefined when no sound would. */
-export function kindOf(heard: string): Kind | undefined {
-  const words = heard
-    .toLowerCase()
-    .replace(/[^a-z' ]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  const rest = words.replace(lead, "").trim();
-  if (!rest) return hello.test(words) ? "greeting" : undefined;
-  if (smallTalk.test(rest)) return "greeting";
-  if (stop.test(rest)) return undefined;
-  if (asks.test(rest)) return "request";
-  if (wonders.test(rest) || heard.trim().endsWith("?")) return "question";
-  return undefined;
+/** The labelled turns the classifier learns from, one `label<tab>text` a line. */
+export function examples(): Example[] {
+  return readFileSync(new URL("./turns.tsv", import.meta.url), "utf8")
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => {
+      const [label, text] = line.split("\t");
+      return { label, text };
+    });
 }
 
 export type Sound = { kind: Kind; text: string; pcm: Int16Array; rate: number };
@@ -69,6 +53,7 @@ export function trim(pcm: Int16Array, rate: number) {
 export class Fillers {
   private sounds: Sound[] = [];
   private last: Sound | undefined;
+  private kinds: Kinds | undefined;
 
   /** Loads the kept sounds from `dir`, making the missing ones in the background. */
   constructor(
@@ -84,6 +69,9 @@ export class Fillers {
   ready: Promise<void>;
 
   private async load() {
+    // Learning takes a few hundred ms, so it waits for the command that started voice to finish.
+    await new Promise((resolve) => setImmediate(resolve));
+    this.kinds = new Kinds(examples());
     const id = voiceId(this.model);
     const lines = (Object.entries(fillerLines) as [Kind, string[]][]).flatMap(([kind, texts]) =>
       texts.map((text) => ({
@@ -125,7 +113,8 @@ export class Fillers {
 
   /** One that fits `heard`, at random and never the one played last; undefined when none fits or is ready. */
   pick(heard: string): Sound | undefined {
-    const kind = kindOf(heard);
+    const kind = this.kinds?.of(heard);
+    if (!kind) return undefined;
     const fitting = this.sounds.filter((sound) => sound.kind === kind);
     const choices = fitting.filter((sound) => sound !== this.last);
     const sound = choices[Math.floor(Math.random() * choices.length)] ?? fitting[0];

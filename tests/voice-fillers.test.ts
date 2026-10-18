@@ -2,7 +2,8 @@ import { afterAll, expect, test } from "bun:test";
 import { mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 import { Call, type DeviceEvent, type Engine, type EngineEvent } from "../src/voice/call";
-import { Fillers, fillerLines, kindOf, trim } from "../src/voice/fillers";
+import { examples, Fillers, fillerLines, trim } from "../src/voice/fillers";
+import { Kinds } from "../src/voice/kind";
 
 const dir = mkdtempSync(resolve(".tmp/fillers-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
@@ -100,7 +101,8 @@ test("fillers are made once, kept, fit what was said, and never repeat back to b
 });
 
 test("the kind of turn is read from what was said", () => {
-  const cases: [string, ReturnType<typeof kindOf>][] = [
+  const kinds = new Kinds(examples());
+  const cases: [string, ReturnType<Kinds["of"]>][] = [
     ["yo fam what are you doing", "greeting"],
     ["how are you doing", "greeting"],
     ["hey", "greeting"],
@@ -109,11 +111,24 @@ test("the kind of turn is read from what was said", () => {
     ["ok show me the chart again", "request"],
     ["why is the build failing on CI", "question"],
     ["should we use postgres or sqlite here", "question"],
-    ["what's the capital of australia", "question"],
+    ["my laptop just died", "news"],
+    ["I finally fixed that bug", "news"],
     ["wait stop", undefined],
     ["thanks man", undefined],
-    ["I finally fixed that bug", undefined],
+    ["the file is in src", undefined],
     ["", undefined],
   ];
-  for (const [heard, kind] of cases) expect([heard, kindOf(heard)]).toEqual([heard, kind]);
+  for (const [heard, kind] of cases) expect([heard, kinds.of(heard)]).toEqual([heard, kind]);
+});
+
+test("a turn of a new kind is learnt from examples of it", () => {
+  const kinds = new Kinds([
+    { text: "morning", label: "greeting" },
+    { text: "why does it fail", label: "question" },
+    { text: "run the tests", label: "request" },
+    { text: "ok", label: "none" },
+  ]);
+  expect(kinds.of("why does it crash")).toBe("question");
+  expect(kinds.of("good morning")).toBe("greeting");
+  expect(() => new Kinds([{ text: "hi", label: "hello" }])).toThrow();
 });
