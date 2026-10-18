@@ -200,6 +200,13 @@ reached SSH or T3 Code.
 
 - Not tried with a real Cloudflare account: the API calls were checked against Cloudflare's docs and a fake
   API in the tests only. A bad tunnel token makes cloudflared give up after about 20 s.
+- Bigger local speech, tried 2026-10-18 and dropped. A listening test of Kokoro, Qwen3-TTS 1.7B,
+  Chatterbox (and Turbo), VibeVoice Realtime 0.5B, Orpheus 3B and Higgs TTS 3 4B had the user pick
+  Higgs (voice "belinda"). Run from a Python helper on this Ryzen 7940HS CPU it made 1.9 frames a second
+  in bf16 and 1.1 in fp32, where speech needs 25: 13 times slower than talking, so a sentence took 45 s.
+  Its licence is also research and non-commercial only. The user went back to Kokoro, or cloud speech.
+  Anything over about 1B needs a real GPU; the user's laptop (Ryzen AI 9 HX 470, 64 GB DDR5-5600) has
+  none that PyTorch uses well.
 - Cloud speech, so the page or an app could work without this machine's models: researched 2026-10-17, not
   built. Deepgram Flux (speech to text with end-of-turn, $0.39/hr) and Aura-2 (speech, $30 per 1M
   characters) share one short-lived browser token; AssemblyAI Universal-Streaming ($0.15/hr) and Inworld
