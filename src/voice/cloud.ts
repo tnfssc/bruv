@@ -1,9 +1,56 @@
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+
 /**
  * Speech from a model on OpenRouter, Fish Audio's Drama 3 by default: it sounds like a person talking, with
  * the "um"s and the moods the agent writes, where Kokoro reads. A sentence comes back in about a second and
  * plays as it arrives, so the next is usually ready before this one ends.
  */
 export const cloudModel = "fish-audio/drama-3";
+
+/**
+ * Fish Audio models pick a new voice for every request unless given one to copy, so each sentence came in a
+ * different voice. This clip is the voice the user picked, sent with every request. It is read at 1.2 times
+ * speed: Drama 3's own pace felt slow to listen to.
+ */
+const voice = `data:audio/mpeg;base64,${readFileSync(new URL("./voice.mp3", import.meta.url)).toString("base64")}`;
+const voiceText = "Hmm, okay. So the test fails because, um, the date is off by one.";
+
+/** What to send OpenRouter to say `text` with `model`. */
+export function speechRequest(model: string, text: string) {
+  const fish = model.startsWith("fish-audio/");
+  return {
+    model,
+    input: text,
+    response_format: "pcm",
+    ...(fish && {
+      speed: 1.2,
+      input_references: [{ type: "input_audio", input_audio: { data: voice, format: "mp3" }, text: voiceText }],
+    }),
+  };
+}
+
+/** The voice's settings, so audio made once can be kept and known to be in the same voice. */
+export const voiceId = (model: string) =>
+  createHash("sha256")
+    .update(JSON.stringify(speechRequest(model, "")))
+    .digest("hex")
+    .slice(0, 12);
+
+/** One whole sentence, with its sample rate; for short sounds made ahead and kept. */
+export async function speakOnce(model: string, key: string, text: string, fetch = globalThis.fetch) {
+  const response = await fetch("https://openrouter.ai/api/v1/audio/speech", {
+    method: "POST",
+    headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
+    body: JSON.stringify(speechRequest(model, text)),
+  });
+  if (!response.ok) throw new Error(`OpenRouter speech failed (${response.status})`);
+  const rate = Number(/rate=(\d+)/.exec(response.headers.get("content-type") ?? "")?.[1] ?? 44_100);
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  const pcm = new Int16Array(bytes.length >> 1);
+  new Uint8Array(pcm.buffer).set(bytes.subarray(0, pcm.length * 2));
+  return { pcm, rate };
+}
 
 export interface CloudSpeech {
   speak(text: string, part: number): void;
@@ -128,7 +175,7 @@ export function startCloudSpeech(options: Options): CloudSpeech {
     return fetch("https://openrouter.ai/api/v1/audio/speech", {
       method: "POST",
       headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-      body: JSON.stringify({ model: options.model, input: job.text, response_format: "pcm" }),
+      body: JSON.stringify(speechRequest(options.model, job.text)),
       signal: job.stop.signal,
     });
   };

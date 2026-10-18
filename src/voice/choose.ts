@@ -39,5 +39,5 @@ export async function chooseCloud(
     "told-cloud",
     `Voice speaks with ${model} through your OpenRouter key. What the agent says aloud is sent there, for about 10¢ an hour of talk with Drama 3 at its launch price. To keep speech on this machine, set "speech": "kokoro" under "voice" in bruv.json.`,
   );
-  return { model, key };
+  return { model, key, fillers: join(dir, "fillers") };
 }

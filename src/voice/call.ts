@@ -22,6 +22,8 @@ export interface Engine {
   talk(on: boolean, keep?: boolean): void;
   /** Drops the speech being made and all speech waiting to be made. */
   hush(): void;
+  /** Plays a short sound such as "hmm" as sentence `part`, if it has one ready, and returns its words. */
+  filler?(part: number): string | undefined;
   onEvent(listener: (event: EngineEvent) => void): void;
   close(): Promise<void>;
 }
@@ -127,9 +129,14 @@ export class Call {
   /** The first sentence that could be heard when the user started talking. */
   private heardFrom = 0;
 
+  /** Set after the user's turn, to play a filler if nothing has been said by then. */
+  private waiting: ReturnType<typeof setTimeout> | undefined;
+
   constructor(
     private engine: Engine,
     private brain: Brain,
+    /** How long a silence after the user's turn is left before a filler fills it. */
+    private fillerDelay = 800,
   ) {
     engine.onEvent((event) => this.onEngine(event));
   }
@@ -237,6 +244,7 @@ export class Call {
 
   /** Drops whatever is being said. */
   hush() {
+    clearTimeout(this.waiting);
     this.muted = true;
     this.saying.clear();
     this.engine.hush();
@@ -263,6 +271,7 @@ export class Call {
   }
 
   async close() {
+    clearTimeout(this.waiting);
     this.devices.clear();
     await this.engine.close();
   }
@@ -271,12 +280,24 @@ export class Call {
   private say(sentence: string) {
     const words = withoutDirections(sentence);
     if (!words) return;
+    clearTimeout(this.waiting);
     const part = ++this.part;
     this.saying.set(part, words);
     this.spoken.set(part, words);
     this.spoken.delete(part - 100);
     this.engine.speak(sentence, part);
     this.broadcast(this.remember({ type: "assistant", text: words, part }));
+  }
+
+  /** The agent hasn't started its answer yet: a "hmm" says the user was heard. It isn't shown. */
+  private fill() {
+    this.waiting = undefined;
+    if (this.state !== "thinking" || this.saying.size || !this.engine.filler) return;
+    const words = this.engine.filler(this.part + 1);
+    if (!words) return;
+    this.part++;
+    this.saying.set(this.part, words);
+    this.spoken.set(this.part, words);
   }
 
   private remember(event: Entry) {
@@ -303,6 +324,8 @@ export class Call {
         this.setState("listening");
         return;
       case "speech":
+        // They're still talking: no filler over them.
+        clearTimeout(this.waiting);
         // The sentence playing now. With nothing playing, nothing was cut: an earlier reply was heard whole.
         // Echo of the last words reaches the microphone as they end, so a reply just finished counts too.
         this.echoable = this.saying.size > 0 || Date.now() - this.playedAt < 1500;
@@ -344,6 +367,8 @@ export class Call {
         this.broadcast(this.remember({ type: "user", text }));
         this.setState("thinking");
         this.brain.tell(text, interrupted, interrupted ? this.cut : undefined);
+        clearTimeout(this.waiting);
+        this.waiting = setTimeout(() => this.fill(), this.fillerDelay);
         return;
       }
       case "audio":

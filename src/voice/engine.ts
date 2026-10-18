@@ -1,11 +1,12 @@
 import { Worker } from "node:worker_threads";
 import type { Engine, EngineEvent } from "./call";
 import { type CloudSpeech, startCloudSpeech } from "./cloud";
+import { Fillers } from "./fillers";
 import type { ModelPaths } from "./models";
 import { withoutDirections } from "./text";
 
-/** Speech from a model on OpenRouter instead of Kokoro. */
-export type Cloud = { model: string; key: () => Promise<string | undefined> };
+/** Speech from a model on OpenRouter instead of Kokoro, and where its fillers are kept. */
+export type Cloud = { model: string; key: () => Promise<string | undefined>; fillers: string };
 
 /**
  * Runs the speech models in a worker thread. With `cloud`, a model on OpenRouter speaks, and Kokoro only
@@ -48,7 +49,14 @@ export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud): Engi
         },
       })
     : undefined;
+  const fillers = cloud ? new Fillers(cloud.fillers, cloud.model, cloud.key) : undefined;
   return {
+    filler: (part) => {
+      if (fallen || stopped) return undefined;
+      const sound = fillers?.pick();
+      if (sound) emit({ type: "audio", pcm: sound.pcm, rate: sound.rate, part });
+      return sound?.text;
+    },
     hear: (pcm) => worker.postMessage({ type: "hear", pcm }, [pcm.buffer as ArrayBuffer]),
     speak: (text, part) => {
       if (Date.now() - last > 3000) fallen = false;

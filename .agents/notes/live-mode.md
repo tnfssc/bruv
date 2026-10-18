@@ -223,6 +223,19 @@ reached SSH or T3 Code.
     went unexplained.
   - In the first real-agent test (cat-jam-free, codemode only) fillers were rare ("oh nice", "yeah") and
     moods came only when asked, so the prompt says why: the user chose a voice that can act.
+  - Without a voice, Fish models pick a new one per request, so every sentence had a different voice.
+    `src/voice/voice.mp3` (7 s, 58 KB) is the voice the user picked; it goes with every request as
+    `input_references`, with `speed: 1.2` (Drama's own pace felt slow; 1.2 gave about 170 words a
+    minute). Other models get neither. The user compared ElevenLabs Flash v2.5 (245 wpm, first audio
+    0.6 s, about $1 an hour), v3 Conversational, MAI-Voice 2.1 Flash, Grok, Gemini 3.8 Flash Lite (2.5 s
+    to start) and Drama with a fixed voice, and chose Drama.
+  - Fillers: the user found the 2–3 s before an answer felt like not being heard, and asked for a "good
+    fake". 0.8 s after their turn, if nothing is being said, one of seven short sounds ("hmm", "mm,
+    okay", "let me think"…) plays in the same voice, never the same twice running. They are made once
+    per voice settings (`voiceId`) into `voice/fillers/`, trimmed and levelled, so they play at once.
+    They are not shown on the page, count for echo, and the prompt tells the agent one may have played.
+    A turn that is still going (speech starts again) or an answer that starts first cancels it.
+    Measured: filler at 0.80 s, answer at 2.5–3.2 s with a 1.6 s model.
   - Speech recognition stays local. Cloud transcription (Scribe v2, GPT-4o mini transcribe, Parakeet,
     Nova-3, Whisper turbo) took 1–2.6 s after each turn and none streams, which barge-in needs;
     Nemotron here streams for free.
