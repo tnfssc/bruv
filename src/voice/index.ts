@@ -183,8 +183,13 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     return live;
   };
 
-  /** Starts the page server, and the tunnel if one was set up before (unless `savedTunnel` is false). */
-  const web = async (context: ExtensionContext, savedTunnel = true) => {
+  /**
+   * Starts the page server, and the tunnel if one was set up before (unless `savedTunnel` is false). `open`
+   * gets the address to open: the tunnel's once it is up, since that is where an installed app lives and
+   * the local page gave no sign of the tunnel; the local one when there is none or it fails.
+   */
+  const web = async (context: ExtensionContext, savedTunnel = true, open?: (url: string) => void) => {
+    if (live?.served) open?.(live.tunnel?.url ?? live.served.url);
     if (!live || live.served) return live?.served;
     const current = live;
     const config = readConfig(options.agentDir).voice ?? {};
@@ -205,9 +210,17 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     // The tunnel can take a while; the page works locally meanwhile.
     if (savedTunnel && host && key)
       void openTunnel(context, host, key).then(
-        () => live?.tunnel && context.ui.notify(`Voice from anywhere: ${live.tunnel.url}`, "info"),
-        (error) => context.ui.notify(`Voice tunnel failed: ${message(error)}`, "error"),
+        () => {
+          if (!live?.tunnel) return;
+          context.ui.notify(`Voice from anywhere: ${live.tunnel.url}`, "info");
+          open?.(live.tunnel.url);
+        },
+        (error) => {
+          context.ui.notify(`Voice tunnel failed: ${message(error)}`, "error");
+          if (live?.served === served) open?.(served.url);
+        },
       );
+    else open?.(served.url);
     return served;
   };
 
@@ -344,19 +357,19 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       await setUpTunnel(context);
       return;
     }
-    const served = (await ensure(context)) && (await web(context));
+    const served = (await ensure(context)) && (await web(context, true, options.open ?? openBrowser));
     if (!served) return;
+    const saved = readConfig(options.agentDir).voice?.tunnel;
     const remote = live?.tunnel
       ? `\nFrom anywhere: ${live.tunnel.url}`
-      : readConfig(options.agentDir).voice?.tunnel
-        ? ""
+      : saved
+        ? `\nConnecting the tunnel to ${saved}; the page opens there once it's up.`
         : "\nTo talk from your phone, run /voice tunnel.";
     // An installed app keeps one address; a page on another port is a different app.
     const wanted = readConfig(options.agentDir).voice?.port ?? 7807;
     const moved =
       wanted && served.port !== wanted ? `\nPort ${wanted} was busy, so this page is on ${served.port}.` : "";
     context.ui.notify(`Voice is on: ${served.url}${remote}${moved}`, "info");
-    (options.open ?? openBrowser)(served.url);
   };
 
   /**

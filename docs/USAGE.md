@@ -181,7 +181,7 @@ Once the tunnel is up, a QR code for the page sits above the input until a page 
 
 The page installs as an app: on a phone, use Add to Home Screen; in Chrome or Edge, use the install button in the address bar. The app opens the page already signed in. It needs bruv running with `/voice web` or `/voice tunnel`; when bruv isn't running, the app says so and opens the page once it's back. Installing works on https or `localhost`, so a phone needs the tunnel.
 
-The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout` can remove it, and the host in `bruv.json`. After that, every `/voice web` starts the tunnel too and shows both links. `/voice tunnel off` stops using it. A tunnel token from the Cloudflare dashboard also works; then set the tunnel's public host name to `http://localhost:7807` there.
+The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout` can remove it, and the host in `bruv.json`. After that, every `/voice web` starts the tunnel too and opens the page at your host once it is up, a few seconds later (the local page if the tunnel fails). `/voice tunnel off` stops using it. A tunnel token from the Cloudflare dashboard also works; then set the tunnel's public host name to `http://localhost:7807` there.
 
 Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's address with the same `?t=` key.
 

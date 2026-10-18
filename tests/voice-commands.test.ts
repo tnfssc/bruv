@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { existsSync, mkdirSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ExtensionUIContext } from "@earendil-works/pi-coding-agent";
 import { saveConfig } from "../src/config";
@@ -19,8 +19,11 @@ const engine = (): Engine => ({
 });
 
 /** bruv with voice, fake models, engine and terminal audio, and the UI answers given. */
-async function voice(ui: Partial<ExtensionUIContext> = {}, withModels = true) {
-  const agentDir = join(process.env.PI_CODING_AGENT_DIR as string, `voice-commands-${Date.now()}-${Math.random()}`);
+async function voice(
+  ui: Partial<ExtensionUIContext> = {},
+  withModels = true,
+  agentDir = join(process.env.PI_CODING_AGENT_DIR as string, `voice-commands-${Date.now()}-${Math.random()}`),
+) {
   const seen = { engines: 0, here: 0, opened: "", notes: [] as string[] };
   if (withModels) {
     const models = join(agentDir, "bruv", "voice", "models");
@@ -117,6 +120,33 @@ test("a tunnel that fails stops the voice it started", async () => {
     expect(tools()).toContain("show");
   } finally {
     await app.close();
+  }
+});
+
+test("after a restart, /voice web brings the saved tunnel back and opens the page there", async () => {
+  const answers: (string | undefined)[] = [];
+  const first = await voice({ input: async () => answers.shift() });
+  const { agentDir } = first;
+  // A stand-in for cloudflared that connects at once.
+  const bin = join(agentDir, "bruv", "voice", "bin");
+  mkdirSync(bin, { recursive: true });
+  writeFileSync(join(bin, "cloudflared"), "#!/bin/sh\necho 'Registered tunnel connection' >&2\nexec sleep 30\n");
+  chmodSync(join(bin, "cloudflared"), 0o755);
+  const tunnelToken = Buffer.from(JSON.stringify({ a: "account", t: "tunnel", s: "secret" })).toString("base64");
+  saveConfig({ voice: { port: 0 } }, agentDir);
+  try {
+    answers.push("voice.example.com", tunnelToken);
+    await first.app.session.prompt("/voice tunnel");
+  } finally {
+    await first.app.close();
+  }
+  const again = await voice({}, true, agentDir);
+  try {
+    await again.app.session.prompt("/voice web");
+    for (let i = 0; i < 100 && !again.seen.opened; i++) await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(again.seen.opened).toStartWith("https://voice.example.com/?t=");
+  } finally {
+    await again.app.close();
   }
 });
 
