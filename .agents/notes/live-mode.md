@@ -27,8 +27,9 @@ reached SSH or T3 Code.
     as background jobs (`job_start`, whose `wait` returns early on pending messages).
   - A voice-started run that ends without `say` gets one more step with a reminder, through
     `agent_before_settle` like bruv's other nudges, never a new run.
-  - The page shows the agent's written text and tool steps as quiet notes (the user wanted the full
-    transcript there), never spoken.
+  - The page shows the agent's written text as quiet notes (the user wanted the full transcript there),
+    never spoken. Tool steps ("bash git status…", "read README.md") were shown too, and dropped: the user
+    found them noise on a phone screen.
   - **Long says: a soft check, not a cap** (the user didn't want hard limits). Past 70 words (about 30 s)
     a say stops at the last whole sentence that fits and the tool returns an error with the word count
     and the last sentence heard, asking to show the rest and say one sentence, or to call say again with

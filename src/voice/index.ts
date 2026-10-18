@@ -50,13 +50,6 @@ function where(voice: { call: Call; tunnel?: { url: string } }) {
   return lines.join(" ");
 }
 
-/** One line for a tool step on the page. */
-function step(name: string, args: Record<string, unknown> | undefined) {
-  const detail = args?.command ?? args?.path ?? args?.title ?? args?.url ?? "";
-  const line = `${name}${typeof detail === "string" && detail ? ` ${detail.split("\n")[0]}` : ""}`;
-  return line.length > 120 ? `${line.slice(0, 119)}…` : line;
-}
-
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 /** Opens a URL in the desktop browser, when there is a desktop. */
@@ -497,10 +490,8 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     const text = written.join("\n\n");
     if (text && live && !isEcho(text, live.call.lately())) live.call.note("text", text);
   });
-  pi.on("tool_execution_start", (event) => {
+  pi.on("tool_execution_start", () => {
     tools++;
-    if (event.toolName !== "say" && event.toolName !== "show")
-      live?.call.note("tool", step(event.toolName, event.args));
   });
   pi.on("tool_execution_end", () => {
     tools = Math.max(0, tools - 1);
