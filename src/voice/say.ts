@@ -105,7 +105,7 @@ export function registerSay(pi: ExtensionAPI, speaker: Speaker, onSay: () => voi
       ),
       text: Type.String({
         description:
-          "Two or three plain sentences, as you'd say them: no Markdown, backticks, code, symbols, links, or file or function names. Say what a thing does instead.",
+          "Two or three plain sentences, as you'd say them: no Markdown, backticks, code, symbols, links, or file or function names. Say what a thing does instead. A mood direction in square brackets at the start of a sentence is acted, not read.",
       }),
     }),
     outputSchema: Type.Object({ heardOn: Type.Array(Type.String()) }),

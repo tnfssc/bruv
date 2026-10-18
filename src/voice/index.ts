@@ -7,8 +7,9 @@ import { Text } from "@earendil-works/pi-tui";
 import { readConfig, saveConfig } from "../config";
 import { setStatus } from "../status";
 import { Call, type Engine } from "./call";
+import { chooseCloud } from "./choose";
 import { downloadCloudflared, findCloudflared, runTunnel } from "./cloudflared";
-import { startEngine } from "./engine";
+import { type Cloud, startEngine } from "./engine";
 import { readKey, saveKey } from "./keys";
 import { audioMissing, startLocal } from "./local";
 import { download, type ModelPaths, missing, modelPaths } from "./models";
@@ -22,7 +23,7 @@ import { cleanHost, permissions, prepare } from "./tunnel";
 const guidance = readFileSync(new URL("../../prompts/voice.md", import.meta.url), "utf8").trim();
 
 type Options = {
-  engine?: (paths: ModelPaths, threads?: number) => Engine;
+  engine?: (paths: ModelPaths, threads?: number, cloud?: Cloud) => Engine;
   /** This machine's microphone and speaker, or why they can't be used. */
   local?: (call: Call) => { stop(): void } | string;
   open?: (url: string) => void;
@@ -150,7 +151,10 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       }
       await download(models, (text) => setStatus(context, "voice", text));
     }
-    const engine = (options.engine ?? startEngine)(modelPaths(models, config.voice), config.threads);
+    const cloud = await chooseCloud(context, config.speech, dir());
+    const engine = (options.engine ?? startEngine)(modelPaths(models, config.voice), config.threads, cloud);
+    // Pages show these themselves; the terminal has only this.
+    engine.onEvent((event) => event.type === "error" && context.ui.notify(event.message, "error"));
     const call = new Call(engine, {
       tell: (text, interrupted, cut) => void tell(text, interrupted, cut),
     });

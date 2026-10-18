@@ -1,4 +1,4 @@
-import { fresh, isEcho, Sentences, withoutEcho } from "./text";
+import { fresh, isEcho, Sentences, withoutDirections, withoutEcho } from "./text";
 
 /** What the speech engine reports. `speech` means someone started talking. */
 export type EngineEvent =
@@ -267,13 +267,16 @@ export class Call {
     await this.engine.close();
   }
 
+  /** The engine gets the sentence with its mood directions to act; everything else, the words heard. */
   private say(sentence: string) {
+    const words = withoutDirections(sentence);
+    if (!words) return;
     const part = ++this.part;
-    this.saying.set(part, sentence);
-    this.spoken.set(part, sentence);
+    this.saying.set(part, words);
+    this.spoken.set(part, words);
     this.spoken.delete(part - 100);
     this.engine.speak(sentence, part);
-    this.broadcast(this.remember({ type: "assistant", text: sentence, part }));
+    this.broadcast(this.remember({ type: "assistant", text: words, part }));
   }
 
   private remember(event: Entry) {

@@ -58,6 +58,13 @@ export class Sentences {
   }
 }
 
+/** Mood directions such as "[a little sheepish]", which the cloud voice acts and nothing else reads out. */
+export const withoutDirections = (text: string) =>
+  text
+    .replace(/\[[^\]]*\]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
 /** Turns one line of Markdown into words worth saying. */
 export function speakable(text: string) {
   return text
@@ -116,13 +123,41 @@ const spoken: Record<string, string> = {
   lemme: "let me",
 };
 
+const ones =
+  "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(
+    " ",
+  );
+const tens = "  twenty thirty forty fifty sixty seventy eighty ninety".split(" ");
+
+/** A whole number as words: 1995 is "one thousand nine hundred ninety five". */
+function cardinal(n: number): string {
+  if (n < 20) return ones[n];
+  if (n < 100) return `${tens[Math.floor(n / 10)]}${n % 10 ? ` ${ones[n % 10]}` : ""}`;
+  if (n < 1000) return `${ones[Math.floor(n / 100)]} hundred${n % 100 ? ` ${cardinal(n % 100)}` : ""}`;
+  if (n < 1_000_000) return `${cardinal(Math.floor(n / 1000))} thousand${n % 1000 ? ` ${cardinal(n % 1000)}` : ""}`;
+  return String(n);
+}
+
+/**
+ * Digits as they may be said. The cloud voice reads "1995" as "nineteen ninety five", which the recogniser
+ * writes in words, so echo of it looked like the user's own words; years get both readings.
+ */
+function said(digits: string) {
+  const n = Number(digits);
+  const year = n >= 1100 && n < 2100 && n % 100 ? ` ${cardinal(Math.floor(n / 100))} ${cardinal(n % 100)}` : "";
+  return `${cardinal(n)}${year}`;
+}
+
 const words = (text: string) =>
   (
     text
       .toLowerCase()
       .replace(/'/g, "")
+      // "zoom.mp4" is said "zoom dot mp four".
+      .replace(/([a-z0-9])\.(?=[a-z0-9])/g, "$1 dot ")
+      .replace(/([a-z])(\d)|(\d)([a-z])/g, "$1$3 $2$4")
       .match(/[a-z0-9]+/g) ?? []
-  ).flatMap((word) => (spoken[word] ?? word).split(" "));
+  ).flatMap((word) => (spoken[word] ?? (/^\d{1,6}$/.test(word) ? said(word) : word)).split(" "));
 
 /**
  * Whether what was heard is most likely the speaker's own voice coming back through the microphone. Echo is

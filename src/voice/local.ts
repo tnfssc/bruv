@@ -25,6 +25,18 @@ const players: ((rate: number) => Tool)[] = [
   }),
 ];
 
+/** Audio at another rate, by straight lines between samples: plenty for a voice. */
+export function resample(pcm: Int16Array, from: number, to: number) {
+  const out = new Int16Array(Math.round((pcm.length * to) / from));
+  for (let i = 0; i < out.length; i++) {
+    const at = (i * from) / to;
+    const left = Math.floor(at);
+    const right = Math.min(left + 1, pcm.length - 1);
+    out[i] = Math.round(pcm[left] + (pcm[right] - pcm[left]) * (at - left));
+  }
+  return out;
+}
+
 const installed = (command: string) => spawnSync("which", [command], { stdio: "ignore" }).status === 0;
 const missing = "Voice here needs pw-record and pw-play, parec and pacat, arecord and aplay, or sox.";
 
@@ -87,11 +99,16 @@ export function startLocal(call: Call): { stop(): void } | string {
         for (const chunk of waiting) device.play(chunk.pcm, chunk.rate, chunk.part);
       }
     },
-    play: (pcm, rate, part) => {
+    play: (input, inputRate, part) => {
       if (held) {
-        held.push({ pcm, rate, part });
+        held.push({ pcm: input, rate: inputRate, part });
         return;
       }
+      // Restarting the player for another rate would cut off what it is still playing, as when Kokoro
+      // takes over from the cloud voice mid-reply, so then the audio is converted instead.
+      const busy = speaker && queue.some((chunk) => chunk.ends > Date.now());
+      const pcm = busy && speakerRate !== inputRate ? resample(input, inputRate, speakerRate) : input;
+      const rate = busy ? speakerRate : inputRate;
       if (!speaker || speakerRate !== rate) {
         silence();
         const tool = player(rate);

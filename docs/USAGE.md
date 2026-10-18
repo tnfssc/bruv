@@ -153,7 +153,9 @@ and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and pr
 
 ## Voice
 
-Speech is recognised and spoken on your machine, on the CPU, by open models: Silero VAD hears when you talk, NVIDIA's streaming Nemotron (English) writes down what you say, and Kokoro speaks. The first `/voice` asks before downloading them (about 800 MB, to `~/.pi/agent/bruv/voice/models`). Only the session's own model, the one you already use, runs elsewhere, so voice costs nothing on top of it. Thinking makes the first words slower; `low` suits talking.
+Your words are recognised on your machine, on the CPU, by open models: Silero VAD hears when you talk, and NVIDIA's streaming Nemotron (English) writes down what you say. The first `/voice` asks before downloading them (about 800 MB, to `~/.pi/agent/bruv/voice/models`). Thinking makes the first words slower; `low` suits talking.
+
+When Pi has an OpenRouter key (`OPENROUTER_API_KEY` or `/login`), the agent speaks with Fish Audio's Drama 3 through OpenRouter. It sounds like a person: the agent thinks aloud ("hmm", "um", "oh nice") and can set a mood for a sentence ("[a little sheepish]"), which is acted, not read. Each sentence comes back in about a second and plays as it arrives. It costs about 10¢ an hour of talk at Drama 3's launch price, and what the agent says aloud is sent to OpenRouter; the first `/voice` says so once. Without a key, or when a request fails, Kokoro speaks on your machine for free. Set `"speech": "kokoro"` to always use it, or another OpenRouter speech model's ID to use that one.
 
 Voice is a way to talk with the agent, not a reading of its transcript. What you say reaches it as a voice message, and it answers with a `say` tool: you hear only what it chooses to tell you, while its written replies show on screen (on the page too, in a quieter style). Long things go on screen rather than in your ear: when it starts to say more than about 70 words, it stops at a sentence end and is asked to show the rest, unless it has a reason to read it all out. Speech starts while it is still writing the call.
 
@@ -184,10 +186,10 @@ The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout
 Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's address with the same `?t=` key.
 
 ```json
-{ "voice": { "port": 7807, "host": "127.0.0.1", "voice": "af_heart", "threads": 4, "tunnel": "voice.example.com" } }
+{ "voice": { "port": 7807, "host": "127.0.0.1", "speech": "fish-audio/drama-3", "voice": "af_heart", "threads": 4, "tunnel": "voice.example.com" } }
 ```
 
-`voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `threads` is how many CPU threads each model uses.
+`speech` is the OpenRouter speech model, or `kokoro`. `voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `threads` is how many CPU threads each model uses.
 
 ## Configuration
 

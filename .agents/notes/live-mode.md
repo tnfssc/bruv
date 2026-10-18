@@ -200,6 +200,32 @@ reached SSH or T3 Code.
 
 - Not tried with a real Cloudflare account: the API calls were checked against Cloudflare's docs and a fake
   API in the tests only. A bad tunnel token makes cloudflared give up after about 20 s.
+- **Cloud speech: Fish Audio Drama 3 through OpenRouter** (2026-10-18). The user wanted the "um"s and
+  "hmm"s that make it feel like a person, and best value above that bar, after Higgs was too slow
+  locally. OpenRouter's `/api/v1/audio/speech` has about 35 speech models; Drama 3 is $2 per million
+  characters at its launch price (80% off), about 10¢ an hour of talk, ranked 4th for realism there.
+  Measured: first bytes in 0.45–0.9 s, a whole sentence in about 1 s, PCM at 44.1 kHz; bracketed
+  directions ("[a little sheepish]") are acted and not read; "uh" is spoken (Scribe and Parakeet heard
+  it). The default voice is used (no `voice` sent).
+  - The key is Pi's OpenRouter key, through `modelRegistry.getApiKeyForProvider("openrouter")`; bruv
+    keeps no key of its own. Without one, Kokoro speaks, and a notice says once what a key would give.
+  - Each sentence is sent as soon as it is whole and played in order (`cloud.ts`). A failed one and
+    everything after it go to Kokoro once the sentences before it have played, so voices never overlap;
+    Kokoro keeps the rest of that reply. 400–404 stop the cloud for the session; 5xx and 429 retry once.
+  - Directions travel to the engine only: the page, echo checks and Kokoro get the words without them.
+  - The prompt asks the agent to think aloud where a person would, not in every sentence, and to give
+    a mood only when it changes. Instructions give the reason, not a list of fillers to use.
+  - Its loudness swings 10 dB between sentences, so each is brought to Kokoro's level (-23 dBFS) from its
+    first 0.4 s of speech, held for the sentence. Louder echo and digits read as words ("1995" heard as
+    "nineteen ninety five") made the agent's own voice count as the user cutting in; echo checks now
+    compare numbers in both readings and "zoom.mp4" as "zoom dot mp four".
+  - Engine errors are shown in the terminal too; before, only pages showed them, so a failed cloud voice
+    went unexplained.
+  - In the first real-agent test (cat-jam-free, codemode only) fillers were rare ("oh nice", "yeah") and
+    moods came only when asked, so the prompt says why: the user chose a voice that can act.
+  - Speech recognition stays local. Cloud transcription (Scribe v2, GPT-4o mini transcribe, Parakeet,
+    Nova-3, Whisper turbo) took 1–2.6 s after each turn and none streams, which barge-in needs;
+    Nemotron here streams for free.
 - Bigger local speech, tried 2026-10-18 and dropped. A listening test of Kokoro, Qwen3-TTS 1.7B,
   Chatterbox (and Turbo), VibeVoice Realtime 0.5B, Orpheus 3B and Higgs TTS 3 4B had the user pick
   Higgs (voice "belinda"). Run from a Python helper on this Ryzen 7940HS CPU it made 1.9 frames a second

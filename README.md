@@ -5,8 +5,9 @@ https://github.com/user-attachments/assets/15b3eb18-e5eb-438e-9a76-d6f118d39bf3
 **Talk to your coding agent.** Type `/voice` and talk. bruv answers out loud, puts what's better seen on
 your screen, and stops the moment you talk over it. Use it from your terminal, or from your phone anywhere.
 
-Speech is recognised and spoken on your machine by open models, so it stays private and costs nothing on top
-of the model you already use. bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, with your
+Your words are recognised on your machine. With an OpenRouter key, bruv speaks with Fish Audio Drama 3, which
+sounds like a person thinking aloud, for about 10¢ an hour of talk; without one, it speaks on your machine for
+free. bruv runs inside [Pi](https://pi.dev), an alternative to the Codex CLI, with your
 ChatGPT plan or any model Pi supports.
 
 - **Talk, don't type.** `/voice` turns it on in your terminal; replies are spoken as they stream. Talk over a reply to cut in, or keep working while it talks.

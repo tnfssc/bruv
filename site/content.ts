@@ -10,7 +10,7 @@ export const landing = {
   title: "bruv",
   titleTail: "Talk to your coding agent.",
   intro:
-    "Talk from your terminal or your phone. bruv answers out loud, shows you pages, pictures and video, and stops the moment you talk over it. Speech runs on your machine, so it costs nothing extra. Built on Pi, for your ChatGPT plan or any model Pi supports.",
+    "Talk from your terminal or your phone. bruv answers out loud, shows you pages, pictures and video, and stops the moment you talk over it. It hears you on your machine, and speaks like a person through OpenRouter, or on your machine for free. Built on Pi, for your ChatGPT plan or any model Pi supports.",
   video: { src: "./assets/voice.mp4", poster: "./assets/voice-poster.jpg", label: "Watch it" },
   features: [
     {
