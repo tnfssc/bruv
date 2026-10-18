@@ -27,6 +27,8 @@ export interface Engine {
    * words; undefined when none fits or is ready.
    */
   filler?(part: number, heard: string): string | undefined;
+  /** How fast to speak, from the next sentence: 1 is the normal pace. */
+  setSpeed?(speed: number): void;
   onEvent(listener: (event: EngineEvent) => void): void;
   close(): Promise<void>;
 }

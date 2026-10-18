@@ -15,7 +15,7 @@ export const landing = {
   features: [
     {
       title: "Talk, don't type",
-      text: "Type /voice and talk. Replies are spoken as they stream, and the agent puts what's better seen on screen: a chart, a page, a picture. Talk over a reply to cut in. /voice web opens the same session on your phone.",
+      text: "Type /voice and talk. Replies are spoken as they stream, and the agent puts what's better seen on screen: a chart, a page, a picture. Talk over a reply to cut in. /voice web puts the same session on your phone.",
     },
     {
       title: "It doesn't stop halfway",

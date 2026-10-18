@@ -12,12 +12,12 @@ export type Cloud = { model: string; key: () => Promise<string | undefined>; fil
  * Runs the speech models in a worker thread. With `cloud`, a model on OpenRouter speaks, and Kokoro only
  * when it fails: for the rest of that reply, or for good when it can't work (no key or no credit).
  */
-export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud): Engine {
+export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud, speed = 1): Engine {
   const listeners: ((event: EngineEvent) => void)[] = [];
   const emit = (event: EngineEvent) => {
     for (const listener of listeners) listener(event);
   };
-  const worker = new Worker(new URL("./worker.mjs", import.meta.url), { workerData: { ...paths, threads } });
+  const worker = new Worker(new URL("./worker.mjs", import.meta.url), { workerData: { ...paths, threads, speed } });
   // Speech is made about three times faster than it plays, so some is always on its way here. Each hush
   // starts a new generation, and audio from an older one is dropped.
   let generation = 0;
@@ -40,6 +40,7 @@ export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud): Engi
     ? startCloudSpeech({
         model: cloud.model,
         key: cloud.key,
+        speed: () => speed,
         audio: (pcm, rate, part) => emit({ type: "audio", pcm, rate, part }),
         failed: (rest, message, stop) => {
           fallen = true;
@@ -49,8 +50,16 @@ export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud): Engi
         },
       })
     : undefined;
-  const fillers = cloud ? new Fillers(cloud.fillers, cloud.model, cloud.key) : undefined;
+  // Fillers are kept per speed, so they match the voice around them.
+  const makeFillers = () => (cloud ? new Fillers(cloud.fillers, cloud.model, cloud.key, undefined, speed) : undefined);
+  let fillers = makeFillers();
   return {
+    setSpeed: (value) => {
+      if (value === speed) return;
+      speed = value;
+      worker.postMessage({ type: "speed", speed });
+      fillers = makeFillers();
+    },
     filler: (part, heard) => {
       if (fallen || stopped) return undefined;
       const sound = fillers?.pick(heard);

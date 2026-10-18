@@ -61,6 +61,7 @@ export class Fillers {
     private model: string,
     private key: () => Promise<string | undefined>,
     private fetch = globalThis.fetch,
+    private speed = 1,
   ) {
     this.ready = this.load().catch(() => {});
   }
@@ -72,7 +73,7 @@ export class Fillers {
     // Learning takes a few hundred ms, so it waits for the command that started voice to finish.
     await new Promise((resolve) => setImmediate(resolve));
     this.kinds = new Kinds(examples());
-    const id = voiceId(this.model);
+    const id = voiceId(this.model, this.speed);
     const lines = (Object.entries(fillerLines) as [Kind, string[]][]).flatMap(([kind, texts]) =>
       texts.map((text) => ({
         kind,
@@ -93,7 +94,7 @@ export class Fillers {
       }
       const key = await this.key();
       if (!key) return;
-      const made = await speakOnce(this.model, key, text, this.fetch);
+      const made = await speakOnce(this.model, key, text, this.speed, this.fetch);
       const level = new Level(made.rate);
       const levelled = [...level.push(trim(made.pcm, made.rate)), ...level.end()];
       const pcm = new Int16Array(levelled.reduce((sum, part) => sum + part.length, 0));

@@ -1,4 +1,3 @@
-import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -23,10 +22,9 @@ import { cleanHost, permissions, prepare } from "./tunnel";
 const guidance = readFileSync(new URL("../../prompts/voice.md", import.meta.url), "utf8").trim();
 
 type Options = {
-  engine?: (paths: ModelPaths, threads?: number, cloud?: Cloud) => Engine;
+  engine?: (paths: ModelPaths, threads?: number, cloud?: Cloud, speed?: number) => Engine;
   /** This machine's microphone and speaker, or why they can't be used. */
   local?: (call: Call) => { stop(): void } | string;
-  open?: (url: string) => void;
   agentDir?: string;
   /** For Cloudflare's API. */
   fetch?: typeof fetch;
@@ -56,19 +54,14 @@ const choices = [
   { value: "web", description: "Talk from the browser, alongside the terminal" },
   { value: "tunnel", description: "Serve the page on your own domain, for your phone" },
   { value: "tunnel off", description: "Stop serving the page on your domain" },
+  { value: "speed", description: "How fast it talks: /voice speed 1.2 is a fifth faster" },
   { value: "off", description: "Turn voice off everywhere" },
 ];
 
-const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
+/** The slowest and fastest /voice speed takes, around the normal pace of 1; Drama 3 goes no faster. */
+const speeds = { slowest: 0.5, fastest: 1.6 };
 
-/** Opens a URL in the desktop browser, when there is a desktop. */
-function openBrowser(url: string) {
-  if (process.platform !== "darwin" && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY) return;
-  const command = process.platform === "darwin" ? "open" : "xdg-open";
-  spawn(command, [url], { stdio: "ignore", detached: true })
-    .on("error", () => {})
-    .unref();
-}
+const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 /** The page's key. It stays the same across runs, so a bookmarked or tunnelled link keeps working. */
 function token(dir: string) {
@@ -89,6 +82,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   let live:
     | {
         call: Call;
+        engine: Engine;
         /** The page server, started by /voice web or /voice tunnel. */
         served?: Served;
         local?: { stop(): void };
@@ -160,13 +154,18 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       await download(models, (text) => setStatus(context, "voice", text));
     }
     const cloud = await chooseCloud(context, config.speech, dir());
-    const engine = (options.engine ?? startEngine)(modelPaths(models, config.voice), config.threads, cloud);
+    const engine = (options.engine ?? startEngine)(
+      modelPaths(models, config.voice),
+      config.threads,
+      cloud,
+      config.speed,
+    );
     // Pages show these themselves; the terminal has only this.
     engine.onEvent((event) => event.type === "error" && context.ui.notify(event.message, "error"));
     const call = new Call(engine, {
       tell: (text, interrupted, cut) => void tell(text, interrupted, cut),
     });
-    live = { call };
+    live = { call, engine };
     voiceTools(pi, true);
     status(context);
     return live;
@@ -184,12 +183,11 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   };
 
   /**
-   * Starts the page server, and the tunnel if one was set up before (unless `savedTunnel` is false). `open`
-   * gets the address to open: the tunnel's once it is up, since that is where an installed app lives and
-   * the local page gave no sign of the tunnel; the local one when there is none or it fails.
+   * Starts the page server, and the tunnel if one was set up before (unless `savedTunnel` is false). Nothing
+   * opens a browser: the user wanted a link to click, which is the tunnel's once it is up, since that is
+   * where an installed app lives.
    */
-  const web = async (context: ExtensionContext, savedTunnel = true, open?: (url: string) => void) => {
-    if (live?.served) open?.(live.tunnel?.url ?? live.served.url);
+  const web = async (context: ExtensionContext, savedTunnel = true) => {
     if (!live || live.served) return live?.served;
     const current = live;
     const config = readConfig(options.agentDir).voice ?? {};
@@ -210,17 +208,9 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
     // The tunnel can take a while; the page works locally meanwhile.
     if (savedTunnel && host && key)
       void openTunnel(context, host, key).then(
-        () => {
-          if (!live?.tunnel) return;
-          context.ui.notify(`Voice from anywhere: ${live.tunnel.url}`, "info");
-          open?.(live.tunnel.url);
-        },
-        (error) => {
-          context.ui.notify(`Voice tunnel failed: ${message(error)}`, "error");
-          if (live?.served === served) open?.(served.url);
-        },
+        () => live?.tunnel && context.ui.notify(`Voice from anywhere: ${live.tunnel.url}`, "info"),
+        (error) => context.ui.notify(`Voice tunnel failed: ${message(error)}`, "error"),
       );
-    else open?.(served.url);
     return served;
   };
 
@@ -311,6 +301,29 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       context.ui.notify("Voice is off.", "info");
       return;
     }
+    const pace = /^speed\b\s*(.*)$/.exec(word);
+    if (pace) {
+      const current = readConfig(options.agentDir).voice?.speed ?? 1;
+      if (!pace[1]) {
+        context.ui.notify(
+          `Voice talks at ${current}× its normal pace. /voice speed 1.2 makes it a fifth faster.`,
+          "info",
+        );
+        return;
+      }
+      const speed = Number(pace[1].replace(/[x×]$/i, ""));
+      if (!(speed >= speeds.slowest && speed <= speeds.fastest)) {
+        context.ui.notify(
+          `Give a speed from ${speeds.slowest} to ${speeds.fastest}, such as /voice speed 1.2.`,
+          "error",
+        );
+        return;
+      }
+      saveConfig({ voice: { ...readConfig(options.agentDir).voice, speed } }, options.agentDir);
+      live?.engine.setSpeed?.(speed);
+      context.ui.notify(`Voice talks at ${speed}× its normal pace${live ? ", from the next sentence" : ""}.`, "info");
+      return;
+    }
     if (word === "tunnel off") {
       live?.tunnel?.stop();
       if (live) live.tunnel = undefined;
@@ -350,20 +363,23 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
       return;
     }
     if (word !== "web" && word !== "tunnel") {
-      context.ui.notify("Use /voice, /voice web, /voice tunnel, /voice tunnel off or /voice off.", "error");
+      context.ui.notify(
+        "Use /voice, /voice web, /voice tunnel, /voice tunnel off, /voice speed or /voice off.",
+        "error",
+      );
       return;
     }
     if (word === "tunnel") {
       await setUpTunnel(context);
       return;
     }
-    const served = (await ensure(context)) && (await web(context, true, options.open ?? openBrowser));
+    const served = (await ensure(context)) && (await web(context));
     if (!served) return;
     const saved = readConfig(options.agentDir).voice?.tunnel;
     const remote = live?.tunnel
       ? `\nFrom anywhere: ${live.tunnel.url}`
       : saved
-        ? `\nConnecting the tunnel to ${saved}; the page opens there once it's up.`
+        ? `\nConnecting the tunnel to ${saved}; its link comes here once it's up.`
         : "\nTo talk from your phone, run /voice tunnel.";
     // An installed app keeps one address; a page on another port is a different app.
     const wanted = readConfig(options.agentDir).voice?.port ?? 7807;
@@ -451,7 +467,7 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   pi.registerFlag("voice", { description: "Start voice with this machine's microphone and speaker", type: "boolean" });
   pi.registerCommand("voice", {
     description:
-      "Talk to bruv: /voice turns it on or off here; /voice web opens it in the browser; /voice tunnel serves it on your domain",
+      "Talk to bruv: /voice turns it on or off here; /voice web gives a link to talk from the browser; /voice tunnel serves it on your domain; /voice speed sets how fast it talks",
     getArgumentCompletions: (prefix) =>
       choices
         .filter(({ value }) => value.startsWith(prefix.trimStart()))

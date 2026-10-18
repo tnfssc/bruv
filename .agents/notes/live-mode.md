@@ -250,6 +250,13 @@ reached SSH or T3 Code.
     "the memory leak is back"), and "oh nice" to bad news is the worst miss. Under 60% sure plays
     nothing; that leaves about 8 wrong sounds in 490, mostly harmless. The OpenRouter small model
     (mimo-v2.6-flash) picked well but took 0.5–3.5 s, too late for a 0.8 s filler.
+  - Speed is the user's to set (`/voice speed`, `voice.speed`), relative to bruv's normal pace: 1 is
+    Drama 3 at 1.2 (its own pace felt slow) and Kokoro at 1. They found 1.2 still slow. Drama 3 refuses
+    speeds outside 0.5–2 (HTTP 400), so the command takes 0.5–1.6. Fillers are kept per speed (it is in
+    `voiceId`), so a change makes new ones in the background.
+  - `/voice web` shows the link instead of opening a browser, at the user's request. With a tunnel saved
+    it says the tunnel is connecting, then gives the tunnel's link: the local page gave no sign of the
+    tunnel, and the user's installed app lives at the tunnel's address.
   - Speech recognition stays local. Cloud transcription (Scribe v2, GPT-4o mini transcribe, Parakeet,
     Nova-3, Whisper turbo) took 1–2.6 s after each turn and none streams, which barge-in needs;
     Nemotron here streams for free.

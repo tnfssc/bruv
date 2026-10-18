@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { Level, startCloudSpeech } from "../src/voice/cloud";
+import { Level, speechRequest, startCloudSpeech, voiceId } from "../src/voice/cloud";
 import { resample } from "../src/voice/local";
 import { withoutDirections } from "../src/voice/text";
 
@@ -150,4 +150,11 @@ test("loud and quiet sentences come out at the same level", () => {
   const a = [...loud.push(tone(12_000)), ...loud.end()];
   const b = [...quiet.push(tone(2_000)), ...quiet.end()];
   expect(Math.abs(rms(a) - rms(b))).toBeLessThan(rms(a) * 0.05);
+});
+
+test("speed scales the cloud voice's pace and gives its kept sounds another name", () => {
+  const pace = (speed?: number) => (speechRequest("fish-audio/drama-3", "Hi.", speed) as { speed?: number }).speed;
+  expect(pace(1.5)).toBeGreaterThan(pace() as number);
+  expect(pace(0.8)).toBeLessThan(pace() as number);
+  expect(voiceId("fish-audio/drama-3", 1.2)).not.toBe(voiceId("fish-audio/drama-3"));
 });

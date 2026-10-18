@@ -5,6 +5,7 @@ import { parentPort, workerData } from "node:worker_threads";
 
 const sherpa = createRequire(import.meta.url)("sherpa-onnx-node");
 const { vad: vadModel, asr, tts: ttsDir, speaker, threads } = workerData;
+let speed = workerData.speed ?? 1;
 const rate = 16000;
 const window = 512;
 // Audio kept from before speech is detected; detection lags the first word by about 0.35 s.
@@ -220,7 +221,7 @@ async function next() {
   while (queue.length) {
     const job = queue.shift();
     if (job.generation !== generation) continue;
-    const config = new sherpa.GenerationConfig({ sid: speaker, speed: 1 });
+    const config = new sherpa.GenerationConfig({ sid: speaker, speed });
     try {
       await tts.generateAsync({
         text: job.text,
@@ -244,6 +245,7 @@ parentPort.on("message", (message) => {
   if (message.type === "hear") hear(message.pcm);
   else if (message.type === "speak") speak(message.text, message.part);
   else if (message.type === "talk") talk(message.on, message.keep);
+  else if (message.type === "speed") speed = message.speed;
   else if (message.type === "hush" || message.type === "close") {
     generation++;
     queue.length = 0;

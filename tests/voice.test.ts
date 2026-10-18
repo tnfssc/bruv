@@ -482,30 +482,32 @@ test("only say is spoken, and an agent that answers in writing is reminded to sa
 
 test("/voice talks in the terminal, /voice web adds the page, and /voice off stops", async () => {
   const engine = new FakeEngine();
-  let opened = "";
+  const notes: string[] = [];
+  /** The page's link, from what bruv said. */
+  const opened = () => notes.join("\n").match(/http:\/\/\S+\?t=\S+/)?.[0] ?? "";
   let here = 0;
   const agentDir = join(process.env.PI_CODING_AGENT_DIR as string, `voice-${Date.now()}`);
-  const app = await sdk([
-    (pi) =>
-      registerVoice(pi, {
-        engine: () => engine,
-        open: (url) => {
-          opened = url;
-        },
-        local: (call) => {
-          here++;
-          const speaker = { send: () => {}, play: () => {} };
-          call.attach(speaker);
-          return {
-            stop: () => {
-              here--;
-              call.detach(speaker);
-            },
-          };
-        },
-        agentDir,
-      }),
-  ]);
+  const app = await sdk(
+    [
+      (pi) =>
+        registerVoice(pi, {
+          engine: () => engine,
+          local: (call) => {
+            here++;
+            const speaker = { send: () => {}, play: () => {} };
+            call.attach(speaker);
+            return {
+              stop: () => {
+                here--;
+                call.detach(speaker);
+              },
+            };
+          },
+          agentDir,
+        }),
+    ],
+    { notify: (text) => notes.push(text) },
+  );
   try {
     saveConfig({ voice: { port: 0 } }, agentDir);
     const models = join(agentDir, "bruv", "voice", "models");
@@ -522,7 +524,7 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice off sto
     await app.session.prompt("/voice");
     // The terminal's microphone and speaker, and no page server until it is asked for.
     expect(here).toBe(1);
-    expect(opened).toBe("");
+    expect(opened()).toBe("");
     // The model can show things only while voice is on.
     expect(app.session.getActiveToolNames()).toContain("show");
     engine.emit({ type: "ready" });
@@ -532,10 +534,10 @@ test("/voice talks in the terminal, /voice web adds the page, and /voice off sto
     expect(sections[0]?.voice).toBeDefined();
     expect(app.session.messages.some((message) => message.role === "user")).toBe(true);
     await app.session.prompt("/voice web");
-    expect(opened).toContain("?t=");
+    expect(opened()).toContain("?t=");
     expect(here).toBe(1);
     // A page opens and takes the microphone.
-    const url = new URL(opened);
+    const url = new URL(opened());
     const page = new WebSocket(`ws://${url.host}/socket${url.search}`);
     await new Promise((resolve) => page.on("open", resolve));
     page.send(JSON.stringify({ type: "mic" }));

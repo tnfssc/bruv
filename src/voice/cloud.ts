@@ -10,39 +10,40 @@ export const cloudModel = "fish-audio/drama-3";
 
 /**
  * Fish Audio models pick a new voice for every request unless given one to copy, so each sentence came in a
- * different voice. This clip is the voice the user picked, sent with every request. It is read at 1.2 times
- * speed: Drama 3's own pace felt slow to listen to.
+ * different voice. This clip is the voice the user picked, sent with every request. Its own pace felt slow
+ * to listen to, so speed 1 (bruv's normal pace) is 1.2 times it.
  */
 const voice = `data:audio/mpeg;base64,${readFileSync(new URL("./voice.mp3", import.meta.url)).toString("base64")}`;
 const voiceText = "Hmm, okay. So the test fails because, um, the date is off by one.";
 
-/** What to send OpenRouter to say `text` with `model`. */
-export function speechRequest(model: string, text: string) {
+/** What to send OpenRouter to say `text` with `model`, `speed` times bruv's normal pace. */
+export function speechRequest(model: string, text: string, speed = 1) {
   const fish = model.startsWith("fish-audio/");
   return {
     model,
     input: text,
     response_format: "pcm",
     ...(fish && {
-      speed: 1.2,
+      // Drama 3 refuses speeds outside 0.5 to 2.
+      speed: Math.min(2, Math.max(0.5, Math.round(120 * speed) / 100)),
       input_references: [{ type: "input_audio", input_audio: { data: voice, format: "mp3" }, text: voiceText }],
     }),
   };
 }
 
 /** The voice's settings, so audio made once can be kept and known to be in the same voice. */
-export const voiceId = (model: string) =>
+export const voiceId = (model: string, speed = 1) =>
   createHash("sha256")
-    .update(JSON.stringify(speechRequest(model, "")))
+    .update(JSON.stringify(speechRequest(model, "", speed)))
     .digest("hex")
     .slice(0, 12);
 
 /** One whole sentence, with its sample rate; for short sounds made ahead and kept. */
-export async function speakOnce(model: string, key: string, text: string, fetch = globalThis.fetch) {
+export async function speakOnce(model: string, key: string, text: string, speed = 1, fetch = globalThis.fetch) {
   const response = await fetch("https://openrouter.ai/api/v1/audio/speech", {
     method: "POST",
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-    body: JSON.stringify(speechRequest(model, text)),
+    body: JSON.stringify(speechRequest(model, text, speed)),
   });
   if (!response.ok) throw new Error(`OpenRouter speech failed (${response.status})`);
   const rate = Number(/rate=(\d+)/.exec(response.headers.get("content-type") ?? "")?.[1] ?? 44_100);
@@ -69,6 +70,8 @@ type Options = {
    */
   failed: (rest: { text: string; part: number }[], message: string, stop: boolean) => void;
   fetch?: typeof globalThis.fetch;
+  /** How fast to speak, read for each sentence so a change applies from the next one. */
+  speed?: () => number;
 };
 
 /**
@@ -175,7 +178,7 @@ export function startCloudSpeech(options: Options): CloudSpeech {
     return fetch("https://openrouter.ai/api/v1/audio/speech", {
       method: "POST",
       headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-      body: JSON.stringify(speechRequest(options.model, job.text)),
+      body: JSON.stringify(speechRequest(options.model, job.text, options.speed?.() ?? 1)),
       signal: job.stop.signal,
     });
   };

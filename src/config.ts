@@ -29,7 +29,7 @@ export interface Config {
   /**
    * /voice. Port default 7807 on 127.0.0.1. speech is the OpenRouter speech model that speaks
    * (fish-audio/drama-3 by default), or "kokoro" to speak on this machine only; voice is one of Kokoro's
-   * English voices (af_heart by default). tunnel is the public host name a Cloudflare tunnel serves the
+   * English voices (af_heart by default). speed is how fast it talks, times the normal pace (1). tunnel is the public host name a Cloudflare tunnel serves the
    * page on (/voice tunnel).
    */
   voice?: {
@@ -38,6 +38,7 @@ export interface Config {
     speech?: string;
     voice?: string;
     threads?: number;
+    speed?: number;
     tunnel?: string;
   };
 }

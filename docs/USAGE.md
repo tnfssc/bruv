@@ -18,7 +18,7 @@ Disable the old "bruv (not Claude)" provider.
 - `/import-codex` previews and imports Codex settings after you confirm.
 - `/usage` shows ChatGPT plan limits, credits, banked plan resets, and session tokens and cost.
 - `/fast` toggles the faster priority tier for OpenAI and Codex models; `/fast on` and `/fast off` also work. It uses more quota, including for agents. The default is saved across sessions; the cost confirmation is asked once.
-- `/voice` lets you talk to bruv with this machine's microphone and speaker (use headphones: nothing cancels the echo). The agent answers out loud, and talking over it stops it. `/voice` again turns it off. `/voice web` opens a page in your browser to talk from (with the page on, `/voice` adds or drops only the terminal's microphone and speaker), `/voice tunnel` puts that page on your own domain through Cloudflare, and `/voice off` stops everything. `pi --voice` starts with voice on. See [Voice](#voice).
+- `/voice` lets you talk to bruv with this machine's microphone and speaker (use headphones: nothing cancels the echo). The agent answers out loud, and talking over it stops it. `/voice` again turns it off. `/voice web` gives a link to a page to talk from in the browser (with the page on, `/voice` adds or drops only the terminal's microphone and speaker), `/voice tunnel` puts that page on your own domain through Cloudflare, `/voice speed 1.2` makes it talk a fifth faster, and `/voice off` stops everything. `pi --voice` starts with voice on. See [Voice](#voice).
 - `/notes` lists the project's notes in `.agents/notes/`. `/notes move` moves a bruv 0.x `wisdom/` folder there, keeping git history.
 - `/ps` lists this session's jobs and agents. Pick one to read its output or answer, see its worktree and session file, or stop it.
 - `/subagents` picks which of your signed-in models agents may use. The model chooses among them per task; your own model is always allowed and is the default.
@@ -161,7 +161,7 @@ Voice is a way to talk with the agent, not a reading of its transcript. What you
 
 The agent can only take in your words between steps. When you talk while it is thinking or writing, that stops and it answers you at once; while a command runs, your words wait for the command to end. It runs slow work, such as test suites and builds, in the background so it can hear you. Talking over it pauses the voice at once; a cough or its own echo resumes it, and real words stop it and tell the agent where you cut in.
 
-`/voice` listens all the time and a pause ends each turn. `/voice web` starts the page server in the same session and opens the page, which works alongside the terminal.
+`/voice` listens all the time and a pause ends each turn. `/voice web` starts the page server in the same session and shows the page's link, which works alongside the terminal.
 
 On the page, the talk button listens from the moment you touch it. **Hold** it while you talk, and the words go as soon as you let go, without waiting for silence; it suits noisy places. **Tap** it for hands-free: the microphone stays open and a pause ends each turn; tap again to turn it off. Words you start saying during the tap are kept. Pressing during a reply cuts in. On a computer, Space works the same way, and the ⋯ menu lists the keys. On a phone the controls take the bottom half of the screen; the arrow next to them makes them one small row, and the page remembers that.
 
@@ -181,15 +181,15 @@ Once the tunnel is up, a QR code for the page sits above the input until a page 
 
 The page installs as an app: on a phone, use Add to Home Screen; in Chrome or Edge, use the install button in the address bar. The app opens the page already signed in. It needs bruv running with `/voice web` or `/voice tunnel`; when bruv isn't running, the app says so and opens the page once it's back. Installing works on https or `localhost`, so a phone needs the tunnel.
 
-The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout` can remove it, and the host in `bruv.json`. After that, every `/voice web` starts the tunnel too and opens the page at your host once it is up, a few seconds later (the local page if the tunnel fails). `/voice tunnel off` stops using it. A tunnel token from the Cloudflare dashboard also works; then set the tunnel's public host name to `http://localhost:7807` there.
+The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout` can remove it, and the host in `bruv.json`. After that, every `/voice web` starts the tunnel too and shows its link once it is up, a few seconds later. `/voice tunnel off` stops using it. A tunnel token from the Cloudflare dashboard also works; then set the tunnel's public host name to `http://localhost:7807` there.
 
 Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's address with the same `?t=` key.
 
 ```json
-{ "voice": { "port": 7807, "host": "127.0.0.1", "speech": "fish-audio/drama-3", "voice": "af_heart", "threads": 4, "tunnel": "voice.example.com" } }
+{ "voice": { "port": 7807, "host": "127.0.0.1", "speech": "fish-audio/drama-3", "voice": "af_heart", "threads": 4, "speed": 1.2, "tunnel": "voice.example.com" } }
 ```
 
-`speech` is the OpenRouter speech model, or `kokoro`. `voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `threads` is how many CPU threads each model uses.
+`speech` is the OpenRouter speech model, or `kokoro`. `voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `speed` is how fast it talks, times its normal pace: from 0.5 to 1.6, set with `/voice speed`, and it applies from the next sentence. `threads` is how many CPU threads each model uses.
 
 ## Configuration
 
