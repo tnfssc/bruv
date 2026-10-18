@@ -141,3 +141,16 @@ test("declining the model download says voice stays off", async () => {
     await app.close();
   }
 });
+
+test("/voice suggests what can follow it", async () => {
+  const { app } = await voice();
+  try {
+    const complete = app.session.extensionRunner.getCommand("voice")?.getArgumentCompletions;
+    const values = async (prefix: string) => (await complete?.(prefix))?.map((item) => item.value);
+    expect(await values("")).toEqual(["web", "tunnel", "tunnel off", "off"]);
+    expect(await values("tu")).toEqual(["tunnel", "tunnel off"]);
+    expect(await values("tunnel o")).toEqual(["tunnel off"]);
+  } finally {
+    await app.close();
+  }
+});

@@ -51,6 +51,14 @@ function where(voice: { call: Call; tunnel?: { url: string } }) {
   return lines.join(" ");
 }
 
+/** What /voice takes after it; /voice alone turns voice in the terminal on or off. */
+const choices = [
+  { value: "web", description: "Talk from the browser, alongside the terminal" },
+  { value: "tunnel", description: "Serve the page on your own domain, for your phone" },
+  { value: "tunnel off", description: "Stop serving the page on your domain" },
+  { value: "off", description: "Turn voice off everywhere" },
+];
+
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 /** Opens a URL in the desktop browser, when there is a desktop. */
@@ -431,6 +439,10 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   pi.registerCommand("voice", {
     description:
       "Talk to bruv: /voice turns it on or off here; /voice web opens it in the browser; /voice tunnel serves it on your domain",
+    getArgumentCompletions: (prefix) =>
+      choices
+        .filter(({ value }) => value.startsWith(prefix.trimStart()))
+        .map(({ value, description }) => ({ value, label: value, description })),
     handler: command,
   });
 
