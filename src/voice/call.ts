@@ -22,8 +22,11 @@ export interface Engine {
   talk(on: boolean, keep?: boolean): void;
   /** Drops the speech being made and all speech waiting to be made. */
   hush(): void;
-  /** Plays a short sound such as "hmm" as sentence `part`, if it has one ready, and returns its words. */
-  filler?(part: number): string | undefined;
+  /**
+   * Plays a short sound such as "hmm" that fits what the user said, as sentence `part`, and returns its
+   * words; undefined when none fits or is ready.
+   */
+  filler?(part: number, heard: string): string | undefined;
   onEvent(listener: (event: EngineEvent) => void): void;
   close(): Promise<void>;
 }
@@ -290,10 +293,10 @@ export class Call {
   }
 
   /** The agent hasn't started its answer yet: a "hmm" says the user was heard. It isn't shown. */
-  private fill() {
+  private fill(heard: string) {
     this.waiting = undefined;
     if (this.state !== "thinking" || this.saying.size || !this.engine.filler) return;
-    const words = this.engine.filler(this.part + 1);
+    const words = this.engine.filler(this.part + 1, heard);
     if (!words) return;
     this.part++;
     this.saying.set(this.part, words);
@@ -368,7 +371,7 @@ export class Call {
         this.setState("thinking");
         this.brain.tell(text, interrupted, interrupted ? this.cut : undefined);
         clearTimeout(this.waiting);
-        this.waiting = setTimeout(() => this.fill(), this.fillerDelay);
+        this.waiting = setTimeout(() => this.fill(text), this.fillerDelay);
         return;
       }
       case "audio":

@@ -236,6 +236,12 @@ reached SSH or T3 Code.
     They are not shown on the page, count for echo, and the prompt tells the agent one may have played.
     A turn that is still going (speech starts again) or an answer that starts first cancels it.
     Measured: filler at 0.80 s, answer at 2.5–3.2 s with a 1.6 s model.
+  - One set for every turn didn't work: "let me think" answered "how are you doing", and the user said
+    no. Now `kindOf` reads the turn: a greeting or small talk ("yo fam what are you doing") gets "oh,
+    hey", a question "hmm", a request "okay", and anything else (stop, thanks, news) nothing, since a
+    wrong sound is worse than silence. A small model (mimo-v2.6-flash) picked the exact sound well, even
+    "oh no" for "my laptop just died", but took 0.5–3.5 s, too late for a 0.8 s filler. Plain rules
+    pick at once; leading "yo", "hey", "ok", "bro" and the like are skipped before reading the rest.
   - Speech recognition stays local. Cloud transcription (Scribe v2, GPT-4o mini transcribe, Parakeet,
     Nova-3, Whisper turbo) took 1–2.6 s after each turn and none streams, which barge-in needs;
     Nemotron here streams for free.

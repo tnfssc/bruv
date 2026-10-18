@@ -51,9 +51,9 @@ export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud): Engi
     : undefined;
   const fillers = cloud ? new Fillers(cloud.fillers, cloud.model, cloud.key) : undefined;
   return {
-    filler: (part) => {
+    filler: (part, heard) => {
       if (fallen || stopped) return undefined;
-      const sound = fillers?.pick();
+      const sound = fillers?.pick(heard);
       if (sound) emit({ type: "audio", pcm: sound.pcm, rate: sound.rate, part });
       return sound?.text;
     },
