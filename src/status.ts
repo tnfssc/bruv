@@ -1,6 +1,6 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-const order = ["usage", "fast", "goal", "voice"] as const;
+const order = ["usage", "fast", "goal", "voice", "web"] as const;
 type Part = (typeof order)[number];
 // Pi creates fresh event contexts but reuses the UI object.
 const statuses = new WeakMap<ExtensionContext["ui"], Partial<Record<Part, string>>>();

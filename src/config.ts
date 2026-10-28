@@ -41,6 +41,18 @@ export interface Config {
     speed?: number;
     tunnel?: string;
   };
+  /**
+   * The web version (`pi --web`). Port default 7808 on 127.0.0.1. lookMinutes is how often the assistant takes
+   * a regular look at its open tasks (default 60; 0 for never). tunnel is the public host name a Cloudflare
+   * tunnel serves the page on, for the phone (/web tunnel); it needs a host other than voice's.
+   */
+  web?: {
+    host?: string;
+    port?: number;
+    lookMinutes?: number;
+    sessionMB?: number;
+    tunnel?: string;
+  };
 }
 
 export function readJson<T>(path: string, fallback: T): T {

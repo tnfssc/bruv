@@ -63,8 +63,9 @@ reached SSH or T3 Code.
   takes about half a CPU core while someone talks and would stall the terminal on the main thread.
 
 - **The page follows shadcn/ui (zinc tokens, new-york components) and uses Lucide icons**, ported by hand to
-  plain CSS and inline SVG. The page is one file served from memory; a build step or a CDN would cost more
-  than the few components it needs. Mobile first: safe areas, a screen wake lock. On touch screens
+  plain CSS and inline SVG. The terminal voice page is one file served from memory; a build step or a CDN would
+  cost more than the few components it needs. The web version (`pi --web`, notes in `assistant/`) moved to a
+  built page once it grew a chat, cards and a thread panel. Mobile first: safe areas, a screen wake lock. On touch screens
   (`pointer: coarse`) mute and stop are wide buttons and the talk button is a pad; with big controls the
   pad and buttons fill the bottom half. Little text: the state badge, icons, one line when empty. The
   keys sit in a ⋯ menu (a `<dialog>`). No pills or bubbles: the state is plain text with a dot, your words are

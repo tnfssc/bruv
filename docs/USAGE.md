@@ -191,6 +191,25 @@ Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's addres
 
 `speech` is the OpenRouter speech model, or `kokoro`. `voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `speed` is how fast it talks, times its normal pace: from 0.5 to 1.6, set with `/voice speed`, and it applies from the next sentence. `threads` is how many CPU threads each model uses.
 
+## The web version
+
+`pi --web` in a folder of its own turns that Pi session into your assistant for the work you run in T3
+Code. You talk or type to it (and paste pictures) from a page in the browser, at the link it prints; it
+starts, follows and messages T3 threads for you, and tells you what needs you. It doesn't code itself.
+
+- The folder is its workspace: it keeps one file per piece of work in `tasks/` and what it learns about
+  you in `memory.md`. Read or fix them as you like. The page shows the tasks as your work, with T3's
+  threads under them.
+- It checks back on its own: when a thread a task follows finishes, fails or waits on you, and every hour
+  while work is open (`"web": { "lookMinutes": 60 }` in `bruv.json`).
+- A thread waiting on a permission request can be answered from the page, or by telling the assistant.
+- The talk button gives voice in the same conversation (hold to talk, tap for hands-free), with the
+  models `/voice` uses.
+- `/web tunnel` serves the page on your own domain through Cloudflare, so your phone can reach it, install
+  it as an app and get notifications while the page isn't open.
+- To keep it running, start it however you like, for example `pi --mode rpc --web` under systemd or in
+  tmux; `pi -c --web` continues the conversation.
+
 ## Configuration
 
 Set agent profiles in `~/.pi/agent/bruv.json`:
