@@ -55,3 +55,15 @@ holding (provider subagents keep `status` idle while they work; `activityRunStat
 turn ending with it is "stopped for now" (sent with the progress batch), and "finished" comes when a turn
 ends with nothing holding it, or when the hold ends after the turn did. A subagent of a followed thread
 that starts waiting on the user is its own wake-up, naming its thread id so the assistant can answer it.
+
+Run for real against T3 (Claude Opus 5.5 threads, 2026-10-29):
+- Background command (`sleep 90; date > done.txt` with run-in-background): the turn ended at 23 s with
+  `pendingBackgroundTasks: [{kind: "command"}]`, shown as holding; the wake-up said "stopped for now" and
+  the assistant kept the task open. When the command ended T3 resumed the thread itself (108 s), it
+  finished at 118 s, and the wake-up said "finished" with its last message; the assistant reported
+  `done.txt` without reading the thread and closed the task.
+- Two background subagents (Claude's own, which T3 lists as `subagent` background tasks and as child
+  threads): holding "waiting on its subagents" from 21 s until both returned and the parent finished at
+  39 s, then "finished". The subagents skipped their sleeps, so the wait was short.
+- Not tried: T3's own delegated tasks (child threads only, no background task on the parent) and a
+  watched pull request; both are covered by tests on the same fields.
