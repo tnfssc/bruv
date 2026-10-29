@@ -99,7 +99,7 @@ export function voicePart(options: Options = {}): WebPart {
 
   const join = (ws: WebSocket, page: Page) => {
     if (!web || page.attached) return;
-    const mb = modelsNeeded(web.agentDir);
+    const mb = modelsNeeded(web.agentDir, openRouter);
     if (mb) {
       ws.send(JSON.stringify({ type: "models", mb, downloading: downloading !== undefined }));
       return;
@@ -134,7 +134,7 @@ export function voicePart(options: Options = {}): WebPart {
   const fetchModels = () => {
     if (!web || downloading) return;
     const agentDir = web.agentDir;
-    downloading = downloadModels(agentDir, (text) => toWaiting({ type: "progress", text }))
+    downloading = downloadModels(agentDir, (text) => toWaiting({ type: "progress", text }), undefined, openRouter)
       .then(
         () => {
           for (const [ws, page] of pages) if (page.wants) join(ws, page);

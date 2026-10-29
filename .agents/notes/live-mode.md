@@ -230,6 +230,9 @@ reached SSH or T3 Code.
     minute). Other models get neither. The user compared ElevenLabs Flash v2.5 (245 wpm, first audio
     0.6 s, about $1 an hour), v3 Conversational, MAI-Voice 2.1 Flash, Grok, Gemini 3.8 Flash Lite (2.5 s
     to start) and Drama with a fixed voice, and chose Drama.
+  - HeyGen Voice 1 Turbo (2026-10-30, $4 per 1M characters, 10 named voices sent as `voice`): first audio
+    0.8–1 s, a sentence in 1.2 s, against Drama's 0.4 s and 1.7 s. Its "um" was heard in only 4 of the 10
+    voices. The user listened to all 10 next to Drama and kept Drama.
   - Fillers: the user found the 2–3 s before an answer felt like not being heard, and asked for a "good
     fake". 0.8 s after their turn, if nothing is being said, one of seven short sounds ("hmm", "mm,
     okay", "let me think"…) plays in the same voice, never the same twice running. They are made once
@@ -269,6 +272,17 @@ reached SSH or T3 Code.
   - Speech recognition stays local. Cloud transcription (Scribe v2, GPT-4o mini transcribe, Parakeet,
     Nova-3, Whisper turbo) took 1–2.6 s after each turn and none streams, which barge-in needs;
     Nemotron here streams for free.
+  - Meta Muse Voice Transcribe 1.0 (2026-10-30, $0.18/hr, built for push-to-talk) did no better: about
+    1.6–2.1 s for a 2 s turn, 2.4–4.9 s for 7 s, no streaming. Words were nearly all right
+    ("date" heard as "data" in 4 of 11 clips). It takes only 16 or 24 kHz WAV, as JSON `input_audio`
+    to `/api/v1/audio/transcriptions`.
+  - The user still wanted the choice, so `voice.listen` (2026-10-30) names an OpenRouter transcription
+    model. With it and a key, the worker loads no recogniser and keeps each turn's audio (from the VAD's
+    preroll to its end, or the talk button's release) and the engine sends it whole; Nemotron isn't
+    downloaded. Words come back in turn order. No partials, so cutting in waits for the turn's end. A failed
+    turn shows the error and is dropped; there is no local fallback, since Nemotron may not be there. The
+    same JSON request worked for Muse, Scribe v2, GPT-4o mini transcribe (0.86 s on a 2 s turn, the
+    fastest), Nemotron 3.5 streaming and AssemblyAI Universal 3.6.
 - Bigger local speech, tried 2026-10-18 and dropped. A listening test of Kokoro, Qwen3-TTS 1.7B,
   Chatterbox (and Turbo), VibeVoice Realtime 0.5B, Orpheus 3B and Higgs TTS 3 4B had the user pick
   Higgs (voice "belinda"). Run from a Python helper on this Ryzen 7940HS CPU it made 1.9 frames a second

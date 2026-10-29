@@ -27,19 +27,22 @@ const vad = new sherpa.Vad(
   },
   30,
 );
-const recognizer = new sherpa.OnlineRecognizer({
-  featConfig: { sampleRate: rate, featureDim: 128 },
-  modelConfig: {
-    transducer: {
-      encoder: `${asr}/encoder.int8.onnx`,
-      decoder: `${asr}/decoder.int8.onnx`,
-      joiner: `${asr}/joiner.int8.onnx`,
+// Without `asr`, a model on OpenRouter recognises the words: each turn's audio is sent whole when it ends.
+const recognizer =
+  asr &&
+  new sherpa.OnlineRecognizer({
+    featConfig: { sampleRate: rate, featureDim: 128 },
+    modelConfig: {
+      transducer: {
+        encoder: `${asr}/encoder.int8.onnx`,
+        decoder: `${asr}/decoder.int8.onnx`,
+        joiner: `${asr}/joiner.int8.onnx`,
+      },
+      tokens: `${asr}/tokens.txt`,
+      numThreads: threads,
+      provider: "cpu",
     },
-    tokens: `${asr}/tokens.txt`,
-    numThreads: threads,
-    provider: "cpu",
-  },
-});
+  });
 const tts = await sherpa.OfflineTts.createAsync({
   model: {
     kokoro: {
@@ -73,7 +76,15 @@ const graceFrames = Math.round((rate * 1.2) / window);
 /** The words heard when the grace was last given, so it is given again only while they still grow. */
 let graceText = "";
 
+/** A turn's audio on its way to the recogniser, or kept for the cloud one. */
+function createStream() {
+  if (recognizer) return recognizer.createStream();
+  const chunks = [];
+  return { chunks, acceptWaveform: ({ samples }) => chunks.push(samples) };
+}
+
 function decode() {
+  if (!recognizer) return "";
   while (recognizer.isReady(stream)) recognizer.decode(stream);
   return recognizer.getResult(stream).text.trim();
 }
@@ -104,7 +115,7 @@ function frame(samples) {
     forget();
   }
   if (!stream && talking) {
-    stream = recognizer.createStream();
+    stream = createStream();
     for (const chunk of recent) stream.acceptWaveform({ sampleRate: rate, samples: chunk });
     recent = [];
     recentLength = 0;
@@ -155,6 +166,17 @@ function report() {
 }
 
 function finish(extra) {
+  if (!recognizer) {
+    const length = stream.chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+    const pcm = new Int16Array(length);
+    let at = 0;
+    for (const chunk of stream.chunks)
+      for (const sample of chunk) pcm[at++] = Math.max(-1, Math.min(1, sample)) * 32767;
+    stream = undefined;
+    forget();
+    post({ type: "turn", pcm, ...extra }, [pcm.buffer]);
+    return;
+  }
   stream.acceptWaveform({ sampleRate: rate, samples: new Float32Array(rate * 0.5) });
   stream.inputFinished();
   const text = decode();
@@ -184,7 +206,7 @@ function talk(on, keep) {
   }
   if (on) {
     if (!stream) {
-      stream = recognizer.createStream();
+      stream = createStream();
       if (keep) for (const chunk of recent) stream.acceptWaveform({ sampleRate: rate, samples: chunk });
     }
     recent = [];
