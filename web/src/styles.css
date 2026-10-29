@@ -1,0 +1,229 @@
+/* Scan only the sources: built files in dist/ must not feed the next build. */
+@import "tailwindcss" source("./");
+
+/* shadcn/ui tokens, zinc theme. Light and dark follow the device. */
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(0.985 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.577 0.245 27.325);
+  --ring: oklch(0.705 0.015 286.067);
+  /* Status colours for threads. */
+  --needs: oklch(0.72 0.16 70);
+  --working: oklch(0.62 0.19 255);
+  --done: oklch(0.65 0.16 155);
+  --shadow: 0 1px 2px oklch(0 0 0 / 5%), 0 8px 24px -8px oklch(0 0 0 / 12%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.141 0.005 285.823);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.175 0.005 285.823);
+    --popover: oklch(0.21 0.006 285.885);
+    --primary: oklch(0.92 0.004 286.32);
+    --primary-foreground: oklch(0.21 0.006 285.885);
+    --secondary: oklch(0.274 0.006 286.033);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.274 0.006 286.033);
+    --muted-foreground: oklch(0.705 0.015 286.067);
+    --accent: oklch(0.274 0.006 286.033);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --ring: oklch(0.552 0.016 285.938);
+    --needs: oklch(0.83 0.14 80);
+    --working: oklch(0.72 0.15 250);
+    --done: oklch(0.77 0.15 160);
+    --shadow: 0 1px 2px oklch(0 0 0 / 30%), 0 12px 32px -12px oklch(0 0 0 / 60%);
+  }
+}
+
+@theme inline {
+  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-ring: var(--ring);
+  --color-needs: var(--needs);
+  --color-working: var(--working);
+  --color-done: var(--done);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --shadow-float: var(--shadow);
+  --animate-blink: blink 1.2s ease-in-out infinite;
+  --animate-fade: fade 0.12s ease-out;
+
+  @keyframes blink {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+  }
+}
+
+/* Assistant text: Markdown without a typography plugin. */
+.md {
+  overflow-wrap: anywhere;
+  > :first-child {
+    margin-top: 0;
+  }
+  > :last-child {
+    margin-bottom: 0;
+  }
+  p,
+  ul,
+  ol,
+  pre,
+  blockquote,
+  table {
+    margin: 0.75em 0;
+  }
+  ul,
+  ol {
+    padding-left: 1.4em;
+  }
+  ul {
+    list-style: disc;
+  }
+  ol {
+    list-style: decimal;
+  }
+  li + li {
+    margin-top: 0.25em;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 1.1em 0 0.5em;
+    font-size: 1em;
+    font-weight: 600;
+  }
+  a {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklch, var(--foreground) 35%, transparent);
+    text-underline-offset: 0.2em;
+  }
+  code {
+    font:
+      0.875em / 1.5 ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      monospace;
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    background: var(--muted);
+  }
+  pre {
+    overflow-x: auto;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--card);
+  }
+  pre code {
+    padding: 0;
+    background: none;
+  }
+  blockquote {
+    padding-left: 0.9em;
+    color: var(--muted-foreground);
+    box-shadow: inset 2px 0 var(--muted);
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.9em;
+  }
+  th,
+  td {
+    padding: 0.3em 0.75em 0.3em 0;
+    text-align: left;
+  }
+  th {
+    font-weight: 600;
+  }
+  hr {
+    margin: 1.25em 0;
+    border: 0;
+    height: 1px;
+    background: var(--muted);
+  }
+}
+
+/* Unlayered, so it wins over Tailwind's layered utilities without !important. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* A caret after a line that is still being written. */
+p.partial::after,
+.md.partial > :is(p, h1, h2, h3, h4, blockquote):last-child::after,
+.md.partial > :is(ul, ol):last-child > li:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -0.15em;
+  background: var(--working);
+  animation: blink 1s steps(2) infinite;
+}

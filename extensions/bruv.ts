@@ -30,8 +30,15 @@ import { registerTurn } from "../src/turn";
 import { registerUI } from "../src/ui";
 import { registerUsage } from "../src/usage";
 import { registerVoice } from "../src/voice";
+import { registerWeb } from "../src/web";
 
 export default function bruv(pi: ExtensionAPI): void {
+  // The web version is a different job, so it loads a different set. Pi sets flag values only after
+  // extensions load, so this reads the command line.
+  if (process.argv.includes("--web")) {
+    web(pi);
+    return;
+  }
   const jobs = new Jobs();
   // Registered first so it wraps every other tool renderer.
   const activity = new Activity();
@@ -67,4 +74,25 @@ export default function bruv(pi: ExtensionAPI): void {
   registerMigrate(pi);
   registerReview(pi);
   registerVoice(pi);
+  registerWeb(pi);
+}
+
+/**
+ * `pi --web`: the assistant that manages the user's T3 work. It doesn't code, so it leaves out what serves
+ * coding (jobs, agents, goals, checks, finish, reviews, notes, apply_patch), which would also act on every run.
+ */
+function web(pi: ExtensionAPI) {
+  const jobs = new Jobs();
+  const activity = new Activity();
+  registerActivity(pi, activity);
+  registerUI(pi, jobs);
+  activity.scripts = registerRender(pi);
+  registerEditor(pi);
+  registerCompact(pi);
+  registerFooter(pi, jobs);
+  registerDeveloper(pi);
+  registerReasoning(pi);
+  registerCodexCompaction(pi);
+  registerCodemode(pi);
+  registerWeb(pi);
 }

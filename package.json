@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "workspaces": [
-    "site"
+    "site",
+    "web"
   ],
   "keywords": [
     "pi-package"
@@ -29,13 +30,15 @@
     "@types/bun": "1.4.2",
     "@types/ws": "^8.18.2",
     "typebox": "1.3.27",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
   },
   "scripts": {
-    "check": "tsc --noEmit && tsc --noEmit -p site",
+    "check": "tsc --noEmit && tsc --noEmit -p site && tsc --noEmit -p web",
     "lint": "biome ci .",
     "test": "bun test",
-    "test:site": "bun run --cwd site test:unit"
+    "test:site": "bun run --cwd site test:unit",
+    "build:web": "bun run --cwd web build"
   },
   "dependencies": {
     "sherpa-onnx-node": "1.13.8",

@@ -3,8 +3,9 @@ import { readFileSync } from "node:fs";
 import { createServer, type IncomingMessage } from "node:http";
 import type { AddressInfo } from "node:net";
 import { WebSocket, WebSocketServer } from "ws";
-import type { Call, Device } from "./call";
+import type { Call } from "./call";
 import { appFile, manifest } from "./install";
+import { pageDevice, pcmFrom } from "./page-device";
 import { qrSvg } from "./qr";
 import { Shelf } from "./show";
 
@@ -66,26 +67,7 @@ export async function serve(
     response.end(html);
   });
   const connect = (ws: WebSocket) => {
-    let rate = 0;
-    let part = 0;
-    const device: Device = {
-      screen: true,
-      send: (event) => {
-        if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(event));
-      },
-      play: (pcm, sampleRate, sentence) => {
-        if (ws.readyState !== WebSocket.OPEN) return;
-        if (sampleRate !== rate) {
-          rate = sampleRate;
-          ws.send(JSON.stringify({ type: "rate", rate }));
-        }
-        if (sentence !== part) {
-          part = sentence;
-          ws.send(JSON.stringify({ type: "part", part }));
-        }
-        ws.send(pcm);
-      },
-    };
+    const device = pageDevice(ws);
     call.attach(device);
     ws.send(remote);
     ws.on("message", (data, binary) => {
@@ -114,11 +96,7 @@ export async function serve(
         } catch {}
         return;
       }
-      const bytes = Buffer.isBuffer(data) ? data : Buffer.concat(data as Buffer[]);
-      // A copy on its own buffer, so it can move to the engine's thread.
-      const pcm = new Int16Array(bytes.length >> 1);
-      new Uint8Array(pcm.buffer).set(bytes.subarray(0, pcm.length * 2));
-      call.hear(pcm, device);
+      call.hear(pcmFrom(data as Buffer), device);
     });
     ws.on("close", () => call.detach(device));
   };

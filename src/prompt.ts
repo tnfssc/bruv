@@ -10,13 +10,13 @@ import {
 const guidance = readFileSync(new URL("../prompts/system.md", import.meta.url), "utf8").trim();
 const withoutFinish = guidance.replace(/^End your work by writing your reply and calling finish.*\n/m, "");
 
-const examples = readFileSync(new URL("../prompts/codemode.md", import.meta.url), "utf8").trim();
+export const examples = readFileSync(new URL("../prompts/codemode.md", import.meta.url), "utf8").trim();
 const piDocs = fileURLToPath(new URL("../prompts/pi-docs.md", import.meta.url));
 
 type Options = BeforeAgentStartEvent["systemPromptOptions"];
 
 /** The tool rules Pi would list for declared tools, without its two general ones. */
-function toolRules(options: Options) {
+export function toolRules(options: Options) {
   const declared = options.selectedTools.filter((name) => !options.hiddenTools.includes(name));
   const rules = [...declared.flatMap((name) => options.toolGuidelines[name] ?? []), ...options.promptGuidelines];
   return [...new Set(rules.map((rule) => rule.trim()).filter(Boolean))].map((rule) => `- ${rule}`).join("\n");

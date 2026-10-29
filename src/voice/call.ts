@@ -207,6 +207,11 @@ export class Call {
     this.engine.talk(on, keep);
   }
 
+  /** Whether the user is talking now: holding the button, or speech heard and their turn not over. */
+  talking() {
+    return this.held || this.state === "hearing";
+  }
+
   /** Puts something on every screen. Returns how many screens got it. */
   show(item: Shown) {
     const screens = [...this.devices].filter((device) => device.screen);

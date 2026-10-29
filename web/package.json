@@ -1,0 +1,27 @@
+{
+  "name": "bruv-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "NODE_ENV=production vite build",
+    "fake": "node scripts/fake-server.ts",
+    "shots": "bun scripts/shots.ts"
+  },
+  "devDependencies": {
+    "@base-ui/react": "1.9.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@tanstack/react-virtual": "3.14.23",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "clsx": "2.1.1",
+    "lucide-react": "1.63.0",
+    "playwright-core": "1.63.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "tailwindcss": "4.3.3",
+    "vite": "8.3.5"
+  }
+}
