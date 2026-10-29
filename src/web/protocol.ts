@@ -42,7 +42,11 @@ export type Thread = {
 export type Project = { id: string; title: string; root: string };
 
 /** How bruv's link to T3 is doing. */
-export type T3State = { state: "connecting" } | { state: "connected" } | { state: "unavailable"; reason: string };
+export type T3State =
+  | { state: "connecting" }
+  /** `app`: T3's own page for this environment; a thread opens at `<app>/<thread id, URL-encoded>`. */
+  | { state: "connected"; app?: string }
+  | { state: "unavailable"; reason: string };
 
 /**
  * A piece of work the user asked for, as the assistant keeps it in `tasks/<slug>.md` in its workspace.

@@ -1,10 +1,11 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, ExternalLinkIcon, MessageCircleQuestionIcon } from "lucide-react";
 import { memo, useMemo, useRef, useState } from "react";
+import { toAsked, toEnd } from "@/lib/events";
 import { age } from "@/lib/time";
 import { cn } from "@/lib/utils";
 import { type Activity, type Group, groupOf } from "@/state/activity";
-import { answer } from "@/state/optimistic";
+import { answer, say } from "@/state/optimistic";
 import { threads as allThreads } from "@/state/store";
 import { useActivity, useNow, useStore } from "@/state/use-store";
 import type { T3State, Task, Thread } from "../../../src/web/protocol";
@@ -27,6 +28,52 @@ function Detail({ label, value }: { label: string; value?: string }) {
   );
 }
 
+/** Asks the assistant how a piece of work is going, as if the user had typed it. */
+function ask(words: string) {
+  say(words, []);
+  toEnd();
+  toAsked();
+}
+
+/**
+ * Where T3's own page opens a thread, or nothing when this device can't reach it: T3 on this computer
+ * (127.0.0.1) can't be opened from a phone.
+ */
+function useThreadLink(id: string) {
+  const app = useStore((state) => (state.t3.state === "connected" ? state.t3.app : undefined));
+  if (!app) return undefined;
+  const loopback = (host: string) => host === "localhost" || host === "[::1]" || host.startsWith("127.");
+  if (loopback(new URL(app).hostname) && !loopback(location.hostname)) return undefined;
+  return `${app}/${encodeURIComponent(id)}`;
+}
+
+/** The actions under an opened row: ask the assistant about it, and open the thread in T3. */
+function Actions({ question, link }: { question: string; link?: string }) {
+  return (
+    <div className="flex flex-wrap gap-2 pt-1">
+      <button
+        type="button"
+        onClick={() => ask(question)}
+        className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md bg-muted px-2.5 text-[13px] transition-colors hover:bg-accent"
+      >
+        <MessageCircleQuestionIcon className="size-3.5" aria-hidden="true" />
+        Ask about this
+      </button>
+      {link ? (
+        <a
+          href={link}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex h-8 items-center gap-1.5 rounded-md bg-muted px-2.5 text-[13px] transition-colors hover:bg-accent"
+        >
+          <ExternalLinkIcon className="size-3.5" aria-hidden="true" />
+          Open in T3
+        </a>
+      ) : null}
+    </div>
+  );
+}
+
 const Row = memo(function Row({
   thread,
   project,
@@ -44,6 +91,7 @@ const Row = memo(function Row({
   const failed = thread.status === "failed";
   const when = group === "done" ? thread.finishedAt : thread.updatedAt;
   const line = failed ? (thread.lastError ?? thread.lastMessage) : thread.lastMessage;
+  const link = useThreadLink(thread.id);
   return (
     <div>
       <button
@@ -82,6 +130,7 @@ const Row = memo(function Row({
             <Detail label="Started" value={new Date(thread.createdAt).toLocaleString()} />
             <Detail label="Finished" value={thread.finishedAt && new Date(thread.finishedAt).toLocaleString()} />
           </dl>
+          <Actions question={`What's happening with the "${thread.title || "untitled"}" thread?`} link={link} />
         </div>
       ) : null}
     </div>
@@ -135,28 +184,49 @@ const TaskRow = memo(function TaskRow({
         </span>
       </button>
       {open ? (
-        <ul className="flex flex-col gap-1 pt-1 pr-3 pb-3 pl-[2.125rem] text-[13px]">
-          {task.threads.length === 0 ? <li className="text-muted-foreground">No threads yet</li> : null}
-          {task.threads.map((id) => {
-            const thread = allThreads.get(id);
-            return (
-              <li key={id} className="flex min-w-0 items-baseline gap-2">
-                <span
-                  className={cn(
-                    "size-1.5 shrink-0 translate-y-[-1px] rounded-full",
-                    thread ? dots[groupOf(thread)] : "bg-muted-foreground/40",
-                  )}
-                />
-                <span className="min-w-0 flex-1 truncate">{thread?.title ?? "A thread T3 no longer lists"}</span>
-                <span className="shrink-0 text-muted-foreground">{thread?.status}</span>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="flex flex-col gap-2 pt-1 pr-3 pb-3 pl-[2.125rem] text-[13px]">
+          <ul className="flex flex-col gap-1">
+            {task.threads.length === 0 ? <li className="text-muted-foreground">No threads yet</li> : null}
+            {task.threads.map((id) => (
+              <TaskThread key={id} id={id} />
+            ))}
+          </ul>
+          <Actions question={`How is "${task.title}" going?`} />
+        </div>
       ) : null}
     </div>
   );
 });
+
+/** One of a task's threads: its state, and a link to it in T3 when this device can open one. */
+function TaskThread({ id }: { id: string }) {
+  const thread = allThreads.get(id);
+  const link = useThreadLink(id);
+  const title = thread?.title ?? "A thread T3 no longer lists";
+  return (
+    <li className="flex min-w-0 items-baseline gap-2">
+      <span
+        className={cn(
+          "size-1.5 shrink-0 translate-y-[-1px] rounded-full",
+          thread ? dots[groupOf(thread)] : "bg-muted-foreground/40",
+        )}
+      />
+      {link && thread ? (
+        <a
+          href={link}
+          target="_blank"
+          rel="noreferrer"
+          className="min-w-0 flex-1 truncate underline-offset-2 hover:underline"
+        >
+          {title}
+        </a>
+      ) : (
+        <span className="min-w-0 flex-1 truncate">{title}</span>
+      )}
+      <span className="shrink-0 text-muted-foreground">{thread?.status}</span>
+    </li>
+  );
+}
 
 /** What a waiting thread asks for, in a few words. */
 export const asks: Record<string, string> = {

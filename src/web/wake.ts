@@ -8,6 +8,18 @@ const working = new Set(["preparing", "queued", "starting", "running", "waiting"
 
 /** Events that close together go as one wake-up. */
 const gather = 3000;
+/**
+ * What a thread says while it works waits this long for more before it wakes the assistant, so a thread
+ * thinking out loud costs one wake-up every few minutes, not one per message. A status change brings it
+ * sooner.
+ */
+const progress = 2 * 60_000;
+/** The most of one message passed on, and of the messages kept per thread. */
+const longest = 4000;
+const kept = 3;
+
+/** A wake-up: one line per event for the page, and what the threads said, for the assistant only. */
+export type Wake = { text: string; said?: string };
 
 /**
  * Decides when the assistant wakes up on its own, and with what. It follows only the threads its open tasks
@@ -18,6 +30,10 @@ export class Waker {
   private seen = new Map<string, Seen>();
   private followed = new Map<string, string>();
   private pending: string[] = [];
+  /** What followed threads said since the last wake-up, newest last, by thread. */
+  private said = new Map<string, { name: string; texts: string[] }>();
+  /** When the waiting wake-up goes: soon for events, later for messages alone. */
+  private due = 0;
   private timer: ReturnType<typeof setTimeout> | undefined;
   private look: ReturnType<typeof setInterval> | undefined;
   private lastWake = 0;
@@ -26,13 +42,15 @@ export class Waker {
   constructor(
     private options: {
       /** Sends the wake-up; called only when `free()` says so. */
-      wake: (text: string) => void;
+      wake: (wake: Wake) => void;
       /** Whether the assistant is idle and nobody is talking. */
       free: () => boolean;
       /** Minutes between regular looks while a task is open; 0 turns them off. */
       everyMinutes: number;
       /** How long to gather events into one wake-up; for tests. */
       gather?: number;
+      /** How long messages alone wait for more; for tests. */
+      progress?: number;
       /** A thread as T3 shows it now, to start following it from where it is. */
       lookup?: (id: string) => Thread | undefined;
       now?: () => number;
@@ -70,8 +88,7 @@ export class Waker {
       this.seen.set(thread.id, now);
       // The first sighting only sets the baseline.
       if (!before) continue;
-      // The task's name is enough when the thread is named the same.
-      const name = thread.title.trim() === task.trim() ? `"${task}"` : `"${thread.title}" (${task})`;
+      const name = this.name(thread.title, task);
       if (now.needsUser && !before.needsUser) this.add(`${name} is waiting on the user.`);
       else if (now.status === "failed" && before.status !== "failed")
         this.add(`${name} failed${thread.lastError ? `: ${thread.lastError.split("\n")[0].slice(0, 200)}` : "."}`);
@@ -79,9 +96,32 @@ export class Waker {
     }
   }
 
+  /**
+   * A followed thread said something (a finished message). It goes with the next wake-up: soon when its
+   * status changed too (a thread's last words come with "finished"), else after a while, with what else it
+   * said by then.
+   */
+  message(threadId: string, text: string) {
+    const task = this.followed.get(threadId);
+    if (!task) return;
+    const title = this.options.lookup?.(threadId)?.title ?? task;
+    let entry = this.said.get(threadId);
+    if (!entry) {
+      entry = { name: this.name(title, task), texts: [] };
+      this.said.set(threadId, entry);
+    }
+    const trimmed = text.trim();
+    entry.texts.push(
+      trimmed.length > longest ? `${trimmed.slice(0, longest)}… (cut; read the thread for the rest)` : trimmed,
+    );
+    if (entry.texts.length > kept) entry.texts.shift();
+    this.schedule(this.options.progress ?? progress);
+  }
+
   /** The assistant became free (or the user stopped talking): deliver what waited. */
   free() {
-    if (!this.pending.length) return;
+    if (!this.pending.length && !this.said.size) return;
+    if (!this.pending.length && this.due > this.now()) return;
     clearTimeout(this.timer);
     this.timer = setTimeout(() => this.flush(), 0);
   }
@@ -91,23 +131,46 @@ export class Waker {
     clearInterval(this.look);
   }
 
+  /** The task's name is enough when the thread is named the same. */
+  private name(title: string, task: string) {
+    return title.trim() === task.trim() ? `"${task}"` : `"${title}" (${task})`;
+  }
+
   private add(line: string) {
     if (!this.pending.includes(line)) this.pending.push(line);
+    this.schedule(this.options.gather ?? gather);
+  }
+
+  /** Flush within `wait`, or sooner if already due sooner. */
+  private schedule(wait: number) {
+    const at = this.now() + wait;
+    if (this.timer && this.due <= at) return;
     clearTimeout(this.timer);
-    this.timer = setTimeout(() => this.flush(), this.options.gather ?? gather);
+    this.due = at;
+    this.timer = setTimeout(() => this.flush(), wait);
   }
 
   private flush() {
     this.timer = undefined;
-    if (!this.pending.length) return;
+    if (!this.pending.length && !this.said.size) return;
     // Busy or someone is talking: try again shortly, and at once when the run settles (`free`).
     if (!this.options.free()) {
       this.timer = setTimeout(() => this.flush(), 5000);
       return;
     }
     const lines = this.pending.splice(0);
+    const said = [...this.said.values()];
+    this.said.clear();
+    // Threads that only spoke get a line too, so the page shows why the assistant woke.
+    for (const entry of said)
+      if (!lines.some((line) => line.startsWith(entry.name))) lines.push(`${entry.name} has an update.`);
     this.lastWake = this.now();
-    this.options.wake(lines.join("\n"));
+    this.options.wake({
+      text: lines.join("\n"),
+      ...(said.length
+        ? { said: said.map((entry) => `${entry.name} said:\n\n${entry.texts.join("\n\n---\n\n")}`).join("\n\n") }
+        : {}),
+    });
   }
 
   private regular() {

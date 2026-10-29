@@ -40,6 +40,7 @@ function fakeT3() {
   const responded: { threadId: string; requestId: string; decision: string }[] = [];
   const threads = [thread("a", "running")];
   const state: T3State = { state: "connected" };
+  let followed: string[] = [];
   const link: T3Link = {
     state: () => state,
     projects: () => [{ id: "p", title: "bruv", root: "/code/bruv" }],
@@ -56,6 +57,9 @@ function fakeT3() {
       throw new Error("no files in this fake");
     },
     readFile: async () => ({ contents: "", truncated: false }),
+    follow: (ids) => {
+      followed = [...ids];
+    },
     pair: async () => "http://t3.test",
     unpair: () => false,
     close: () => listeners.clear(),
@@ -63,8 +67,13 @@ function fakeT3() {
   return {
     link,
     responded,
+    followed: () => followed,
     change: (changed: Thread[]) => {
       for (const listener of listeners) listener({ threads: changed });
+    },
+    say: (threadId: string, text: string) => {
+      for (const listener of listeners)
+        listener({ message: { threadId, id: `m-${text.length}`, text, at: new Date().toISOString() } });
     },
   };
 }
@@ -295,7 +304,7 @@ test("a task file gives its title, status, next step and threads, however the th
 test("wake-ups follow only the threads of open tasks, gather what changed, and wait until the assistant is free", async () => {
   const woke: string[] = [];
   let free = false;
-  const waker = new Waker({ wake: (text) => woke.push(text), free: () => free, everyMinutes: 0, gather: 10 });
+  const waker = new Waker({ wake: ({ text }) => woke.push(text), free: () => free, everyMinutes: 0, gather: 10 });
   try {
     waker.tasks([
       { slug: "x", title: "Fix login", status: "working", threads: ["a", "b"], updatedAt: "" },
@@ -336,21 +345,29 @@ test("a thread a task follows finishing wakes the assistant, the page sees the t
     let woken = "";
     app.faux.setResponses([
       (context) => {
-        woken = JSON.stringify(context.messages.filter((message) => message.role === "user"));
+        woken = JSON.stringify(context.messages);
         return fauxAssistantMessage("The login fix is done and ready for you to review.");
       },
     ]);
-    const { ws, events } = page(url);
+    const { ws, events, lines } = page(url);
     await until(() => events.length > 0);
     const hello = events[0];
     expect(hello.type === "hello" && hello.tasks.map((task) => task.slug)).toEqual(["login"]);
+    // The threads of open tasks are followed closely.
+    expect(t3.followed()).toEqual(["a"]);
     // The page counts as away once it says so.
     ws.send(JSON.stringify({ type: "visible", visible: false }));
     await new Promise((resolve) => setTimeout(resolve, 20));
+    // The thread's last words come with its finishing, for the assistant to act on.
+    t3.say("a", "Fixed the redirect; PR 12 is open for review.");
     t3.change([thread("a", "completed")]);
     await until(() => news.length === 1);
     expect(woken).toContain(wakeMark.trim());
+    expect(woken).toContain("PR 12 is open");
     expect(news[0]).toContain("review");
+    // The page shows the short line, not what the thread said.
+    await until(() => lines().some((line) => line.role === "wake"));
+    expect(lines().find((line) => line.role === "wake")?.text).not.toContain("PR 12");
 
     // A task file the assistant writes reaches open pages.
     writeFileSync(join(workspace, "tasks", "notes.md"), "---\ntitle: Release notes\nstatus: waiting\n---\n");
@@ -430,7 +447,7 @@ test("a thread starts being followed from where it is, so its first change after
   const woke: string[] = [];
   const now = new Map([["a", thread("a", "running")]]);
   const waker = new Waker({
-    wake: (text) => woke.push(text),
+    wake: ({ text }) => woke.push(text),
     free: () => true,
     everyMinutes: 0,
     gather: 10,

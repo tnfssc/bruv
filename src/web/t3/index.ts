@@ -1,10 +1,12 @@
 import type { Decision, Project, T3State, Thread } from "../protocol";
 import { type FeedEnd, followShell, protocolVersion, rpc, type ShellValue, T3SocketError, ticket } from "./feed";
+import { followThreads, type ThreadMessage } from "./follow";
 import { keyStore, T3Error } from "./keys";
 import { locateT3, type T3Place } from "./locate";
 import { sameThread, type T3Thread, toProject, toThread } from "./thread";
 
 export { T3RpcError } from "./feed";
+export type { ThreadMessage } from "./follow";
 
 /**
  * bruv's link to T3 Code: a live picture of every project and thread, and a key for T3's MCP server.
@@ -15,6 +17,8 @@ export type T3Change = {
   projects?: Project[];
   /** Only the threads that changed. A thread that was archived or deleted comes once more with `away` set, then is gone. */
   threads?: Thread[];
+  /** A finished message from a followed thread. */
+  message?: ThreadMessage;
 };
 
 export type T3Link = {
@@ -23,6 +27,8 @@ export type T3Link = {
   /** Every thread T3 shows, archived ones left out. */
   threads(): Thread[];
   onChange(listener: (change: T3Change) => void): () => void;
+  /** Threads whose messages to pass on as they come (`T3Change.message`). */
+  follow(ids: Iterable<string>): void;
   /** For Pi's MCP client: T3's /mcp and the header to reach it, signing in when needed. Undefined if T3 can't be reached. */
   mcp(): Promise<{ url: string; headers: Record<string, string> } | undefined>;
   /**
@@ -52,6 +58,20 @@ export type T3Link = {
 export type T3Asset =
   | { _tag: "workspace-file" | "media-file"; threadId: string; path: string }
   | { _tag: "attachment"; attachmentId: string; mimeType: "text/html"; disposition: "inline" };
+
+/**
+ * T3's own page for this environment, which opens a thread at `<address>/<threadId>`. Public, no key:
+ * `/.well-known/t3/environment` names the environment.
+ */
+async function appAddress(origin: string) {
+  try {
+    const response = await fetch(`${origin}/.well-known/t3/environment`, { signal: AbortSignal.timeout(5000) });
+    const body = (await response.json()) as { environmentId?: unknown };
+    return typeof body.environmentId === "string" ? `${origin}/${encodeURIComponent(body.environmentId)}` : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 const firstDelay = 500;
 const maxDelay = 10_000;
@@ -183,12 +203,18 @@ export function connectT3(options: {
     }
     if (closed) return { kind: "closed", reason: "closed" };
     // Positions mean nothing to another T3.
-    if (origin !== place.origin) sequence = -1;
+    if (origin !== place.origin) {
+      sequence = -1;
+      if (origin !== undefined) follower.reset();
+    }
     origin = place.origin;
     const feed = followShell(place.origin, wsTicket, sequence < 0 ? undefined : sequence, (values) => {
       if (apply(values) && state.state !== "connected") {
         onLive();
         setState({ state: "connected" });
+        void appAddress(place.origin).then((app) => {
+          if (app && state.state === "connected" && origin === place.origin) setState({ state: "connected", app });
+        });
       }
     });
     stopFeed = feed.close;
@@ -236,6 +262,15 @@ export function connectT3(options: {
       delay = Math.min(delay * 2, maxDelay);
     }
   };
+  const follower = followThreads({
+    connect: async () => {
+      const place = locate();
+      if (!place) return undefined;
+      return { origin: place.origin, ticket: await ticket(place.origin, await keys.get("session", place)) };
+    },
+    position: () => (origin === locate()?.origin ? sequence : -1),
+    onMessage: (message) => emit({ message }),
+  });
   void run();
 
   /** One call to T3's app API with the session key, signing in again once if T3 refused it. */
@@ -267,6 +302,7 @@ export function connectT3(options: {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
+    follow: (ids) => follower.follow(ids),
     async mcp() {
       const place = locate();
       if (!place) return undefined;
@@ -338,6 +374,7 @@ export function connectT3(options: {
     },
     close() {
       closed = true;
+      follower.close();
       listeners.clear();
       stopFeed?.();
       wake?.();

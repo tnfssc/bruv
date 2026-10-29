@@ -6,6 +6,7 @@ import { Composer } from "./components/composer";
 import { Conversation } from "./components/conversation";
 import { GoPanel } from "./components/go";
 import { Button } from "./components/ui/button";
+import { onAsked } from "./lib/events";
 import { cn } from "./lib/utils";
 import { setGo, useGo } from "./state/go";
 import { useActivity, useStore } from "./state/use-store";
@@ -92,6 +93,8 @@ export function App() {
   useEffect(() => {
     if (sheet) setSheetUsed(true);
   }, [sheet]);
+  // Asking about something from the panel: show the answer.
+  useEffect(() => onAsked(() => setSheet(false)), []);
   // Fetch the sheet's chunk once the page is idle, so the first tap opens it at once.
   useEffect(() => {
     if (isWide) return;

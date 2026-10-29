@@ -28,7 +28,7 @@ import { webParts } from "./parts";
 import type { Decision, Line, PageEvent, ServerEvent, Task, Thread } from "./protocol";
 import { type Assets, serveWeb, type WebServer } from "./server";
 import { connectT3, type T3Link } from "./t3";
-import { watchTasks } from "./tasks";
+import { open, watchTasks } from "./tasks";
 import { setUpWebTunnel, stopWebTunnel } from "./tunnel";
 import { Waker } from "./wake";
 
@@ -346,22 +346,37 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
       gather: options.gather,
       lookup: (id) => t3.threads().find((thread) => thread.id === id),
       free,
-      wake: (text) => {
+      wake: ({ text, said }) => {
         waking = true;
         news = "";
         withOverview();
+        // What the threads said goes to the assistant only; the page shows the short line.
+        if (said)
+          pi.sendMessage(
+            {
+              customType: "bruv-web-said",
+              content: `What your threads said (from bruv, not the user):\n\n${said}`,
+              display: false,
+            },
+            { deliverAs: "nextTurn" },
+          );
         pi.sendUserMessage(`${wakeMark}${text}`);
       },
     });
+    // The threads open tasks name are followed closely: what they say reaches the assistant.
+    const follow = (list: Task[]) => t3.follow(list.filter(open).flatMap((task) => task.threads));
     const tasks = watchTasks(context.cwd, (list) => {
       send({ type: "tasks", tasks: list });
       waker.tasks(list);
+      follow(list);
     });
     waker.tasks(tasks.list());
+    follow(tasks.list());
     const unsubscribe = t3.onChange((change) => {
       if (change.t3) send({ type: "t3", t3: change.t3 });
       if (change.projects) send({ type: "projects", projects: change.projects });
       if (change.threads) waker.threads(change.threads);
+      if (change.message) waker.message(change.message.threadId, change.message.text);
       const threads = topLevel(change.threads ?? []);
       if (threads.length) send({ type: "threads", threads });
     });
