@@ -48,6 +48,9 @@ export type Thread = {
 
 export type Project = { id: string; title: string; root: string };
 
+/** T3's run statuses where a thread is still going. One list, so the waker, overview and page agree. */
+export const going: ReadonlySet<string> = new Set(["preparing", "queued", "starting", "running", "waiting"]);
+
 /** How bruv's link to T3 is doing. */
 export type T3State =
   | { state: "connecting" }

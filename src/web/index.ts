@@ -2,34 +2,23 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
-import { Type } from "typebox";
 import { readConfig } from "../config";
-import { toolResult } from "../jobs";
 import { toolRules } from "../prompt";
 import { setStatus } from "../status";
-import { lineAt, parentOf, readBack } from "./archive";
 import { pageAssets } from "./assets";
-import { fileRoute, prepareShow } from "./files";
-import {
-  lines,
-  type Message,
-  page,
-  pictures,
-  showEntry,
-  shownLine,
-  showTool,
-  toImage,
-  toLine,
-  wakeMark,
-} from "./lines";
+import { registerWebCommands } from "./commands";
+import { fileRoute } from "./files";
+import { conversationHistory } from "./history";
+import { type Message, showEntry, showTool, toImage, toLine, wakeMark } from "./lines";
 import { overview } from "./overview";
 import type { WebContext, WebPart } from "./part";
 import { webParts } from "./parts";
 import type { Decision, Line, PageEvent, ServerEvent, Task, Thread } from "./protocol";
 import { type Assets, serveWeb, type WebServer } from "./server";
+import { step } from "./steps";
 import { connectT3, type T3Link } from "./t3";
 import { open, watchTasks } from "./tasks";
-import { setUpWebTunnel, stopWebTunnel } from "./tunnel";
+import { registerWebTools } from "./tools";
 import { Waker } from "./wake";
 
 const guidance = readFileSync(new URL("../../prompts/assistant.md", import.meta.url), "utf8").trim();
@@ -61,41 +50,6 @@ type Options = {
   /** For tests: how long wake-ups gather events. */
   gather?: number;
 };
-
-/** Lines of earlier sessions have ids `a<n>.<offset>`: the nth parent session, and where the line starts. */
-const archived = /^a(\d+)\.(\d+)$/;
-
-/** Words for the tools a person would care to see being used. */
-const doing: Record<string, string> = {
-  overview: "Looking at your T3 work",
-  read: "Reading its notes",
-  write: "Updating its notes",
-  edit: "Updating its notes",
-  approve: "Answering the thread",
-  [showTool]: "Getting it to show you",
-  mcp__t3__t3_thread_launch: "Starting a thread",
-  mcp__t3__t3_thread_send: "Messaging a thread",
-  mcp__t3__t3_thread_read: "Reading a thread",
-  mcp__t3__t3_thread_list: "Looking at threads",
-  mcp__t3__t3_project_list: "Looking at your projects",
-  mcp__t3__t3_thread_interrupt: "Stopping a thread",
-  mcp__t3__t3_pending_request_respond: "Answering the thread",
-};
-
-/**
- * Words for what a tool call is doing, or nothing for ones not worth showing. A codemode script says what
- * it does in its opening comment; without one, the first tool it calls does.
- */
-function step(tool: string, args: { code?: unknown } | undefined) {
-  if (tool === "codemode") {
-    const code = typeof args?.code === "string" ? args.code : "";
-    const comment = /^\s*\/\/\s*(.+)$/m.exec(code.trimStart().split("\n")[0] ?? "")?.[1]?.trim();
-    if (comment) return comment.slice(0, 120);
-    const first = /tools\.([A-Za-z0-9_]+)\s*\(/.exec(code)?.[1];
-    return (first && doing[first]) ?? (first?.startsWith("mcp__t3__") ? "Talking to T3" : "Working it out");
-  }
-  return doing[tool] ?? (tool.startsWith("mcp__t3__") ? "Talking to T3" : undefined);
-}
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
@@ -162,70 +116,18 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
    * second, so a long reply costs its length once, not once per update.
    */
   let writing: { line: Line; unsent: string; blocks: number; timer?: ReturnType<typeof setTimeout> } | undefined;
-  /** Ids pages gave the lines they sent, in order, for Pi's echo of each user message. */
-  const pageIds: string[] = [];
   /**
-   * Pictures of lines sent before Pi saves their message (it saves after extensions hear `message_end`).
-   * Only the last few; older ones are read back from the session by entry id.
+   * Ids pages gave the lines they sent, with the words, for Pi's echo of each user message. Matched by the
+   * words rather than by order: a line that never reaches Pi (sent during compaction) or a message from
+   * elsewhere would otherwise shift every later echo onto the wrong line.
    */
-  const recent = new Map<string, { mimeType: string; data: string }[]>();
-
-  /** Earlier session files, the parent first, found as the page scrolls back into them. */
-  let chain: string[] = [];
-  const archive = (index: number) => {
-    while (chain.length <= index) {
-      const parent = chain.length
-        ? parentOf(chain[chain.length - 1] as string)
-        : ctx?.sessionManager.getHeader()?.parentSession;
-      if (!parent || !existsSync(parent)) return undefined;
-      chain.push(parent);
-    }
-    return chain[index];
-  };
-
-  /**
-   * A page of lines before `before` (or the newest), going on into earlier sessions when this one runs out.
-   */
-  const history = (before?: string): { lines: Line[]; more: boolean } => {
-    const found: Line[] = [];
-    let index = 0;
-    let end: number | undefined;
-    const old = before === undefined ? null : archived.exec(before);
-    if (old) {
-      index = Number(old[1]);
-      end = Number(old[2]);
-    } else {
-      if (!ctx) return { lines: [], more: false };
-      const current = lines(ctx.sessionManager, link, before);
-      if (current.more) return current;
-      found.push(...current.lines);
-    }
-    while (found.length < page) {
-      const file = archive(index);
-      if (!file) return { lines: found, more: false };
-      const n = index;
-      const back = readBack(file, end, page - found.length, (entry, offset) => {
-        const id = `a${n}.${offset}`;
-        if (entry.type === "custom" && entry.customType === showEntry)
-          return shownLine(entry.data, id, Date.parse(String(entry.timestamp)));
-        if (entry.type !== "message") return undefined;
-        return toLine(
-          entry.message as Message,
-          id,
-          (picture) => link(id, picture),
-          Date.parse(String(entry.timestamp)),
-        );
-      });
-      found.unshift(...back.found);
-      if (!back.done) return { lines: found, more: true };
-      index++;
-      end = undefined;
-    }
-    return { lines: found, more: archive(index) !== undefined };
-  };
+  const pageIds: { id: string; text: string; at: number }[] = [];
+  /** Line ids of messages waiting for Pi to save them, by message. */
+  const unsaved = new WeakMap<object, string>();
+  const link = (id: string, index: number) => `/image/${encodeURIComponent(id)}/${index}?t=${live?.key ?? ""}`;
+  const past = conversationHistory({ session: () => ctx?.sessionManager, link });
 
   const send = (event: ServerEvent) => live?.server.send(event);
-  const link = (id: string, index: number) => `/image/${encodeURIComponent(id)}/${index}?t=${live?.key ?? ""}`;
   const flush = () => {
     if (!writing) return;
     clearTimeout(writing.timer);
@@ -236,7 +138,7 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
   };
 
   const hello = (): ServerEvent => {
-    const shown = history();
+    const shown = past.page();
     return {
       type: "hello",
       lines: writing?.line.text ? [...shown.lines, writing.line] : shown.lines,
@@ -249,29 +151,12 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     };
   };
 
-  const image = (id: string, index: number) => {
-    const found = recent.get(id);
-    if (found) return found[index];
-    const old = archived.exec(id);
-    if (old) {
-      const file = archive(Number(old[1]));
-      const text = file && lineAt(file, Number(old[2]));
-      if (!text) return undefined;
-      const block = pictures((JSON.parse(text).message as Message | undefined)?.content)[index];
-      return block?.data ? { mimeType: block.mimeType ?? "image/png", data: block.data } : undefined;
-    }
-    const entry = ctx?.sessionManager.getEntry(id);
-    if (entry?.type !== "message") return undefined;
-    const block = pictures((entry.message as Message).content)[index];
-    return block?.data ? { mimeType: block.mimeType ?? "image/png", data: block.data } : undefined;
-  };
-
   /**
    * Answers the permission request a thread waits on. Questions (user_input) go through T3's MCP tools
    * instead, since they need answers, not a yes or no.
    */
   const answer = async (threadId: string, decision: Decision) => {
-    const thread = live?.t3.threads().find((each) => each.id === threadId);
+    const thread = live?.t3.thread(threadId);
     if (!live || !thread?.requestId) throw new Error("That thread isn't waiting on a permission request.");
     if (thread.requestKind === "user_input")
       throw new Error("That thread asks a question; answer it with t3_pending_request_respond.");
@@ -291,12 +176,16 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
       return;
     }
     if (event.type === "more") {
-      reply({ type: "older", ...history(event.before) });
+      reply({ type: "older", ...past.page(event.before) });
       return;
     }
     if (event.type !== "say") return;
     // The page shows the line at once under its own id; the echo of it uses that id.
-    if (event.id && /^[\w-]{1,64}$/.test(event.id)) pageIds.push(event.id);
+    if (event.id && /^[\w-]{1,64}$/.test(event.id)) {
+      // Ones Pi never echoed are given up after a while.
+      while (pageIds.length && (pageIds.length > 20 || Date.now() - (pageIds[0]?.at ?? 0) > 120_000)) pageIds.shift();
+      pageIds.push({ id: event.id, text: event.text.trim(), at: Date.now() });
+    }
     say(event.text, event.images);
   };
 
@@ -331,7 +220,7 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
         assets: options.assets ?? ((http) => pageAssets({ dev, server: http })),
         hello,
         onPage,
-        image,
+        image: past.image,
       });
     } catch (error) {
       t3.close();
@@ -344,7 +233,7 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     const waker = new Waker({
       everyMinutes: config.lookMinutes ?? 60,
       gather: options.gather,
-      lookup: (id) => t3.threads().find((thread) => thread.id === id),
+      lookup: (id) => t3.thread(id),
       free,
       wake: ({ text, said }) => {
         waking = true;
@@ -486,161 +375,33 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
 
   // The assistant's tools exist only in the web version: a coding session would carry them on every request
   // for nothing. Pi sets flag values only after extensions load, so this reads the command line.
-  if (options.on ?? process.argv.includes("--web")) {
-    pi.registerTool({
-      name: "overview",
-      label: "Overview",
-      description:
-        "What is going on across all the user's T3 work right now: threads waiting on the user, working, failed, and finished but not yet opened. Instant, from bruv's live view of T3. Start here; read a thread with T3's tools when you need more.",
-      parameters: Type.Object({
-        project: Type.Optional(Type.String({ description: "Only this project, by name or id." })),
-      }),
-      async execute(_id, args) {
-        if (!live) throw new Error("The web version is off.");
-        const state = live.t3.state();
-        const text = overview(live.t3.threads(), live.t3.projects(), { project: args.project });
-        return {
-          ...toolResult({ text }),
-          content: [
-            {
-              type: "text" as const,
-              text: state.state === "unavailable" ? `T3 is unavailable: ${state.reason}` : text,
-            },
-          ],
-        };
-      },
-    });
-
-    pi.registerTool({
-      name: "approve",
-      label: "Approve",
-      description:
-        "Answer a T3 thread's permission request (a command, a file change, a permission) as the user would in T3. Only when the user said to: approve once, approve for the rest of the thread's session, or deny. The thread's requestKind says what it asks; read the thread first if you need the details.",
-      parameters: Type.Object({
-        threadId: Type.String(),
-        decision: Type.Union([Type.Literal("approve"), Type.Literal("approve for session"), Type.Literal("deny")]),
-      }),
-      async execute(_id, args) {
-        const decision: Decision =
-          args.decision === "approve" ? "accept" : args.decision === "deny" ? "decline" : "acceptForSession";
-        const thread = await answer(args.threadId, decision);
-        return toolResult({ answered: thread.title, decision: args.decision });
-      },
-    });
-
-    pi.registerTool({
-      name: showTool,
-      label: "Show",
-      description:
-        "Show the user a file on the page, in the conversation: a picture, video, sound, HTML page, PDF or text file. From your working folder (path), from a T3 thread's folder (path and thread), or a page a thread showed with html_render (render: its attachment id, and thread). It shows at once; say what it is in a line, not what's in it.",
-      parameters: Type.Object({
-        path: Type.Optional(
-          Type.String({ description: "The file: in your working folder, or with thread, in that thread's folder." }),
-        ),
-        thread: Type.Optional(Type.String({ description: "The T3 thread whose folder the file is in." })),
-        render: Type.Optional(
-          Type.String({ description: "An html_render page's attachment id, from the thread's activity." }),
-        ),
-        title: Type.Optional(Type.String({ description: "A few words for it, shown with it." })),
-      }),
-      async execute(_id, args, _signal, _update, context) {
-        if (!live) throw new Error("The web version is off.");
-        const shown = await prepareShow({
-          secret: live.key,
-          workspace: context.cwd,
-          t3: live.t3,
-          path: args.path,
-          thread: args.thread,
-          render: args.render,
-          title: args.title,
-        });
+  if (options.on ?? process.argv.includes("--web"))
+    registerWebTools(pi, {
+      live: () => live,
+      answer,
+      shown: (file) => {
         // Saved as a line of its own, and on the page now, while the run goes on.
-        pi.appendEntry(showEntry, shown);
-        send({
-          type: "line",
-          line: { id: `live-${++count}`, role: "assistant", text: "", files: [shown], at: new Date().toISOString() },
-        });
-        return {
-          content: [{ type: "text" as const, text: `Shown to the user: ${shown.name} (${shown.kind}).` }],
-          details: { shown },
-        };
+        pi.appendEntry(showEntry, file);
+        const id = `live-${++count}`;
+        past.savedAs(id);
+        send({ type: "line", line: { id, role: "assistant", text: "", files: [file], at: new Date().toISOString() } });
       },
     });
-  }
 
   pi.registerFlag("web", { description: "Run as the web version: your assistant for T3 Code work", type: "boolean" });
   pi.registerFlag("web-dev", {
     description: "With --web, serve the page from its source with live reload",
     type: "boolean",
   });
-  pi.registerCommand("web", {
-    description:
-      "Show the web version's link (start Pi with --web to turn it on); /web tunnel serves it on your domain, for your phone",
-    getArgumentCompletions: (prefix) =>
-      [
-        { value: "tunnel", description: "Serve the page on your own domain, for your phone" },
-        { value: "tunnel off", description: "Stop serving the page on your domain" },
-        { value: "t3 ", description: "Pair with a T3 on another machine: paste the link `t3 pair` prints there" },
-        { value: "t3 local", description: "Use the T3 on this machine again" },
-      ]
-        .filter(({ value }) => value.startsWith(prefix.trimStart()))
-        .map(({ value, description }) => ({ value, label: value, description })),
-    handler: async (args, context) => {
-      const word = args.trim();
-      if (word === "tunnel") return setUpWebTunnel(context, options.agentDir);
-      if (word === "tunnel off") return stopWebTunnel(context, options.agentDir);
-      if (word === "t3" || word.startsWith("t3 ")) {
-        const link = word.slice(2).trim();
-        if (!live) return context.ui.notify("Start Pi with --web to run the web version.", "info");
-        if (!link)
-          return context.ui.notify(
-            "Run `t3 pair --tailscale` where T3 runs (or with a --host other machines reach), then /web t3 <the pairing link>.",
-            "info",
-          );
-        if (link === "local")
-          return context.ui.notify(
-            live.t3.unpair() ? "Using the T3 on this machine again." : "Already using the T3 on this machine.",
-            "info",
-          );
-        try {
-          const origin = await live.t3.pair(link);
-          context.ui.notify(`Paired with T3 at ${origin}.`, "info");
-          await registerMcp?.();
-        } catch (error) {
-          context.ui.notify(`Couldn't pair with T3: ${message(error)}`, "error");
-        }
-        return;
-      }
-      context.ui.notify(
-        live
-          ? `The web version is on: ${live.address ?? live.server.url}`
-          : "Start Pi with --web to run the web version.",
-        "info",
-      );
-    },
-  });
-
-  pi.registerCommand("web-fresh", {
-    description: "Move the web version to a fresh session; the page can still scroll back into this one",
-    handler: async (_args, context) => {
-      await context.waitForIdle();
-      const parent = context.sessionManager.getSessionFile();
-      await context.newSession({
-        parentSession: parent,
-        setup: async (manager) => {
-          manager.appendCustomMessageEntry(
-            "bruv-web",
-            `This conversation continues an earlier one${parent ? `, saved in ${parent}` : ""}. What you are managing is in tasks/ and memory.md in your working folder: read them before acting on earlier work.`,
-            false,
-          );
-        },
-      });
-    },
+  registerWebCommands(pi, {
+    agentDir: options.agentDir,
+    live: () => live && { t3: live.t3, address: live.address ?? live.server.url },
+    registerMcp: () => registerMcp?.(),
   });
 
   pi.on("session_start", async (_event, context) => {
     ctx = context;
-    chain = [];
+    past.reset();
     if (!(options.on ?? pi.getFlag("web") === true) || live) return;
     try {
       await start(context);
@@ -693,16 +454,12 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     const fresh = `live-${++count}`;
     const first = toLine(message, fresh, (index) => link(fresh, index));
     // Wake-ups are user messages too, but no page sent them.
-    const id = (first?.role === "user" && pageIds.shift()) || fresh;
+    const index = first?.role === "user" ? pageIds.findIndex((each) => each.text === first.text.trim()) : -1;
+    const id = index >= 0 ? (pageIds.splice(index, 1)[0]?.id ?? fresh) : fresh;
     const line = id === fresh ? first : toLine(message, id, (index) => link(id, index));
     if (!line) return;
-    if (line.images) {
-      recent.set(
-        id,
-        pictures(message.content).map((block) => ({ mimeType: block.mimeType ?? "image/png", data: block.data ?? "" })),
-      );
-      for (const old of recent.keys()) if (recent.size > 8) recent.delete(old);
-    }
+    if (line.images) past.remember(id, message);
+    unsaved.set(event.message, id);
     send({ type: "line", line });
   });
   pi.on("message_update", (event) => {
@@ -733,12 +490,17 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     writing.timer ??= setTimeout(flush, 100);
   });
   pi.on("message_end", (event) => {
-    if (event.message.role !== "assistant") return;
+    if (event.message.role !== "assistant") {
+      const id = unsaved.get(event.message);
+      if (id) past.whenSaved(event.message, id);
+      return;
+    }
     const current = writing;
     writing = undefined;
     clearTimeout(current?.timer);
     if (!live) return;
     const id = current?.line.id ?? `live-${++count}`;
+    past.whenSaved(event.message, id);
     const line = toLine(event.message as Message, id, (index) => link(id, index));
     if (line) send({ type: "line", line });
     else if (current?.line.text) send({ type: "line", line: { ...current.line, partial: false } });

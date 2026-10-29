@@ -3,6 +3,7 @@ import { closeSync, createReadStream, openSync, readSync, realpathSync, statSync
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { basename, extname, isAbsolute, join, posix, relative, sep } from "node:path";
 import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import type { Shown, ShownKind, Thread } from "./protocol";
 import type { T3Asset, T3Link } from "./t3";
 
@@ -76,6 +77,17 @@ export const kindOf = (path: string): ShownKind => kinds[ext(path)] ?? "text";
  * page that shows it, its key or its cookies.
  */
 const sandbox = "sandbox allow-scripts allow-forms allow-popups allow-downloads";
+/** Anything else opened on its own (XHTML, XML, a type a thread made up) runs no script at all. */
+const inert = "sandbox";
+
+/**
+ * Sends a stream to the page. A reader that goes away (a video seeked or closed) or a source that fails
+ * ends both quietly; an error left unheard would end the whole Pi process.
+ */
+const send = (source: NodeJS.ReadableStream, response: ServerResponse) =>
+  pipeline(source, response).catch(() => {
+    if (!response.destroyed) response.destroy();
+  });
 /** The most of a text file the page gets; more is cut, and the page says so. */
 const textLimit = 256 * 1024;
 
@@ -157,7 +169,7 @@ export async function prepareShow(options: {
   if (!path) throw new Error("Say which file: path (and thread, for a file in a T3 thread's folder).");
   if (options.thread) {
     if (!t3) throw new Error("T3 isn't connected.");
-    const thread = t3.threads().find((each) => each.id === options.thread);
+    const thread = t3.thread(options.thread);
     if (!thread) throw new Error("No such thread in T3.");
     const folder = folderOf(thread, t3);
     if (!folder) throw new Error("T3 doesn't say which folder that thread works in.");
@@ -248,12 +260,21 @@ export function fileRoute(options: { secret: () => string; workspace: () => stri
       if (typeof value === "string") headers[name] = value;
     }
     let answer: Response | undefined;
+    // The wait is for T3 to answer, not for the whole file: a long video streams for as long as it plays.
+    // Leaving the page ends the stream from T3.
+    const stop = new AbortController();
+    response.on("close", () => stop.abort());
     for (let attempt = 0; attempt < 2; attempt++) {
       let url = await linkFor(t3, asset, attempt > 0);
       // A page's link is to its folder's files: `<folder link>/<name>`.
       if (sibling)
         url = `${url.slice(0, url.lastIndexOf("/") + 1)}${sibling.split("/").map(encodeURIComponent).join("/")}`;
-      answer = await fetch(url, { headers, signal: AbortSignal.timeout(30_000) });
+      const slow = setTimeout(() => stop.abort(), 30_000);
+      try {
+        answer = await fetch(url, { headers, signal: stop.signal });
+      } finally {
+        clearTimeout(slow);
+      }
       // A link that ran out early: make it again, once.
       if (answer.status !== 401 && answer.status !== 403 && !(answer.status === 404 && !sibling)) break;
       await answer.body?.cancel();
@@ -264,10 +285,15 @@ export function fileRoute(options: { secret: () => string; workspace: () => stri
       const value = answer.headers.get(name);
       if (value) out[name] = value;
     }
-    if (/^text\/html|^image\/svg/.test(out["content-type"] ?? "")) out["content-security-policy"] = sandbox;
+    // Served from bruv's own origin, so nothing here may run script there: pages get their own origin, the
+    // rest none at all.
+    out["content-security-policy"] = /^text\/html/.test(out["content-type"] ?? "") ? sandbox : inert;
     response.writeHead(answer.status, out);
-    if (!answer.body || request.method === "HEAD") return response.end();
-    Readable.fromWeb(answer.body as unknown as import("node:stream/web").ReadableStream).pipe(response);
+    if (!answer.body || request.method === "HEAD") {
+      await answer.body?.cancel();
+      return response.end();
+    }
+    await send(Readable.fromWeb(answer.body as unknown as import("node:stream/web").ReadableStream), response);
   };
 
   const fromDisk = (request: IncomingMessage, response: ServerResponse, full: string) => {
@@ -282,7 +308,7 @@ export function fileRoute(options: { secret: () => string; workspace: () => stri
       "x-content-type-options": "nosniff",
       "accept-ranges": "bytes",
     };
-    if (kind === "html" || ext(full) === "svg") headers["content-security-policy"] = sandbox;
+    headers["content-security-policy"] = kind === "html" ? sandbox : inert;
     if (request.headers["if-none-match"] === etag) {
       response.writeHead(304, headers);
       return response.end();
@@ -310,7 +336,7 @@ export function fileRoute(options: { secret: () => string; workspace: () => stri
     headers["content-length"] = Math.max(0, end - start + 1);
     response.writeHead(status, headers);
     if (request.method === "HEAD" || stat.size === 0) return response.end();
-    createReadStream(full, { start, end }).pipe(response);
+    void send(createReadStream(full, { start, end }), response);
   };
 
   return async (request: IncomingMessage, response: ServerResponse, path: string) => {

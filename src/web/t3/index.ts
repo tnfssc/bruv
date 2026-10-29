@@ -1,4 +1,4 @@
-import type { Decision, Project, T3State, Thread } from "../protocol";
+import { type Decision, going, type Project, type T3State, type Thread } from "../protocol";
 import { type FeedEnd, followShell, protocolVersion, rpc, type ShellValue, T3SocketError, ticket } from "./feed";
 import { followThreads, type ThreadMessage } from "./follow";
 import { keyStore, T3Error } from "./keys";
@@ -26,6 +26,8 @@ export type T3Link = {
   projects(): Project[];
   /** Every thread T3 shows, archived ones left out. */
   threads(): Thread[];
+  /** One thread by id, without copying the rest. */
+  thread(id: string): Thread | undefined;
   onChange(listener: (change: T3Change) => void): () => void;
   /** Threads whose messages to pass on as they come (`T3Change.message`). */
   follow(ids: Iterable<string>): void;
@@ -78,7 +80,6 @@ const maxDelay = 10_000;
 /** How often to look again when T3 is not there at all. */
 const slowDelay = 30_000;
 
-const going = new Set(["preparing", "queued", "starting", "running", "waiting"]);
 const live = (record: T3Thread) => record.archivedAt == null && record.deletedAt == null;
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -102,6 +103,36 @@ export function connectT3(options: {
   const listeners = new Set<(change: T3Change) => void>();
   const threads = new Map<string, Thread>();
   let projects: Project[] = [];
+  /**
+   * Snoozed threads, by when the snooze ends and whether they are settled besides. T3 sends nothing when a
+   * snooze ends, so a timer brings each back into view then.
+   */
+  const snoozes = new Map<string, { until: number; settled: boolean }>();
+  let snoozeTimer: ReturnType<typeof setTimeout> | undefined;
+  const scheduleSnoozes = () => {
+    clearTimeout(snoozeTimer);
+    snoozeTimer = undefined;
+    if (closed || !snoozes.size) return;
+    const next = Math.min(...[...snoozes.values()].map((snooze) => snooze.until));
+    // Timers can't wait longer than about 24 days; a later wake is checked again then.
+    snoozeTimer = setTimeout(endSnoozes, Math.min(Math.max(0, next - Date.now()) + 50, 2 ** 31 - 1));
+    snoozeTimer.unref?.();
+  };
+  const endSnoozes = () => {
+    const now = Date.now();
+    const woke: Thread[] = [];
+    for (const [id, snooze] of snoozes) {
+      if (snooze.until > now) continue;
+      snoozes.delete(id);
+      const thread = threads.get(id);
+      if (!thread || thread.away === snooze.settled) continue;
+      const next = { ...thread, away: snooze.settled };
+      threads.set(id, next);
+      woke.push(next);
+    }
+    if (woke.length) emit({ threads: woke });
+    scheduleSnoozes();
+  };
   /** Why each thread waits, from its own record; and each thread's children (delegated tasks, subagents). */
   const own = new Map<string, string | undefined>();
   const children = new Map<string, Set<string>>();
@@ -158,6 +189,7 @@ export function connectT3(options: {
       if (!old) return;
       threads.delete(id);
       own.delete(id);
+      snoozes.delete(id);
       if (old.parentId) {
         children.get(old.parentId)?.delete(id);
         parents.add(old.parentId);
@@ -168,6 +200,9 @@ export function connectT3(options: {
       if (!live(record)) return drop(record.id);
       const mapped = toThread(record);
       own.set(record.id, mapped.holding);
+      const until = record.snoozedUntil ? Date.parse(record.snoozedUntil) : Number.NaN;
+      if (until > Date.now()) snoozes.set(record.id, { until, settled: record.settledAt != null });
+      else snoozes.delete(record.id);
       if (mapped.parentId) {
         let set = children.get(mapped.parentId);
         if (!set) {
@@ -223,6 +258,7 @@ export function connectT3(options: {
       threads.set(id, next);
       changed.set(id, next);
     }
+    scheduleSnoozes();
     const change: T3Change = {};
     if (!same(nextProjects, projects)) change.projects = projects = nextProjects;
     if (changed.size) change.threads = [...changed.values()];
@@ -336,6 +372,7 @@ export function connectT3(options: {
     state: () => state,
     projects: () => [...projects],
     threads: () => [...threads.values()],
+    thread: (id) => threads.get(id),
     onChange(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);
@@ -412,6 +449,7 @@ export function connectT3(options: {
     },
     close() {
       closed = true;
+      clearTimeout(snoozeTimer);
       follower.close();
       listeners.clear();
       stopFeed?.();

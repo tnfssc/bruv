@@ -171,8 +171,9 @@ export async function setUpWebTunnel(context: ExtensionContext, agentDir = runni
 /** `/web tunnel off`: stops the tunnel and forgets its host. The Cloudflare key stays for /logout. */
 export function stopWebTunnel(context: ExtensionContext, agentDir = running?.web.agentDir) {
   const state = running;
+  // Also for a tunnel still connecting: it comes up to find it is no longer wanted and stops.
+  if (state) state.tries++;
   if (state?.tunnel) {
-    state.tries++;
     state.tunnel.stop();
     state.tunnel = undefined;
     state.web.setAddress(undefined);

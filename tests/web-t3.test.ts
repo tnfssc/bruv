@@ -555,3 +555,13 @@ test("pairs with a T3 elsewhere from its link, then keeps itself signed in with 
   expect(second.unpair()).toBe(true);
   await until(() => second.state().state === "unavailable");
 });
+
+test("a snoozed thread comes back into view when its snooze ends, with nothing from T3", async () => {
+  const { fake, open } = await setup();
+  fake.snapshot.threads = [record("a", { snoozedUntil: new Date(Date.now() + 80).toISOString() })];
+  const { link, changes } = open();
+  await until(() => link.state().state === "connected");
+  expect(byId(link, "a")?.away).toBe(true);
+  await until(() => byId(link, "a")?.away === false);
+  expect(threadsIn(changes).some((thread) => thread.id === "a" && !thread.away)).toBe(true);
+});

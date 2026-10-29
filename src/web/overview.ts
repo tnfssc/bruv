@@ -1,11 +1,9 @@
-import type { Project, Thread } from "./protocol";
+import { type Project, type Thread, going as working } from "./protocol";
 
 /** How many threads each group lists; the rest are counted. */
 const listed = 15;
 /** Finished or failed threads older than this are history, not news. */
 const recent = 3 * 24 * 60 * 60 * 1000;
-
-const working = new Set(["preparing", "queued", "starting", "running", "waiting"]);
 
 const age = (iso: string | undefined, now: number) => {
   if (!iso) return "";

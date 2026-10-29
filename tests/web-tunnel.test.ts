@@ -28,11 +28,12 @@ const key = "page-key";
 const tunnelToken = Buffer.from(JSON.stringify({ a: "account", t: "tunnel", s: "secret" })).toString("base64");
 
 /** A stand-in for cloudflared: connects at once, then runs until stopped (or exits soon after, when told). */
-function fakeCloudflared(agentDir: string, exits = false) {
+function fakeCloudflared(agentDir: string, exits = false, slow = false) {
   const bin = join(agentDir, "bruv", "voice", "bin");
   mkdirSync(bin, { recursive: true });
   const tail = exits ? "sleep 0.05\nexit 1\n" : "exec sleep 30\n";
-  writeFileSync(join(bin, "cloudflared"), `#!/bin/sh\necho 'Registered tunnel connection' >&2\n${tail}`);
+  const wait = slow ? "sleep 0.1\n" : "";
+  writeFileSync(join(bin, "cloudflared"), `#!/bin/sh\n${wait}echo 'Registered tunnel connection' >&2\n${tail}`);
   chmodSync(join(bin, "cloudflared"), 0o755);
 }
 
@@ -80,7 +81,8 @@ async function start(
 
 test("a saved host and key bring the tunnel up at start, with the phone's QR code", async () => {
   const { seen, base, part } = await start(async (agentDir) => {
-    fakeCloudflared(agentDir);
+    // Connects after a moment, so there is a "before" to look at.
+    fakeCloudflared(agentDir, false, true);
     saveConfig({ web: { tunnel: "bruv.example.com" } }, agentDir);
     await saveKey(tunnelToken, agentDir);
   });
@@ -123,6 +125,19 @@ test("a tunnel that stops clears the address", async () => {
   await until(() => seen.address !== undefined);
   await until(() => seen.address === undefined);
   expect(seen.notes.at(-1)?.kind).toBe("error");
+});
+
+test("turning the tunnel off while it is still connecting keeps it off", async () => {
+  const { seen, agentDir } = await start(async (agentDir) => {
+    fakeCloudflared(agentDir, false, true);
+    saveConfig({ web: { tunnel: "bruv.example.com" } }, agentDir);
+    await saveKey(tunnelToken, agentDir);
+  });
+  stopWebTunnel(context([]).ctx, agentDir);
+  // Longer than the fake takes to connect.
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  expect(seen.address).toBeUndefined();
 });
 
 function context(answers: (string | undefined)[], confirm = false) {

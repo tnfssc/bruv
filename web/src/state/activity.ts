@@ -1,9 +1,6 @@
-import type { Thread } from "../../../src/web/protocol";
+import { going, type Thread } from "../../../src/web/protocol";
 
 export type Group = "needs" | "working" | "done" | "recent";
-
-/** T3 run states where a thread is still going. */
-const going = new Set(["preparing", "queued", "starting", "running", "waiting"]);
 
 /** Recent threads older than this sit behind a "show older" fold. */
 export const recentFor = 72 * 60 * 60 * 1000;

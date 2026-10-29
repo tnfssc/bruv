@@ -1,10 +1,8 @@
-import type { Task, Thread } from "./protocol";
+import { type Task, type Thread, going as working } from "./protocol";
 import { open } from "./tasks";
 
 /** What a thread was last seen doing, to tell a change worth waking for from churn. */
 type Seen = { status: string; needsUser: boolean; holding?: string };
-
-const working = new Set(["preparing", "queued", "starting", "running", "waiting"]);
 
 /** Events that close together go as one wake-up. */
 const gather = 3000;

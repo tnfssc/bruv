@@ -60,6 +60,12 @@ async function fakeT3(files: Record<string, { type: string; body: string }>) {
     const base = decodeURIComponent(match[2] as string);
     const file = files[base ? `${base}/${match[3]}` : (match[3] as string)];
     if (!file) return response.writeHead(404).end();
+    // A transfer that breaks halfway.
+    if (file.body === "BREAK") {
+      response.writeHead(200, { "content-type": file.type, "content-length": "1000" });
+      response.write("partial");
+      return setTimeout(() => response.socket?.destroy(), 10);
+    }
     const range = /^bytes=(\d+)-(\d+)$/.exec(String(request.headers.range ?? ""));
     if (range) {
       const part = file.body.slice(Number(range[1]), Number(range[2]) + 1);
@@ -78,6 +84,7 @@ async function fakeT3(files: Record<string, { type: string; body: string }>) {
   const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   const link = {
     threads: () => [thread],
+    thread: (id: string) => (id === thread.id ? thread : undefined),
     projects: () => [{ id: "p1", title: "bruv", root: "/remote/bruv" }],
     async asset(resource: T3Asset) {
       made.push(resource);
@@ -229,4 +236,20 @@ test("a saved shown file becomes a line of its own, and only a link of bruv's ow
   expect(shownLine(shown, "l1", 0)).toMatchObject({ role: "assistant", files: [shown] });
   expect(shownLine({ ...shown, url: "https://elsewhere/x.png" }, "l2", 0)).toBeUndefined();
   expect(shownLine(undefined, "l3", 0)).toBeUndefined();
+});
+
+test("a file whose transfer from T3 breaks halfway fails on its own", async () => {
+  const t3 = await fakeT3({
+    "broken.mp4": { type: "video/mp4", body: "BREAK" },
+    "ok.png": { type: "image/png", body: "png" },
+  });
+  const workspace = folder();
+  const origin = await serve(fileRoute({ secret: () => secret, workspace: () => workspace, t3: () => t3.link }));
+  const broken = await prepareShow({ secret, workspace, t3: t3.link, thread: "t1", path: "broken.mp4" });
+  await fetch(origin + broken.url)
+    .then((answer) => answer.text())
+    .catch(() => "");
+  // The server is still there for the next file.
+  const ok = await prepareShow({ secret, workspace, t3: t3.link, thread: "t1", path: "ok.png" });
+  expect(await (await fetch(origin + ok.url)).text()).toBe("png");
 });

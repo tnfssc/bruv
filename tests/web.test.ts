@@ -45,6 +45,8 @@ function fakeT3() {
     state: () => state,
     projects: () => [{ id: "p", title: "bruv", root: "/code/bruv" }],
     threads: () => threads,
+    // Through `threads`, so a test that swaps the list sees it here too.
+    thread: (id) => link.threads().find((each) => each.id === id),
     onChange: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
@@ -508,6 +510,29 @@ test("a coding session doesn't get the web version's tools", async () => {
     const names = app.session.getAllTools().map((tool) => tool.name);
     // `show` is terminal voice's in a coding session; the web version's would replace it.
     for (const name of ["overview", "approve", "show"]) expect(names).not.toContain(name);
+  } finally {
+    await app.close();
+  }
+});
+
+test("scrolling back from a line the page saw live finds the lines before it", async () => {
+  const { app, url } = await web();
+  try {
+    app.faux.setResponses([fauxAssistantMessage("first answer"), fauxAssistantMessage("second answer")]);
+    const { ws, events, lines } = page(url);
+    await until(() => events.length > 0);
+    ws.send(JSON.stringify({ type: "say", text: "first question", id: "p-1" }));
+    await until(() => lines().some((line) => line.text === "first answer"));
+    ws.send(JSON.stringify({ type: "say", text: "second question", id: "p-2" }));
+    await until(() => lines().some((line) => line.text === "second answer"));
+    await until(() => events.some((event, index) => index > 2 && event.type === "busy" && !event.busy));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    // The page's own id for its second line, as a page that dropped older lines would ask with.
+    ws.send(JSON.stringify({ type: "more", before: "p-2" }));
+    await until(() => events.some((event) => event.type === "older"));
+    const older = events.find((event) => event.type === "older");
+    expect(older?.type === "older" && older.lines.map((line) => line.text)).toEqual(["first question", "first answer"]);
+    ws.close();
   } finally {
     await app.close();
   }
