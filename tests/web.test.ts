@@ -501,3 +501,14 @@ test("a file the assistant shows reaches every page as a line of its own, fetche
     await app.close();
   }
 });
+
+test("a coding session doesn't get the web version's tools", async () => {
+  const app = await sdk([(pi) => registerWeb(pi, { on: false })]);
+  try {
+    const names = app.session.getAllTools().map((tool) => tool.name);
+    // `show` is terminal voice's in a coding session; the web version's would replace it.
+    for (const name of ["overview", "approve", "show"]) expect(names).not.toContain(name);
+  } finally {
+    await app.close();
+  }
+});
