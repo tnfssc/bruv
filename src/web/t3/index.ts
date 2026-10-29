@@ -1,8 +1,10 @@
 import type { Decision, Project, T3State, Thread } from "../protocol";
-import { dispatch, type FeedEnd, followShell, protocolVersion, type ShellValue, T3SocketError, ticket } from "./feed";
+import { type FeedEnd, followShell, protocolVersion, rpc, type ShellValue, T3SocketError, ticket } from "./feed";
 import { keyStore, T3Error } from "./keys";
 import { locateT3, type T3Place } from "./locate";
 import { sameThread, type T3Thread, toProject, toThread } from "./thread";
+
+export { T3RpcError } from "./feed";
 
 /**
  * bruv's link to T3 Code: a live picture of every project and thread, and a key for T3's MCP server.
@@ -28,8 +30,28 @@ export type T3Link = {
    * `acceptForSession` for the rest of the thread's session, or `decline`.
    */
   respond(threadId: string, requestId: string, decision: Decision): Promise<void>;
+  /**
+   * A signed link on T3's origin to a file T3 lets a reader see (see `T3Asset`), lasting about an hour. No key
+   * is needed to fetch it. Throws `T3RpcError` with T3's reason when it won't.
+   */
+  asset(resource: T3Asset): Promise<{ url: string; expiresAt: number }>;
+  /** A text file in a folder of T3's machine, as T3 reads it (text only, cut short when long). */
+  readFile(folder: string, path: string): Promise<{ contents: string; truncated: boolean }>;
+  /** Pairs with a T3 elsewhere from a `t3 pair` link, and uses it from then on. Answers its origin. */
+  pair(link: string): Promise<string>;
+  /** Back to the T3 on this machine. False when none was paired from a link. */
+  unpair(): boolean;
   close(): void;
 };
+
+/**
+ * What T3 makes links for. `workspace-file`: a picture, SVG, PDF or HTML page in a thread's folder (a page's
+ * link also reaches the files beside it). `media-file`: the same plus video and audio. `attachment`: a page
+ * a thread showed with `html_render`.
+ */
+export type T3Asset =
+  | { _tag: "workspace-file" | "media-file"; threadId: string; path: string }
+  | { _tag: "attachment"; attachmentId: string; mimeType: "text/html"; disposition: "inline" };
 
 const firstDelay = 500;
 const maxDelay = 10_000;
@@ -53,8 +75,9 @@ export function connectT3(options: {
   /** For tests: where T3 is and how to get a pairing token. The default reads ~/.t3 and runs `t3 pair`. */
   locate?: () => T3Place | undefined;
 }): T3Link {
-  const locate = options.locate ?? (() => locateT3());
   const keys = keyStore(options.dir);
+  // A T3 paired from a link wins over the one on this machine.
+  const locate = options.locate ?? (() => keys.remote() ?? locateT3());
   const listeners = new Set<(change: T3Change) => void>();
   const threads = new Map<string, Thread>();
   let projects: Project[] = [];
@@ -215,6 +238,27 @@ export function connectT3(options: {
   };
   void run();
 
+  /** One call to T3's app API with the session key, signing in again once if T3 refused it. */
+  const call = async (tag: string, payload: Record<string, unknown>) => {
+    const place = locate();
+    if (!place) throw new Error("T3 is not running");
+    for (let attempt = 0; ; attempt++) {
+      const session = await keys.get("session", place);
+      try {
+        return {
+          origin: place.origin,
+          value: await rpc(place.origin, await ticket(place.origin, session), tag, payload),
+        };
+      } catch (error) {
+        const refused =
+          (error instanceof T3Error && error.status === 401) ||
+          (error instanceof T3SocketError && error.status === 401);
+        if (!refused || attempt) throw error;
+        keys.drop("session", session);
+      }
+    }
+  };
+
   return {
     state: () => state,
     projects: () => [...projects],
@@ -254,26 +298,43 @@ export function connectT3(options: {
       return undefined;
     },
     async respond(threadId, requestId, decision) {
-      const place = locate();
-      if (!place) throw new Error("T3 is not running");
-      for (let attempt = 0; attempt < 2; attempt++) {
-        const session = await keys.get("session", place);
-        try {
-          await dispatch(place.origin, await ticket(place.origin, session), {
-            type: "runtime-request.respond",
-            threadId,
-            requestId,
-            decision,
-          });
-          return;
-        } catch (error) {
-          const refused =
-            (error instanceof T3Error && error.status === 401) ||
-            (error instanceof T3SocketError && error.status === 401);
-          if (!refused || attempt) throw error;
-          keys.drop("session", session);
-        }
+      await call("orchestration.dispatchCommand", {
+        commandId: crypto.randomUUID(),
+        type: "runtime-request.respond",
+        threadId,
+        requestId,
+        decision,
+      });
+    },
+    async asset(resource) {
+      const { origin, value } = await call("assets.createUrl", { resource });
+      const answer = value as { relativeUrl?: unknown; expiresAt?: unknown };
+      if (typeof answer?.relativeUrl !== "string") throw new Error("T3 gave no link");
+      const expiresAt = typeof answer.expiresAt === "number" ? answer.expiresAt : Date.parse(String(answer.expiresAt));
+      return { url: new URL(answer.relativeUrl, origin).href, expiresAt: expiresAt || Date.now() + 10 * 60_000 };
+    },
+    async readFile(folder, path) {
+      const { value } = await call("projects.readFile", { cwd: folder, relativePath: path });
+      const answer = value as { contents?: unknown; truncated?: unknown };
+      return {
+        contents: typeof answer?.contents === "string" ? answer.contents : "",
+        truncated: answer?.truncated === true,
+      };
+    },
+    async pair(link) {
+      const origin = await keys.pair(link);
+      // A new T3: follow it now instead of after the current wait.
+      stopFeed?.();
+      wake?.();
+      return origin;
+    },
+    unpair() {
+      const was = keys.unpair();
+      if (was) {
+        stopFeed?.();
+        wake?.();
       }
+      return was;
     },
     close() {
       closed = true;

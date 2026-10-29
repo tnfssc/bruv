@@ -9,6 +9,7 @@ import { setFollowing } from "@/state/store";
 import { useLine, useLineIds, useStore } from "@/state/use-store";
 import type { Line } from "../../../src/web/protocol";
 import { Mark } from "./brand";
+import { ShownFiles } from "./shown";
 import { Button } from "./ui/button";
 
 /** How close to the top, in pixels, before older lines are asked for. */
@@ -68,6 +69,7 @@ const Row = memo(function Row({ id }: { id: string }) {
         ) : null}
       </div>
     );
+  if (line.role === "assistant" && line.files?.length) return <ShownFiles files={line.files} />;
   if (line.role === "assistant") return <Text line={line} className="text-[17px] leading-[1.65] tracking-[-0.005em]" />;
   if (line.role === "wake")
     return (

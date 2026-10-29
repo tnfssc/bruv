@@ -135,39 +135,31 @@ export function followShell(
 }
 
 /**
- * Sends one command to T3's app API over a socket of its own and waits for T3's answer. Used for what MCP
- * can't do, like answering a thread's permission request; that is rare, so the live feed's socket stays
- * as it is.
+ * One call to T3's app API over a socket of its own, answered with its value. Used for what MCP can't do,
+ * like answering a thread's permission request or making a link to a thread's file; those are rare next to
+ * the live feed, whose socket stays as it is.
  */
-export function dispatch(origin: string, wsTicket: string, command: Record<string, unknown>): Promise<void> {
+export function rpc(origin: string, wsTicket: string, tag: string, payload: Record<string, unknown>): Promise<unknown> {
   const url = new URL("/ws", origin.replace(/^http/, "ws"));
   url.searchParams.set("wsTicket", wsTicket);
   url.searchParams.set("orchestrationProtocol", String(protocolVersion));
   url.searchParams.set("clientDeviceType", "bot");
   return new Promise((resolve, reject) => {
     const socket = new WebSocket(url);
-    const end = (error?: Error) => {
+    const end = (error?: Error, value?: unknown) => {
       clearTimeout(timer);
       socket.removeAllListeners();
       socket.on("error", () => {});
       socket.close();
       if (error) reject(error);
-      else resolve();
+      else resolve(value);
     };
     const timer = setTimeout(() => end(new Error("T3 didn't answer")), 15_000);
     socket.on("open", () => {
-      socket.send(
-        JSON.stringify({
-          _tag: "Request",
-          id: "1",
-          tag: "orchestration.dispatchCommand",
-          payload: { commandId: crypto.randomUUID(), ...command },
-          headers: [],
-        }),
-      );
+      socket.send(JSON.stringify({ _tag: "Request", id: "1", tag, payload, headers: [] }));
     });
     socket.on("message", (data) => {
-      let message: { _tag?: string; exit?: { _tag?: string; cause?: unknown } };
+      let message: { _tag?: string; exit?: { _tag?: string; value?: unknown; cause?: unknown } };
       try {
         message = JSON.parse(data.toString());
       } catch {
@@ -175,11 +167,9 @@ export function dispatch(origin: string, wsTicket: string, command: Record<strin
       }
       if (message._tag === "Ping") socket.send(JSON.stringify({ _tag: "Pong" }));
       else if (message._tag === "Exit")
-        end(
-          message.exit?._tag === "Success"
-            ? undefined
-            : new Error(`T3 refused it: ${JSON.stringify(message.exit?.cause ?? message).slice(0, 300)}`),
-        );
+        message.exit?._tag === "Success"
+          ? end(undefined, message.exit.value)
+          : end(new T3RpcError(message.exit?.cause ?? message));
       else if (message._tag === "Defect" || message._tag === "ClientProtocolError")
         end(new Error(`T3 refused it: ${message._tag}`));
     });
@@ -188,6 +178,21 @@ export function dispatch(origin: string, wsTicket: string, command: Record<strin
     );
     socket.on("error", (error) => end(error));
   });
+}
+
+/** Sends one command (`orchestration.dispatchCommand`) and waits for T3 to take it. */
+export async function dispatch(origin: string, wsTicket: string, command: Record<string, unknown>): Promise<void> {
+  await rpc(origin, wsTicket, "orchestration.dispatchCommand", { commandId: crypto.randomUUID(), ...command });
+}
+
+/** T3 answered a call with a failure. `tag` is its error's name, like `AssetPreviewTypeValidationError`. */
+export class T3RpcError extends Error {
+  readonly tag: string | undefined;
+  constructor(cause: unknown) {
+    const first = Array.isArray(cause) ? (cause[0] as { error?: { _tag?: string; message?: string } }) : undefined;
+    super(`T3 refused it: ${first?.error?.message ?? JSON.stringify(cause).slice(0, 300)}`);
+    this.tag = first?.error?._tag;
+  }
 }
 
 /** A socket T3 turned away, with its HTTP status (401: the key was refused). */

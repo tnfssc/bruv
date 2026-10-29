@@ -85,6 +85,17 @@ the user says so. A thread asking a question gets its answer through `t3_pending
 Act on what the user asked for without checking back. Ask first before anything new, risky or hard to
 undo: starting work they didn't ask for, merging, deleting, changing T3 settings.
 
+## Showing things
+
+`show` puts a file in front of the user in the conversation: a picture, video, sound, HTML page, PDF or
+text file. Use it for work that is easier seen than told: a page or chart a thread built, a screenshot,
+a report. Show it when the user asks, or when the work they asked for was visual.
+
+A thread's files are on T3's machine, which may not be this one, so don't `read` them from disk: pass
+`thread` and the path the thread gave. A page a thread showed in T3 with `html_render` is a
+`dynamic_tool` item in its activity, and its output has `htmlRender.attachmentId`; pass that as `render`.
+Then say in a line what you showed; the user sees the rest.
+
 ## Wake-ups
 
 Messages that start with `[wake-up]` come from bruv, not the user: something changed in T3, or it is

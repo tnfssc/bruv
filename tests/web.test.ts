@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { fauxAssistantMessage } from "@earendil-works/pi-ai";
+import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
 import WebSocket from "ws";
 import { saveConfig } from "../src/config";
 import { registerWeb } from "../src/web";
@@ -52,6 +52,12 @@ function fakeT3() {
     respond: async (threadId, requestId, decision) => {
       responded.push({ threadId, requestId, decision });
     },
+    asset: async () => {
+      throw new Error("no files in this fake");
+    },
+    readFile: async () => ({ contents: "", truncated: false }),
+    pair: async () => "http://t3.test",
+    unpair: () => false,
     close: () => listeners.clear(),
   };
   return {
@@ -438,5 +444,43 @@ test("a thread starts being followed from where it is, so its first change after
     expect(woke[0]).toContain('"a"');
   } finally {
     waker.close();
+  }
+});
+
+test("a file the assistant shows reaches every page as a line of its own, fetched with no key", async () => {
+  const workspace = join(process.env.PI_CODING_AGENT_DIR as string, `workspace-${Date.now()}-${Math.random()}`);
+  mkdirSync(join(workspace, "out"), { recursive: true });
+  writeFileSync(join(workspace, "out", "chart.svg"), "<svg xmlns='http://www.w3.org/2000/svg'/>");
+  const { app, url } = await web({}, workspace);
+  try {
+    app.faux.setResponses([
+      // Called from a script, as the model often does: the file still gets its line.
+      fauxAssistantMessage(
+        fauxToolCall("codemode", {
+          code: '// Show the chart\nawait tools.show({ path: "out/chart.svg", title: "Speed" });',
+        }),
+        { stopReason: "toolUse" },
+      ),
+      fauxAssistantMessage("That's the chart."),
+    ]);
+    const { ws, events, lines } = page(url);
+    await until(() => events.length > 0);
+    ws.send(JSON.stringify({ type: "say", text: "show me the chart" }));
+    await until(() => lines().some((line) => line.text === "That's the chart."));
+    const shown = lines().find((line) => line.files)?.files?.[0];
+    expect(shown).toMatchObject({ kind: "image", name: "chart.svg", title: "Speed" });
+    const { origin } = new URL(url);
+    const file = await fetch(origin + shown?.url);
+    expect(file.status).toBe(200);
+    expect(file.headers.get("content-security-policy")).toContain("sandbox");
+
+    // It is part of the conversation for a page that opens later.
+    const late = page(url);
+    await until(() => late.events.length > 0);
+    expect(late.lines().some((line) => line.files?.[0]?.url === shown?.url)).toBe(true);
+    ws.close();
+    late.ws.close();
+  } finally {
+    await app.close();
   }
 });

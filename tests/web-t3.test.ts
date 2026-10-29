@@ -1,12 +1,12 @@
 import { afterEach, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { resolve } from "node:path";
 import { type WebSocket, WebSocketServer } from "ws";
 import type { Thread } from "../src/web/protocol";
-import { connectT3, type T3Change, type T3Link } from "../src/web/t3";
+import { connectT3, type T3Change, type T3Link, T3RpcError } from "../src/web/t3";
 import type { ShellValue } from "../src/web/t3/feed";
 import { type T3Thread, toThread } from "../src/web/t3/thread";
 
@@ -42,6 +42,16 @@ async function fakeT3() {
   let n = 0;
   const fake = {
     pairs: 0,
+    /** Pairing tokens minted with a session, as a bruv paired from a link does. */
+    mints: 0,
+    /** A pairing token, as `t3 pair` prints one in its link. */
+    code: () => {
+      const code = `code-${++n}`;
+      codes.add(code);
+      return code;
+    },
+    /** Calls on the app API other than the feed, by tag. */
+    calls: [] as { tag: string; payload: Record<string, unknown> }[],
     subscribes: 0,
     chunks: 0,
     acks: 0,
@@ -110,6 +120,11 @@ async function fakeT3() {
       tickets.add(ticket);
       return reply(response, 200, { ticket, expiresAt: "2026-10-28T00:00:00.000Z" });
     }
+    if (url.pathname === "/api/auth/pairing-token") {
+      if (!sessions.has(bearer(request))) return reply(response, 401, { code: "auth_invalid" });
+      fake.mints++;
+      return reply(response, 200, { id: `p-${n}`, credential: fake.code(), expiresAt: "2026-10-29T00:00:00.000Z" });
+    }
     if (url.pathname === "/oauth/mcp/register") return reply(response, 201, { client_id: "client-1" });
     if (url.pathname === "/oauth/mcp/decision") {
       const { authorization, decision } = JSON.parse(text);
@@ -148,6 +163,17 @@ async function fakeT3() {
       ws.on("message", (data) => {
         const message = JSON.parse(data.toString());
         if (message._tag === "Ack") fake.acks++;
+        if (message._tag === "Request" && message.tag !== "orchestration.subscribeShell") {
+          fake.calls.push({ tag: message.tag, payload: message.payload });
+          const exit =
+            message.tag === "assets.createUrl" && message.payload.resource.path === "shot.png"
+              ? {
+                  _tag: "Success",
+                  value: { relativeUrl: "/api/assets/signed/shot.png", expiresAt: Date.now() + 3600_000 },
+                }
+              : { _tag: "Failure", cause: [{ _tag: "Fail", error: { _tag: "AssetWorkspaceAssetNotFoundError" } }] };
+          ws.send(JSON.stringify({ _tag: "Exit", requestId: message.id, exit }));
+        }
         if (message._tag === "Request" && message.tag === "orchestration.subscribeShell") {
           fake.subscribes++;
           fake.requests.push(message.payload);
@@ -434,4 +460,63 @@ test("is unavailable when T3 is missing or speaks another protocol", async () =>
   const { link } = open();
   await until(() => link.state().state === "unavailable");
   expect(fake.subscribes).toBe(0);
+});
+
+test("makes links to a thread's files through T3's app API", async () => {
+  const { fake, open } = await setup();
+  const { link } = open();
+  await until(() => link.state().state === "connected");
+  const made = await link.asset({ _tag: "workspace-file", threadId: "a", path: "shot.png" });
+  expect(made.url).toBe(`${fake.origin}/api/assets/signed/shot.png`);
+  expect(made.expiresAt).toBeGreaterThan(Date.now());
+  const refused = await link
+    .asset({ _tag: "workspace-file", threadId: "a", path: "missing.png" })
+    .catch((error) => error);
+  expect(refused).toBeInstanceOf(T3RpcError);
+  expect(refused.tag).toBe("AssetWorkspaceAssetNotFoundError");
+});
+
+test("pairs with a T3 elsewhere from its link, then keeps itself signed in with nothing from this machine", async () => {
+  const fake = await fakeT3();
+  mkdirSync(".tmp", { recursive: true });
+  const dir = mkdtempSync(resolve(".tmp/web-t3-"));
+  // No T3 on this machine.
+  const home = process.env.T3CODE_HOME;
+  process.env.T3CODE_HOME = mkdtempSync(resolve(".tmp/web-t3-home-"));
+  const links: T3Link[] = [];
+  cleanup.push(() => {
+    for (const each of links) each.close();
+    fake.close();
+    rmSync(dir, { recursive: true, force: true });
+    rmSync(process.env.T3CODE_HOME as string, { recursive: true, force: true });
+    process.env.T3CODE_HOME = home;
+  });
+  const first = connectT3({ dir });
+  links.push(first);
+  await until(() => first.state().state === "unavailable");
+  await expect(first.pair("not a link")).rejects.toThrow();
+
+  expect(await first.pair(`${fake.origin}/pair#token=${fake.code()}`)).toBe(fake.origin);
+  await until(() => first.state().state === "connected");
+  const mcp = await first.mcp();
+  expect(mcp?.url).toBe(`${fake.origin}/mcp`);
+  expect(fake.pairs).toBe(0);
+  expect(fake.mints).toBe(1);
+  first.close();
+
+  // Near its end, the key mints its own successor.
+  const saved = JSON.parse(readFileSync(`${dir}/t3.json`, "utf8"));
+  const old = saved.session.token;
+  saved.session.expiresAt = Date.now() + 60_000;
+  writeFileSync(`${dir}/t3.json`, JSON.stringify(saved));
+  const second = connectT3({ dir });
+  links.push(second);
+  await until(() => second.state().state === "connected");
+  const renewed = JSON.parse(readFileSync(`${dir}/t3.json`, "utf8")).session.token;
+  expect(renewed).not.toBe(old);
+  expect(fake.sessions.has(renewed)).toBe(true);
+  expect(fake.mints).toBe(2);
+
+  expect(second.unpair()).toBe(true);
+  await until(() => second.state().state === "unavailable");
 });

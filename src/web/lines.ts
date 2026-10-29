@@ -1,5 +1,5 @@
 import type { SessionEntry } from "@earendil-works/pi-coding-agent";
-import type { Line } from "./protocol";
+import type { Line, Shown } from "./protocol";
 
 /**
  * Wake-ups reach the model as user messages that start with this, since a custom message that starts a run
@@ -30,6 +30,21 @@ const text = (content: Message["content"]) =>
 /** The pictures in a message, in order. */
 export const pictures = (content: Message["content"]) =>
   typeof content === "string" ? [] : (content ?? []).filter((block) => block.type === "image" && block.data);
+
+/** The tool that shows the user a file. */
+export const showTool = "show";
+/**
+ * The session entry a shown file is saved in, as its own line. Not the tool's result: the model often calls
+ * `show` from a script, and then the result is the script's.
+ */
+export const showEntry = "bruv-web-show";
+
+/** The line for a saved shown file, or nothing when it isn't one. */
+export function shownLine(data: unknown, id: string, at: number): Line | undefined {
+  const file = data as Shown | undefined;
+  if (!file || typeof file.url !== "string" || !file.url.startsWith("/file/")) return undefined;
+  return { id, role: "assistant", text: "", files: [file], at: new Date(at).toISOString() };
+}
 
 /**
  * What the page shows for a message, or nothing for tool results, thinking and hidden notes. Pictures
@@ -77,13 +92,12 @@ export function lines(entries: Entries, link: (id: string, index: number) => str
     const entry = entries.getEntry(id);
     if (!entry) break;
     id = entry.parentId;
-    if (entry.type !== "message") continue;
-    const line = toLine(
-      entry.message as Message,
-      entry.id,
-      (index) => link(entry.id, index),
-      Date.parse(entry.timestamp),
-    );
+    const line =
+      entry.type === "custom" && entry.customType === showEntry
+        ? shownLine(entry.data, entry.id, Date.parse(entry.timestamp))
+        : entry.type !== "message"
+          ? undefined
+          : toLine(entry.message as Message, entry.id, (index) => link(entry.id, index), Date.parse(entry.timestamp));
     if (!line) continue;
     if (found.length === page) return { lines: found.reverse(), more: true };
     found.push(line);

@@ -26,6 +26,8 @@ export type Thread = {
   lastMessage?: string;
   lastError?: string;
   branch?: string;
+  /** The thread's own worktree folder on T3's machine; without one it works in its project's root. */
+  worktree?: string;
   /** When the latest run finished, and when the user last opened the thread in T3, for "done, unread". */
   finishedAt?: string;
   visitedAt?: string;
@@ -59,12 +61,20 @@ export type Task = {
 };
 
 /** A line in the conversation. Wake-ups are the assistant's own check-ins, shown small. */
+/** How the page shows a file: inline for pictures, video, sound and HTML; text in a box; a PDF as a link. */
+export type ShownKind = "image" | "video" | "audio" | "html" | "pdf" | "text";
+
+/** A file the assistant showed the user. `url` is on the server and needs no key; `title` is the assistant's words for it. */
+export type Shown = { url: string; kind: ShownKind; name: string; title?: string };
+
 export type Line = {
   id: string;
   role: "user" | "assistant" | "wake" | "note";
   text: string;
   /** Pictures sent with a user line, as links on the server (cacheable for good). */
   images?: string[];
+  /** Files the assistant showed, on an assistant line of their own. */
+  files?: Shown[];
   at: string;
   /** Still being written. */
   partial?: boolean;

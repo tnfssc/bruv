@@ -203,6 +203,12 @@ starts, follows and messages T3 threads for you, and tells you what needs you. I
 - It checks back on its own: when a thread a task follows finishes, fails or waits on you, and every hour
   while work is open (`"web": { "lookMinutes": 60 }` in `bruv.json`).
 - A thread waiting on a permission request can be answered from the page, or by telling the assistant.
+- It can show you files in the conversation: pictures, videos, sound, HTML pages (running, sandboxed),
+  PDFs and text, from its folder or a thread's, and pages threads made in T3. Ask "show me the page it
+  built", or it shows visual work on its own.
+- T3 on another machine: run `t3 pair --tailscale` there (or start T3 with a `--host` this machine
+  reaches) and give bruv the link it prints with `/web t3 <link>`. bruv then signs itself in and renews
+  its key with nothing else from that machine; `/web t3 local` goes back to the T3 here.
 - The talk button gives voice in the same conversation (hold to talk, tap for hands-free), with the
   models `/voice` uses.
 - `/web tunnel` serves the page on your own domain through Cloudflare, so your phone can reach it, install

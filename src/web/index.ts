@@ -9,7 +9,19 @@ import { toolRules } from "../prompt";
 import { setStatus } from "../status";
 import { lineAt, parentOf, readBack } from "./archive";
 import { pageAssets } from "./assets";
-import { lines, type Message, page, pictures, toImage, toLine, wakeMark } from "./lines";
+import { fileRoute, prepareShow } from "./files";
+import {
+  lines,
+  type Message,
+  page,
+  pictures,
+  showEntry,
+  shownLine,
+  showTool,
+  toImage,
+  toLine,
+  wakeMark,
+} from "./lines";
 import { overview } from "./overview";
 import type { WebContext, WebPart } from "./part";
 import { webParts } from "./parts";
@@ -32,7 +44,7 @@ const topLevel = (threads: Thread[]) => threads.filter((thread) => !thread.paren
  * Pi's tools the assistant keeps: its workspace files and scripts. It doesn't run commands or code; T3's
  * threads do the work. T3's own tools (`mcp__t3__*`) and `overview` are added to these.
  */
-const ownTools = new Set(["codemode", "tool_search", "read", "write", "edit", "overview", "approve"]);
+const ownTools = new Set(["codemode", "tool_search", "read", "write", "edit", "overview", "approve", showTool]);
 
 /** T3 tools the model sees directly; the other ~80 stay behind codemode. */
 const directTools = ["t3_thread_list", "t3_thread_read", "t3_thread_launch", "t3_thread_send"];
@@ -60,6 +72,7 @@ const doing: Record<string, string> = {
   write: "Updating its notes",
   edit: "Updating its notes",
   approve: "Answering the thread",
+  [showTool]: "Getting it to show you",
   mcp__t3__t3_thread_launch: "Starting a thread",
   mcp__t3__t3_thread_send: "Messaging a thread",
   mcp__t3__t3_thread_read: "Reading a thread",
@@ -122,6 +135,8 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
    * nothing (the prompt stays cached).
    */
   let shownOverview = "";
+  /** Registers T3's MCP server again when its key or origin changed (after pairing with another T3). */
+  let registerMcp: (() => Promise<void>) | undefined;
   const withOverview = () => {
     if (live?.t3.state().state !== "connected") return;
     const now = overview(live.t3.threads(), live.t3.projects());
@@ -190,8 +205,10 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
       if (!file) return { lines: found, more: false };
       const n = index;
       const back = readBack(file, end, page - found.length, (entry, offset) => {
-        if (entry.type !== "message") return undefined;
         const id = `a${n}.${offset}`;
+        if (entry.type === "custom" && entry.customType === showEntry)
+          return shownLine(entry.data, id, Date.parse(String(entry.timestamp)));
+        if (entry.type !== "message") return undefined;
         return toLine(
           entry.message as Message,
           id,
@@ -320,6 +337,8 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
       t3.close();
       throw error;
     }
+    const workspace = context.cwd;
+    server.route(fileRoute({ secret: () => secret, workspace: () => workspace, t3: () => t3 }));
     const parts = (options.parts ?? webParts)();
     const free = () => !busy && (ctx?.isIdle() ?? true) && !parts.some((part) => part.talking?.());
     const waker = new Waker({
@@ -405,6 +424,7 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
         description: "T3 Code: the user's coding-agent threads and projects.",
       });
     };
+    registerMcp = register;
     void register();
     const recheck = setInterval(() => void register(), 6 * 60 * 60 * 1000);
     recheck.unref?.();
@@ -487,6 +507,45 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     },
   });
 
+  pi.registerTool({
+    name: showTool,
+    label: "Show",
+    description:
+      "Show the user a file on the page, in the conversation: a picture, video, sound, HTML page, PDF or text file. From your working folder (path), from a T3 thread's folder (path and thread), or a page a thread showed with html_render (render: its attachment id, and thread). It shows at once; say what it is in a line, not what's in it.",
+    parameters: Type.Object({
+      path: Type.Optional(
+        Type.String({ description: "The file: in your working folder, or with thread, in that thread's folder." }),
+      ),
+      thread: Type.Optional(Type.String({ description: "The T3 thread whose folder the file is in." })),
+      render: Type.Optional(
+        Type.String({ description: "An html_render page's attachment id, from the thread's activity." }),
+      ),
+      title: Type.Optional(Type.String({ description: "A few words for it, shown with it." })),
+    }),
+    async execute(_id, args, _signal, _update, context) {
+      if (!live) throw new Error("The web version is off.");
+      const shown = await prepareShow({
+        secret: live.key,
+        workspace: context.cwd,
+        t3: live.t3,
+        path: args.path,
+        thread: args.thread,
+        render: args.render,
+        title: args.title,
+      });
+      // Saved as a line of its own, and on the page now, while the run goes on.
+      pi.appendEntry(showEntry, shown);
+      send({
+        type: "line",
+        line: { id: `live-${++count}`, role: "assistant", text: "", files: [shown], at: new Date().toISOString() },
+      });
+      return {
+        content: [{ type: "text" as const, text: `Shown to the user: ${shown.name} (${shown.kind}).` }],
+        details: { shown },
+      };
+    },
+  });
+
   pi.registerFlag("web", { description: "Run as the web version: your assistant for T3 Code work", type: "boolean" });
   pi.registerFlag("web-dev", {
     description: "With --web, serve the page from its source with live reload",
@@ -499,6 +558,8 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
       [
         { value: "tunnel", description: "Serve the page on your own domain, for your phone" },
         { value: "tunnel off", description: "Stop serving the page on your domain" },
+        { value: "t3 ", description: "Pair with a T3 on another machine: paste the link `t3 pair` prints there" },
+        { value: "t3 local", description: "Use the T3 on this machine again" },
       ]
         .filter(({ value }) => value.startsWith(prefix.trimStart()))
         .map(({ value, description }) => ({ value, label: value, description })),
@@ -506,6 +567,28 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
       const word = args.trim();
       if (word === "tunnel") return setUpWebTunnel(context, options.agentDir);
       if (word === "tunnel off") return stopWebTunnel(context, options.agentDir);
+      if (word === "t3" || word.startsWith("t3 ")) {
+        const link = word.slice(2).trim();
+        if (!live) return context.ui.notify("Start Pi with --web to run the web version.", "info");
+        if (!link)
+          return context.ui.notify(
+            "Run `t3 pair --tailscale` where T3 runs (or with a --host other machines reach), then /web t3 <the pairing link>.",
+            "info",
+          );
+        if (link === "local")
+          return context.ui.notify(
+            live.t3.unpair() ? "Using the T3 on this machine again." : "Already using the T3 on this machine.",
+            "info",
+          );
+        try {
+          const origin = await live.t3.pair(link);
+          context.ui.notify(`Paired with T3 at ${origin}.`, "info");
+          await registerMcp?.();
+        } catch (error) {
+          context.ui.notify(`Couldn't pair with T3: ${message(error)}`, "error");
+        }
+        return;
+      }
       context.ui.notify(
         live
           ? `The web version is on: ${live.address ?? live.server.url}`

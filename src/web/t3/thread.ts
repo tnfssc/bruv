@@ -10,6 +10,8 @@ export type T3Thread = {
   title: string;
   status: string;
   branch?: string | null;
+  /** The git worktree the thread works in, when it has its own. */
+  worktreePath?: string | null;
   lineage?: { parentThreadId?: string | null } | null;
   lastError?: string | null;
   /** A permission request (command, file-change, permission, ...) or a question (user_input) waiting on the user. */
@@ -49,6 +51,7 @@ export function toThread(record: T3Thread, now = Date.now()): Thread {
     lastMessage: message && message.role !== "user" ? text(message.text) : undefined,
     lastError: text(record.lastError),
     branch: text(record.branch),
+    worktree: text(record.worktreePath),
     finishedAt: text(record.latestRunCompletedAt),
     visitedAt: text(record.lastVisitedAt),
     pinned: record.pinnedAt != null,
