@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The web version is T3-native: its page lists only the T3 threads its assistant started, with their subagents under them, instead of task files beside all of T3's threads. Each thread it starts shows as a live card in the conversation, with what the thread last said.
+
 - Add the web version: `pi --web` makes a Pi session your assistant for the work you run in T3 Code. Talk or type to it from a page in the browser or on your phone, paste pictures, and it starts, follows and messages T3 threads for you, keeps your work as tasks in its folder, and tells you what needs you. It wakes on its own when a thread it follows finishes, fails or waits on you, with what the thread said, so it can act on results; a thread that watches a pull request or waits on its subagents isn't taken as finished. It shows you pictures, videos, HTML pages, PDFs and text from its folder or a thread's, and pages threads rendered in T3. Approve or deny a thread's request from the page, ask about a piece of work, or open it in T3. Voice works in the same conversation, an on-the-go mode gives a phone one big button to hold and talk, and `/web tunnel` serves the page on your own domain, where it installs as an app and sends notifications. `/web t3 <link>` pairs it with a T3 on another machine.
 
 - The voice page on a phone plays at the media volume. It used to switch between the media and the call volume, since Android treats a microphone with echo cancelling as a call; **Cancel echo** in the ⋯ menu turns that back on for the phone's own speaker.

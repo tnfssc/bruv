@@ -36,7 +36,6 @@ function hello(event: Extract<ServerEvent, { type: "hello" }>) {
     t3: event.t3,
     projects: event.projects,
     threadsVersion: getState().threadsVersion + 1,
-    tasks: event.tasks,
   });
   touchAll();
   for (const line of event.lines) heard(line.id);
@@ -95,9 +94,6 @@ export function apply(event: ServerEvent) {
       setThreads(event.threads, false);
       settleAnswers(event.threads, false);
       setState({ threadsVersion: getState().threadsVersion + 1 });
-      return;
-    case "tasks":
-      setState({ tasks: event.tasks });
       return;
   }
 }

@@ -79,7 +79,7 @@ export function registerWebCommands(
         setup: async (manager) => {
           manager.appendCustomMessageEntry(
             "bruv-web",
-            `This conversation continues an earlier one${parent ? `, saved in ${parent}` : ""}. What you are managing is in tasks/ and memory.md in your working folder: read them before acting on earlier work.`,
+            `This conversation continues an earlier one${parent ? `, saved in ${parent}` : ""}. Your threads carry on in T3: \`overview\` lists them, and memory.md in your working folder has what you learned about the user.`,
             false,
           );
         },

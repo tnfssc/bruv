@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fauxAssistantMessage, fauxToolCall } from "@earendil-works/pi-ai";
+import { Type } from "typebox";
 import WebSocket from "ws";
 import { saveConfig } from "../src/config";
 import { registerWeb } from "../src/web";
@@ -10,7 +11,6 @@ import { overview } from "../src/web/overview";
 import type { WebPart } from "../src/web/part";
 import type { Line, ServerEvent, T3State, Thread } from "../src/web/protocol";
 import type { T3Link } from "../src/web/t3";
-import { parseTask } from "../src/web/tasks";
 import { Waker } from "../src/web/wake";
 import { sdk } from "./sdk";
 
@@ -80,7 +80,11 @@ function fakeT3() {
   };
 }
 
-async function web(extra: Partial<Parameters<typeof registerWeb>[1]> = {}, cwd?: string) {
+async function web(
+  extra: Partial<Parameters<typeof registerWeb>[1]> = {},
+  cwd?: string,
+  more: Parameters<typeof sdk>[0] = [],
+) {
   const agentDir = join(process.env.PI_CODING_AGENT_DIR as string, `web-${Date.now()}-${Math.random()}`);
   saveConfig({ web: { port: 0 } }, agentDir);
   const t3 = fakeT3();
@@ -99,6 +103,7 @@ async function web(extra: Partial<Parameters<typeof registerWeb>[1]> = {}, cwd?:
           }),
           ...extra,
         }),
+      ...more,
     ],
     { notify: (text) => notes.push(text) },
     cwd,
@@ -128,8 +133,8 @@ function page(url: string) {
   return { ws, events, lines };
 }
 
-test("pi --web serves the page with its key and tells it what T3 is doing", async () => {
-  const { app, t3, url } = await web();
+test("pi --web serves the page with its key and tells it what the assistant's threads are doing", async () => {
+  const { app, t3, url } = await web({ ours: ["a"] });
   try {
     expect((await fetch(url)).status).toBe(200);
     expect((await fetch(url.replace(/\?t=.*/, "?t=wrong"))).status).toBe(404);
@@ -289,29 +294,12 @@ test("overview lists what needs the user, works, failed or newly finished, acros
   expect(site).not.toContain("id asks");
 });
 
-test("a task file gives its title, status, next step and threads, however the threads are written", () => {
-  const listed = parseTask(
-    "login",
-    "---\ntitle: Fix the login redirect\nstatus: Waiting\nnext: Pick a fix\nthreads: [a, 'b']\n---\nNotes.",
-    "2026-10-28T00:00:00.000Z",
-  );
-  expect(listed).toMatchObject({ slug: "login", status: "waiting", next: "Pick a fix", threads: ["a", "b"] });
-  const lines = parseTask("ci", "---\nthreads:\n  - a\n  - b\n---\n# Stop the flaky test\n", "x");
-  expect(lines).toMatchObject({ threads: ["a", "b"], status: "working" });
-  expect(lines.title).toContain("flaky");
-  expect(parseTask("plain-notes", "just text", "x").threads).toEqual([]);
-  expect(parseTask("finished", "---\nstatus: done\nnext: None\n---\n", "x").next).toBeUndefined();
-});
-
-test("wake-ups follow only the threads of open tasks, gather what changed, and wait until the assistant is free", async () => {
+test("wake-ups follow only the assistant's threads, gather what changed, and wait until the assistant is free", async () => {
   const woke: string[] = [];
   let free = false;
   const waker = new Waker({ wake: ({ text }) => woke.push(text), free: () => free, everyMinutes: 0, gather: 10 });
   try {
-    waker.tasks([
-      { slug: "x", title: "Fix login", status: "working", threads: ["a", "b"], updatedAt: "" },
-      { slug: "y", title: "Old", status: "done", threads: ["c"], updatedAt: "" },
-    ]);
+    waker.follow(["a", "b"]);
     // First sightings only set the baseline.
     waker.threads([thread("a", "running"), thread("b", "running"), thread("c", "running"), thread("d", "running")]);
     waker.threads([
@@ -336,16 +324,35 @@ test("wake-ups follow only the threads of open tasks, gather what changed, and w
   }
 });
 
-test("a thread a task follows finishing wakes the assistant, the page sees the task, and its reply is news for an away user", async () => {
-  const workspace = join(process.env.PI_CODING_AGENT_DIR as string, `workspace-${Date.now()}-${Math.random()}`);
-  mkdirSync(join(workspace, "tasks"), { recursive: true });
-  writeFileSync(join(workspace, "tasks", "login.md"), "---\ntitle: Fix login\nstatus: working\nthreads: [a]\n---\n");
+test("a thread the assistant starts is its own: listed, carded, followed, and its finishing wakes it with its last words", async () => {
   const news: string[] = [];
   const part: WebPart = { name: "test", start: () => {}, news: (text) => news.push(text), close: () => {} };
-  const { app, t3, url } = await web({ parts: () => [part], gather: 10 }, workspace);
+  // T3's launch tool, as Pi's MCP client would give it.
+  const launch = (pi: Parameters<Parameters<typeof sdk>[0][number]>[0]) =>
+    pi.registerTool({
+      name: "mcp__t3__t3_thread_launch",
+      label: "Launch",
+      description: "Start a T3 thread.",
+      parameters: Type.Object({ title: Type.String() }),
+      async execute() {
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ threadId: "a", status: "preparing" }) }],
+          details: {},
+        };
+      },
+    });
+  const { app, t3, url } = await web({ parts: () => [part], gather: 10 }, undefined, [launch]);
   try {
     let woken = "";
     app.faux.setResponses([
+      // Started from a script, as the assistant usually does.
+      fauxAssistantMessage(
+        fauxToolCall("codemode", {
+          code: '// Start the login fix\nawait tools.mcp__t3__t3_thread_launch({ title: "Fix login" });',
+        }),
+        { stopReason: "toolUse" },
+      ),
+      fauxAssistantMessage("Started the login fix."),
       (context) => {
         woken = JSON.stringify(context.messages);
         return fauxAssistantMessage("The login fix is done and ready for you to review.");
@@ -353,10 +360,20 @@ test("a thread a task follows finishing wakes the assistant, the page sees the t
     ]);
     const { ws, events, lines } = page(url);
     await until(() => events.length > 0);
+    // Threads it didn't start aren't the page's business.
     const hello = events[0];
-    expect(hello.type === "hello" && hello.tasks.map((task) => task.slug)).toEqual(["login"]);
-    // The threads of open tasks are followed closely.
-    expect(t3.followed()).toEqual(["a"]);
+    expect(hello.type === "hello" && hello.threads).toEqual([]);
+    ws.send(JSON.stringify({ type: "say", text: "fix the login bug" }));
+    await until(() => lines().some((line) => line.text === "Started the login fix."));
+    // A live card for it in the conversation, and it's followed.
+    expect(lines().some((line) => line.thread === "a")).toBe(true);
+    t3.change([thread("a", "running"), thread("z", "running")]);
+    await until(() => t3.followed().includes("a"));
+    const sent = events
+      .filter((event) => event.type === "threads")
+      .flatMap((event) => (event.type === "threads" ? event.threads : []));
+    expect(sent.map((each) => each.id)).toContain("a");
+    expect(sent.map((each) => each.id)).not.toContain("z");
     // The page counts as away once it says so.
     ws.send(JSON.stringify({ type: "visible", visible: false }));
     await new Promise((resolve) => setTimeout(resolve, 20));
@@ -370,11 +387,14 @@ test("a thread a task follows finishing wakes the assistant, the page sees the t
     // The page shows the short line, not what the thread said.
     await until(() => lines().some((line) => line.role === "wake"));
     expect(lines().find((line) => line.role === "wake")?.text).not.toContain("PR 12");
-
-    // A task file the assistant writes reaches open pages.
-    writeFileSync(join(workspace, "tasks", "notes.md"), "---\ntitle: Release notes\nstatus: waiting\n---\n");
-    await until(() => events.some((event) => event.type === "tasks" && event.tasks.length === 2));
+    // A page that opens later gets the thread, and the card stays in the conversation.
+    const late = page(url);
+    await until(() => late.events.length > 0);
+    const again = late.events[0];
+    expect(again.type === "hello" && again.threads.map((each) => each.id)).toEqual(["a"]);
+    expect(late.lines().some((line) => line.thread === "a")).toBe(true);
     ws.close();
+    late.ws.close();
   } finally {
     await app.close();
   }
@@ -421,7 +441,7 @@ test("the page scrolls back past a fresh session into the one before it", async 
 });
 
 test("a permission request a thread waits on can be answered from the page, and questions can't be", async () => {
-  const { app, t3, url } = await web();
+  const { app, t3, url } = await web({ ours: ["a", "b"] });
   try {
     const { ws, events } = page(url);
     await until(() => events.length > 0);
@@ -456,7 +476,7 @@ test("a thread starts being followed from where it is, so its first change after
     lookup: (id) => now.get(id),
   });
   try {
-    waker.tasks([{ slug: "x", title: "Fix login", status: "working", threads: ["a"], updatedAt: "" }]);
+    waker.follow(["a"]);
     // The very first event T3 sends for it says it now waits on the user.
     waker.threads([{ ...thread("a", "running"), needsUser: true }]);
     await until(() => woke.length === 1);

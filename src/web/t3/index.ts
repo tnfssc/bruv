@@ -135,6 +135,8 @@ export function connectT3(options: {
   };
   /** Why each thread waits, from its own record; and each thread's children (delegated tasks, subagents). */
   const own = new Map<string, string | undefined>();
+  /** The last thing each followed thread said, kept across T3's updates (which don't carry it). */
+  const said = new Map<string, string>();
   const children = new Map<string, Set<string>>();
   /** A thread holds when it left work going, or a child of it is still at work or waits on the user. */
   const holdingOf = (id: string) =>
@@ -212,7 +214,11 @@ export function connectT3(options: {
         set.add(record.id);
         parents.add(mapped.parentId);
       }
-      const thread = { ...mapped, holding: holdingOf(record.id) };
+      const thread = {
+        ...mapped,
+        holding: holdingOf(record.id),
+        lastMessage: mapped.lastMessage ?? said.get(record.id),
+      };
       const old = threads.get(record.id);
       threads.set(record.id, thread);
       // A running thread is updated many times a second; most of that never reaches the mapped fields.
@@ -343,7 +349,18 @@ export function connectT3(options: {
       if (!place) return undefined;
       return { origin: place.origin, ticket: await ticket(place.origin, await keys.get("session", place)) };
     },
-    onMessage: (message) => emit({ message }),
+    onMessage: (message) => {
+      // T3's records carry no last message; a followed thread's comes from here, for its row.
+      const last = message.text.trim().slice(0, 1000);
+      said.set(message.threadId, last);
+      for (const old of said.keys()) if (said.size > 500) said.delete(old);
+      const thread = threads.get(message.threadId);
+      if (thread && thread.lastMessage !== last) {
+        const next = { ...thread, lastMessage: last };
+        threads.set(thread.id, next);
+        emit({ threads: [next], message });
+      } else emit({ message });
+    },
   });
   void run();
 

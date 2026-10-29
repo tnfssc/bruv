@@ -197,14 +197,14 @@ Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's addres
 Code. You talk or type to it (and paste pictures) from a page in the browser, at the link it prints; it
 starts, follows and messages T3 threads for you, and tells you what needs you. It doesn't code itself.
 
-- The folder is its workspace: it keeps one file per piece of work in `tasks/` and what it learns about
-  you in `memory.md`. Read or fix them as you like. The page shows the tasks as your work, with T3's
-  threads under them.
-- It checks back on its own: when a thread a task follows finishes, fails or waits on you, and every hour
-  while work is open (`"web": { "lookMinutes": 60 }` in `bruv.json`). What those threads say reaches it
-  as they say it: a thread's last message comes with "finished", and what it says while working comes
-  every few minutes, so it can act on results without reading the thread.
-- In the activity panel, open a task or thread to ask the assistant about it, or to open the thread in T3.
+- The page lists the T3 threads it started, with their subagents, and nothing else; each also shows as a
+  live card in the conversation where it was started. The folder you start it in is its own: it keeps
+  what it learns about you in `memory.md` there.
+- It checks back on its own when one of its threads finishes, fails or waits on you, and every hour while
+  one is at work (`"web": { "lookMinutes": 60 }` in `bruv.json`). What those threads say reaches it as
+  they say it: a thread's last message comes with "finished", and what it says while working comes every
+  few minutes, so it can act on results without reading the thread.
+- Open a thread in the activity panel (or use its card) to ask the assistant about it, or to open it in T3.
 - A thread waiting on a permission request can be answered from the page, or by telling the assistant.
 - It can show you files in the conversation: pictures, videos, sound, HTML pages (running, sandboxed),
   PDFs and text, from its folder or a thread's, and pages threads made in T3. Ask "show me the page it

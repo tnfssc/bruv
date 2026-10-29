@@ -23,13 +23,15 @@ export function overview(threads: Thread[], projects: Project[], options: { proj
   const wanted = options.project?.toLowerCase();
   const shown = threads.filter(
     (thread) =>
-      !thread.parentId &&
+      // Subagents show only when they wait on the user, who has to answer them.
+      (!thread.parentId || thread.needsUser) &&
       !thread.away &&
       (!wanted || thread.projectId === options.project || names.get(thread.projectId)?.toLowerCase() === wanted),
   );
   const line = (thread: Thread, when?: string) =>
     [
       `- ${thread.title} (${names.get(thread.projectId) ?? "no project"}, ${thread.holding ?? thread.status}${when ? `, ${when}` : ""})`,
+      thread.parentId ? ` subagent of ${thread.parentId}` : "",
       thread.requestKind ? ` asks: ${thread.requestKind}` : "",
       thread.lastError ? ` error: ${thread.lastError.split("\n")[0].slice(0, 200)}` : "",
       ` id ${thread.id}`,

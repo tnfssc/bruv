@@ -47,7 +47,6 @@ const hello = (more: Partial<Extract<ServerEvent, { type: "hello" }>> = {}): Ser
   t3: { state: "connected" },
   projects: [],
   threads: [],
-  tasks: [],
   ...more,
 });
 /** What the conversation shows, in order. */

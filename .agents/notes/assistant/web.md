@@ -53,19 +53,19 @@ five, with as little network, memory and disk as possible, on the server and in 
 - The page scrolls back past a fresh session into its parents: `src/web/archive.ts` reads those files
   backwards from a byte offset in 64 KB chunks (line ids `a<n>.<offset>`), so it costs the lines shown and
   holds nothing in memory.
-- Disk reads at run time: the config once at start, task files once and then only the one that changed
-  (`fs.watch`), one `stat` of the session file per run.
+- Disk reads at run time: the config and the assistant's thread list once at start, one `stat` of the
+  session file per run; the thread list is written only when the assistant starts a thread.
 
-## Tasks and wake-ups
+## The assistant's threads and wake-ups
 
-- The assistant keeps one `tasks/<slug>.md` per piece of work, with a front matter of `title`, `status`
-  (working, waiting, blocked, done), `next` and `threads`. The page shows these as "Your work" above T3's
-  threads; a task opens to the threads doing it.
-- `src/web/wake.ts` follows only the threads named by open tasks. A followed thread that starts needing
-  the user, fails, or finishes after working is news; events within 3 s go as one wake-up. A wake-up waits
-  while the assistant is busy or a part says the user is talking, retrying every 5 s and at once when a run
-  settles. While any task is open it also takes a regular look every `web.lookMinutes` (default 60),
-  skipped when news already woke it. No open task, no timer cost beyond a cheap check.
+- T3-native since 2026-10-29: the page lists only the T3 threads the assistant started, with their
+  subagents, forks and delegated tasks under them. There are no task files; the user found a second list
+  of "tasks" beside T3's threads confusing, and asked for T3's threads alone. See `threads-of-its-own.md`.
+- `src/web/wake.ts` follows the assistant's threads. One that starts needing the user, fails, or finishes
+  after working is news; events within 3 s go as one wake-up. A wake-up waits while the assistant is busy
+  or a part says the user is talking, retrying every 5 s and at once when a run settles. While any of them
+  is at work it also takes a regular look every `web.lookMinutes` (default 60), skipped when news already
+  woke it.
 - A wake-up is a user message starting `[wake-up] ` (custom messages that start a run lose bruv's prompt);
   the page shows it as a small check-in, not as the user. If the run it starts ends with written words,
   they are news: parts get `news(text)` (push sends it when no page is in front, reported by the page's
@@ -102,8 +102,8 @@ jobs, a vague ask, a risky ask, a pasted screenshot, phone size, real speech thr
 - The model fumbled T3 launches: `scratch: true` takes no `projectId`, and an outside caller must pass
   `modelSelection` (no default). Both are in the prompt now, with the tool names, so it stops searching.
 - It sat in `t3_thread_wait`; the prompt now says to end the turn, since wake-ups bring the news.
-- It skipped the task file for quick work, so nothing was followed; the prompt asks for it as soon as a
-  thread starts.
+- It skipped the task file for quick work, so nothing was followed. (Task files are gone: bruv now notes
+  every thread the assistant starts itself.)
 - "What's going on?" cost a model round trip for `overview`. The overview now rides along with the user's
   message (a hidden `nextTurn` custom message) only when it changed, and the answer came in ~4 s.
 - Bug: the waker took a thread's first event as its baseline, so a thread whose first event was "waits on

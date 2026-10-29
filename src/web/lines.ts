@@ -39,6 +39,18 @@ export const showTool = "show";
  */
 export const showEntry = "bruv-web-show";
 
+/** The session entry for a thread the assistant started: a live card for it in the conversation. */
+export const threadEntry = "bruv-web-thread";
+
+/** The line a saved custom entry shows as (a shown file, a started thread), or nothing. */
+export function customLine(entry: { customType?: string; data?: unknown }, id: string, at: number): Line | undefined {
+  if (entry.customType === showEntry) return shownLine(entry.data, id, at);
+  const thread = (entry.data as { id?: unknown } | undefined)?.id;
+  if (entry.customType === threadEntry && typeof thread === "string")
+    return { id, role: "assistant", text: "", thread, at: new Date(at).toISOString() };
+  return undefined;
+}
+
 /** The line for a saved shown file, or nothing when it isn't one. */
 export function shownLine(data: unknown, id: string, at: number): Line | undefined {
   const file = data as Shown | undefined;
@@ -93,8 +105,8 @@ export function lines(entries: Entries, link: (id: string, index: number) => str
     if (!entry) break;
     id = entry.parentId;
     const line =
-      entry.type === "custom" && entry.customType === showEntry
-        ? shownLine(entry.data, entry.id, Date.parse(entry.timestamp))
+      entry.type === "custom"
+        ? customLine(entry, entry.id, Date.parse(entry.timestamp))
         : entry.type !== "message"
           ? undefined
           : toLine(entry.message as Message, entry.id, (index) => link(entry.id, index), Date.parse(entry.timestamp));
