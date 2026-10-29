@@ -467,7 +467,6 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     live?.waker.free();
     freshen();
   });
-  // A step a person can follow: codemode scripts start with a comment saying what they do.
   // A thread the assistant starts, directly or from a script, becomes one of its own: listed on the page,
   // followed, and shown as a card in the conversation.
   pi.on("tool_execution_end", (event) => {
@@ -484,6 +483,7 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     const thread = live.t3.thread(id);
     if (thread) send({ type: "threads", threads: [thread] });
   });
+  // A step a person can follow: codemode scripts start with a comment saying what they do.
   pi.on("tool_execution_start", (event) => {
     if (!live || event.parentToolCallId) return;
     const text = step(event.toolName, event.args);

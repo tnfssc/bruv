@@ -106,7 +106,7 @@ export class Waker {
   private child(thread: Thread) {
     let parent = thread.parentId;
     // Up a few levels: a subagent's subagent still belongs to the work.
-    for (let depth = 0; parent && depth < 4 && !this.followed.has(parent); depth++)
+    for (let depth = 0; parent && depth < 6 && !this.followed.has(parent); depth++)
       parent = this.options.lookup?.(parent)?.parentId;
     if (!parent || !this.followed.has(parent)) return;
     const before = this.seen.get(thread.id);

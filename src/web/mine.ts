@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { Thread } from "./protocol";
 
@@ -40,7 +40,10 @@ export function mine(file: string, workspace: string): Mine {
       } catch {}
       all[workspace] = ids;
       mkdirSync(dirname(file), { recursive: true });
-      writeFileSync(file, `${JSON.stringify(all)}\n`);
+      // Whole or not at all: a reader never sees half a file.
+      const temporary = `${file}.${process.pid}.tmp`;
+      writeFileSync(temporary, `${JSON.stringify(all)}\n`);
+      renameSync(temporary, file);
       return true;
     },
     has(thread, lookup) {

@@ -78,7 +78,7 @@ const Row = memo(function Row({ id }: { id: string }) {
       </div>
     );
   if (line.role === "assistant" && line.files?.length) return <ShownFiles files={line.files} />;
-  if (line.role === "assistant" && line.thread) return <ThreadCard id={line.thread} />;
+  if (line.role === "assistant" && line.thread) return <ThreadCard id={line.thread} at={line.at} />;
   if (line.role === "assistant")
     return (
       <Text

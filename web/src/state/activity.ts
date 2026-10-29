@@ -42,11 +42,24 @@ export type Activity = {
  * parents. Threads put away in T3 aren't shown at all.
  */
 export function activity(threads: Iterable<Thread>, now: number): Activity {
+  const byId = new Map<string, Thread>();
+  for (const thread of threads) byId.set(thread.id, thread);
+  // Every subagent goes under the top-level thread it descends from, however deep, so one row shows all
+  // that thread's work and anything in it that waits on the user.
   const kids = new Map<string, Thread[]>();
   const top: Thread[] = [];
-  for (const thread of threads) {
-    if (!thread.parentId) top.push(thread);
-    else kids.set(thread.parentId, [...(kids.get(thread.parentId) ?? []), thread]);
+  for (const thread of byId.values()) {
+    if (!thread.parentId) {
+      top.push(thread);
+      continue;
+    }
+    let root = thread;
+    for (let depth = 0; root.parentId && depth < 8; depth++) {
+      const parent = byId.get(root.parentId);
+      if (!parent) break;
+      root = parent;
+    }
+    kids.set(root.id, [...(kids.get(root.id) ?? []), thread]);
   }
   const out: Activity = { kids, needs: [], working: [], done: [], recent: [], older: [] };
   for (const thread of top) {
