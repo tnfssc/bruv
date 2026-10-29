@@ -16,6 +16,14 @@ export type T3Thread = {
   lastError?: string | null;
   /** A permission request (command, file-change, permission, ...) or a question (user_input) waiting on the user. */
   pendingRuntimeRequest?: { id: string; kind: string; blocking?: boolean } | null;
+  /** Work the thread's agent left running when its turn ended: subagents, commands, monitors. */
+  pendingBackgroundTasks?: { kind?: string }[] | null;
+  /** The thread is blocked in a wait on another thread. */
+  blockedOnThreadWait?: boolean | null;
+  /** Pull requests linked to the thread; one with `watch` is being watched (T3 wakes the thread on news). */
+  pullRequests?: { watch?: unknown }[] | null;
+  /** Set while a run is going; provider subagents keep `status` idle while they work, but not this. */
+  activityRunStatus?: string | null;
   /** A plan T3 proposed that waits for the user to approve it. */
   hasActionableProposedPlan?: boolean;
   /** Empty in every shell record seen so far, but typed by T3 as the last message a person would read. */
@@ -37,6 +45,19 @@ export type T3Project = { id: string; title: string; workspaceRoot: string };
 const longest = 1000;
 const text = (value: string | null | undefined) => (value ? value.slice(0, longest) : undefined);
 
+/**
+ * Why a thread whose turn ended isn't done: it left work going that will bring it back. Its own children
+ * (delegated tasks are separate threads) are added by the link, which sees them all.
+ */
+function holdingOf(record: T3Thread) {
+  if (record.pullRequests?.some((link) => link.watch != null)) return "watching its pull request";
+  const background = record.pendingBackgroundTasks ?? [];
+  if (background.some((task) => task.kind === "subagent")) return "waiting on its subagents";
+  if (background.length) return "waiting on work it left running";
+  if (record.blockedOnThreadWait) return "waiting on another thread";
+  return undefined;
+}
+
 export function toThread(record: T3Thread, now = Date.now()): Thread {
   const snoozed = record.snoozedUntil ? Date.parse(record.snoozedUntil) > now : false;
   const message = record.latestVisibleMessage;
@@ -46,6 +67,8 @@ export function toThread(record: T3Thread, now = Date.now()): Thread {
     title: record.title,
     status: record.status,
     needsUser: record.pendingRuntimeRequest != null || record.hasActionableProposedPlan === true,
+    holding: holdingOf(record),
+    ...(record.activityRunStatus ? { active: true } : {}),
     requestId: text(record.pendingRuntimeRequest?.id),
     requestKind: text(record.pendingRuntimeRequest?.kind),
     lastMessage: message && message.role !== "user" ? text(message.text) : undefined,

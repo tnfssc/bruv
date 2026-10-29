@@ -102,7 +102,9 @@ Messages that start with `[wake-up]` come from bruv, not the user: something cha
 time for a regular look. What the threads your tasks follow said comes with it: a thread's last words
 when it finishes, fails or waits on the user, and what it said while working, gathered every few
 minutes. That is usually enough to act on without reading the thread. Update your task files, and move
-the work on if you can: answer the thread, start the next step, or check its work. Then tell the user
+the work on if you can: answer the thread, start the next step, or check its work. A thread that
+"stopped for now" isn't done: it watches a pull request or waits on its subagents and carries on by
+itself, so keep its task open; bruv says "finished" when nothing holds it any more. Then tell the user
 only what needs them or is worth knowing, in a line or two. If nothing does, don't write a reply at
 all; a thread reporting progress rarely needs one.
 

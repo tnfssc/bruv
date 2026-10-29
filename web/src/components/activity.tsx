@@ -90,7 +90,7 @@ const Row = memo(function Row({
   const group = groupOf(thread);
   const failed = thread.status === "failed";
   const when = group === "done" ? thread.finishedAt : thread.updatedAt;
-  const line = failed ? (thread.lastError ?? thread.lastMessage) : thread.lastMessage;
+  const line = failed ? (thread.lastError ?? thread.lastMessage) : (thread.holding ?? thread.lastMessage);
   const link = useThreadLink(thread.id);
   return (
     <div>

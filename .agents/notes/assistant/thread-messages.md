@@ -40,3 +40,18 @@ updates while it works, without asking, so it can act on them like a parent agen
   with the environment from `/.well-known/t3/environment` (no key). Hidden when T3 is on loopback and the
   page isn't, since a phone can't open 127.0.0.1. A browser not signed in to T3 lands on T3's pairing page;
   signed in, the link opens the thread (checked).
+
+## A turn's end isn't always the work's end (2026-10-29)
+
+A thread can end its turn and still be at work: watching a pull request (T3 wakes it on checks and
+comments), waiting on subagents, or on a command or monitor it left running. Calling that "finished"
+made the assistant mark the task done and stop following the thread. T3's shell record says it all
+(T3 source, `packages/contracts/src/orchestrationV2.ts`): a pull request link with `watch`,
+`pendingBackgroundTasks` (kinds `subagent`, `command`, `monitor`, `background_task`), and
+`blockedOnThreadWait`. T3's delegated tasks are separate threads naming their parent in `lineage`, not
+background tasks, so the link also counts a parent whose children are working, waiting on the user or
+holding (provider subagents keep `status` idle while they work; `activityRunStatus` shows them).
+`Thread.holding` gives the reason. Such a thread counts as working on the page and in the overview, a
+turn ending with it is "stopped for now" (sent with the progress batch), and "finished" comes when a turn
+ends with nothing holding it, or when the hold ends after the turn did. A subagent of a followed thread
+that starts waiting on the user is its own wake-up, naming its thread id so the assistant can answer it.

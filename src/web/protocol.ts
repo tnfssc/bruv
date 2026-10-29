@@ -17,6 +17,13 @@ export type Thread = {
   /** T3 is waiting on the user: a permission request or a question. */
   needsUser: boolean;
   /**
+   * Why a thread whose turn ended isn't done yet, in a few words: it watches a pull request, waits on its
+   * subagents or other work it started. It comes back on its own; until then it counts as working.
+   */
+  holding?: string;
+  /** A run is going (a provider's subagent shows only this; its status stays idle). */
+  active?: boolean;
+  /**
    * The request it waits on, when there is one: its id, and its kind (command, file-change, file-read,
    * permission, user_input, …). Kept flat so a changed thread compares field by field.
    */

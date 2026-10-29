@@ -1,4 +1,4 @@
-import{n as e,r as t,t as n}from"./index-CNzTfQ71.js";var r=`registerProcessor("mic", class extends AudioWorkletProcessor {
+import{n as e,r as t,t as n}from"./index-Tf-Tw7Pp.js";var r=`registerProcessor("mic", class extends AudioWorkletProcessor {
   constructor() { super(); this.step = sampleRate / 16000; this.at = 0; this.sum = 0; this.count = 0; this.out = new Int16Array(320); this.n = 0; }
   process([input]) {
     const samples = input[0]; if (!samples) return true;

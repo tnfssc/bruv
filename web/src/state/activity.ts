@@ -10,7 +10,8 @@ export const recentFor = 72 * 60 * 60 * 1000;
 
 export function groupOf(thread: Thread): Group {
   if (thread.needsUser || thread.status === "failed") return "needs";
-  if (going.has(thread.status)) return "working";
+  // Ended its turn but watches a pull request or waits on subagents: it comes back on its own.
+  if (going.has(thread.status) || thread.holding) return "working";
   if (
     thread.status === "completed" &&
     thread.finishedAt &&

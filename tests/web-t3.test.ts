@@ -285,6 +285,41 @@ test("maps T3 thread records", () => {
   expect(toThread(record("t", { settledAt: "2026-10-27T00:00:00.000Z" }), now).away).toBe(true);
   expect(toThread(record("t", { snoozedUntil: "2026-10-29T00:00:00.000Z" }), now).away).toBe(true);
   expect(toThread(record("t", { snoozedUntil: "2026-10-27T00:00:00.000Z" }), now).away).toBe(false);
+  // A turn that ended with work left going: why it isn't done.
+  const holding = (extra: Partial<T3Thread>) => toThread(record("t", { status: "completed", ...extra }), now).holding;
+  expect(holding({ pullRequests: [{}, { watch: { startedAt: "2026-10-28T00:00:00.000Z" } }] })).toBeDefined();
+  expect(holding({ pendingBackgroundTasks: [{ kind: "subagent" }] })).toBeDefined();
+  expect(holding({ pendingBackgroundTasks: [{ kind: "command" }] })).toBeDefined();
+  expect(holding({ blockedOnThreadWait: true })).toBeDefined();
+  expect(holding({ pullRequests: [{}], pendingBackgroundTasks: [], blockedOnThreadWait: false })).toBeUndefined();
+});
+
+test("a thread whose children are still at work isn't done", async () => {
+  const { fake, open } = await setup();
+  fake.snapshot.threads = [record("a", { status: "completed" })];
+  const { link } = open();
+  await until(() => link.state().state === "connected");
+  expect(byId(link, "a")?.holding).toBeUndefined();
+  // A delegated task: a thread of its own that names its parent. Provider subagents stay idle while they
+  // work, so a running activity counts too.
+  fake.send([
+    {
+      kind: "thread.updated",
+      sequence: 11,
+      location: "active",
+      thread: record("c", { status: "idle", activityRunStatus: "running", lineage: { parentThreadId: "a" } }),
+    },
+  ]);
+  await until(() => byId(link, "a")?.holding !== undefined);
+  fake.send([
+    {
+      kind: "thread.updated",
+      sequence: 12,
+      location: "active",
+      thread: record("c", { status: "completed", activityRunStatus: null, lineage: { parentThreadId: "a" } }),
+    },
+  ]);
+  await until(() => byId(link, "a")?.holding === undefined);
 });
 
 test("follows the shell feed and reports only what changed", async () => {

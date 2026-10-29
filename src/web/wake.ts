@@ -2,7 +2,7 @@ import type { Task, Thread } from "./protocol";
 import { open } from "./tasks";
 
 /** What a thread was last seen doing, to tell a change worth waking for from churn. */
-type Seen = { status: string; needsUser: boolean };
+type Seen = { status: string; needsUser: boolean; holding?: string };
 
 const working = new Set(["preparing", "queued", "starting", "running", "waiting"]);
 
@@ -68,32 +68,63 @@ export class Waker {
     const live = tasks.filter(open);
     this.openTasks = live.length;
     for (const task of live) for (const id of task.threads) this.followed.set(id, task.title);
-    for (const id of this.seen.keys()) if (!this.followed.has(id)) this.seen.delete(id);
+    // Subagents of followed threads are kept too.
+    for (const id of this.seen.keys()) if (!this.followed.has(id) && !this.isChild(id)) this.seen.delete(id);
     // A thread starts being followed from where it is now, so its next change is news even when T3 sends
     // nothing in between.
     for (const id of this.followed.keys()) {
       if (this.seen.has(id)) continue;
       const thread = this.options.lookup?.(id);
-      if (thread) this.seen.set(id, { status: thread.status, needsUser: thread.needsUser });
+      if (thread) this.seen.set(id, { status: thread.status, needsUser: thread.needsUser, holding: thread.holding });
     }
   }
 
-  /** Threads changed; the followed ones may be news. */
+  /** Threads changed; the followed ones (and their subagents) may be news. */
   threads(threads: Thread[]) {
     for (const thread of threads) {
       const task = this.followed.get(thread.id);
-      if (!task) continue;
+      if (!task) {
+        this.child(thread);
+        continue;
+      }
       const before = this.seen.get(thread.id);
-      const now = { status: thread.status, needsUser: thread.needsUser };
+      const now = { status: thread.status, needsUser: thread.needsUser, holding: thread.holding };
       this.seen.set(thread.id, now);
       // The first sighting only sets the baseline.
       if (!before) continue;
       const name = this.name(thread.title, task);
+      const ended = now.status === "completed" && (working.has(before.status) || !!before.holding);
       if (now.needsUser && !before.needsUser) this.add(`${name} is waiting on the user.`);
       else if (now.status === "failed" && before.status !== "failed")
         this.add(`${name} failed${thread.lastError ? `: ${thread.lastError.split("\n")[0].slice(0, 200)}` : "."}`);
-      else if (now.status === "completed" && working.has(before.status)) this.add(`${name} finished.`);
+      // A turn that ended with work left going (a watched pull request, subagents) isn't the end: the thread
+      // comes back on its own. What it said then is an update, not a result.
+      else if (ended && now.holding) {
+        if (now.holding !== before.holding || working.has(before.status))
+          this.add(
+            `${name} stopped for now, ${now.holding}; it carries on by itself.`,
+            this.options.progress ?? progress,
+          );
+      } else if (ended) this.add(`${name} finished.`);
     }
+  }
+
+  /** A subagent (or delegated task) of a followed thread that starts waiting on the user is news too. */
+  private child(thread: Thread) {
+    let parent = thread.parentId;
+    let task: string | undefined;
+    // Up a few levels: a subagent's subagent still belongs to the work.
+    for (let depth = 0; parent && depth < 4 && !task; depth++) {
+      task = this.followed.get(parent);
+      if (!task) parent = this.options.lookup?.(parent)?.parentId;
+    }
+    if (!task || !parent) return;
+    const before = this.seen.get(thread.id);
+    this.seen.set(thread.id, { status: thread.status, needsUser: thread.needsUser });
+    if (thread.needsUser && !before?.needsUser)
+      this.add(
+        `A subagent of ${this.name(this.options.lookup?.(parent)?.title ?? task, task)}, "${thread.title}" (thread ${thread.id}), is waiting on the user.`,
+      );
   }
 
   /**
@@ -131,6 +162,11 @@ export class Waker {
     clearInterval(this.look);
   }
 
+  private isChild(id: string) {
+    const parent = this.options.lookup?.(id)?.parentId;
+    return !!parent && this.followed.has(parent);
+  }
+
   /** The task's name is enough when the thread is named the same. */
   private name(title: string, task: string) {
     // Typed and typeset quotes, case and spacing don't make it another name.
@@ -144,9 +180,9 @@ export class Waker {
     return plain(title) === plain(task) ? `"${task}"` : `"${title}" (${task})`;
   }
 
-  private add(line: string) {
+  private add(line: string, wait = this.options.gather ?? gather) {
     if (!this.pending.includes(line)) this.pending.push(line);
-    this.schedule(this.options.gather ?? gather);
+    this.schedule(wait);
   }
 
   /** Flush within `wait`, or sooner if already due sooner. */

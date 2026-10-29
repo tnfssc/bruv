@@ -78,6 +78,7 @@ const maxDelay = 10_000;
 /** How often to look again when T3 is not there at all. */
 const slowDelay = 30_000;
 
+const going = new Set(["preparing", "queued", "starting", "running", "waiting"]);
 const live = (record: T3Thread) => record.archivedAt == null && record.deletedAt == null;
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -101,6 +102,18 @@ export function connectT3(options: {
   const listeners = new Set<(change: T3Change) => void>();
   const threads = new Map<string, Thread>();
   let projects: Project[] = [];
+  /** Why each thread waits, from its own record; and each thread's children (delegated tasks, subagents). */
+  const own = new Map<string, string | undefined>();
+  const children = new Map<string, Set<string>>();
+  /** A thread holds when it left work going, or a child of it is still at work or waits on the user. */
+  const holdingOf = (id: string) =>
+    own.get(id) ??
+    ([...(children.get(id) ?? [])].some((child) => {
+      const thread = threads.get(child);
+      return thread && (going.has(thread.status) || thread.active || thread.needsUser || thread.holding);
+    })
+      ? "waiting on its subagents"
+      : undefined);
   let state: T3State = { state: "connecting" };
   /** The last feed position applied, so a new connection can resume from it instead of loading everything. */
   let sequence = -1;
@@ -138,15 +151,33 @@ export function connectT3(options: {
   const apply = (values: ShellValue[]) => {
     const changed = new Map<string, Thread>();
     let nextProjects = projects;
+    /** Parents whose children changed: whether they wait on them may have too. */
+    const parents = new Set<string>();
     const drop = (id: string) => {
       const old = threads.get(id);
       if (!old) return;
       threads.delete(id);
+      own.delete(id);
+      if (old.parentId) {
+        children.get(old.parentId)?.delete(id);
+        parents.add(old.parentId);
+      }
       changed.set(id, { ...old, away: true });
     };
     const put = (record: T3Thread) => {
       if (!live(record)) return drop(record.id);
-      const thread = toThread(record);
+      const mapped = toThread(record);
+      own.set(record.id, mapped.holding);
+      if (mapped.parentId) {
+        let set = children.get(mapped.parentId);
+        if (!set) {
+          set = new Set();
+          children.set(mapped.parentId, set);
+        }
+        set.add(record.id);
+        parents.add(mapped.parentId);
+      }
+      const thread = { ...mapped, holding: holdingOf(record.id) };
       const old = threads.get(record.id);
       threads.set(record.id, thread);
       // A running thread is updated many times a second; most of that never reaches the mapped fields.
@@ -183,6 +214,14 @@ export function connectT3(options: {
           : [...nextProjects, project];
       } else if (value.kind === "project.removed")
         nextProjects = nextProjects.filter((item) => item.id !== value.projectId);
+    }
+    for (const id of parents) {
+      const parent = threads.get(id);
+      const holding = holdingOf(id);
+      if (!parent || parent.holding === holding) continue;
+      const next = { ...parent, holding };
+      threads.set(id, next);
+      changed.set(id, next);
     }
     const change: T3Change = {};
     if (!same(nextProjects, projects)) change.projects = projects = nextProjects;

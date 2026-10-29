@@ -31,7 +31,7 @@ export function overview(threads: Thread[], projects: Project[], options: { proj
   );
   const line = (thread: Thread, when?: string) =>
     [
-      `- ${thread.title} (${names.get(thread.projectId) ?? "no project"}, ${thread.status}${when ? `, ${when}` : ""})`,
+      `- ${thread.title} (${names.get(thread.projectId) ?? "no project"}, ${thread.holding ?? thread.status}${when ? `, ${when}` : ""})`,
       thread.requestKind ? ` asks: ${thread.requestKind}` : "",
       thread.lastError ? ` error: ${thread.lastError.split("\n")[0].slice(0, 200)}` : "",
       ` id ${thread.id}`,
@@ -47,7 +47,10 @@ export function overview(threads: Thread[], projects: Project[], options: { proj
   const newest = (a: Thread, b: Thread) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt);
   const fresh = (thread: Thread) => now - Date.parse(thread.finishedAt ?? thread.updatedAt) < recent;
   const needs = shown.filter((thread) => thread.needsUser).sort(newest);
-  const busy = shown.filter((thread) => !thread.needsUser && working.has(thread.status)).sort(newest);
+  // A thread that ended its turn but watches a pull request or waits on subagents is still at work.
+  const busy = shown
+    .filter((thread) => !thread.needsUser && (working.has(thread.status) || !!thread.holding))
+    .sort(newest);
   const failed = shown
     .filter((thread) => !thread.needsUser && thread.status === "failed" && fresh(thread))
     .sort(newest);
@@ -55,6 +58,7 @@ export function overview(threads: Thread[], projects: Project[], options: { proj
     .filter(
       (thread) =>
         thread.status === "completed" &&
+        !thread.holding &&
         !thread.needsUser &&
         thread.finishedAt &&
         (!thread.visitedAt || thread.visitedAt < thread.finishedAt) &&
