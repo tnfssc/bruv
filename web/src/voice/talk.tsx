@@ -6,12 +6,12 @@ import { act, down, getVoice, level, preload, setVoice, subscribeVoice, up, type
 
 const touch = matchMedia("(pointer: coarse)");
 
-function useVoice<T>(pick: (state: VoiceState) => T): T {
+export function useVoice<T>(pick: (state: VoiceState) => T): T {
   return useSyncExternalStore(subscribeVoice, () => pick(getVoice()));
 }
 
 /** The colour of what is happening, as on the old voice page. */
-const tones = {
+export const tones = {
   idle: "var(--muted-foreground)",
   listening: "var(--done)",
   hearing: "var(--working)",
@@ -20,7 +20,7 @@ const tones = {
   error: "var(--destructive)",
 };
 
-function toneOf(voice: VoiceState): keyof typeof tones {
+export function toneOf(voice: VoiceState): keyof typeof tones {
   if (!voice.on) return "idle";
   if (voice.offline || voice.need) return voice.offline ? "error" : "idle";
   if (voice.holding) return "hearing";
@@ -28,7 +28,7 @@ function toneOf(voice: VoiceState): keyof typeof tones {
   return voice.state === "starting" ? "idle" : voice.state;
 }
 
-function labelOf(voice: VoiceState) {
+export function labelOf(voice: VoiceState) {
   if (voice.offline) return "Connecting";
   if (voice.muted && voice.playing) return "Muted";
   if (voice.holding) return "Hearing you";
@@ -45,7 +45,7 @@ function labelOf(voice: VoiceState) {
  * The talk button: hold to talk, tap for hands-free (and tap again to end it). The first press turns voice
  * on in this page. The voice level shows as its fill, from `--level`.
  */
-export function TalkButton() {
+export function TalkButton({ big = false }: { big?: boolean }) {
   // Voice waiting on its models can't hear yet, so the button doesn't look on.
   const on = useVoice((voice) => voice.on && !voice.need);
   const free = useVoice((voice) => voice.free && !voice.need);
@@ -75,8 +75,11 @@ export function TalkButton() {
       aria-pressed={on}
       style={style}
       className={cn(
-        "inline-flex size-9 shrink-0 cursor-pointer touch-none select-none items-center justify-center rounded-full transition-colors [-webkit-touch-callout:none] [&_svg]:pointer-events-none [&_svg]:size-5",
-        !on && "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+        "inline-flex shrink-0 cursor-pointer touch-none select-none items-center justify-center rounded-full transition-[color,background-color,transform] [-webkit-touch-callout:none] [&_svg]:pointer-events-none",
+        big ? "size-32 [&_svg]:size-12" : "size-9 [&_svg]:size-5",
+        big && holding && "scale-105",
+        !on &&
+          (big ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"),
       )}
       onPointerEnter={() => void preload()}
       onPointerDown={(event) => {

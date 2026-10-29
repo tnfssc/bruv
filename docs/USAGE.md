@@ -211,6 +211,8 @@ starts, follows and messages T3 threads for you, and tells you what needs you. I
   its key with nothing else from that machine; `/web t3 local` goes back to the T3 here.
 - The talk button gives voice in the same conversation (hold to talk, tap for hands-free), with the
   models `/voice` uses.
+- On a phone, the footprints button in the header turns on on-the-go mode: one big button to hold and
+  talk (tap it for hands-free), big buttons for the rest, big text, and approvals you can hit with a thumb.
 - `/web tunnel` serves the page on your own domain through Cloudflare, so your phone can reach it, install
   it as an app and get notifications while the page isn't open.
 - To keep it running, start it however you like, for example `pi --mode rpc --web` under systemd or in

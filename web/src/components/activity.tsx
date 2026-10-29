@@ -158,7 +158,8 @@ const TaskRow = memo(function TaskRow({
   );
 });
 
-const asks: Record<string, string> = {
+/** What a waiting thread asks for, in a few words. */
+export const asks: Record<string, string> = {
   command: "wants to run a command",
   "file-change": "wants to change files",
   "file-read": "wants to read files",

@@ -1,11 +1,13 @@
-import { ListChecksIcon } from "lucide-react";
+import { FootprintsIcon, ListChecksIcon } from "lucide-react";
 import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { ActivityPanel } from "./components/activity";
 import { Wordmark } from "./components/brand";
 import { Composer } from "./components/composer";
 import { Conversation } from "./components/conversation";
+import { GoPanel } from "./components/go";
 import { Button } from "./components/ui/button";
 import { cn } from "./lib/utils";
+import { setGo, useGo } from "./state/go";
 import { useActivity, useStore } from "./state/use-store";
 
 /** The sheet (Base UI's dialog) only matters on phones, so it is its own chunk. */
@@ -65,8 +67,26 @@ function ActivityButton({ onClick }: { onClick: () => void }) {
   );
 }
 
+/** On the go: big talk button and big text, for a phone in a hand or a car mount. */
+function GoButton() {
+  const go = useGo();
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      aria-label="On the go"
+      aria-pressed={go}
+      onClick={() => setGo(!go)}
+      className={cn(go && "bg-accent text-accent-foreground")}
+    >
+      <FootprintsIcon />
+    </Button>
+  );
+}
+
 export function App() {
   const isWide = useWide();
+  const go = useGo();
   const [sheet, setSheet] = useState(false);
   const [sheetUsed, setSheetUsed] = useState(false);
   useEffect(() => {
@@ -85,11 +105,12 @@ export function App() {
           <Wordmark className="h-[1.375rem] shrink-0" />
           <div className="flex items-center gap-1">
             <Status />
+            <GoButton />
             {isWide ? null : <ActivityButton onClick={() => setSheet(true)} />}
           </div>
         </header>
         <Conversation />
-        <Composer />
+        {go ? <GoPanel /> : <Composer />}
       </main>
       {isWide ? (
         <aside className="flex w-[22rem] shrink-0 flex-col bg-card">

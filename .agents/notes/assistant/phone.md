@@ -25,3 +25,13 @@ description: How the web version reaches the phone (tunnel, installable app, pus
 - Headless Chrome crashes in `pushManager.subscribe`, and this machine's Xvfb is broken, so subscribing was
   not checked in a browser. Checked there: manifest with no installability errors (real profile), the
   worker registers, a push sent through CDP shows a notification, the waiting page when bruv is gone.
+
+## On the go (2026-10-29)
+
+The footprints button in the header switches the page to on the go, kept per device in localStorage
+(`web/src/state/go.ts`): it is about where the device is, not the conversation. The keyboard makes way for
+`GoPanel` (`web/src/components/go.tsx`): the voice state in big words with the words heard or the step
+being worked on, a 128 px talk button (the same hold-to-talk / tap-for-hands-free as the small one), 64 px
+buttons for mute, quiet, stop and back to typing, and the first thread waiting on a yes or no as a card
+with 56 px Approve and Deny. Conversation text grows to 20 px. Checked at 390x844 with touch and a fake
+mic: hold, hearing, thinking, spoken answer.

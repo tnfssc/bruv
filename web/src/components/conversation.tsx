@@ -5,6 +5,7 @@ import { onEnd } from "@/lib/events";
 import { useMarkdown } from "@/lib/markdown";
 import { cn } from "@/lib/utils";
 import { askOlder } from "@/state/feed";
+import { useGo } from "@/state/go";
 import { setFollowing } from "@/state/store";
 import { useLine, useLineIds, useStore } from "@/state/use-store";
 import type { Line } from "../../../src/web/protocol";
@@ -43,10 +44,16 @@ function Note({ line }: { line: Line }) {
 /** One line, subscribed on its own: text streaming into it renders only this. */
 const Row = memo(function Row({ id }: { id: string }) {
   const line = useLine(id);
+  const go = useGo();
   if (!line) return null;
   if (line.role === "user")
     return (
-      <div className="ml-auto flex max-w-[min(85%,32rem)] flex-col items-end gap-2 text-right text-muted-foreground">
+      <div
+        className={cn(
+          "ml-auto flex max-w-[min(85%,32rem)] flex-col items-end gap-2 text-right text-muted-foreground",
+          go && "text-[18px]",
+        )}
+      >
         {line.images?.length ? (
           <div className="flex flex-wrap justify-end gap-2">
             {/* A fixed height keeps the rows below still as a picture loads; the width follows the picture, so a
@@ -70,7 +77,13 @@ const Row = memo(function Row({ id }: { id: string }) {
       </div>
     );
   if (line.role === "assistant" && line.files?.length) return <ShownFiles files={line.files} />;
-  if (line.role === "assistant") return <Text line={line} className="text-[17px] leading-[1.65] tracking-[-0.005em]" />;
+  if (line.role === "assistant")
+    return (
+      <Text
+        line={line}
+        className={cn("leading-[1.65] tracking-[-0.005em]", go ? "text-[20px] leading-[1.55]" : "text-[17px]")}
+      />
+    );
   if (line.role === "wake")
     return (
       <div className="flex items-start gap-2 text-[13px] text-muted-foreground opacity-80">
