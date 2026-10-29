@@ -28,7 +28,8 @@ const models = {
 /** Models bruv used before, deleted once their replacements are in. */
 const retired = ["sherpa-onnx-pocket-tts-int8-2026-01-26"];
 
-export type ModelPaths = { vad: string; asr: string; tts: string; speaker: number };
+/** `asr` is left out when a model on OpenRouter recognises the words. */
+export type ModelPaths = { vad: string; asr?: string; tts: string; speaker: number };
 
 /**
  * Kokoro's English voices, in the model's speaker order: American and British, women (f) and men (m).
@@ -41,25 +42,26 @@ export const voices = [
   ...["bm_george", "bm_lewis"],
 ];
 
-export function modelPaths(dir: string, voice = "af_heart"): ModelPaths {
+/** Where the models are. Without `asr`, there is no recogniser: a model on OpenRouter hears instead. */
+export function modelPaths(dir: string, voice = "af_heart", asr = true): ModelPaths {
   const speaker = voices.indexOf(voice);
   return {
     vad: join(dir, models.vad.name),
-    asr: join(dir, models.asr.name),
+    ...(asr && { asr: join(dir, models.asr.name) }),
     tts: join(dir, models.tts.name),
     speaker: speaker < 0 ? voices.indexOf("af_heart") : speaker,
   };
 }
 
-/** The models not yet downloaded, with their size in MB. */
-export function missing(dir: string) {
-  return Object.values(models).filter((model) => !existsSync(join(dir, model.name)));
+/** The models not yet downloaded, with their size in MB; without `asr`, the recogniser isn't needed. */
+export function missing(dir: string, asr = true) {
+  return Object.values(models).filter((model) => (asr || model !== models.asr) && !existsSync(join(dir, model.name)));
 }
 
 /** Downloads the missing models. Archives are unpacked to a temporary folder first, so a failed download leaves nothing behind. */
-export async function download(dir: string, progress: (text: string) => void, fetch = globalThis.fetch) {
+export async function download(dir: string, progress: (text: string) => void, fetch = globalThis.fetch, asr = true) {
   mkdirSync(dir, { recursive: true });
-  for (const model of missing(dir)) {
+  for (const model of missing(dir, asr)) {
     progress(`Downloading ${model.name} (${model.mb} MB)…`);
     const response = await fetch(model.url);
     if (!response.ok || !response.body) throw new Error(`Download of ${model.name} failed (${response.status}).`);

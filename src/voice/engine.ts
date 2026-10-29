@@ -2,6 +2,7 @@ import { Worker } from "node:worker_threads";
 import type { Engine, EngineEvent } from "./call";
 import { type CloudSpeech, startCloudSpeech } from "./cloud";
 import { Fillers } from "./fillers";
+import { type Listen, startListening } from "./listen";
 import type { ModelPaths } from "./models";
 import { withoutDirections } from "./text";
 
@@ -10,9 +11,10 @@ export type Cloud = { model: string; key: () => Promise<string | undefined>; fil
 
 /**
  * Runs the speech models in a worker thread. With `cloud`, a model on OpenRouter speaks, and Kokoro only
- * when it fails: for the rest of that reply, or for good when it can't work (no key or no credit).
+ * when it fails: for the rest of that reply, or for good when it can't work (no key or no credit). With
+ * `listen`, a model on OpenRouter recognises the words, and `paths` has no recogniser.
  */
-export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud, speed = 1): Engine {
+export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud, speed = 1, listen?: Listen): Engine {
   const listeners: ((event: EngineEvent) => void)[] = [];
   const emit = (event: EngineEvent) => {
     for (const listener of listeners) listener(event);
@@ -21,9 +23,17 @@ export function startEngine(paths: ModelPaths, threads = 4, cloud?: Cloud, speed
   // Speech is made about three times faster than it plays, so some is always on its way here. Each hush
   // starts a new generation, and audio from an older one is dropped.
   let generation = 0;
-  worker.on("message", (event: EngineEvent & { generation?: number }) => {
-    if (event.type === "audio" && event.generation !== generation) return;
-    emit(event);
+  const turn =
+    listen &&
+    startListening(
+      listen,
+      (text, held) => emit({ type: "heard", text, held }),
+      (message) => emit({ type: "error", message }),
+    );
+  type WorkerEvent = (EngineEvent & { generation?: number }) | { type: "turn"; pcm: Int16Array; held?: boolean };
+  worker.on("message", (event: WorkerEvent) => {
+    if (event.type === "turn") turn?.(event.pcm, event.held ?? false);
+    else if (event.type !== "audio" || event.generation === generation) emit(event);
   });
   worker.on("error", (error) =>
     emit({ type: "error", message: `Voice engine failed: ${error instanceof Error ? error.message : String(error)}` }),

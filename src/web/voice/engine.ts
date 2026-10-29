@@ -4,23 +4,40 @@ import { readConfig } from "../../config";
 import type { Engine } from "../../voice/call";
 import { cloudModel } from "../../voice/cloud";
 import { type Cloud, startEngine } from "../../voice/engine";
+import type { Listen } from "../../voice/listen";
 import { download, type ModelPaths, missing, modelPaths } from "../../voice/models";
 
-export type MakeEngine = (paths: ModelPaths, threads?: number, cloud?: Cloud, speed?: number) => Engine;
+export type MakeEngine = (
+  paths: ModelPaths,
+  threads?: number,
+  cloud?: Cloud,
+  speed?: number,
+  listen?: Listen,
+) => Engine;
 
 /** Voice's folder, shared with /voice in the terminal, so the models are downloaded once for both. */
 const voiceDir = (agentDir: string) => join(agentDir, "bruv", "voice");
 const modelsDir = (agentDir: string) => join(voiceDir(agentDir), "models");
 
-/** MB of models still to download; 0 when voice can start. */
-export const modelsNeeded = (agentDir: string) =>
-  missing(modelsDir(agentDir)).reduce((sum, model) => sum + model.mb, 0);
-
-export const downloadModels = (agentDir: string, progress: (text: string) => void, fetch?: typeof globalThis.fetch) =>
-  download(modelsDir(agentDir), progress, fetch);
-
 /** Pi's key for a provider, and whether there was one when voice started. */
 export type Key = { has: boolean; get: () => Promise<string | undefined> };
+
+/** A model on OpenRouter hears when bruv.json names one and Pi has the key; otherwise Nemotron, here. */
+function listener(agentDir: string, key: Key | undefined): Listen | undefined {
+  const model = readConfig(agentDir).voice?.listen;
+  return model && key?.has ? { model, key: key.get } : undefined;
+}
+
+/** MB of models still to download; 0 when voice can start. */
+export const modelsNeeded = (agentDir: string, key?: Key) =>
+  missing(modelsDir(agentDir), !listener(agentDir, key)).reduce((sum, model) => sum + model.mb, 0);
+
+export const downloadModels = (
+  agentDir: string,
+  progress: (text: string) => void,
+  fetch?: typeof globalThis.fetch,
+  key?: Key,
+) => download(modelsDir(agentDir), progress, fetch, !listener(agentDir, key));
 
 /** Speech from OpenRouter when Pi has a key, unless the user chose Kokoro; told once, as in the terminal. */
 function cloud(
@@ -50,10 +67,12 @@ export function makeEngine(
   key?: Key,
 ) {
   const config = readConfig(agentDir).voice ?? {};
+  const listen = listener(agentDir, key);
   return make(
-    modelPaths(modelsDir(agentDir), config.voice),
+    modelPaths(modelsDir(agentDir), config.voice, !listen),
     config.threads,
     cloud(agentDir, config.speech, notify, key),
     config.speed,
+    listen,
   );
 }

@@ -6,10 +6,11 @@ import { Text } from "@earendil-works/pi-tui";
 import { readConfig, saveConfig } from "../config";
 import { setStatus } from "../status";
 import { Call, type Engine } from "./call";
-import { chooseCloud } from "./choose";
+import { chooseCloud, chooseListen } from "./choose";
 import { downloadCloudflared, findCloudflared, runTunnel } from "./cloudflared";
 import { type Cloud, startEngine } from "./engine";
 import { readKey, saveKey } from "./keys";
+import type { Listen } from "./listen";
 import { audioMissing, startLocal } from "./local";
 import { download, type ModelPaths, missing, modelPaths } from "./models";
 import { registerSay, Speaker } from "./say";
@@ -22,7 +23,7 @@ import { cleanHost, permissions, prepare } from "./tunnel";
 const guidance = readFileSync(new URL("../../prompts/voice.md", import.meta.url), "utf8").trim();
 
 type Options = {
-  engine?: (paths: ModelPaths, threads?: number, cloud?: Cloud, speed?: number) => Engine;
+  engine?: (paths: ModelPaths, threads?: number, cloud?: Cloud, speed?: number, listen?: Listen) => Engine;
   /** This machine's microphone and speaker, or why they can't be used. */
   local?: (call: Call) => { stop(): void } | string;
   agentDir?: string;
@@ -138,27 +139,31 @@ export function registerVoice(pi: ExtensionAPI, options: Options = {}) {
   const start = async (context: ExtensionContext) => {
     const config = readConfig(options.agentDir).voice ?? {};
     const models = join(dir(), "models");
-    const needed = missing(models);
+    const listen = await chooseListen(context, config.listen, dir());
+    const needed = missing(models, !listen);
     if (needed.length) {
       const mb = needed.reduce((sum, model) => sum + model.mb, 0);
       const ok =
         !context.hasUI ||
         (await context.ui.confirm(
           "Download voice models?",
-          `Voice runs speech recognition and speech on this machine. It needs ${mb} MB of models in ${models}.`,
+          listen
+            ? `Voice runs speech on this machine. It needs ${mb} MB of models in ${models}.`
+            : `Voice runs speech recognition and speech on this machine. It needs ${mb} MB of models in ${models}.`,
         ));
       if (!ok) {
         context.ui.notify("Voice stays off.", "info");
         return;
       }
-      await download(models, (text) => setStatus(context, "voice", text));
+      await download(models, (text) => setStatus(context, "voice", text), undefined, !listen);
     }
     const cloud = await chooseCloud(context, config.speech, dir());
     const engine = (options.engine ?? startEngine)(
-      modelPaths(models, config.voice),
+      modelPaths(models, config.voice, !listen),
       config.threads,
       cloud,
       config.speed,
+      listen,
     );
     // Pages show these themselves; the terminal has only this.
     engine.onEvent((event) => event.type === "error" && context.ui.notify(event.message, "error"));

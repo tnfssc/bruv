@@ -155,6 +155,8 @@ and goals that finish or stop. Terminal effects stay off in T3/RPC, JSON, and pr
 
 Your words are recognised on your machine, on the CPU, by open models: Silero VAD hears when you talk, and NVIDIA's streaming Nemotron (English) writes down what you say. The first `/voice` asks before downloading them (about 800 MB, to `~/.pi/agent/bruv/voice/models`). Thinking makes the first words slower; `low` suits talking.
 
+To have a model on OpenRouter write down your words instead, set `"listen"` to its ID, such as `"meta/muse-voice-transcribe-1.0"` or `"openai/gpt-4o-mini-transcribe"`. It needs Pi's OpenRouter key, and then Nemotron isn't downloaded (463 MB less). What you say is sent to OpenRouter, and none of these models streams: your words appear only when each turn ends, 1–2 s later, and talking over a reply stops it only then. Without a key, Nemotron hears as before.
+
 When Pi has an OpenRouter key (`OPENROUTER_API_KEY` or `/login`), the agent speaks with Fish Audio's Drama 3 through OpenRouter. It sounds like a person: the agent thinks aloud ("hmm", "um", "oh nice") and can set a mood for a sentence ("[a little sheepish]"), which is acted, not read. It always speaks in the same voice, a little faster than its natural pace, and each sentence comes back in about a second and plays as it arrives. When the agent hasn't started answering 0.8 s after you stop, a short sound in its voice that fits what you said fills the pause: "oh, hey" to a greeting, "hmm" to a question, "okay" to a request, "oh!" to news, and nothing when none fits (a small classifier on your machine picks, in a hundredth of a millisecond); these are made once and kept, so they play at once and cost nothing after. It costs about 10¢ an hour of talk at Drama 3's launch price, and what the agent says aloud is sent to OpenRouter; the first `/voice` says so once. Without a key, or when a request fails, Kokoro speaks on your machine for free. Set `"speech": "kokoro"` to always use it, or another OpenRouter speech model's ID to use that one.
 
 Voice is a way to talk with the agent, not a reading of its transcript. What you say reaches it as a voice message, and it answers with a `say` tool: you hear only what it chooses to tell you, while its written replies show on screen (on the page too, in a quieter style). Long things go on screen rather than in your ear: when it starts to say more than about 70 words, it stops at a sentence end and is asked to show the rest, unless it has a reason to read it all out. Speech starts while it is still writing the call.
@@ -186,10 +188,10 @@ The token is kept in `~/.pi/agent/auth.json` as `cloudflare-tunnel`, so `/logout
 Other tunnels work too, such as `tailscale serve 7807`. Open the tunnel's address with the same `?t=` key.
 
 ```json
-{ "voice": { "port": 7807, "host": "127.0.0.1", "speech": "fish-audio/drama-3", "voice": "af_heart", "threads": 4, "speed": 1.2, "tunnel": "voice.example.com" } }
+{ "voice": { "port": 7807, "host": "127.0.0.1", "speech": "fish-audio/drama-3", "listen": "meta/muse-voice-transcribe-1.0", "voice": "af_heart", "threads": 4, "speed": 1.2, "tunnel": "voice.example.com" } }
 ```
 
-`speech` is the OpenRouter speech model, or `kokoro`. `voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `speed` is how fast it talks, times its normal pace: from 0.5 to 1.6, set with `/voice speed`, and it applies from the next sentence. `threads` is how many CPU threads each model uses.
+`speech` is the OpenRouter speech model, or `kokoro`. `listen` is the OpenRouter transcription model; leave it out to hear on this machine. `voice` is one of Kokoro's English voices: `af_heart` (the default), `af_bella`, `am_michael`, `bf_emma`, `bm_george` and the others in `src/voice/models.ts` (`a` is American, `b` British, `f` a woman, `m` a man). `speed` is how fast it talks, times its normal pace: from 0.5 to 1.6, set with `/voice speed`, and it applies from the next sentence. `threads` is how many CPU threads each model uses.
 
 ## The web version
 
