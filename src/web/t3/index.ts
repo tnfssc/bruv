@@ -268,7 +268,6 @@ export function connectT3(options: {
       if (!place) return undefined;
       return { origin: place.origin, ticket: await ticket(place.origin, await keys.get("session", place)) };
     },
-    position: () => (origin === locate()?.origin ? sequence : -1),
     onMessage: (message) => emit({ message }),
   });
   void run();

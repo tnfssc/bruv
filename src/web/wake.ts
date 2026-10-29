@@ -133,7 +133,15 @@ export class Waker {
 
   /** The task's name is enough when the thread is named the same. */
   private name(title: string, task: string) {
-    return title.trim() === task.trim() ? `"${task}"` : `"${title}" (${task})`;
+    // Typed and typeset quotes, case and spacing don't make it another name.
+    const plain = (text: string) =>
+      text
+        .normalize("NFKC")
+        .replace(/[\u2018\u2019\u201c\u201d]/g, "'")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+    return plain(title) === plain(task) ? `"${task}"` : `"${title}" (${task})`;
   }
 
   private add(line: string) {

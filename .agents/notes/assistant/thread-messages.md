@@ -13,11 +13,18 @@ updates while it works, without asking, so it can act on them like a parent agen
   events; `message.updated` carries `{id, role, text, streaming, runId, updatedAt}`, the whole text each
   time. bruv passes on assistant messages with `streaming: false`, once per id and text.
 - **Cheap.** `src/web/t3/follow.ts` follows only threads named by open tasks, all on one socket (Effect
-  RPC carries many requests). A thread followed for the first time starts from the shell feed's position,
-  so only new events come; after a drop each resumes from its own last position. A small run was about
-  40 KB of events. A position T3 can't resume from gets a whole snapshot (bounded projection, ~150 KB),
-  whose messages are taken as already told. MCP's `t3_thread_read` pages forward only, so the newest
-  message would cost reading the whole thread; the REST thread endpoints are 100-150 KB.
+  RPC carries many requests). Positions are the thread's own, not the shell feed's: T3 answers a position
+  past the thread's last event, more than 128 events back, or over 1 MiB of replay with a whole snapshot
+  (T3 source, `apps/server/src/ws.ts`, same in the 0.1.2 nightly). So a thread followed for the first time
+  starts with a bounded snapshot (`acceptBoundedSnapshot`; 28 KB for a fresh scratch thread, 680 KB for a
+  long old one, compressed on the socket) whose messages are the past, and then resumes from its own last
+  position: a small run was about 40 KB of events. A snapshot that replaces a resume passes on finished
+  messages from after following began, so a thread that finished while bruv was away isn't lost. T3
+  normally ends a message with `streaming: false` but has no sweep that guarantees it, so a run's end
+  (`run.updated`, terminal status) passes on its last message if it wasn't. MCP's `t3_thread_read` pages
+  forward only and has no notifications, and the REST thread endpoints are 100-150 KB, so this socket is
+  the only cheap way.
+- **T3's source** is at github.com/pingdotgg/t3code (open source); read it rather than the built bundle.
 - **Batching** (`src/web/wake.ts`): a message waits up to two minutes for more; a status change (finished,
   failed, waiting on the user) sends it with the event after the usual 3 s. Last three messages per
   thread, each cut at 4000 characters.
