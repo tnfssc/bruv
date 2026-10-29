@@ -6,12 +6,12 @@ import { age } from "@/lib/time";
 import { cn } from "@/lib/utils";
 import { type Activity, type Group, groupOf } from "@/state/activity";
 import { answer, say } from "@/state/optimistic";
-import { threads as allThreads } from "@/state/store";
 import { useActivity, useNow, useStore } from "@/state/use-store";
-import type { T3State, Task, Thread } from "../../../src/web/protocol";
+import type { T3State, Thread } from "../../../src/web/protocol";
 import { Phone } from "./phone";
+import { MarkdownText } from "./shown";
 
-const dots: Record<Group, string> = {
+export const dots: Record<Group, string> = {
   needs: "bg-needs",
   working: "bg-working animate-blink",
   done: "bg-done",
@@ -39,7 +39,7 @@ function ask(words: string) {
  * Where T3's own page opens a thread, or nothing when this device can't reach it: T3 on this computer
  * (127.0.0.1) can't be opened from a phone.
  */
-function useThreadLink(id: string) {
+export function useThreadLink(id: string) {
   const app = useStore((state) => (state.t3.state === "connected" ? state.t3.app : undefined));
   if (!app) return undefined;
   const loopback = (host: string) => host === "localhost" || host === "[::1]" || host.startsWith("127.");
@@ -48,7 +48,7 @@ function useThreadLink(id: string) {
 }
 
 /** The actions under an opened row: ask the assistant about it, and open the thread in T3. */
-function Actions({ question, link }: { question: string; link?: string }) {
+export function Actions({ question, link }: { question: string; link?: string }) {
   return (
     <div className="flex flex-wrap gap-2 pt-1">
       <button
@@ -76,18 +76,22 @@ function Actions({ question, link }: { question: string; link?: string }) {
 
 const Row = memo(function Row({
   thread,
+  kids = [],
   project,
   now,
   open,
   toggle,
 }: {
   thread: Thread;
+  /** Its subagents and delegated tasks. */
+  kids?: Thread[];
   project?: string;
   now: number;
   open: boolean;
   toggle: (id: string) => void;
 }) {
-  const group = groupOf(thread);
+  const group = groupOf(thread, kids);
+  const busyKids = kids.filter((kid) => groupOf(kid) === "working").length;
   const failed = thread.status === "failed";
   const when = group === "done" ? thread.finishedAt : thread.updatedAt;
   const line = failed ? (thread.lastError ?? thread.lastMessage) : (thread.holding ?? thread.lastMessage);
@@ -110,14 +114,27 @@ const Row = memo(function Row({
             {project ? <span className="max-w-[45%] shrink-0 truncate">{project}</span> : null}
             {project && line ? <span aria-hidden="true">·</span> : null}
             <span className={cn("min-w-0 truncate", failed && thread.lastError && "text-destructive")}>{line}</span>
+            {busyKids ? (
+              <span className="shrink-0">
+                · {busyKids} subagent{busyKids === 1 ? "" : "s"}
+              </span>
+            ) : null}
           </span>
         </span>
       </button>
       {thread.requestId && thread.requestKind !== "user_input" ? <Answer thread={thread} /> : null}
+      {/* A subagent waiting on the user is answered here, under the work it holds up. */}
+      {kids
+        .filter((kid) => kid.requestId && kid.requestKind !== "user_input")
+        .map((kid) => (
+          <Answer key={kid.id} thread={kid} who={kid.title} />
+        ))}
       {open ? (
         <div className="flex flex-col gap-2 pt-1 pr-3 pb-3 pl-[2.125rem] text-[13px]">
           {thread.lastMessage ? (
-            <p className="line-clamp-[12] whitespace-pre-wrap [overflow-wrap:anywhere]">{thread.lastMessage}</p>
+            <div className="max-h-72 overflow-y-auto [overflow-wrap:anywhere]">
+              <MarkdownText id={`last:${thread.id}`} text={thread.lastMessage} />
+            </div>
           ) : null}
           {thread.lastError ? (
             <p className="line-clamp-6 whitespace-pre-wrap text-destructive [overflow-wrap:anywhere]">
@@ -130,6 +147,13 @@ const Row = memo(function Row({
             <Detail label="Started" value={new Date(thread.createdAt).toLocaleString()} />
             <Detail label="Finished" value={thread.finishedAt && new Date(thread.finishedAt).toLocaleString()} />
           </dl>
+          {kids.length ? (
+            <ul className="flex flex-col gap-1">
+              {kids.map((kid) => (
+                <Kid key={kid.id} thread={kid} />
+              ))}
+            </ul>
+          ) : null}
           <Actions question={`What's happening with the "${thread.title || "untitled"}" thread?`} link={link} />
         </div>
       ) : null}
@@ -137,81 +161,14 @@ const Row = memo(function Row({
   );
 });
 
-const taskDots: Record<string, string> = {
-  waiting: "bg-needs",
-  blocked: "bg-destructive",
-  done: "bg-done",
-};
-
-/** Done tasks stay in view this long, then drop out of the panel (the file stays). */
-const doneFor = 7 * 24 * 60 * 60 * 1000;
-
-/** A piece of the user's work, as the assistant keeps it. Opens to show the threads doing it. */
-const TaskRow = memo(function TaskRow({
-  task,
-  now,
-  open,
-  toggle,
-}: {
-  task: Task;
-  now: number;
-  open: boolean;
-  toggle: (id: string) => void;
-}) {
-  const key = `task:${task.slug}`;
-  return (
-    <div>
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={() => toggle(key)}
-        className="flex w-full cursor-pointer gap-2.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent/60 aria-expanded:bg-accent/60"
-      >
-        <span
-          className={cn(
-            "mt-[0.45rem] size-2 shrink-0 rounded-full",
-            taskDots[task.status] ?? "bg-working animate-blink",
-          )}
-        />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="flex items-baseline gap-2">
-            <span className="min-w-0 flex-1 truncate font-medium text-sm">{task.title}</span>
-            <span className="shrink-0 text-muted-foreground text-xs tabular-nums">{age(task.updatedAt, now)}</span>
-          </span>
-          <span className="min-w-0 truncate text-[13px] text-muted-foreground">
-            {task.status === "working" ? task.next : [task.status, task.next].filter(Boolean).join(" · ")}
-          </span>
-        </span>
-      </button>
-      {open ? (
-        <div className="flex flex-col gap-2 pt-1 pr-3 pb-3 pl-[2.125rem] text-[13px]">
-          <ul className="flex flex-col gap-1">
-            {task.threads.length === 0 ? <li className="text-muted-foreground">No threads yet</li> : null}
-            {task.threads.map((id) => (
-              <TaskThread key={id} id={id} />
-            ))}
-          </ul>
-          <Actions question={`How is "${task.title}" going?`} />
-        </div>
-      ) : null}
-    </div>
-  );
-});
-
-/** One of a task's threads: its state, and a link to it in T3 when this device can open one. */
-function TaskThread({ id }: { id: string }) {
-  const thread = allThreads.get(id);
-  const link = useThreadLink(id);
-  const title = thread?.title ?? "A thread T3 no longer lists";
+/** One of a thread's subagents: its state, and a link to it in T3 when this device can open one. */
+function Kid({ thread }: { thread: Thread }) {
+  const link = useThreadLink(thread.id);
+  const title = thread.title || "Subagent";
   return (
     <li className="flex min-w-0 items-baseline gap-2">
-      <span
-        className={cn(
-          "size-1.5 shrink-0 translate-y-[-1px] rounded-full",
-          thread ? dots[groupOf(thread)] : "bg-muted-foreground/40",
-        )}
-      />
-      {link && thread ? (
+      <span className={cn("size-1.5 shrink-0 translate-y-[-1px] rounded-full", dots[groupOf(thread)])} />
+      {link ? (
         <a
           href={link}
           target="_blank"
@@ -223,7 +180,7 @@ function TaskThread({ id }: { id: string }) {
       ) : (
         <span className="min-w-0 flex-1 truncate">{title}</span>
       )}
-      <span className="shrink-0 text-muted-foreground">{thread?.status}</span>
+      <span className="shrink-0 text-muted-foreground">{thread.holding ?? thread.status}</span>
     </li>
   );
 }
@@ -240,11 +197,12 @@ export const asks: Record<string, string> = {
  * Yes or no to a thread's permission request, right in its row, as the user would answer in T3. The row
  * moves on at once; if T3 doesn't take the answer, the buttons come back and say so.
  */
-function Answer({ thread }: { thread: Thread }) {
+export function Answer({ thread, who }: { thread: Thread /** For a subagent: its name. */; who?: string }) {
   const missed = useStore((state) => state.missed === thread.requestId);
   return (
     <div className="flex items-center gap-2 pr-3 pb-2 pl-[2.125rem] text-[13px]">
       <span className="min-w-0 flex-1 truncate text-muted-foreground">
+        {who ? `${who}: ` : ""}
         {missed ? "That answer didn't go through" : (asks[thread.requestKind ?? ""] ?? "waits on you")}
       </span>
       <button
@@ -308,26 +266,11 @@ function Link({ t3 }: { t3: T3State }) {
   );
 }
 
-type Item =
-  | { key: string; title: string }
-  | { key: string; task: Task }
-  | { key: string; thread: Thread }
-  | { key: "fold"; fold: number };
+type Item = { key: string; title: string } | { key: string; thread: Thread } | { key: "fold"; fold: number };
 
-/**
- * The user's work first (the assistant's tasks: open ones, then recently done), then T3's threads in
- * groups, as one flat list, so the panel shows only what is in view however much there is.
- */
-function items(tasks: Task[], groups: Activity, older: boolean, now: number): Item[] {
+/** The assistant's threads in groups, as one flat list, so the panel shows only what is in view. */
+function items(groups: Activity, older: boolean): Item[] {
   const out: Item[] = [];
-  const shown = [
-    ...tasks.filter((task) => task.status !== "done"),
-    ...tasks.filter((task) => task.status === "done" && now - Date.parse(task.updatedAt) < doneFor),
-  ];
-  if (shown.length) {
-    out.push({ key: "group:Your work", title: "Your work" });
-    for (const task of shown) out.push({ key: `task:${task.slug}`, task });
-  }
   const add = (title: string, threads: Thread[]) => {
     if (threads.length === 0) return;
     out.push({ key: `group:${title}`, title });
@@ -341,19 +284,16 @@ function items(tasks: Task[], groups: Activity, older: boolean, now: number): It
   return out;
 }
 
-/** What is going on in T3 Code, grouped by what it needs from the user. */
+/** The T3 threads the assistant started, grouped by what they need from the user. */
 export function ActivityPanel() {
   const groups = useActivity();
   const t3 = useStore((state) => state.t3);
-  const tasks = useStore((state) => state.tasks);
   const projects = useStore((state) => state.projects);
   const names = useMemo(() => new Map(projects.map((project) => [project.id, project.title])), [projects]);
   const now = useNow();
   const [older, setOlder] = useState(false);
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
-  // Done tasks drop out by age, which only needs checking now and then.
-  const hour = Math.floor(now / 3_600_000);
-  const list = useMemo(() => items(tasks, groups, older, hour * 3_600_000), [tasks, groups, older, hour]);
+  const list = useMemo(() => items(groups, older), [groups, older]);
   const scroller = useRef<HTMLDivElement>(null);
   const toggle = useMemo(
     () => (id: string) =>
@@ -384,7 +324,9 @@ export function ActivityPanel() {
         className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pb-[calc(1rem+env(safe-area-inset-bottom))]"
       >
         {list.length === 0 ? (
-          <p className="px-4 py-6 text-center text-muted-foreground text-sm">Nothing going on</p>
+          <p className="px-4 py-6 text-center text-muted-foreground text-sm">
+            Threads the assistant starts in T3 show here.
+          </p>
         ) : (
           <div className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
             {virtualizer.getVirtualItems().map((virtual) => {
@@ -403,11 +345,10 @@ export function ActivityPanel() {
                     >
                       {item.title}
                     </h3>
-                  ) : "task" in item ? (
-                    <TaskRow task={item.task} now={now} open={open.has(item.key)} toggle={toggle} />
                   ) : "thread" in item ? (
                     <Row
                       thread={item.thread}
+                      kids={groups.kids.get(item.thread.id)}
                       project={names.get(item.thread.projectId)}
                       now={now}
                       open={open.has(item.thread.id)}

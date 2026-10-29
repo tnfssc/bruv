@@ -17,6 +17,8 @@ export function registerWebTools(
   options: {
     live: () => { t3: T3Link; key: string } | undefined;
     answer: (threadId: string, decision: Decision) => Promise<Thread>;
+    /** The assistant's own threads among these. */
+    ours: (threads: Thread[]) => Thread[];
     /** Puts a shown file in the conversation. */
     shown: (file: Shown) => void;
   },
@@ -25,15 +27,17 @@ export function registerWebTools(
     name: "overview",
     label: "Overview",
     description:
-      "What is going on across all the user's T3 work right now: threads waiting on the user, working, failed, and finished but not yet opened. Instant, from bruv's live view of T3. Start here; read a thread with T3's tools when you need more.",
+      "What your T3 threads (the ones you started, with their subagents) are doing right now: waiting on the user, working, failed, and finished but not yet opened. Instant, from bruv's live view of T3. Start here; read a thread with T3's tools when you need more.",
     parameters: Type.Object({
       project: Type.Optional(Type.String({ description: "Only this project, by name or id." })),
+      all: Type.Optional(Type.Boolean({ description: "Every thread in T3, not only yours." })),
     }),
     async execute(_id, args) {
       const live = options.live();
       if (!live) throw new Error("The web version is off.");
       const state = live.t3.state();
-      const text = overview(live.t3.threads(), live.t3.projects(), { project: args.project });
+      const threads = args.all ? live.t3.threads() : options.ours(live.t3.threads());
+      const text = overview(threads, live.t3.projects(), { project: args.project });
       return {
         ...toolResult({ text }),
         content: [

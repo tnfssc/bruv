@@ -3,6 +3,10 @@ name: plan
 description: The plan for bruv's web version, a personal assistant (voice + chat) that manages the user's work in T3 Code, made from the discovery and the user's answers on 2026-10-28. Built on 2026-10-29; see web.md for what was built and learned.
 ---
 
+> The task files and task cards planned here were dropped on 2026-10-29 for a T3-native page that
+> lists only the assistant's own threads; see `threads-of-its-own.md`.
+
+
 # bruv web: plan
 
 The user talks or types (with pasted images) to one assistant, from a computer or a phone. Its job is

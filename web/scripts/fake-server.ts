@@ -14,7 +14,7 @@ import type { AddressInfo } from "node:net";
 import { parseArgs } from "node:util";
 import { WebSocket, WebSocketServer } from "ws";
 import { pageAssets } from "../../src/web/assets.ts";
-import type { Line, PageEvent, Project, ServerEvent, T3State, Task, Thread } from "../../src/web/protocol.ts";
+import type { Line, PageEvent, Project, ServerEvent, T3State, Thread } from "../../src/web/protocol.ts";
 
 const { values } = parseArgs({
   options: {
@@ -55,7 +55,7 @@ let history: Line[] = Array.from({ length: Number(values.lines) }, (_, i) => {
           : `${i}: ${sentence(i, 12 + (i % 40))}.`
         : role === "wake"
           ? "Checked on 3 threads; nothing new."
-          : `Read ${i % 4} threads, wrote tasks/login.md\n${sentence(i, 30)}`;
+          : `Read ${i % 4} threads, started a thread\n${sentence(i, 30)}`;
   return { id: `l${i}`, role, text, at: ago(minutes) };
 });
 
@@ -97,33 +97,6 @@ let stream: ReturnType<typeof setInterval> | undefined;
 let count = history.length;
 const pictures = new Map<string, Buffer>();
 
-// The user's work as the assistant keeps it, naming some of the threads above.
-const tasks: Task[] = [
-  {
-    slug: "login-redirect",
-    title: "Fix the login redirect",
-    status: "working",
-    next: "Review the fix once the thread finishes",
-    threads: threads.slice(0, 2).map((thread) => thread.id),
-    updatedAt: new Date(Date.now() - 20 * 60_000).toISOString(),
-  },
-  {
-    slug: "release-notes",
-    title: "Write the 1.1 release notes",
-    status: "waiting",
-    next: "Pick which features lead",
-    threads: threads.slice(2, 3).map((thread) => thread.id),
-    updatedAt: new Date(Date.now() - 2 * 3_600_000).toISOString(),
-  },
-  {
-    slug: "ci-flake",
-    title: "Stop the flaky CI test",
-    status: "done",
-    threads: [],
-    updatedAt: new Date().toISOString(),
-  },
-];
-
 const server = createServer(async (request, response) => {
   const url = new URL(request.url ?? "/", "http://x");
   if (url.pathname === "/") {
@@ -148,7 +121,7 @@ server.on("upgrade", (request, socket, head) => {
   if (url.searchParams.get("t") !== key) return void socket.destroy();
   sockets.handleUpgrade(request, socket, head, (ws) => {
     const say = (event: ServerEvent) => ws.send(JSON.stringify(event));
-    say({ type: "hello", lines: history.slice(-50), more: history.length > 50, busy, t3, projects, threads, tasks });
+    say({ type: "hello", lines: history.slice(-50), more: history.length > 50, busy, t3, projects, threads });
     ws.on("message", (data) => onPage(JSON.parse(String(data)) as PageEvent, say));
   });
 });

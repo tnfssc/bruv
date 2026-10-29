@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { lineAt, parentOf, readBack } from "./archive";
-import { lines, type Message, page, pictures, showEntry, shownLine, toLine } from "./lines";
+import { customLine, lines, type Message, page, pictures, toLine } from "./lines";
 import type { Line } from "./protocol";
 
 /** Lines of earlier sessions have ids `a<n>.<offset>`: the nth parent session, and where the line starts. */
@@ -75,8 +75,12 @@ export function conversationHistory(options: {
         const n = index;
         const back = readBack(file, end, page - found.length, (entry, offset) => {
           const id = `a${n}.${offset}`;
-          if (entry.type === "custom" && entry.customType === showEntry)
-            return shownLine(entry.data, id, Date.parse(String(entry.timestamp)));
+          if (entry.type === "custom")
+            return customLine(
+              entry as { customType?: string; data?: unknown },
+              id,
+              Date.parse(String(entry.timestamp)),
+            );
           if (entry.type !== "message") return undefined;
           return toLine(entry.message as Message, id, (each) => link(id, each), Date.parse(String(entry.timestamp)));
         });

@@ -73,7 +73,7 @@ function ShownFile({ file }: { file: Shown }) {
     );
   if (file.kind === "audio")
     return (
-      <div className="rounded-xl border bg-card">
+      <div className="rounded-xl bg-card ring-1 ring-foreground/10">
         <Header file={file} />
         {/* biome-ignore lint/a11y/useMediaCaption: files the work made have no captions to give */}
         <audio src={file.url} controls preload="none" className="w-full px-3 pb-3" />
@@ -81,7 +81,7 @@ function ShownFile({ file }: { file: Shown }) {
     );
   if (file.kind === "html")
     return (
-      <div className="overflow-hidden rounded-xl border bg-card">
+      <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
         <Header file={file} />
         <iframe
           src={file.url}
@@ -89,7 +89,7 @@ function ShownFile({ file }: { file: Shown }) {
           sandbox="allow-scripts allow-forms allow-popups allow-downloads"
           referrerPolicy="no-referrer"
           loading="lazy"
-          className="block h-[26rem] max-h-[70dvh] w-full border-0 border-t bg-white"
+          className="block h-[26rem] max-h-[70dvh] w-full border-0 border-t border-foreground/10 bg-white"
         />
       </div>
     );
@@ -99,7 +99,7 @@ function ShownFile({ file }: { file: Shown }) {
         href={file.url}
         target="_blank"
         rel="noreferrer"
-        className="flex items-center gap-3 rounded-xl border bg-card px-3 py-3 text-[13px] hover:bg-accent"
+        className="flex items-center gap-3 rounded-xl bg-card ring-1 ring-foreground/10 px-3 py-3 text-[13px] hover:bg-accent"
       >
         <FileTextIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate font-medium">{file.title ?? file.name}</span>
@@ -141,9 +141,9 @@ function TextFile({ file }: { file: Shown }) {
   const { found, failed } = useText(file.url);
   const markdown = /\.(md|markdown)$/i.test(file.name);
   return (
-    <div className="overflow-hidden rounded-xl border bg-card">
+    <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
       <Header file={file} />
-      <div className="max-h-80 overflow-auto border-t px-3 py-2">
+      <div className="max-h-80 overflow-auto border-foreground/10 border-t px-3 py-2">
         {failed ? (
           <p className="text-[13px] text-muted-foreground">Couldn't load it.</p>
         ) : !found ? (
@@ -161,7 +161,7 @@ function TextFile({ file }: { file: Shown }) {
   );
 }
 
-function MarkdownText({ id, text }: { id: string; text: string }) {
+export function MarkdownText({ id, text }: { id: string; text: string }) {
   const out = useMarkdown(id, text);
   return <div className={cn("md text-[14px]", !out && "whitespace-pre-wrap")}>{out ?? text}</div>;
 }

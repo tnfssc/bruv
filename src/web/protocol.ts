@@ -58,22 +58,6 @@ export type T3State =
   | { state: "connected"; app?: string }
   | { state: "unavailable"; reason: string };
 
-/**
- * A piece of work the user asked for, as the assistant keeps it in `tasks/<slug>.md` in its workspace.
- * The page shows these instead of threads: the user thinks in work, not threads.
- */
-export type Task = {
-  slug: string;
-  title: string;
-  /** working, waiting (on the user), blocked, done; anything else shows as working. */
-  status: string;
-  /** What comes next, in a line. */
-  next?: string;
-  /** T3 threads doing it. */
-  threads: string[];
-  updatedAt: string;
-};
-
 /** A line in the conversation. Wake-ups are the assistant's own check-ins, shown small. */
 /** How the page shows a file: inline for pictures, video, sound and HTML; text in a box; a PDF as a link. */
 export type ShownKind = "image" | "video" | "audio" | "html" | "pdf" | "text";
@@ -89,6 +73,8 @@ export type Line = {
   images?: string[];
   /** Files the assistant showed, on an assistant line of their own. */
   files?: Shown[];
+  /** A thread the assistant started: the page shows it as a live card, from the threads it holds. */
+  thread?: string;
   at: string;
   /** Still being written. */
   partial?: boolean;
@@ -110,7 +96,6 @@ export type ServerEvent =
       t3: T3State;
       projects: Project[];
       threads: Thread[];
-      tasks: Task[];
     }
   /** A new line, or a newer version of one already sent (same id): it replaces that line whole. */
   | { type: "line"; line: Line }
@@ -126,10 +111,8 @@ export type ServerEvent =
   | { type: "step"; text: string }
   | { type: "t3"; t3: T3State }
   | { type: "projects"; projects: Project[] }
-  /** Threads that changed, whole. */
-  | { type: "threads"; threads: Thread[] }
-  /** All tasks, whenever one changes (there are few). */
-  | { type: "tasks"; tasks: Task[] };
+  /** Threads that changed, whole: the assistant's own and their subagents. */
+  | { type: "threads"; threads: Thread[] };
 
 export type PageEvent =
   /**

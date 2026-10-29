@@ -9,25 +9,19 @@ import { pageAssets } from "./assets";
 import { registerWebCommands } from "./commands";
 import { fileRoute } from "./files";
 import { conversationHistory } from "./history";
-import { type Message, showEntry, showTool, toImage, toLine, wakeMark } from "./lines";
+import { type Message, showEntry, showTool, threadEntry, toImage, toLine, wakeMark } from "./lines";
+import { launched, type Mine, mine } from "./mine";
 import { overview } from "./overview";
 import type { WebContext, WebPart } from "./part";
 import { webParts } from "./parts";
-import type { Decision, Line, PageEvent, ServerEvent, Task, Thread } from "./protocol";
+import { type Decision, going, type Line, type PageEvent, type ServerEvent, type Thread } from "./protocol";
 import { type Assets, serveWeb, type WebServer } from "./server";
 import { step } from "./steps";
 import { connectT3, type T3Link } from "./t3";
-import { open, watchTasks } from "./tasks";
 import { registerWebTools } from "./tools";
 import { Waker } from "./wake";
 
 const guidance = readFileSync(new URL("../../prompts/assistant.md", import.meta.url), "utf8").trim();
-
-/**
- * Threads the page shows: top-level ones. Children (the providers' own subagents, delegated tasks) are the
- * threads' business; about two thirds of T3's threads are those.
- */
-const topLevel = (threads: Thread[]) => threads.filter((thread) => !thread.parentId);
 
 /**
  * Pi's tools the assistant keeps: its workspace files and scripts. It doesn't run commands or code; T3's
@@ -47,6 +41,8 @@ type Options = {
   assets?: (server: import("node:http").Server) => Promise<Assets>;
   /** For tests: the parts to start instead of the real ones (voice, push, tunnel). */
   parts?: () => WebPart[];
+  /** For tests: threads taken as the assistant's own from the start. */
+  ours?: string[];
   /** For tests: how long wake-ups gather events. */
   gather?: number;
 };
@@ -73,7 +69,10 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
         server: WebServer;
         t3: T3Link;
         key: string;
-        tasks: () => Task[];
+        /** The threads the assistant started. */
+        mine: Mine;
+        /** Follows the assistant's threads that are at work now. */
+        refollow: () => void;
         parts: WebPart[];
         waker: Waker;
         /** The tunnel's address once it is up; else the local one. */
@@ -91,9 +90,14 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
   let shownOverview = "";
   /** Registers T3's MCP server again when its key or origin changed (after pairing with another T3). */
   let registerMcp: (() => Promise<void>) | undefined;
+  /** The assistant's threads and what descends from them, as T3 shows them now. */
+  const ours = (threads: Thread[]) => {
+    const current = live;
+    return current ? threads.filter((thread) => current.mine.has(thread, current.t3.thread)) : [];
+  };
   const withOverview = () => {
     if (live?.t3.state().state !== "connected") return;
-    const now = overview(live.t3.threads(), live.t3.projects());
+    const now = overview(ours(live.t3.threads()), live.t3.projects());
     if (now === shownOverview) return;
     shownOverview = now;
     pi.sendMessage(
@@ -146,8 +150,7 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
       busy,
       t3: live?.t3.state() ?? { state: "connecting" },
       projects: live?.t3.projects() ?? [],
-      threads: topLevel(live?.t3.threads() ?? []),
-      tasks: live?.tasks() ?? [],
+      threads: ours(live?.t3.threads() ?? []),
     };
   };
 
@@ -252,37 +255,58 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
         pi.sendUserMessage(`${wakeMark}${text}`);
       },
     });
-    // The threads open tasks name are followed closely: what they say reaches the assistant.
-    const follow = (list: Task[]) => t3.follow(list.filter(open).flatMap((task) => task.threads));
-    const tasks = watchTasks(context.cwd, (list) => {
-      send({ type: "tasks", tasks: list });
-      waker.tasks(list);
-      follow(list);
-    });
-    waker.tasks(tasks.list());
-    follow(tasks.list());
+    const mineList = mine(join(dir, "threads.json"), context.cwd);
+    for (const id of options.ours ?? []) mineList.add(id);
+    const isMine = (thread: Thread) => mineList.has(thread, t3.thread);
+    /**
+     * What the assistant's threads say reaches it as they say it. Only the ones at work (and those that
+     * just stopped, whose last words may still be on the way) are followed, so old threads cost nothing.
+     */
+    const followAtWork = () => {
+      const soon = Date.now() - 10 * 60_000;
+      t3.follow(
+        mineList.ids().filter((id) => {
+          const thread = t3.thread(id);
+          return (
+            thread &&
+            !thread.away &&
+            (going.has(thread.status) || thread.holding || thread.needsUser || Date.parse(thread.updatedAt) > soon)
+          );
+        }),
+      );
+    };
+    waker.follow(mineList.ids());
+    followAtWork();
     const unsubscribe = t3.onChange((change) => {
       if (change.t3) send({ type: "t3", t3: change.t3 });
       if (change.projects) send({ type: "projects", projects: change.projects });
-      if (change.threads) waker.threads(change.threads);
+      if (change.threads) {
+        waker.threads(change.threads);
+        const changed = change.threads.filter(isMine);
+        if (changed.length) {
+          send({ type: "threads", threads: changed });
+          followAtWork();
+        }
+      }
       if (change.message) waker.message(change.message.threadId, change.message.text);
-      const threads = topLevel(change.threads ?? []);
-      if (threads.length) send({ type: "threads", threads });
     });
-    waker.threads(t3.threads());
+    // Stopped threads drop out of following after a while, with nothing from T3 to say so.
+    const refollow = setInterval(followAtWork, 5 * 60_000);
+    refollow.unref?.();
     const current = {
       server,
       t3,
       key: secret,
-      tasks: tasks.list,
+      mine: mineList,
+      refollow: followAtWork,
       parts,
       waker,
       address: undefined as string | undefined,
       sessionLimit: (config.sessionMB ?? 20) * 1024 * 1024,
       stop: () => {
         unsubscribe();
+        clearInterval(refollow);
         waker.close();
-        tasks.close();
         t3.close();
       },
     };
@@ -379,6 +403,7 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     registerWebTools(pi, {
       live: () => live,
       answer,
+      ours,
       shown: (file) => {
         // Saved as a line of its own, and on the page now, while the run goes on.
         pi.appendEntry(showEntry, file);
@@ -441,6 +466,22 @@ export function registerWeb(pi: ExtensionAPI, options: Options = {}) {
     if (said) each((part) => part.news?.(said));
     live?.waker.free();
     freshen();
+  });
+  // A thread the assistant starts, directly or from a script, becomes one of its own: listed on the page,
+  // followed, and shown as a card in the conversation.
+  pi.on("tool_execution_end", (event) => {
+    if (!live || event.isError || !/(^|__)t3_thread_launch$/.test(event.toolName)) return;
+    const id = launched(event.result);
+    if (!id || !live.mine.add(id)) return;
+    live.waker.follow(live.mine.ids());
+    // T3's record of it comes moments later; following starts when it does.
+    live.refollow();
+    pi.appendEntry(threadEntry, { id });
+    const line = `live-${++count}`;
+    past.savedAs(line);
+    send({ type: "line", line: { id: line, role: "assistant", text: "", thread: id, at: new Date().toISOString() } });
+    const thread = live.t3.thread(id);
+    if (thread) send({ type: "threads", threads: [thread] });
   });
   // A step a person can follow: codemode scripts start with a comment saying what they do.
   pi.on("tool_execution_start", (event) => {

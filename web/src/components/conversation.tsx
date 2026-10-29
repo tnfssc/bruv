@@ -11,6 +11,7 @@ import { useLine, useLineIds, useStore } from "@/state/use-store";
 import type { Line } from "../../../src/web/protocol";
 import { Mark } from "./brand";
 import { ShownFiles } from "./shown";
+import { ThreadCard } from "./thread-card";
 import { Button } from "./ui/button";
 
 /** How close to the top, in pixels, before older lines are asked for. */
@@ -77,6 +78,7 @@ const Row = memo(function Row({ id }: { id: string }) {
       </div>
     );
   if (line.role === "assistant" && line.files?.length) return <ShownFiles files={line.files} />;
+  if (line.role === "assistant" && line.thread) return <ThreadCard id={line.thread} at={line.at} />;
   if (line.role === "assistant")
     return (
       <Text

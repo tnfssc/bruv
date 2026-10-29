@@ -15,6 +15,7 @@ mock.module("../web/src/state/socket", () => ({
 }));
 
 const { apply, askOlder } = await import("../web/src/state/feed");
+const { activity } = await import("../web/src/state/activity");
 const { say, answer, onLate, patience, withAnswers } = await import("../web/src/state/optimistic");
 const { getLine, getState, keep, setFollowing, setState, subscribeLine, threads } = await import(
   "../web/src/state/store"
@@ -47,7 +48,6 @@ const hello = (more: Partial<Extract<ServerEvent, { type: "hello" }>> = {}): Ser
   t3: { state: "connected" },
   projects: [],
   threads: [],
-  tasks: [],
   ...more,
 });
 /** What the conversation shows, in order. */
@@ -208,4 +208,21 @@ test("an answer T3 never takes comes back", async () => {
   await Bun.sleep(patience.ms * 2);
   expect(getState().missed).toBe("r2");
   expect(waiting("t1")?.requestId).toBe("r2");
+});
+
+test("a subagent's subagent shows under its top-level thread, and one waiting on the user moves it up", () => {
+  const base = { projectId: "p", pinned: false, away: false, createdAt: "", updatedAt: "2026-10-29T00:00:00.000Z" };
+  const all: Thread[] = [
+    { ...base, id: "a", title: "a", status: "completed", needsUser: false },
+    { ...base, id: "s", title: "s", status: "idle", needsUser: false, parentId: "a" },
+    { ...base, id: "g", title: "g", status: "running", needsUser: true, parentId: "s" },
+  ];
+  const groups = activity(all, Date.parse("2026-10-29T01:00:00.000Z"));
+  expect(
+    groups.kids
+      .get("a")
+      ?.map((thread) => thread.id)
+      .sort(),
+  ).toEqual(["g", "s"]);
+  expect(groups.needs.map((thread) => thread.id)).toEqual(["a"]);
 });

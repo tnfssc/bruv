@@ -1,5 +1,4 @@
-import { type Task, type Thread, going as working } from "./protocol";
-import { open } from "./tasks";
+import { type Thread, going as working } from "./protocol";
 
 /** What a thread was last seen doing, to tell a change worth waking for from churn. */
 type Seen = { status: string; needsUser: boolean; holding?: string };
@@ -20,13 +19,14 @@ const kept = 3;
 export type Wake = { text: string; said?: string };
 
 /**
- * Decides when the assistant wakes up on its own, and with what. It follows only the threads its open tasks
- * name, and wakes when one needs the user, fails or finishes. It also takes a regular look while any task
- * is open. A wake-up waits until the assistant is free and the user isn't talking, then goes as one message.
+ * Decides when the assistant wakes up on its own, and with what. It follows the threads the assistant
+ * started (and their subagents), and wakes when one needs the user, fails or finishes. It also takes a
+ * regular look while any of them is at work. A wake-up waits until the assistant is free and the user isn't
+ * talking, then goes as one message.
  */
 export class Waker {
   private seen = new Map<string, Seen>();
-  private followed = new Map<string, string>();
+  private followed = new Set<string>();
   private pending: string[] = [];
   /** What followed threads said since the last wake-up, newest last, by thread. */
   private said = new Map<string, { name: string; texts: string[] }>();
@@ -35,7 +35,6 @@ export class Waker {
   private timer: ReturnType<typeof setTimeout> | undefined;
   private look: ReturnType<typeof setInterval> | undefined;
   private lastWake = 0;
-  private openTasks = 0;
 
   constructor(
     private options: {
@@ -43,7 +42,7 @@ export class Waker {
       wake: (wake: Wake) => void;
       /** Whether the assistant is idle and nobody is talking. */
       free: () => boolean;
-      /** Minutes between regular looks while a task is open; 0 turns them off. */
+      /** Minutes between regular looks while a followed thread is at work; 0 turns them off. */
       everyMinutes: number;
       /** How long to gather events into one wake-up; for tests. */
       gather?: number;
@@ -60,17 +59,14 @@ export class Waker {
     }
   }
 
-  /** The tasks changed: follow the threads of the open ones. */
-  tasks(tasks: Task[]) {
-    this.followed.clear();
-    const live = tasks.filter(open);
-    this.openTasks = live.length;
-    for (const task of live) for (const id of task.threads) this.followed.set(id, task.title);
+  /** The threads to follow: the ones the assistant started. */
+  follow(ids: Iterable<string>) {
+    this.followed = new Set(ids);
     // Subagents of followed threads are kept too.
     for (const id of this.seen.keys()) if (!this.followed.has(id) && !this.isChild(id)) this.seen.delete(id);
     // A thread starts being followed from where it is now, so its next change is news even when T3 sends
     // nothing in between.
-    for (const id of this.followed.keys()) {
+    for (const id of this.followed) {
       if (this.seen.has(id)) continue;
       const thread = this.options.lookup?.(id);
       if (thread) this.seen.set(id, { status: thread.status, needsUser: thread.needsUser, holding: thread.holding });
@@ -80,8 +76,7 @@ export class Waker {
   /** Threads changed; the followed ones (and their subagents) may be news. */
   threads(threads: Thread[]) {
     for (const thread of threads) {
-      const task = this.followed.get(thread.id);
-      if (!task) {
+      if (!this.followed.has(thread.id)) {
         this.child(thread);
         continue;
       }
@@ -90,7 +85,7 @@ export class Waker {
       this.seen.set(thread.id, now);
       // The first sighting only sets the baseline.
       if (!before) continue;
-      const name = this.name(thread.title, task);
+      const name = this.name(thread.title);
       const ended = now.status === "completed" && (working.has(before.status) || !!before.holding);
       if (now.needsUser && !before.needsUser) this.add(`${name} is waiting on the user.`);
       else if (now.status === "failed" && before.status !== "failed")
@@ -110,18 +105,15 @@ export class Waker {
   /** A subagent (or delegated task) of a followed thread that starts waiting on the user is news too. */
   private child(thread: Thread) {
     let parent = thread.parentId;
-    let task: string | undefined;
     // Up a few levels: a subagent's subagent still belongs to the work.
-    for (let depth = 0; parent && depth < 4 && !task; depth++) {
-      task = this.followed.get(parent);
-      if (!task) parent = this.options.lookup?.(parent)?.parentId;
-    }
-    if (!task || !parent) return;
+    for (let depth = 0; parent && depth < 6 && !this.followed.has(parent); depth++)
+      parent = this.options.lookup?.(parent)?.parentId;
+    if (!parent || !this.followed.has(parent)) return;
     const before = this.seen.get(thread.id);
     this.seen.set(thread.id, { status: thread.status, needsUser: thread.needsUser });
     if (thread.needsUser && !before?.needsUser)
       this.add(
-        `A subagent of ${this.name(this.options.lookup?.(parent)?.title ?? task, task)}, "${thread.title}" (thread ${thread.id}), is waiting on the user.`,
+        `A subagent of ${this.name(this.options.lookup?.(parent)?.title ?? parent)}, "${thread.title}" (thread ${thread.id}), is waiting on the user.`,
       );
   }
 
@@ -131,12 +123,10 @@ export class Waker {
    * said by then.
    */
   message(threadId: string, text: string) {
-    const task = this.followed.get(threadId);
-    if (!task) return;
-    const title = this.options.lookup?.(threadId)?.title ?? task;
+    if (!this.followed.has(threadId)) return;
     let entry = this.said.get(threadId);
     if (!entry) {
-      entry = { name: this.name(title, task), texts: [] };
+      entry = { name: this.name(this.options.lookup?.(threadId)?.title ?? threadId), texts: [] };
       this.said.set(threadId, entry);
     }
     const trimmed = text.trim();
@@ -165,17 +155,8 @@ export class Waker {
     return !!parent && this.followed.has(parent);
   }
 
-  /** The task's name is enough when the thread is named the same. */
-  private name(title: string, task: string) {
-    // Typed and typeset quotes, case and spacing don't make it another name.
-    const plain = (text: string) =>
-      text
-        .normalize("NFKC")
-        .replace(/[\u2018\u2019\u201c\u201d]/g, "'")
-        .replace(/\s+/g, " ")
-        .trim()
-        .toLowerCase();
-    return plain(title) === plain(task) ? `"${task}"` : `"${title}" (${task})`;
+  private name(title: string) {
+    return `"${title.trim() || "Untitled"}"`;
   }
 
   private add(line: string, wait = this.options.gather ?? gather) {
@@ -217,9 +198,13 @@ export class Waker {
 
   private regular() {
     const minutes = this.options.everyMinutes;
-    // A wake-up for news already counts as a look.
-    if (!this.openTasks || this.now() - this.lastWake < minutes * 60_000 * 0.9) return;
-    this.add(`Regular look: ${this.openTasks} open task${this.openTasks === 1 ? "" : "s"}.`);
+    // Only while something is at work; a wake-up for news already counts as a look.
+    const busy = [...this.followed].filter((id) => {
+      const thread = this.options.lookup?.(id);
+      return thread && !thread.away && (working.has(thread.status) || !!thread.holding);
+    }).length;
+    if (!busy || this.now() - this.lastWake < minutes * 60_000 * 0.9) return;
+    this.add(`Regular look: ${busy} thread${busy === 1 ? "" : "s"} at work.`);
   }
 
   private now() {

@@ -1,4 +1,4 @@
-import type { Line, Project, T3State, Task, Thread } from "../../../src/web/protocol";
+import type { Line, Project, T3State, Thread } from "../../../src/web/protocol";
 
 /**
  * Everything the page shows, outside React so a hot reload of a component keeps it. Built so a long
@@ -29,8 +29,6 @@ export type State = {
   sending: string[];
   /** Bumped when threads (or answers waiting on them) change; the threads themselves are in `threads`. */
   threadsVersion: number;
-  /** The user's work as the assistant keeps it; few, so sent whole. */
-  tasks: Task[];
   /** What the assistant is doing right now, while it works. */
   step: string;
   /** The request whose answer last didn't go through, shown by its buttons. */
@@ -52,7 +50,6 @@ let state: State = {
   ids: [],
   sending: [],
   threadsVersion: 0,
-  tasks: [],
   step: "",
 };
 const listeners = new Set<() => void>();

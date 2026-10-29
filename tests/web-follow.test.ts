@@ -41,7 +41,7 @@ function waker(options: Partial<ConstructorParameters<typeof Waker>[0]> = {}) {
     ...options,
   });
   cleanup.push(() => instance.close());
-  instance.tasks([{ slug: "x", title: "Fix login", status: "working", threads: ["a"], updatedAt: "" }]);
+  instance.follow(["a"]);
   instance.threads([thread("a", "running")]);
   return { instance, woke };
 }
@@ -60,22 +60,6 @@ test("a finishing thread's last words come with the wake-up, for the assistant o
   expect(woke.length).toBe(1);
 });
 
-test("a thread named like its task is named once, whatever its quotes", async () => {
-  const woke: Wake[] = [];
-  const instance = new Waker({
-    wake: (wake) => woke.push(wake),
-    free: () => true,
-    everyMinutes: 0,
-    gather: 10,
-    lookup: () => ({ ...thread("a", "running"), title: "Print today\u2019s weekday" }),
-  });
-  cleanup.push(() => instance.close());
-  instance.tasks([{ slug: "x", title: "Print today's weekday", status: "working", threads: ["a"], updatedAt: "" }]);
-  instance.threads([{ ...thread("a", "completed"), title: "Print today\u2019s weekday" }]);
-  await until(() => woke.length === 1);
-  expect(woke[0]?.text).not.toContain("(");
-});
-
 test("a turn that ends with work left going is not the end; nothing holding it any more is", async () => {
   const threads = new Map<string, Thread>([["a", thread("a", "running")]]);
   const { instance, woke } = waker({ progress: 40, lookup: (id) => threads.get(id) });
@@ -87,10 +71,11 @@ test("a turn that ends with work left going is not the end; nothing holding it a
   change({ ...thread("a", "completed"), holding: "watching its pull request" });
   await until(() => woke.length === 1);
   expect(woke[0]?.text).not.toContain("finished");
-  // A subagent of it starts waiting on the user: news, with the subagent's id to answer it.
-  change({ ...thread("s1", "running"), title: "Check the tests", parentId: "a", needsUser: true });
+  // A subagent's subagent starts waiting on the user: news, naming it so it can be answered.
+  change({ ...thread("s1", "running"), parentId: "a" });
+  change({ ...thread("s2", "running"), title: "Check the tests", parentId: "s1", needsUser: true });
   await until(() => woke.length === 2);
-  expect(woke[1]?.text).toContain("s1");
+  expect(woke[1]?.text).toContain("s2");
   // Checks pass, the thread comes back, finishes, and nothing holds it.
   change(thread("a", "running"));
   change(thread("a", "completed"));
@@ -107,8 +92,8 @@ test("what a thread says while it works gathers into one later wake-up", async (
   await until(() => woke.length === 1);
   expect(woke[0]?.said).toContain("Looking at the login code.");
   expect(woke[0]?.said).toContain("Found the redirect bug.");
-  // The page's line says why it woke, by the task's name when the thread's isn't known.
-  expect(woke[0]?.text).toContain("Fix login");
+  // The page's line says which thread woke it.
+  expect(woke[0]?.text).toMatch(/\ba\b/);
   // A very long message is cut.
   instance.message("a", "x".repeat(10_000));
   await until(() => woke.length === 2);
