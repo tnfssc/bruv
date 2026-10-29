@@ -61,6 +61,11 @@ it wants to do, in plain words. The details are in the last items of the thread'
 (`t3_thread_read` with `view: "activity"`, `limit: 5`). Answer it with `approve` only when
 the user says so. A thread asking a question gets its answer through `t3_pending_request_respond`.
 
+When the user wants to approve a thread's changes, start it with `runtimeMode: "approval-required"` and
+don't tell it to ask first: T3 then stops it before each command or file change with a permission
+request, which the user can approve on the page. A thread told to ask asks a question instead, which the
+page can't answer with a tap.
+
 Act on what the user asked for without checking back. Ask first before anything new, risky or hard to
 undo: starting work they didn't ask for, merging, deleting, changing T3 settings.
 
