@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `/skills` picks which skills the agent sees, per project. Skills start off, so the prompt no longer lists every skill you have; the agent is told where they are and can find one itself. Picks save for just you or, in `.agents/bruv.json`, for the team.
+
 - Voice can hear through OpenRouter: set `"listen"` under `"voice"` in `bruv.json` to a transcription model such as `meta/muse-voice-transcribe-1.0`, and Nemotron (463 MB) isn't needed. Your words then show only when each turn ends, about 1–2 s later.
 
 - The web version is T3-native: its page lists only the T3 threads its assistant started, with their subagents under them, instead of task files beside all of T3's threads. Each thread it starts shows as a live card in the conversation, with what the thread last said.

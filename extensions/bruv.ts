@@ -28,6 +28,7 @@ import { registerRender } from "../src/render";
 import { registerReview } from "../src/review";
 import { registerSettle } from "../src/settle";
 import { registerSharedAgents } from "../src/shared-agents";
+import { registerSkills } from "../src/skills";
 import { registerTurn } from "../src/turn";
 import { registerUI } from "../src/ui";
 import { registerUsage } from "../src/usage";
@@ -70,6 +71,7 @@ export default function bruv(pi: ExtensionAPI): void {
   registerCodexCompaction(pi);
   const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);
   registerPrompt(pi);
+  registerSkills(pi);
   registerSharedAgents(pi);
   // After every handler that adds context files.
   registerContextOrder(pi);
