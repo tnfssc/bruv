@@ -26,6 +26,7 @@ import { registerReasoning } from "../src/reasoning";
 import { registerRender } from "../src/render";
 import { registerReview } from "../src/review";
 import { registerSettle } from "../src/settle";
+import { registerSharedAgents } from "../src/shared-agents";
 import { registerTurn } from "../src/turn";
 import { registerUI } from "../src/ui";
 import { registerUsage } from "../src/usage";
@@ -68,6 +69,7 @@ export default function bruv(pi: ExtensionAPI): void {
   registerCodexCompaction(pi);
   const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);
   registerPrompt(pi);
+  registerSharedAgents(pi);
   registerNotes(pi);
   registerCodemode(pi);
   registerCodexImport(pi);
