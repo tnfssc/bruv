@@ -110,6 +110,10 @@ export function registerCheck(
     accepted = false;
   };
   pi.on("session_start", restore);
+  // A snapshot still running when the session ends must not report through its closed ctx.
+  pi.on("session_shutdown", () => {
+    revision++;
+  });
   pi.on("session_tree", restore);
   pi.on("agent_settled", () => {
     running = false;

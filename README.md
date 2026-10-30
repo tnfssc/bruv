@@ -68,7 +68,7 @@ Parallel agents use more quota too.
 
 ## Commands
 
-`/voice` · `/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/notes` · `/ps` · `/subagents` · `/bruv-compact` · `/bruv-setup` · `/bruv-migrate`
+`/voice` · `/keep-going` · `/check` · `/goal` · `/review` · `/import-codex` · `/usage` · `/fast` · `/notes` · `/ps` · `/skills` · `/subagents` · `/bruv-compact` · `/bruv-setup` · `/bruv-migrate`
 
 Coming from Codex? `/import-codex` previews your model, MCP servers, skills, prompts and trusted projects, then asks before importing. Sign in to Pi with `/login`; Codex sign-in tokens stay separate.
 
