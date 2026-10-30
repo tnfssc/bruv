@@ -6,6 +6,7 @@ import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
 import { registerCompact } from "../src/compact";
+import { registerContextOrder } from "../src/context-order";
 import { registerDeveloper } from "../src/developer";
 import { registerEditor } from "../src/editor";
 import { registerFast } from "../src/fast";
@@ -26,6 +27,7 @@ import { registerReasoning } from "../src/reasoning";
 import { registerRender } from "../src/render";
 import { registerReview } from "../src/review";
 import { registerSettle } from "../src/settle";
+import { registerSharedAgents } from "../src/shared-agents";
 import { registerTurn } from "../src/turn";
 import { registerUI } from "../src/ui";
 import { registerUsage } from "../src/usage";
@@ -68,6 +70,9 @@ export default function bruv(pi: ExtensionAPI): void {
   registerCodexCompaction(pi);
   const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);
   registerPrompt(pi);
+  registerSharedAgents(pi);
+  // After every handler that adds context files.
+  registerContextOrder(pi);
   registerNotes(pi);
   registerCodemode(pi);
   registerCodexImport(pi);

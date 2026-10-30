@@ -240,3 +240,9 @@ Set agent profiles in `~/.pi/agent/bruv.json`:
 
 Missing fields use the parent model and thinking level. The model can override either for a single agent.
 Ordinary agent worktrees and branches stay on disk after the agent finishes.
+
+### Instructions files
+
+Pi reads `AGENTS.md` (or `CLAUDE.md`) from `~/.pi/agent/`, the working folder and each folder above it.
+bruv also reads `~/.agents/AGENTS.md`, the file other coding agents share, and puts it first. If Pi's own
+file links to it, it is read once. `--no-context-files` turns both off.
