@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- `/skills` picks which skills the agent sees, per project. Skills start off, so the prompt no longer lists every skill you have; the agent is told where they are and can find one itself. Picks save for just you or, in `.agents/bruv.json`, for the team.
+- `/skills` picks which skills the agent sees, per project: flip one with Space and it is saved, or run `/skills <name>`. Skills start off, so the prompt no longer lists every skill you have; the agent is told where they are and can find one itself. Picks save for just you or, in `.agents/bruv.json`, for the team.
 
 - Voice can hear through OpenRouter: set `"listen"` under `"voice"` in `bruv.json` to a transcription model such as `meta/muse-voice-transcribe-1.0`, and Nemotron (463 MB) isn't needed. Your words then show only when each turn ends, about 1–2 s later.
 

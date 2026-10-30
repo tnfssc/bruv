@@ -18,6 +18,9 @@ Listing every skill was too much for the user, so `src/skills.ts` does this inst
 - The local file is read from the main checkout (`git rev-parse --git-common-dir`), so every worktree
   shares it; an untracked file would otherwise be missing in each new worktree. It is ignored through
   `.git/info/exclude`, like `.bruv/` in `worktree.ts`, so bruv adds no file to the repo for it.
+- `/skills` is Pi's `SettingsList`: each flip saves at once, so there is no Save step and the cursor stays
+  put. A first try used `ui.select` in a loop, which jumped back to the top after every pick and asked
+  where to save at the end; too many keys for a list of switches. `/skills <name>` flips one with no list.
 - A pick for a skill that isn't installed is kept and shown as "not installed"; it does no harm.
 
 The web assistant still clears the list: it has no file reader, so it could not load a skill anyway.

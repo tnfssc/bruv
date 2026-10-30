@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { join, resolve } from "node:path";
 import { fauxAssistantMessage } from "@earendil-works/pi-ai";
 import bruv from "../extensions/bruv";
-import { chosenSkills, saveSkills, skillFiles } from "../src/skills";
+import { chosenSkills, setSkill, skillFiles } from "../src/skills";
 import { sdk } from "./sdk";
 
 mkdirSync(".tmp", { recursive: true });
@@ -29,35 +29,25 @@ test("worktrees share the main checkout's local file and keep their own team fil
   expect(places.local).toBe(join(repo, ".agents", "bruv.local.json"));
 });
 
-test("local picks win over the team's, and saving keeps only the differences", () => {
+test("local picks win over the team's, and your file keeps only the differences", () => {
   const places = skillFiles(repo);
-  saveSkills(places, new Set(["alpha-skill-311"]), ["alpha-skill-311", "beta-skill-622"], true);
+  setSkill(places, "alpha-skill-311", true, true);
   expect(existsSync(places.local)).toBe(false);
-  saveSkills(places, new Set(["beta-skill-622"]), ["alpha-skill-311", "beta-skill-622"], false);
-  const { team, local, on } = chosenSkills(places);
-  expect(team).toEqual({ "alpha-skill-311": true });
-  expect(local).toEqual({ "alpha-skill-311": false, "beta-skill-622": true });
-  expect([...on]).toEqual(["beta-skill-622"]);
+  setSkill(places, "alpha-skill-311", false, false);
+  setSkill(places, "beta-skill-622", true, false);
+  expect(chosenSkills(places)).toEqual({
+    team: { "alpha-skill-311": true },
+    local: { "alpha-skill-311": false, "beta-skill-622": true },
+    on: new Set(["beta-skill-622"]),
+  });
+  setSkill(places, "beta-skill-622", true, true);
+  expect(chosenSkills(places).local).toEqual({ "alpha-skill-311": false });
   expect(readFileSync(join(repo, ".git", "info", "exclude"), "utf8")).toContain(".agents/bruv.local.json");
   rmSync(join(repo, ".agents"), { recursive: true });
 });
 
-test("/skills turns a skill on, and only that skill is listed", async () => {
-  const picks = ["beta-skill-622", "Save", "Just me"];
-  const app = await sdk(
-    [bruv],
-    {
-      select: async (_title, options) => {
-        const want = picks.shift() ?? "";
-        return options.find((option) => option.includes(want));
-      },
-    },
-    tree,
-    "rpc",
-    [],
-    undefined,
-    [skills],
-  );
+test("/skills <name> turns a skill on, and only that skill is listed", async () => {
+  const app = await sdk([bruv], undefined, tree, "rpc", [], undefined, [skills]);
   try {
     const seen: string[] = [];
     app.faux.setResponses([
@@ -66,7 +56,7 @@ test("/skills turns a skill on, and only that skill is listed", async () => {
         return fauxAssistantMessage("ok");
       },
     ]);
-    await app.session.prompt("/skills");
+    await app.session.prompt("/skills beta-skill-622");
     expect(chosenSkills(skillFiles(tree)).on).toEqual(new Set(["beta-skill-622"]));
     await app.session.prompt("go");
     expect(seen[0]).toContain("beta-skill-622");

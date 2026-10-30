@@ -1,7 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { type ExtensionAPI, getSettingsListTheme } from "@earendil-works/pi-coding-agent";
+import { type SettingItem, SettingsList } from "@earendil-works/pi-tui";
 import { readJson } from "./config";
 
 interface ProjectFile {
@@ -49,27 +50,24 @@ function write(path: string, skills: Record<string, boolean>) {
   writeFileSync(path, `${JSON.stringify({ ...file, skills }, null, 2)}\n`);
 }
 
-/** Saves the picks, for the team or just this user, so that afterwards exactly `on` is turned on. */
-export function saveSkills(places: Places, on: Set<string>, names: string[], forTeam: boolean) {
-  let { team, local } = chosenSkills(places);
+/** Turns one skill on or off, for the team or just this user. Your own file holds only where you differ. */
+export function setSkill(places: Places, name: string, on: boolean, forTeam: boolean) {
+  const { team, local } = chosenSkills(places);
   if (forTeam) {
-    team = Object.fromEntries([...on].sort().map((name) => [name, true]));
-    write(places.team, team);
-  }
-  const next = { ...local };
-  for (const name of new Set([...names, ...on])) {
-    if (on.has(name) === (team[name] ?? false)) delete next[name];
-    else next[name] = on.has(name);
-  }
-  if (!forTeam || existsSync(places.local)) write(places.local, next);
+    const next = { ...team, [name]: true };
+    if (!on) delete next[name];
+    write(places.team, next);
+    if (!(name in local)) return;
+    delete local[name];
+  } else if (on === (team[name] ?? false)) delete local[name];
+  else local[name] = on;
+  write(places.local, local);
   // The local file is the user's own, so git ignores it without touching the repo's files.
   const exclude = places.exclude;
-  if (exclude && existsSync(places.local)) {
-    const line = ".agents/bruv.local.json";
-    if (!existsSync(exclude) || !readFileSync(exclude, "utf8").split("\n").includes(line)) {
-      mkdirSync(dirname(exclude), { recursive: true });
-      appendFileSync(exclude, `\n${line}\n`);
-    }
+  const line = ".agents/bruv.local.json";
+  if (exclude && (!existsSync(exclude) || !readFileSync(exclude, "utf8").split("\n").includes(line))) {
+    mkdirSync(dirname(exclude), { recursive: true });
+    appendFileSync(exclude, `\n${line}\n`);
   }
 }
 
@@ -93,38 +91,86 @@ export function registerSkills(pi: ExtensionAPI): void {
       "The user turns skills on for a project with /skills.",
     ].join("\n");
   });
+  const installed = () =>
+    new Map(
+      pi
+        .getCommands()
+        .filter((command) => command.source === "skill")
+        .map((command) => [command.name.slice("skill:".length), command.description ?? ""]),
+    );
   pi.registerCommand("skills", {
     description: "Choose which skills the agent sees in this project",
-    handler: async (_args, ctx) => {
+    getArgumentCompletions: (prefix) => {
+      const word = prefix.split(/\s+/).at(-1) ?? "";
+      const items = [...installed()].filter(([name]) => name.startsWith(word));
+      return items.length ? items.map(([name, about]) => ({ value: name, label: name, description: about })) : null;
+    },
+    handler: async (args, ctx) => {
       places ??= skillFiles(ctx.cwd);
-      const installed = new Map(
-        pi
-          .getCommands()
-          .filter((command) => command.source === "skill")
-          .map((command) => [command.name.slice("skill:".length), command.description ?? ""]),
-      );
-      const on = chosenSkills(places).on;
-      const names = [...new Set([...installed.keys(), ...on])].sort();
+      const files = places;
+      const known = installed();
+      const summary = () => {
+        const on = [...chosenSkills(files).on].sort();
+        return on.length ? `Skills on: ${on.join(", ")}.` : "All skills off.";
+      };
+      // `/skills a b` flips those skills for you alone, without opening the list.
+      const named = args.split(/\s+/).filter(Boolean);
+      if (named.length) {
+        for (const name of named) setSkill(files, name, !chosenSkills(files).on.has(name), false);
+        ctx.ui.notify(summary(), "info");
+        return;
+      }
+      const names = [...new Set([...known.keys(), ...chosenSkills(files).on])].sort();
       if (names.length === 0) {
         ctx.ui.notify("No skills found. Add them to ~/.agents/skills or .agents/skills.", "info");
         return;
       }
-      const save = "Save";
-      for (;;) {
-        const rows = names.map((name) => {
-          const about = installed.has(name) ? installed.get(name)?.split("\n")[0].slice(0, 70) : "not installed";
-          return `${on.has(name) ? "✓" : " "} ${name}${about ? ` · ${about}` : ""}`;
-        });
-        const picked = await ctx.ui.select("Skills the agent sees here (pick to switch, then Save)", [save, ...rows]);
-        if (picked === undefined) return;
-        if (picked === save) break;
-        const name = names[rows.indexOf(picked)];
-        if (name && !on.delete(name)) on.add(name);
+      if (ctx.mode !== "tui") {
+        ctx.ui.notify(`${summary()} Switch one with /skills <name>.`, "info");
+        return;
       }
-      const where = await ctx.ui.select("Save for", ["Just me", "Team (.agents/bruv.json, commit it)"]);
-      if (where === undefined) return;
-      saveSkills(places, on, names, where !== "Just me");
-      ctx.ui.notify(on.size ? `Skills on: ${[...on].sort().join(", ")}.` : "All skills off.", "info");
+      let forTeam = false;
+      const scope = "\0scope";
+      const items: SettingItem[] = [
+        {
+          id: scope,
+          label: "Save for",
+          currentValue: "just me",
+          values: ["just me", "team"],
+          description:
+            "Just me: .agents/bruv.local.json, ignored by git, shared by worktrees. Team: .agents/bruv.json, to commit.",
+        },
+        ...names.map((name) => ({
+          id: name,
+          label: name,
+          currentValue: chosenSkills(files).on.has(name) ? "on" : "off",
+          values: ["off", "on"],
+          description: known.get(name) || "Not installed.",
+        })),
+      ];
+      await ctx.ui.custom<void>((tui, theme, _keys, done) => {
+        const list = new SettingsList(
+          items,
+          Math.min(names.length + 1, Math.max(5, tui.terminal.rows - 10)),
+          getSettingsListTheme(),
+          (id, value) => {
+            if (id === scope) forTeam = value === "team";
+            else setSkill(files, id, value === "on", forTeam);
+          },
+          () => done(),
+          { enableSearch: true },
+        );
+        return {
+          render: (width) => [
+            theme.fg("accent", theme.bold("Skills the agent sees in this project")),
+            ...list.render(width),
+          ],
+          handleInput: (data) => list.handleInput(data),
+          handleMouse: (event) => list.handleMouse(event),
+          invalidate: () => list.invalidate(),
+        };
+      });
+      ctx.ui.notify(summary(), "info");
     },
   });
 }
