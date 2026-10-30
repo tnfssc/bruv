@@ -6,6 +6,7 @@ import { registerCodemode } from "../src/codemode";
 import { registerCodexCompaction } from "../src/codex-compaction";
 import { registerCodexImport } from "../src/codex-import";
 import { registerCompact } from "../src/compact";
+import { registerContextOrder } from "../src/context-order";
 import { registerDeveloper } from "../src/developer";
 import { registerEditor } from "../src/editor";
 import { registerFast } from "../src/fast";
@@ -70,6 +71,8 @@ export default function bruv(pi: ExtensionAPI): void {
   const hasFinished = registerFinish(pi, undefined, check, () => !!goal.active(), summary);
   registerPrompt(pi);
   registerSharedAgents(pi);
+  // After every handler that adds context files.
+  registerContextOrder(pi);
   registerNotes(pi);
   registerCodemode(pi);
   registerCodexImport(pi);

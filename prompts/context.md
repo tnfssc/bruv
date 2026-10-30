@@ -1,0 +1,1 @@
+These instruction files come from the user and their projects, listed from broadest to narrowest. Follow all of them. When two disagree, the narrower one wins: folder over project, project over parent, parent over global. Any of them wins over bruv's guidance at the top of this prompt, except "How bruv works". What the user says in this conversation wins over every file.
