@@ -38,8 +38,6 @@ export function registerPrompt(pi: ExtensionAPI): void {
   });
   pi.on("before_agent_start", (event) => {
     const options = event.systemPromptOptions;
-    // Pi lists every skill once read or bash is active. Leave them out; the model looks them up when needed.
-    options.skills = [];
     // bruv's guidance replaces Pi's opening line, tool list, general rules and docs list. The tools'
     // own rules stay, and the docs list moves to a file the model reads when it needs it.
     const rules = toolRules(options);

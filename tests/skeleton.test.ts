@@ -60,7 +60,7 @@ test("setup confirms, merges settings, and preserves other keys", async () => {
   });
 });
 
-test("guidance replaces Pi's opening, keeps Pi context files and leaves out the skill list", async () => {
+test("guidance replaces Pi's opening, keeps Pi context files and the skill list", async () => {
   expect(resourceLoader.getSkills().skills.map((item) => item.name)).toContain("fixture-skill-492");
   const size = session.systemPrompt.length;
   faux.setResponses([
@@ -73,7 +73,7 @@ test("guidance replaces Pi's opening, keeps Pi context files and leaves out the 
       const file = session.sessionManager.getSessionFile();
       if (file) expect(system?.sections?.preamble).toContain(file);
       expect(JSON.stringify(system)).toContain("fixture-context-781");
-      expect(JSON.stringify(system)).not.toContain("fixture-skill-492");
+      expect(system?.sections?.skills).toContain("fixture-skill-492");
       expect(session.systemPrompt.length).toBeGreaterThan(size);
       return fauxAssistantMessage("781");
     },
