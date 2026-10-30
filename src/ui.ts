@@ -2,7 +2,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { Text } from "@earendil-works/pi-tui";
 import { visibleWork, WorkBoard } from "./board";
 import type { Jobs, Result, Summary, Work } from "./jobs";
-import { clearStatus, setStatus } from "./status";
+import { clearStatus } from "./status";
 
 const oneLine = (text: string) => text.replace(/[\r\n\t]+/g, " ");
 const duration = (seconds: number) => (seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m${seconds % 60}s`);
